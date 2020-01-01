@@ -19,8 +19,8 @@ app.use(parser.json());
 
 //Use cors
 app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  // res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, fintrack_token');
   next();
 });
@@ -32,4 +32,4 @@ app.use('/',  express.static(path.join(__dirname, '../desktop_client/')));
 app.use("/", router);
 
 app.listen(app.get("port"));
-console.log("Listening on", app.get("port"));
+console.log("Listening on port:", app.get("port"));

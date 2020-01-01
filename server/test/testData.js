@@ -4,16 +4,16 @@ var Promise = require('bluebird');
 
 exports.testData = function () {
   db.User.find({
-      username: "aaa"
+      username: "aa"
   })
   .then(function (found) {
     if(!found){
-      db.User.create({
-        username: "aa",
-        password: "aa",
-        email: "1@1.com"
-      })
-      .then(function (user) {
+      // db.User.create({
+      //   username: "aa",
+      //   password: "aa",
+      //   email: "1@1.com"
+      // })
+      // .then(function (user) {
         var expensesCategories = [
           {
             category: "Groceries"
@@ -156,7 +156,7 @@ exports.testData = function () {
           .then(function () {
             console.log("created start data completed")
           })
-      })
+      // })
     }
   })
 }

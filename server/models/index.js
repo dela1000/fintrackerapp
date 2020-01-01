@@ -1,5 +1,6 @@
 // Models
 var db = require('../db/db.js');
+var utils = require('../helpers/utils.js');
 var Promise = require('bluebird');
 var _ = require('lodash');
 
@@ -8,18 +9,20 @@ module.exports = {
 
   login: {
     post: function (payload, callback) {
-      db.User.find({
+      db.User.findOne({
         where: {
           username: payload.username
         }
       })
-      .then(function (found)  {
-        if (found && found.password === payload.password) {
-          delete found.password
-          callback(found)
-        } else {
-          callback(false)
-        }
+      .then(function (found) {
+        utils.checkPasswordHash(payload.password, found.password, function (res) {
+          if (res) {
+            callback(found)
+          } else {
+            callback(false)
+          }
+          
+        })
       })
     }
   },
@@ -36,12 +39,15 @@ module.exports = {
         }
       })
       .spread(function (found, create) {
+        console.log("+++ 40 index.js create: ", create)
         if (create) {
-          found.username = payload.username;
-          found.password = payload.password; //gotta crypt this
-          found.email = payload.email;
-          found.save();
-          callback(found);
+          utils.createPasswordHash(payload.password, function (passwordHash) {
+            found.username = payload.username;
+            found.password = passwordHash;
+            found.email = payload.email;
+            found.save();
+            callback(found);
+          })
         }else{
           callback(false);
         }
