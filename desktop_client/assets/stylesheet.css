@@ -1,0 +1,176 @@
+/*==============================*\
+COLORS
+#E8E0D1
+#FFF7E5
+#FFFCF9 // Background
+#E8E3DE
+#FFF2E5
+#2C2E2F
+<<<<<<< HEAD
+#BBD530 // Buttons
+=======
+#BBD530 // Green button
+#D53030 // Red button
+>>>>>>> featStyling
+\*==============================*/
+
+@import url(https://fonts.googleapis.com/css?family=Lobster);
+@import url(https://fonts.googleapis.com/css?family=Arimo);
+
+/*==============================*\
+MAIN SECTION
+\*==============================*/
+body{
+  max-width: 850px;
+  text-decoration: none !important;
+  font-weight: 100;
+}
+
+input{
+  border: 1px solid #E8E3DE;
+  height:25px;
+  width: 275px;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 5px;
+  border-radius: 25px;
+  /*font-family: 'Arimo', sans-serif;*/
+  outline: none;
+}
+
+textarea{
+  border: 1px solid #E8E3DE;
+  height:100px;
+  width: 275px;
+  font-size: 24px;
+  margin-bottom: 5px;
+  border-radius: 25px;
+  /*font-family: 'Arimo', sans-serif;*/
+  outline: none;
+}
+
+p{
+  font-size: 75px;
+  margin: 0px;
+}
+
+.centerElement{
+  margin: 0 auto;
+  background-color: #CFBFB4;
+  font-size: 15px;
+  font-family: 'Arimo';
+}
+
+.section{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-bottom: 5px;
+}
+
+.button{
+  border: 0px;
+  height: 32px;
+  width: 111px;
+  border-radius: 25px;
+  background-color: #BBD530;
+  /*font-family: 'Lobster', cursive;*/
+  font-size: 16px;
+  outline: none;
+}
+
+/*==============================*\
+AUTH SECTION
+\*==============================*/
+
+#authContainer{
+  position: fixed;
+  min-width: 920px;
+  max-width:500px;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  text-align: center;
+}
+
+#authContainer img{
+/*  height: 400px;
+  width: 400px;*/
+}
+
+#authCenter{
+  margin: auto;
+  width: 60%;
+}
+
+/*==============================*\
+HOME SECTION
+\*==============================*/
+
+#header{
+  margin: 10px 25px 10px 25px;
+  height: 60px;
+}
+
+#header img{
+  width: 32px;
+  height: 32px;
+}
+
+#logout{
+  float: right;
+  width: 64px;
+}
+
+
+.redButton{
+  border: 0px;
+  height: 32px;
+  min-width: 30px;
+  border-radius: 25px;
+  background-color: #D53030;
+  font-size: 16px;
+  /*font-family: 'Lobster', cursive;*/
+  outline: none;
+}
+
+.calendar{
+  float: right;
+}
+
+.fade.ng-hide {
+  transition:0.5s linear all;
+  opacity:0;
+}
+
+.wideContainer{
+  width: 100%;
+  height: 23px;
+  margin-top: 10px;
+  margin-bottom: 100px;
+}
+
+.category{
+  background-color: white;
+  text-align: center;
+  float: left;
+  margin: 0px 5px 0px 5px;
+  width: 73px;
+  border-radius: 25px;
+  border: 1px solid #535C6B;
+}
+
+.expenseContainer{
+  height: 400px;
+  width: 100%;
+}
+
+.negativeAmount{
+  color: red;
+}
+
+/*Date*/
+.calendar{
+  display: inline-block;
+  min-height: 290px;
+}
+

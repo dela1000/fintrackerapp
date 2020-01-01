@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+desktop_client/bower_components
+mobile_client/www/lib
+secrets/
+*.log

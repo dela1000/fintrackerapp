@@ -1,0 +1,18 @@
+<ion-view view-title="Login" name="login-view">
+  <ion-content class="padding">
+    <img class="center" src="taco.png">
+    <div class="center">
+      <p class="center logo" id="name">FinTracker</p>
+    </div>
+      <div class="list list-inset">
+          <label class="item item-input">
+              <input type="text" placeholder="Username" ng-model="data.username" autofocus="autofocus">
+          </label>
+          <label class="item item-input">
+              <input type="password" placeholder="Password" ng-model="data.password">
+          </label>
+      </div>
+      <button class="button button-block button-calm" ng-click="login()">Login</button>
+      <button class="button button-block button-calm" ui-sref="signup">Create Account</button>
+  </ion-content>
+</ion-view>
