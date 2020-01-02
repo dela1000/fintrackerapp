@@ -12,16 +12,24 @@ module.exports = controllers = {
       models.login.post(payload, function (isUser) {
         if (isUser) {
           utils.createToken(request, response, isUser, function (token, name) {
-           response.status(200).send( {
-             'username': name,
-             'fintrackToken': token,
-             'userId': isUser.dataValues.id,
-             'initial': isUser.dataValues.initial,
-             'userEmail': isUser.dataValues.email,
+           response.status(200).send({
+            success: true,
+            data: {
+             username: name,
+             fintrackToken: token,
+             userId: isUser.dataValues.id,
+             initial: isUser.dataValues.initial,
+             userEmail: isUser.dataValues.email,
+            }
            });
           })
         }else{
-         response.sendStatus(400);
+         response.status(200).json({
+            success: false,
+            data: {
+              message: "Login unsuccessful"
+            }
+          });
         };
       })
     }
@@ -39,15 +47,23 @@ module.exports = controllers = {
         if(isUser){
           utils.createToken(request, response, isUser, function (token, name) {
            response.status(200).json({
-             'username': name,
-             'fintrackToken': token,
-             'userId': isUser.dataValues.id,
-             'initial': isUser.dataValues.initial,
-             'userEmail': isUser.dataValues.email,
+            success: true,
+            data: {
+              username: name,
+              fintrackToken: token,
+              userId: isUser.dataValues.id,
+              initial: isUser.dataValues.initial,
+              userEmail: isUser.dataValues.email,
+              }
             });
           })
         }else{
-          response.sendStatus(400);
+          response.status(200).json({
+            success: false,
+            data: {
+              message: "User name or email already used"
+            }
+          });
         };
       })
     }
@@ -56,9 +72,12 @@ module.exports = controllers = {
   logout: {
     get: function (request, response) {
       response.status(202).json({
-        'username': null,
-        'fintrackToken': null,
-        'userId': null
+        success: true,
+        data: {
+          username: null,
+          fintrackToken: null,
+          userId: null
+        }
       })
     }
   },
@@ -66,7 +85,10 @@ module.exports = controllers = {
   categories: {
     get: function (request, response) {
       models.categories.get(function (allCategories) {
-        response.status(200).json(allCategories)
+        response.status(200).json({
+            success: false,
+            data: allCategories
+          });
       })
     }
   },
@@ -81,10 +103,15 @@ module.exports = controllers = {
       var createdAt = request.body.createdAt;
       models.expenses.post(userId, amount, comment, categoryId, category, createdAt, function (expenseAdded) {
         if (expenseAdded) {
-          response.status(200).json(expenseAdded)
+          response.status(200).json({
+            success: false,
+            data: expenseAdded
+          })
         } else{
-          console.log("No expenses found")
-          response.sendStatus(404)
+          response.status(200).json({
+            success: false,
+            message: "No expenses found"
+          });
         };
       })
     },

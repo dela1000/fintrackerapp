@@ -276,11 +276,10 @@ User.sync().then(function(){
               CurrentTotalSavings.sync().then(function(){
                 CurrentTotalInvest.sync().then(function(){
                   IncomeCategory.sync().then(function(){
-                    IncomeAccount.sync().then(function(){
-                      SavingsAccount.sync().then(function(){
-                        InvestAccount.sync().then(function(){
-                          ExpensesCategory.sync()
-                          .then(function(){
+                    ExpensesCategory.sync().then(function(){
+                      InvestAccount.sync().then(function(){
+                        IncomeAccount.sync().then(function(){
+                          SavingsAccount.sync().then(function(){
                             testData();
                           })
                         })
@@ -307,8 +306,8 @@ exports.CurrentTotalExpenses = CurrentTotalExpenses;
 exports.CurrentTotalSavings = CurrentTotalSavings;
 exports.CurrentTotalInvest = CurrentTotalInvest;
 exports.IncomeCategory = IncomeCategory;
+exports.ExpensesCategory = ExpensesCategory;
 exports.IncomeAccount = IncomeAccount;
 exports.SavingsAccount = SavingsAccount;
 exports.InvestAccount = InvestAccount;
-exports.ExpensesCategory = ExpensesCategory;
 
