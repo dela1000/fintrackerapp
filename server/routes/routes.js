@@ -4,66 +4,66 @@ var router = require('express').Router();
 var path = require('path')
 var utils = require('../helpers/utils.js');
 
-router.get('/', function(request, response){
-  response.status(202).sendFile(path.resolve(__dirname + "../../desktop_client/index.html"));
+router.get('/', function(req, res){
+  res.status(202).sendFile(path.resolve(__dirname + "../../desktop_client/index.html"));
 })
 
 //Auth routes
 //ADD AUTHENTICATION MIDDLEWARE AT SOME POINT
-router.post('/signup', function (request, response) {
-  controllers.signup.post(request, response)
+router.post('/signup', function (req, res) {
+  controllers.signup.post(req, res)
 })
 
-router.get('/login', function (request, response) {
-  controllers.login.get(request, response)
+router.get('/login', function (req, res) {
+  controllers.login.get(req, res)
 })
 
-router.get('/logout', function (request, response) {
-  controllers.logout.get(request, response)
+router.get('/logout', function (req, res) {
+  controllers.logout.get(req, res)
 })
 
 
 // Set initial values for accounts
-router.post('/set_initials', utils.checkUser, function (request, response) {
-  controllers.setInitials.post(request, response)
+router.post('/set_initials', utils.checkUser, function (req, res) {
+  controllers.set_initials.post(req, res)
 })
 
 
 //Income routes
-router.post('/income', utils.checkUser, function (request, response) {
-  controllers.income.post(request, response)
+router.post('/income', utils.checkUser, function (req, res) {
+  controllers.income.post(req, res)
 })
 
-router.get('/income', utils.checkUser, function (request, response) {
-  controllers.income.get(request, response)
+router.get('/income', utils.checkUser, function (req, res) {
+  controllers.income.get(req, res)
 })
 
-router.patch('/income', utils.checkUser, function (request, response) {
-  controllers.income.patch(request, response)
+router.patch('/income', utils.checkUser, function (req, res) {
+  controllers.income.patch(req, res)
 })
 
 
 //Expenses routes
-router.post('/expenses', utils.checkUser, function (request, response) {
-  controllers.expenses.post(request, response)
+router.post('/expenses', utils.checkUser, function (req, res) {
+  controllers.expenses.post(req, res)
 })
 
-router.get('/expenses', utils.checkUser, function (request, response) {
-  controllers.expenses.get(request, response)
+router.get('/expenses', utils.checkUser, function (req, res) {
+  controllers.expenses.get(req, res)
 })
 
-router.patch('/expenses', utils.checkUser, function (request, response) {
-  controllers.expenses.patch(request, response)
+router.patch('/expenses', utils.checkUser, function (req, res) {
+  controllers.expenses.patch(req, res)
 })
 
 //Category routes
-router.get('/categories', utils.checkUser, function (request, response) {
-  controllers.categories.get(request, response)
+router.get('/categories', utils.checkUser, function (req, res) {
+  controllers.categories.get(req, res)
 })
 
 // TEST Ping
-router.get('/ping', utils.checkUser, function (request, response) {
-  controllers.ping.get(request, response)
+router.get('/ping', utils.checkUser, function (req, res) {
+  controllers.ping.get(req, res)
 })
 
 module.exports = router;

@@ -1,18 +1,19 @@
 var models = require('../models');
 var utils = require('../helpers/utils.js');
+var _ = require('lodash');
 
 var controllers;
 module.exports = controllers = {
   login: {
-    get: function (request, response) {
+    get: function (req, res) {
       var payload = {
-        username: request.body.username,
-        password: request.body.password
+        username: req.body.username,
+        password: req.body.password
       }
       models.login.post(payload, function (isUser) {
         if (isUser) {
-          utils.createToken(request, response, isUser, function (token, name) {
-           response.status(200).send({
+          utils.createToken(req, res, isUser, function (token, name) {
+           res.status(200).send({
             success: true,
             data: {
              username: name,
@@ -24,7 +25,7 @@ module.exports = controllers = {
            });
           })
         }else{
-         response.status(200).json({
+         res.status(200).json({
             success: false,
             data: {
               message: "Login unsuccessful"
@@ -36,17 +37,17 @@ module.exports = controllers = {
   },
 
   signup: {
-    post: function (request, response) {
+    post: function (req, res) {
       var payload = {
-        username: request.body.username,
-        password: request.body.password, // need to bcrypt
-        email: request.body.email
+        username: req.body.username,
+        password: req.body.password, // need to bcrypt
+        email: req.body.email
       }
 
       models.signup.post(payload, function (isUser) {
         if(isUser){
-          utils.createToken(request, response, isUser, function (token, name) {
-           response.status(200).json({
+          utils.createToken(req, res, isUser, function (token, name) {
+           res.status(200).json({
             success: true,
             data: {
               username: name,
@@ -58,7 +59,7 @@ module.exports = controllers = {
             });
           })
         }else{
-          response.status(200).json({
+          res.status(200).json({
             success: false,
             data: {
               message: "User name or email already used"
@@ -70,8 +71,8 @@ module.exports = controllers = {
   },
 
   logout: {
-    get: function (request, response) {
-      response.status(202).json({
+    get: function (req, res) {
+      res.status(202).json({
         success: true,
         data: {
           username: null,
@@ -83,20 +84,54 @@ module.exports = controllers = {
   },
 
   set_initials: {
-    post: function (request, response) {
-      models.categories.get(function (allCategories) {
-        response.status(200).json({
-            success: false,
-            data: allCategories
-          });
+    post: function (req, res) {
+      var payload = req.body.initialAmounts
+      _.forEach(payload, function(amount) {
+        amount['userId'] = req.headers.userId
       })
+      if(payload.length > 0){
+        models.set_initials.post(payload, function (initialIncomesCreated) {
+          if(initialIncomesCreated){
+            models.totalIncome.get(req.headers.userId, function (currentTotalIncome) {
+              var totalAmount = _.sumBy(initialIncomesCreated, 'amount');
+              newTotaIncome = {
+                newAmount: currentTotalIncome.dataValues.amount + totalAmount,
+                userId: req.headers.userId
+              }
+              models.totalIncome.patch(newTotaIncome, function (newTotalIncome) {
+                res.status(200).json({
+                    success: true,
+                    data: {
+                      initialIncomesCreated: initialIncomesCreated, 
+                      newTotaIncome: newTotaIncome.newAmount
+                    }
+                });
+              })
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: "Initial incomes not added"
+              }
+            });
+          }
+        })
+      } else{
+        res.status(200).json({
+          success: false,
+          data: {
+            message: "Initial incomes needs to exist"
+          }
+        });
+      };
     }
   },
 
   categories: {
-    get: function (request, response) {
+    get: function (req, res) {
       models.categories.get(function (allCategories) {
-        response.status(200).json({
+        res.status(200).json({
             success: false,
             data: allCategories
           });
@@ -105,96 +140,95 @@ module.exports = controllers = {
   },
 
   expenses: {
-    post: function (request, response) {
-      var userId = request.body.userId;
-      var amount = request.body.amount;
-      var comment = request.body.comment;
-      var categoryId = request.body.categoryId;
-      var category = request.body.category;
-      var createdAt = request.body.createdAt;
+    post: function (req, res) {
+      var userId = req.body.userId;
+      var amount = req.body.amount;
+      var comment = req.body.comment;
+      var categoryId = req.body.categoryId;
+      var category = req.body.category;
+      var createdAt = req.body.createdAt;
       models.expenses.post(userId, amount, comment, categoryId, category, createdAt, function (expenseAdded) {
         if (expenseAdded) {
-          response.status(200).json({
+          res.status(200).json({
             success: false,
             data: expenseAdded
           })
         } else{
-          response.status(200).json({
+          res.status(200).json({
             success: false,
             message: "No expenses found"
           });
         };
       })
     },
-    get: function (request, response) {
-      var userId = request.query.userId;
-      console.log("+++ 75 index.js userId: ", userId)
+    get: function (req, res) {
+      var userId = req.query.userId;
       models.expenses.get(userId, function (allExpenses) {
         if (allExpenses) {
-          response.status(200).json(allExpenses)
+          res.status(200).json(allExpenses)
         } else{
           console.log("This user has no expenses to show")
-          response.sendStatus(404)
+          res.sendStatus(404)
         };
       })
     },
-    patch: function (request, response) {
-      var expenseId = request.body.expenseId;
-      var amount = request.body.amount;
-      var comment = request.body.comment;
-      var categoryId = request.body.categoryId;
+    patch: function (req, res) {
+      var expenseId = req.body.expenseId;
+      var amount = req.body.amount;
+      var comment = req.body.comment;
+      var categoryId = req.body.categoryId;
       models.expenses.put(expenseId, amount, comment, categoryId, function (updatedExpense) {
         if (updatedExpense) {
-          response.status(200).json(updatedExpense)
+          res.status(200).json(updatedExpense)
         }else{
           console.log("That expense does not exist")
-          response.sendStatus(404)
+          res.sendStatus(404)
         }
       })
     }
   },
   income: {
-    post: function (request, response) {
-      var userId = request.body.userId;
-      var amount = request.body.amount;
-      var source = request.body.source;
+    post: function (req, res) {
+      var userId = req.body.userId;
+      var amount = req.body.amount;
+      var source = req.body.source;
       console.log("+++ 115 index.js source: ", source)
       models.income.post(userId, amount, source, function (incomeCreated) {
         if ((incomeCreated)) {
-          response.status(200).json(incomeCreated)
+          res.status(200).json(incomeCreated)
         } else{
-          response.sendStatus(404)
+          res.sendStatus(404)
         };
       })
     },
-    get: function name1 (request, response) {
-      var userId = request.query.userId
+    get: function name1 (req, res) {
+      var userId = req.query.userId
       models.income.get(userId, function (userIncome) {
         if (userIncome) {
-          response.status(200).json(userIncome)
+          res.status(200).json(userIncome)
         } else{
-          response.status(404)
+          res.status(404)
         };
 
       })
     },
-    patch: function (request, response) {
-      var incomeId = request.body.incomeId;
-      var amount = request.body.amount;
-      var source = request.body.source;
+    patch: function (req, res) {
+      var incomeId = req.body.incomeId;
+      var amount = req.body.amount;
+      var source = req.body.source;
       models.income.put(incomeId, amount, source, function (updatedIncome) {
         if (updatedIncome) {
-          response.status(200).json(updatedIncome)
+          res.status(200).json(updatedIncome)
         }else{
           console.log("That income does not exist")
-          response.sendStatus(404)
+          res.sendStatus(404)
         }
       })
     }
   },
   ping: {
-    get: function (request, response){
-      response.status(200).json(request.headers)
+    get: function (req, res){
+      res.status(200).json(req.headers)
     }
   }
 }

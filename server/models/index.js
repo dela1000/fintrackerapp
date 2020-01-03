@@ -55,9 +55,25 @@ module.exports = {
     }
   },
 
+  set_initials: {
+    post: function (payload, callback) {
+      if(payload && payload.length > 0){
+         db.Income.bulkCreate(payload)
+           .then(function (initialIncomesCreated) {
+             if (initialIncomesCreated) {
+               callback(initialIncomesCreated)
+             }else{
+               callback(false)
+             };
+           })
+      } else{
+        callback(false)
+      };
+    }
+  },
+
   categories: {
     get: function (callback) {
-      console.log("+++ 53 index.js Here")
       db.Category.findAll()
       .then(function (allCategories) {
         callback(allCategories)
@@ -67,8 +83,8 @@ module.exports = {
 
   expenses: {
     post: function (userId, amount, comment, categoryId, category, createdAt, callback) {
-      db.Expense.create({
-        user_id: userId,
+      db.Expense.bulkCreate({
+        userId: userId,
         amount: amount,
         comment: comment,
         category: category,
@@ -86,7 +102,7 @@ module.exports = {
     get: function (userId, callback) {
       db.Expense.findAll({
         where: {
-          user_id: userId
+          userId: userId
         }
       })
       .then(function (allExpenses) {
@@ -116,10 +132,44 @@ module.exports = {
       })
     }
   },
+
+  totalIncome: {
+    get: function (userId, callback) {
+      db.CurrentTotalIncome.find({
+        where: {
+          userId: userId
+        }
+      })
+      .then(function (currentTotalIncome) {
+        if (currentTotalIncome) {
+          callback(currentTotalIncome)
+        } else{
+          callback(false)
+        };
+      })
+    },
+    patch: function (newTotaIncome, callback) {
+      db.CurrentTotalIncome.update(
+        {
+          amount: newTotaIncome.newAmount
+        },
+        {
+          returning: true, 
+          where: {
+            id: newTotaIncome.userId
+          } 
+        }
+      )
+        .then(function(updated) {
+          callback(updated)
+      })
+    }
+  },
+
   income: {
     post: function (userId, amount, source, callback) {
        db.Income.create({
-        user_id: userId,
+        userId: userId,
         amount: amount,
         source: source
       })
@@ -134,7 +184,7 @@ module.exports = {
     get: function (userId, callback) {
       db.Income.findAll({
         where: {
-          user_id: userId
+          userId: userId
         }
       })
       .then(function (userIncome) {

@@ -3,12 +3,12 @@ var bcrypt = require('bcrypt');
 var secrets = require('../../secrets/secrets.js');
 
 
-var decodeToken = exports.decodeToken = function(request){
-  return jwt.decode(request.headers[secrets.tokenName], secrets.magicWords);
+var decodeToken = exports.decodeToken = function(req){
+  return jwt.decode(req.headers[secrets.tokenName], secrets.magicWords);
 }
 
 //Creates token
-exports.createToken = function(request, response, isUser, callback) {
+exports.createToken = function(req, res, isUser, callback) {
   var token = jwt.encode({"userId": isUser.dataValues.id, "username": isUser.dataValues.username}, secrets.magicWords);
   callback(token, isUser.dataValues.username);
 }
@@ -18,23 +18,22 @@ var isLoggedIn = function(token) {
   var hash = jwt.decode(token, secrets.magicWords);
   if(!!hash.userId){
     return hash;
-
   }
 }
 
 // Reroute based on Auth status
-exports.checkUser = function(request, response, next) {
-  var token = request.headers[secrets.tokenName];
+exports.checkUser = function(req, res, next) {
+  var token = req.headers[secrets.tokenName];
   if (!token || (token === "undefined")){
-    response.status(401).send("No token detected")
+    res.status(401).send("No token detected")
   } else {
     var isloggedIn = isLoggedIn(token)
     if (isloggedIn && isLoggedIn(token)){
-      request.headers['userId'] = isloggedIn.userId;
-      request.headers['username'] = isloggedIn.username;
+      req.headers['userId'] = isloggedIn.userId;
+      req.headers['username'] = isloggedIn.username;
       next()
     } else {
-      response.sendStatus(401);
+      res.sendStatus(401);
     }
   }
 }

@@ -1,7 +1,9 @@
 var mysql = require('mysql');
 var express = require('express');
 var path = require('path');
+var session = require('express-session')
 var db = require(__dirname + '/db/db.js');
+var secrets = require('../secrets/secrets.js');
 
 //Middleware
 var parser = require('body-parser');
@@ -24,6 +26,12 @@ app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, fintrack_token');
   next();
 });
+
+var secret = {
+  'secret': secrets.sessionSecret
+}
+
+app.use(session(secret))
 
 // Serving static files from client directory.
 app.use(express.static(__dirname + '../desktop_client'));

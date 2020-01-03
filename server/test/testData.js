@@ -8,12 +8,12 @@ exports.testData = function () {
   })
   .then(function (found) {
     if(!found){
-      // db.User.create({
-      //   username: "aa",
-      //   password: "aa",
-      //   email: "1@1.com"
-      // })
-      // .then(function (user) {
+      db.User.create({
+        username: "aa",
+        password: "aa",
+        email: "1@1.com"
+      })
+      .then(function (user) {
         var expensesCategories = [
           {
             category: "Groceries"
@@ -82,7 +82,8 @@ exports.testData = function () {
 
         var IncomeAccounts = [
           {
-            name: "Chase"
+            name: "Chase",
+            primary: 1
           },
           {
             name: "Charles Schwab"
@@ -115,6 +116,7 @@ exports.testData = function () {
         var incomeCreatedNames = [];
         var savingsCreatedNames = [];
         var investCreatedNames = [];
+        var createCurrentTotalIncome = [];
 
         _.each(expensesCategories, function (category) {
         expensesCreatedCategories.push(db.ExpensesCategory.create({
@@ -131,6 +133,10 @@ exports.testData = function () {
         _.each(IncomeAccounts, function (account) {
         incomeCreatedNames.push(db.IncomeAccount.create({
             name: account.name
+          }))
+        createCurrentTotalIncome.push(db.CurrentTotalIncome.create({
+            userId: 1,
+            amount: 0
           }))
         })
 
@@ -156,7 +162,7 @@ exports.testData = function () {
           .then(function () {
             console.log("created start data completed")
           })
-      // })
+      })
     }
   })
 }

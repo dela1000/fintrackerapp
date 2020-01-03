@@ -35,7 +35,7 @@ var Income = sequelize.define('income', {
       type: Sequelize.TEXT,
       allowNull: true
     },
-    accountid: {
+    accountId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -43,7 +43,7 @@ var Income = sequelize.define('income', {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    categoryid: {
+    categoryId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -66,7 +66,7 @@ var Expense = sequelize.define('expense', {
       type: Sequelize.TEXT,
       allowNull: true
     },
-    categoryid: {
+    categoryId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -93,7 +93,7 @@ var Saving = sequelize.define('saving', {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    accountid: {
+    accountId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -116,7 +116,7 @@ var Invest = sequelize.define('invest', {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    accountid: {
+    accountId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -196,7 +196,11 @@ var IncomeAccount = sequelize.define('incomeaccount', {
     name: {
       type: Sequelize.STRING,
       allowNull: false
-    }
+    },
+    primary: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    },
   }, {
     timestamps: true
   }, {
@@ -226,44 +230,44 @@ var InvestAccount = sequelize.define('investaccount', {
 });
 
 //Users have many Expenses, Expenses have one user
+Income.belongsTo(User, {
+  foreignKey: 'userId'
+});
+
 Expense.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 Saving.belongsTo(User, {
-  foreignKey: 'user_id'
-});
-
-Income.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 CurrentTotalIncome.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 CurrentTotalExpenses.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 CurrentTotalSavings.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 CurrentTotalInvest.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 IncomeAccount.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 SavingsAccount.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 InvestAccount.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'userId'
 });
 
 User.sync().then(function(){
