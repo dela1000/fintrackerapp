@@ -82,6 +82,17 @@ module.exports = controllers = {
     }
   },
 
+  set_initials: {
+    post: function (request, response) {
+      models.categories.get(function (allCategories) {
+        response.status(200).json({
+            success: false,
+            data: allCategories
+          });
+      })
+    }
+  },
+
   categories: {
     get: function (request, response) {
       models.categories.get(function (allCategories) {
@@ -183,7 +194,7 @@ module.exports = controllers = {
   },
   ping: {
     get: function (request, response){
-      response.status(200).json({"hello": "world"})
+      response.status(200).json(request.headers)
     }
   }
 }

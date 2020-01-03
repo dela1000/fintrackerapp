@@ -16,8 +16,10 @@ exports.createToken = function(request, response, isUser, callback) {
 // Login Checks
 var isLoggedIn = function(token) {
   var hash = jwt.decode(token, secrets.magicWords);
-  console.log("+++ 19 utils.js hash: ", hash)
-  return !!hash.userId;
+  if(!!hash.userId){
+    return hash;
+
+  }
 }
 
 // Reroute based on Auth status
@@ -26,7 +28,10 @@ exports.checkUser = function(request, response, next) {
   if (!token || (token === "undefined")){
     response.status(401).send("No token detected")
   } else {
-    if (isLoggedIn(token)){
+    var isloggedIn = isLoggedIn(token)
+    if (isloggedIn && isLoggedIn(token)){
+      request.headers['userId'] = isloggedIn.userId;
+      request.headers['username'] = isloggedIn.username;
       next()
     } else {
       response.sendStatus(401);

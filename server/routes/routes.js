@@ -11,7 +11,6 @@ router.get('/', function(request, response){
 //Auth routes
 //ADD AUTHENTICATION MIDDLEWARE AT SOME POINT
 router.post('/signup', function (request, response) {
-  console.log("+++ 12 routes.js Here")
   controllers.signup.post(request, response)
 })
 
@@ -23,39 +22,47 @@ router.get('/logout', function (request, response) {
   controllers.logout.get(request, response)
 })
 
+
+// Set initial values for accounts
+router.post('/set_initials', utils.checkUser, function (request, response) {
+  controllers.setInitials.post(request, response)
+})
+
+
 //Income routes
-router.post('/income', function (request, response) {
+router.post('/income', utils.checkUser, function (request, response) {
   controllers.income.post(request, response)
 })
 
-router.get('/income', function (request, response) {
+router.get('/income', utils.checkUser, function (request, response) {
   controllers.income.get(request, response)
 })
 
-router.patch('/income', function (request, response) {
+router.patch('/income', utils.checkUser, function (request, response) {
   controllers.income.patch(request, response)
 })
 
+
 //Expenses routes
-router.post('/expenses', function (request, response) {
+router.post('/expenses', utils.checkUser, function (request, response) {
   controllers.expenses.post(request, response)
 })
 
-router.get('/expenses', function (request, response) {
+router.get('/expenses', utils.checkUser, function (request, response) {
   controllers.expenses.get(request, response)
 })
 
-router.patch('/expenses', function (request, response) {
+router.patch('/expenses', utils.checkUser, function (request, response) {
   controllers.expenses.patch(request, response)
 })
 
 //Category routes
-router.get('/categories', function (request, response) {
+router.get('/categories', utils.checkUser, function (request, response) {
   controllers.categories.get(request, response)
 })
 
 // TEST Ping
-router.get('/ping', function (request, response) {
+router.get('/ping', utils.checkUser, function (request, response) {
   controllers.ping.get(request, response)
 })
 
