@@ -57,11 +57,12 @@ module.exports = {
 
   set_initials: {
     post: function (payload, callback) {
-      if(payload && payload.length > 0){
-         db.Income.bulkCreate(payload)
-           .then(function (initialIncomesCreated) {
-             if (initialIncomesCreated) {
-               callback(initialIncomesCreated)
+      var type = payload.type
+      if(payload && payload.initialAmounts.length > 0){
+         db[type].bulkCreate(payload.initialAmounts)
+           .then(function (initialAmountCreated) {
+             if (initialAmountCreated) {
+               callback(initialAmountCreated)
              }else{
                callback(false)
              };
@@ -133,11 +134,12 @@ module.exports = {
     }
   },
 
-  totalIncome: {
-    get: function (userId, callback) {
-      db.CurrentTotalIncome.find({
+  totalAmount: {
+    get: function (data, callback) {
+      var tableName = 'CurrentTotal' + data.type
+      db[tableName].find({
         where: {
-          userId: userId
+          userId: data.userId
         }
       })
       .then(function (currentTotalIncome) {
@@ -148,15 +150,16 @@ module.exports = {
         };
       })
     },
-    patch: function (newTotaIncome, callback) {
-      db.CurrentTotalIncome.update(
+    patch: function (newTotalData, callback) {
+      var tableName = 'CurrentTotal' + newTotalData.type;
+      db[tableName].update(
         {
-          amount: newTotaIncome.newAmount
+          amount: newTotalData.newAmount
         },
         {
           returning: true, 
           where: {
-            id: newTotaIncome.userId
+            id: newTotalData.userId
           } 
         }
       )

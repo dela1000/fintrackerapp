@@ -85,25 +85,35 @@ module.exports = controllers = {
 
   set_initials: {
     post: function (req, res) {
-      var payload = req.body.initialAmounts
-      _.forEach(payload, function(amount) {
+      var type = req.body.type;
+      var payload = {
+        type: type,
+        initialAmounts: req.body.initialAmounts
+      }
+      _.forEach(payload.initialAmounts, function(amount) {
         amount['userId'] = req.headers.userId
       })
-      if(payload.length > 0){
-        models.set_initials.post(payload, function (initialIncomesCreated) {
-          if(initialIncomesCreated){
-            models.totalIncome.get(req.headers.userId, function (currentTotalIncome) {
-              var totalAmount = _.sumBy(initialIncomesCreated, 'amount');
-              newTotaIncome = {
-                newAmount: currentTotalIncome.dataValues.amount + totalAmount,
-                userId: req.headers.userId
+      if(payload.initialAmounts.length > 0){
+        models.set_initials.post(payload, function (initialAmountCreated) {
+          if(initialAmountCreated){
+            var data = {
+              userId: req.headers.userId,
+              type: type
+            }
+            models.totalAmount.get(data, function (currentTotalAmount) {
+              var totalAmount = _.sumBy(initialAmountCreated, 'amount');
+              newTotalData = {
+                newAmount: currentTotalAmount.dataValues.amount + totalAmount,
+                userId: req.headers.userId,
+                type: type
               }
-              models.totalIncome.patch(newTotaIncome, function (newTotalIncome) {
+              models.totalAmount.patch(newTotalData, function (newTotalAmount) {
                 res.status(200).json({
                     success: true,
                     data: {
-                      initialIncomesCreated: initialIncomesCreated, 
-                      newTotaIncome: newTotaIncome.newAmount
+                      type: type,
+                      initialAmountCreated: initialAmountCreated, 
+                      newTotalData: newTotalData.newAmount
                     }
                 });
               })
@@ -112,7 +122,7 @@ module.exports = controllers = {
             res.status(200).json({
               success: false,
               data: {
-                message: "Initial incomes not added"
+                message: "Initial amounts not added"
               }
             });
           }
@@ -228,7 +238,10 @@ module.exports = controllers = {
   },
   ping: {
     get: function (req, res){
-      res.status(200).json(req.headers)
+      res.status(200).json({
+        ping: "System Working",
+        headers:req.headers
+      })
     }
   }
 }

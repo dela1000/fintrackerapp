@@ -80,7 +80,7 @@ var Expense = sequelize.define('expense', {
     paranoid: true
 });
 
-var Saving = sequelize.define('saving', {
+var Savings = sequelize.define('savings', {
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -126,7 +126,7 @@ var Invest = sequelize.define('invest', {
     paranoid: true
 });
 
-var IncomeCategory = sequelize.define('incomecategory', {
+var Category = sequelize.define('category', {
     category: {
       type: Sequelize.STRING,
       allowNull: false
@@ -238,7 +238,7 @@ Expense.belongsTo(User, {
   foreignKey: 'userId'
 });
 
-Saving.belongsTo(User, {
+Savings.belongsTo(User, {
   foreignKey: 'userId'
 });
 
@@ -273,13 +273,13 @@ InvestAccount.belongsTo(User, {
 User.sync().then(function(){
   Income.sync().then(function(){
     Expense.sync().then(function(){
-      Saving.sync().then(function(){
+      Savings.sync().then(function(){
         Invest.sync().then(function(){
           CurrentTotalIncome.sync().then(function(){
             CurrentTotalExpenses.sync().then(function(){
               CurrentTotalSavings.sync().then(function(){
                 CurrentTotalInvest.sync().then(function(){
-                  IncomeCategory.sync().then(function(){
+                  Category.sync().then(function(){
                     ExpensesCategory.sync().then(function(){
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){
@@ -303,13 +303,13 @@ User.sync().then(function(){
 exports.User = User;
 exports.Income = Income;
 exports.Expense = Expense;
-exports.Saving = Saving;
+exports.Savings = Savings;
 exports.Invest = Invest;
 exports.CurrentTotalIncome = CurrentTotalIncome;
 exports.CurrentTotalExpenses = CurrentTotalExpenses;
 exports.CurrentTotalSavings = CurrentTotalSavings;
 exports.CurrentTotalInvest = CurrentTotalInvest;
-exports.IncomeCategory = IncomeCategory;
+exports.Category = Category;
 exports.ExpensesCategory = ExpensesCategory;
 exports.IncomeAccount = IncomeAccount;
 exports.SavingsAccount = SavingsAccount;

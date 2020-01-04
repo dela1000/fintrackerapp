@@ -50,7 +50,7 @@ exports.testData = function () {
           },
         ]
 
-        var incomeCategories = [
+        var Categories = [
           {
             category: "INITIAL"
           },
@@ -98,7 +98,7 @@ exports.testData = function () {
             name: "Chase"
           },
           {
-            name: "Charles Schwab"
+            name: "Ally"
           },
         ]
 
@@ -112,11 +112,12 @@ exports.testData = function () {
         ]
 
         var expensesCreatedCategories = [];
-        var incomeCreatedCategories = [];
+        var createdCategories = [];
         var incomeCreatedNames = [];
         var savingsCreatedNames = [];
         var investCreatedNames = [];
         var createCurrentTotalIncome = [];
+        var createCurrentTotalSavings = [];
 
         _.each(expensesCategories, function (category) {
         expensesCreatedCategories.push(db.ExpensesCategory.create({
@@ -124,8 +125,8 @@ exports.testData = function () {
           }))
         })
         
-        _.each(incomeCategories, function (category) {
-        incomeCreatedCategories.push(db.IncomeCategory.create({
+        _.each(Categories, function (category) {
+        createdCategories.push(db.Category.create({
             category: category.category
           }))
         })
@@ -134,17 +135,23 @@ exports.testData = function () {
         incomeCreatedNames.push(db.IncomeAccount.create({
             name: account.name
           }))
-        createCurrentTotalIncome.push(db.CurrentTotalIncome.create({
-            userId: 1,
-            amount: 0
-          }))
         })
+        
+        createCurrentTotalIncome.push(db.CurrentTotalIncome.create({
+          userId: 1,
+          amount: 0
+        }))
 
         _.each(SavingsAccounts, function (account) {
         savingsCreatedNames.push(db.SavingsAccount.create({
             name: account.name
           }))
         })
+
+        createCurrentTotalSavings.push(db.CurrentTotalSavings.create({
+          userId: 1,
+          amount: 0
+        }))
 
         _.each(InvestAccounts, function (account) {
         investCreatedNames.push(db.InvestAccount.create({
@@ -154,10 +161,12 @@ exports.testData = function () {
         
         Promise.all([
             expensesCreatedCategories, 
-            incomeCreatedCategories, 
+            createdCategories, 
             incomeCreatedNames, 
             savingsCreatedNames,
-            investCreatedNames
+            investCreatedNames,
+            createCurrentTotalIncome,
+            createCurrentTotalSavings,
           ])
           .then(function () {
             console.log("created start data completed")
