@@ -143,11 +143,32 @@ module.exports = controllers = {
     }
   },
 
+  initials_done: {
+    post: function (req, res) {
+      var data = {
+        userId: req.headers.userId,
+      }
+      models.initials_done.post(data, function (updated) {
+        if(updated){
+          res.status(200).json({
+              success: true,
+              data: updated
+            });
+        } else{
+          res.status(200).json({
+              success: false,
+              message: "User not updated"
+            });
+        };
+      })
+    }
+  },
+
   categories: {
     get: function (req, res) {
       models.categories.get(function (allCategories) {
         res.status(200).json({
-            success: false,
+            success: true,
             data: allCategories
           });
       })

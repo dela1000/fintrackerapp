@@ -73,6 +73,25 @@ module.exports = {
     }
   },
 
+  initials_done: {
+    post: function (payload, callback) {
+      db.User.findOne({
+        where: {
+          id: payload.userId
+        }
+      })
+        .then(function (user) {
+          if(user){
+            user.initial = true;
+            user.save();
+            callback(user);
+          } else {
+            callback(false)
+          }
+        })
+    }
+  },
+
   categories: {
     get: function (callback) {
       db.Category.findAll()

@@ -28,6 +28,10 @@ router.post('/set_initials', utils.checkUser, function (req, res) {
   controllers.set_initials.post(req, res)
 })
 
+router.post('/initials_done', utils.checkUser, function (req, res) {
+  controllers.initials_done.post(req, res)
+})
+
 
 //Income routes
 router.post('/income', utils.checkUser, function (req, res) {
