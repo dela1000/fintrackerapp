@@ -104,11 +104,14 @@ module.exports = controllers = {
             }
             models.totalAmount.get(data, function (currentTotalAmount) {
               var totalAmount = _.sumBy(initialAmountCreated, 'amount');
+              console.log("+++ 107 index.js currentTotalAmount.dataValues.amount: ", currentTotalAmount.dataValues.amount)
+              console.log("+++ 108 index.js totalAmount: ", totalAmount)
               newTotalData = {
                 newAmount: currentTotalAmount.dataValues.amount + totalAmount,
                 userId: req.headers.userId,
                 type: type
               }
+              console.log("+++ 114 index.js newTotalData: ", newTotalData)
               models.totalAmount.patch(newTotalData, function (newTotalAmount) {
                 res.status(200).json({
                     success: true,
