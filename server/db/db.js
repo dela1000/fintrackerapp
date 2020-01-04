@@ -5,6 +5,16 @@ var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass);
 
 
 var User = sequelize.define('user', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     username: {
       type: Sequelize.STRING,
       unique: true
@@ -27,6 +37,11 @@ var User = sequelize.define('user', {
 });
 
 var Income = sequelize.define('income', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -51,6 +66,10 @@ var Income = sequelize.define('income', {
       type: Sequelize.TEXT,
       allowNull: true
     },
+    date: {
+      type: Sequelize.DATE,
+      allowNull: false
+    }
   }, {
     timestamps: true
   }, {
@@ -58,6 +77,11 @@ var Income = sequelize.define('income', {
 });
 
 var Expense = sequelize.define('expense', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -72,6 +96,10 @@ var Expense = sequelize.define('expense', {
     },
     category: {
       type: Sequelize.TEXT,
+      allowNull: false
+    },
+    date: {
+      type: Sequelize.DATE,
       allowNull: false
     }
   }, {
@@ -81,6 +109,11 @@ var Expense = sequelize.define('expense', {
 });
 
 var Savings = sequelize.define('savings', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -97,6 +130,10 @@ var Savings = sequelize.define('savings', {
       type: Sequelize.INTEGER,
       allowNull: false
     },
+    date: {
+      type: Sequelize.DATE,
+      allowNull: false
+    }
   }, {
     timestamps: true
   }, {
@@ -104,6 +141,11 @@ var Savings = sequelize.define('savings', {
 });
 
 var Invest = sequelize.define('invest', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -120,6 +162,10 @@ var Invest = sequelize.define('invest', {
       type: Sequelize.INTEGER,
       allowNull: false
     },
+    date: {
+      type: Sequelize.DATE,
+      allowNull: false
+    }
   }, {
     timestamps: true
   }, {
@@ -127,6 +173,11 @@ var Invest = sequelize.define('invest', {
 });
 
 var Category = sequelize.define('category', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     category: {
       type: Sequelize.STRING,
       allowNull: false
@@ -138,6 +189,11 @@ var Category = sequelize.define('category', {
 });
 
 var ExpensesCategory = sequelize.define('expensescategory', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     category: {
       type: Sequelize.STRING,
       allowNull: false
@@ -149,6 +205,11 @@ var ExpensesCategory = sequelize.define('expensescategory', {
 });
 
 var CurrentTotalIncome = sequelize.define('currenttotalincome', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -160,6 +221,11 @@ var CurrentTotalIncome = sequelize.define('currenttotalincome', {
 });
 
 var CurrentTotalExpenses = sequelize.define('currenttotalexpenses', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -171,6 +237,11 @@ var CurrentTotalExpenses = sequelize.define('currenttotalexpenses', {
 });
 
 var CurrentTotalSavings = sequelize.define('currenttotalsavings', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -182,6 +253,11 @@ var CurrentTotalSavings = sequelize.define('currenttotalsavings', {
 });
 
 var CurrentTotalInvest = sequelize.define('currenttotalinvest', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     amount: {
       type: Sequelize.FLOAT,
       allowNull: false
@@ -193,6 +269,11 @@ var CurrentTotalInvest = sequelize.define('currenttotalinvest', {
 });
 
 var IncomeAccount = sequelize.define('incomeaccount', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false
@@ -208,6 +289,11 @@ var IncomeAccount = sequelize.define('incomeaccount', {
 });
 
 var SavingsAccount = sequelize.define('savingsaccount', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false
@@ -219,6 +305,11 @@ var SavingsAccount = sequelize.define('savingsaccount', {
 });
 
 var InvestAccount = sequelize.define('investaccount', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      autoIncrement: true
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false

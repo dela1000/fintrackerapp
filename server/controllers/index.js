@@ -1,6 +1,7 @@
 var models = require('../models');
 var utils = require('../helpers/utils.js');
 var _ = require('lodash');
+var moment = require('moment');
 
 var controllers;
 module.exports = controllers = {
@@ -92,6 +93,7 @@ module.exports = controllers = {
       }
       _.forEach(payload.initialAmounts, function(amount) {
         amount['userId'] = req.headers.userId
+        amount['date'] = moment(amount.date).startOf('day').format()
       })
       if(payload.initialAmounts.length > 0){
         models.set_initials.post(payload, function (initialAmountCreated) {
