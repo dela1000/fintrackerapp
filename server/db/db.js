@@ -30,6 +30,10 @@ var User = sequelize.define('user', {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
   }, {
     timestamps: true
   }, {
@@ -69,6 +73,10 @@ var Income = sequelize.define('income', {
     date: {
       type: Sequelize.DATE,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -101,6 +109,10 @@ var Expense = sequelize.define('expense', {
     date: {
       type: Sequelize.DATE,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -133,6 +145,10 @@ var Savings = sequelize.define('savings', {
     date: {
       type: Sequelize.DATE,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -165,6 +181,10 @@ var Invest = sequelize.define('invest', {
     date: {
       type: Sequelize.DATE,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -181,6 +201,10 @@ var Category = sequelize.define('category', {
     category: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -197,6 +221,10 @@ var ExpensesCategory = sequelize.define('expensescategory', {
     category: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -214,6 +242,10 @@ var CurrentTotalIncome = sequelize.define('currenttotalincome', {
       type: Sequelize.FLOAT(10,2),
       allowNull: false
     },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
   }, {
     timestamps: true
   }, {
@@ -229,6 +261,10 @@ var CurrentTotalExpenses = sequelize.define('currenttotalexpenses', {
     amount: {
       type: Sequelize.FLOAT(10,2),
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     },
   }, {
     timestamps: true
@@ -246,6 +282,10 @@ var CurrentTotalSavings = sequelize.define('currenttotalsavings', {
       type: Sequelize.FLOAT(10,2),
       allowNull: false
     },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
   }, {
     timestamps: true
   }, {
@@ -261,6 +301,10 @@ var CurrentTotalInvest = sequelize.define('currenttotalinvest', {
     amount: {
       type: Sequelize.FLOAT(10,2),
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     },
   }, {
     timestamps: true
@@ -282,6 +326,10 @@ var IncomeAccount = sequelize.define('incomeaccount', {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
   }, {
     timestamps: true
   }, {
@@ -297,6 +345,10 @@ var SavingsAccount = sequelize.define('savingsaccount', {
     name: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true
@@ -313,6 +365,10 @@ var InvestAccount = sequelize.define('investaccount', {
     name: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    deleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: true

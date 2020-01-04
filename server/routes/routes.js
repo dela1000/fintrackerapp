@@ -32,6 +32,8 @@ router.post('/initials_done', utils.checkUser, function (req, res) {
   controllers.initials_done.post(req, res)
 })
 
+// NEED TO ADD CATEGORIES ROUTES (CREATE, UPDATE, DELETE)
+
 
 //Income routes
 router.post('/income', utils.checkUser, function (req, res) {
