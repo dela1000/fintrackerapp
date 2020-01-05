@@ -135,7 +135,8 @@ exports.testData = function () {
 
         _.each(IncomeAccounts, function (account) {
         incomeCreatedNames.push(db.IncomeAccount.create({
-            name: account.name
+            name: account.name,
+            userId: 1
           }))
         })
         
@@ -151,7 +152,8 @@ exports.testData = function () {
 
         _.each(SavingsAccounts, function (account) {
         savingsCreatedNames.push(db.SavingsAccount.create({
-            name: account.name
+            name: account.name,
+            userId: 1
           }))
         })
 
@@ -162,7 +164,8 @@ exports.testData = function () {
 
         _.each(InvestAccounts, function (account) {
         investCreatedNames.push(db.InvestAccount.create({
-            name: account.name
+            name: account.name,
+            userId: 1
           }))
         })
 

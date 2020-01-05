@@ -176,11 +176,15 @@ module.exports = controllers = {
   income: {
     post: function (req, res) {
       var type = req.body.type;
-      var incomeData = {
+      var payload = {
         userId: req.headers.userId,
         incomeData: req.body.incomeData
       }
-      models.income.post(incomeData, function (incomeCreated) {
+      _.forEach(payload.incomeData, function(amount) {
+        amount['userId'] = req.headers.userId
+        amount['date'] = moment(amount.date).startOf('day').format()
+      })
+      models.income.post(payload, function (incomeCreated) {
         if(incomeCreated){
           var data = {
             userId: req.headers.userId,
@@ -290,7 +294,7 @@ module.exports = controllers = {
                           success: true,
                           data: {
                             type: type,
-                            expensesAdded: expensesCreated, 
+                            expensesCreated: expensesCreated, 
                             totalExpensesAdded: newTotalData.newAmount,
                             newIncomeTotalAmount: newIncomeTotalData.newAmount
                           }
