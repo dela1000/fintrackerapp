@@ -62,7 +62,7 @@ var Income = sequelize.define('income', {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    categoryId: {
+    incomeCategoryId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -98,7 +98,7 @@ var Expenses = sequelize.define('expenses', {
       type: Sequelize.TEXT,
       allowNull: true
     },
-    categoryId: {
+    expensesCategoryId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -192,7 +192,7 @@ var Invest = sequelize.define('invest', {
     paranoid: true
 });
 
-var Category = sequelize.define('category', {
+var incomeCategory = sequelize.define('category', {
     id: {
       primaryKey: true,
       type: Sequelize.INTEGER,
@@ -417,6 +417,8 @@ InvestAccount.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+
+
 User.sync().then(function(){
   Income.sync().then(function(){
     Expenses.sync().then(function(){
@@ -426,8 +428,14 @@ User.sync().then(function(){
             CurrentTotalExpenses.sync().then(function(){
               CurrentTotalSavings.sync().then(function(){
                 CurrentTotalInvest.sync().then(function(){
-                  Category.sync().then(function(){
+                  incomeCategory.sync().then(function(){
+                    incomeCategory.hasMany(Income, {
+                      foreignKey: 'incomeCategoryId'
+                    });
                     ExpensesCategory.sync().then(function(){
+                      ExpensesCategory.hasMany(Expenses, {
+                        foreignKey: 'expensesCategoryId'
+                      });
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){
                           SavingsAccount.sync().then(function(){
@@ -456,7 +464,7 @@ exports.CurrentTotalIncome = CurrentTotalIncome;
 exports.CurrentTotalExpenses = CurrentTotalExpenses;
 exports.CurrentTotalSavings = CurrentTotalSavings;
 exports.CurrentTotalInvest = CurrentTotalInvest;
-exports.Category = Category;
+exports.incomeCategory = incomeCategory;
 exports.ExpensesCategory = ExpensesCategory;
 exports.IncomeAccount = IncomeAccount;
 exports.SavingsAccount = SavingsAccount;

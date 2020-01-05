@@ -50,7 +50,7 @@ exports.testData = function () {
           },
         ]
 
-        var Categories = [
+        var incomeCategories = [
           {
             category: "INITIAL"
           },
@@ -112,7 +112,7 @@ exports.testData = function () {
         ]
 
         var expensesCreatedCategories = [];
-        var createdCategories = [];
+        var createdIncomeCategories = [];
         var incomeCreatedNames = [];
         var savingsCreatedNames = [];
         var investCreatedNames = [];
@@ -127,8 +127,8 @@ exports.testData = function () {
           }))
         })
         
-        _.each(Categories, function (category) {
-        createdCategories.push(db.Category.create({
+        _.each(incomeCategories, function (category) {
+        createdIncomeCategories.push(db.incomeCategory.create({
             category: category.category
           }))
         })
@@ -176,7 +176,7 @@ exports.testData = function () {
         
         Promise.all([
             expensesCreatedCategories, 
-            createdCategories, 
+            createdIncomeCategories, 
             incomeCreatedNames, 
             savingsCreatedNames,
             investCreatedNames,
