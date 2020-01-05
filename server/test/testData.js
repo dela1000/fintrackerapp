@@ -117,6 +117,7 @@ exports.testData = function () {
         var savingsCreatedNames = [];
         var investCreatedNames = [];
         var createCurrentTotalIncome = [];
+        var createCurrentTotalExpenses = [];
         var createCurrentTotalSavings = [];
         var createCurrentTotalInvest = [];
 
@@ -139,6 +140,11 @@ exports.testData = function () {
         })
         
         createCurrentTotalIncome.push(db.CurrentTotalIncome.create({
+          userId: 1,
+          amount: 0
+        }))
+
+        createCurrentTotalExpenses.push(db.CurrentTotalExpenses.create({
           userId: 1,
           amount: 0
         }))
@@ -172,6 +178,7 @@ exports.testData = function () {
             savingsCreatedNames,
             investCreatedNames,
             createCurrentTotalIncome,
+            createCurrentTotalExpenses,
             createCurrentTotalSavings,
             createCurrentTotalInvest,
           ])

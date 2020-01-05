@@ -104,15 +104,13 @@ module.exports = controllers = {
             }
             models.totalAmount.get(data, function (currentTotalAmount) {
               var totalAmount = _.sumBy(initialAmountCreated, 'amount');
-              console.log("+++ 107 index.js currentTotalAmount.dataValues.amount: ", currentTotalAmount.dataValues.amount)
-              console.log("+++ 108 index.js totalAmount: ", totalAmount)
               newTotalData = {
                 newAmount: currentTotalAmount.dataValues.amount + totalAmount,
                 userId: req.headers.userId,
                 type: type
               }
-              console.log("+++ 114 index.js newTotalData: ", newTotalData)
               models.totalAmount.patch(newTotalData, function (newTotalAmount) {
+                console.log("+++ 113 index.js set initial Done: ", type)
                 res.status(200).json({
                     success: true,
                     data: {
@@ -175,26 +173,158 @@ module.exports = controllers = {
     }
   },
 
+  income: {
+    post: function (req, res) {
+      var type = req.body.type;
+      var incomeData = {
+        userId: req.headers.userId,
+        incomeData: req.body.incomeData
+      }
+      models.income.post(incomeData, function (incomeCreated) {
+        if(incomeCreated){
+          var data = {
+            userId: req.headers.userId,
+            type: type
+          }
+          models.totalAmount.get(data, function (currentTotalAmount) {
+            var totalAmount = _.sumBy(incomeCreated, 'amount');
+            newTotalData = {
+              newAmount: currentTotalAmount.dataValues.amount + totalAmount,
+              userId: req.headers.userId,
+              type: type
+            }
+            models.totalAmount.patch(newTotalData, function (newTotalAmount) {
+              res.status(200).json({
+                  success: true,
+                  data: {
+                    type: type,
+                    incomeAdded: incomeCreated, 
+                    newTotalData: newTotalData.newAmount
+                  }
+              });
+            })
+          })
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: "Income not added"
+            }
+          });
+        }
+      })
+    },
+    get: function (req, res) {
+      var userId = req.query.userId
+      models.income.get(userId, function (userIncome) {
+        if (userIncome) {
+          res.status(200).json(userIncome)
+        } else{
+          res.status(404)
+        };
+
+      })
+    },
+    patch: function (req, res) {
+      var incomeId = req.body.incomeId;
+      var amount = req.body.amount;
+      var source = req.body.source;
+      models.income.put(incomeId, amount, source, function (updatedIncome) {
+        if (updatedIncome) {
+          res.status(200).json(updatedIncome)
+        }else{
+          console.log("That income does not exist")
+          res.sendStatus(404)
+        }
+      })
+    }
+  },
+
   expenses: {
     post: function (req, res) {
-      var userId = req.body.userId;
-      var amount = req.body.amount;
-      var comment = req.body.comment;
-      var categoryId = req.body.categoryId;
-      var category = req.body.category;
-      var createdAt = req.body.createdAt;
-      models.expenses.post(userId, amount, comment, categoryId, category, createdAt, function (expenseAdded) {
-        if (expenseAdded) {
-          res.status(200).json({
-            success: false,
-            data: expenseAdded
+      var type = req.body.type;
+      var payload = {
+        userId: req.headers.userId,
+        expensesData: req.body.expensesData
+      }
+      models.expenses.post(payload, function (expensesCreated) {
+        if(expensesCreated){
+          // UPDATE EXPENSES TOTAL
+          var data = {
+            userId: req.headers.userId,
+            type: type
+          }
+          models.totalAmount.get(data, function (currentTotalAmount) {
+            var totalAmount = _.sumBy(expensesCreated, 'amount');
+            var newAmount = currentTotalAmount.dataValues.amount + totalAmount
+            newAmount = newAmount.toFixed(2);
+            newTotalData = {
+              newAmount: newAmount,
+              userId: req.headers.userId,
+              type: type
+            }
+            models.totalAmount.patch(newTotalData, function (newExpensesTotalAmount) {
+              // UPDATE INCOME TOTAL
+              if(newExpensesTotalAmount){
+                var updatedIncomeTotal = {
+                  userId: req.headers.userId,
+                  type: "Income"
+                }
+                models.totalAmount.get(updatedIncomeTotal, function (currentIncomeTotalAmount) {
+                  console.log("+++ 274 index.js currentIncomeTotalAmount.dataValues.amount: ", currentIncomeTotalAmount.dataValues.amount)
+                  console.log("+++ 275 index.js newAmount: ", newAmount)
+                  var newUpdatedAmount = currentIncomeTotalAmount.dataValues.amount - newAmount
+                  newUpdatedAmount = newUpdatedAmount.toFixed(2);
+                  console.log("+++ 278 index.js newUpdatedAmount: ", newUpdatedAmount)
+                  var newIncomeTotalData = {
+                    newAmount: newUpdatedAmount,
+                    userId: req.headers.userId,
+                    type: "Income"
+                  }
+                  console.log("+++ 280 index.js newIncomeTotalData: ", newIncomeTotalData)
+                  models.totalAmount.patch(newIncomeTotalData, function (newIncomeTotalAmount) {
+                    console.log("+++ 281 index.js newIncomeTotalAmount: ", newIncomeTotalAmount)
+                    console.log("+++ 184 index.js Expenses Added: ", type)
+                    if(newIncomeTotalAmount){
+                      res.status(200).json({
+                          success: true,
+                          data: {
+                            type: type,
+                            expensesAdded: expensesCreated, 
+                            totalExpensesAdded: newTotalData.newAmount,
+                            newIncomeTotalAmount: newIncomeTotalData.newAmount
+                          }
+                      });
+                    } else{
+                      res.status(200).json({
+                        success: false,
+                        data: {
+                          message: "Something went wrong"
+                        }
+                      });
+                    };
+
+                  })
+                })
+
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: "Something went wrong"
+                  }
+                });
+              }
+            })
           })
-        } else{
+        } else {
           res.status(200).json({
             success: false,
-            message: "No expenses found"
+            data: {
+              message: "Expense not added"
+            }
           });
-        };
+        }
       })
     },
     get: function (req, res) {
@@ -223,45 +353,7 @@ module.exports = controllers = {
       })
     }
   },
-  income: {
-    post: function (req, res) {
-      var userId = req.body.userId;
-      var amount = req.body.amount;
-      var source = req.body.source;
-      console.log("+++ 115 index.js source: ", source)
-      models.income.post(userId, amount, source, function (incomeCreated) {
-        if ((incomeCreated)) {
-          res.status(200).json(incomeCreated)
-        } else{
-          res.sendStatus(404)
-        };
-      })
-    },
-    get: function name1 (req, res) {
-      var userId = req.query.userId
-      models.income.get(userId, function (userIncome) {
-        if (userIncome) {
-          res.status(200).json(userIncome)
-        } else{
-          res.status(404)
-        };
 
-      })
-    },
-    patch: function (req, res) {
-      var incomeId = req.body.incomeId;
-      var amount = req.body.amount;
-      var source = req.body.source;
-      models.income.put(incomeId, amount, source, function (updatedIncome) {
-        if (updatedIncome) {
-          res.status(200).json(updatedIncome)
-        }else{
-          console.log("That income does not exist")
-          res.sendStatus(404)
-        }
-      })
-    }
-  },
   ping: {
     get: function (req, res){
       res.status(200).json({

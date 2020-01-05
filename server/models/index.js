@@ -101,23 +101,68 @@ module.exports = {
     }
   },
 
-  expenses: {
-    post: function (userId, amount, comment, categoryId, category, createdAt, callback) {
-      db.Expense.bulkCreate({
-        userId: userId,
-        amount: amount,
-        comment: comment,
-        category: category,
-        categoryid: categoryId,
-        createdAt: createdAt
+  income: {
+    post: function (payload, callback) {
+      if(payload && payload.incomeData.length > 0){
+        db.Income.bulkCreate(payload.incomeData)
+          .then(function (incomeAdded) {
+            if (incomeAdded) {
+              callback(incomeAdded)
+            }else{
+              callback(false)
+            };
+          })
+      } else{
+       callback(false)
+      };
+    },
+    get: function (userId, callback) {
+      db.Income.findAll({
+        where: {
+          userId: userId
+        }
       })
-      .then(function (expenseAdded) {
-        if (expenseAdded !== null) {
-          callback(expenseAdded)
+      .then(function (userIncome) {
+        if (userIncome) {
+          callback(userIncome)
         } else{
           callback(false)
         };
       })
+    },
+    put: function (incomeId, amount, source, callback) {
+      db.Income.find({
+        where: {
+          id: incomeId
+        }
+      })
+      .then(function (income) {
+        if(income !== null){
+          income.amount = amount;
+          income.source = source;
+          income.save();
+          callback(income)
+        } else{
+          callback(false)
+        };
+      })
+    }
+  },
+
+  expenses: {
+    post: function (payload, callback) {
+      if(payload && payload.expensesData.length > 0){
+        db.Expenses.bulkCreate(payload.expensesData)
+        .then(function (expensesAdded) {
+          if (expensesAdded) {
+            callback(expensesAdded)
+          } else{
+            callback(false)
+          };
+        })
+      } else {
+        callback(false)
+      };
     },
     get: function (userId, callback) {
       db.Expense.findAll({
@@ -171,6 +216,7 @@ module.exports = {
     },
     patch: function (newTotalData, callback) {
       var tableName = 'CurrentTotal' + newTotalData.type;
+      console.log("+++ 219 index.js tableName: ", tableName)
       db[tableName].update(
         {
           amount: newTotalData.newAmount
@@ -183,56 +229,10 @@ module.exports = {
         }
       )
         .then(function(updated) {
+          console.log("+++ 231 index.js updated: ", updated)
           callback(updated)
       })
     }
   },
 
-  income: {
-    post: function (userId, amount, source, callback) {
-       db.Income.create({
-        userId: userId,
-        amount: amount,
-        source: source
-      })
-       .then(function (incomeCreated) {
-         if (incomeCreated) {
-           callback(incomeCreated)
-         }else{
-           callback(false)
-         };
-       })
-    },
-    get: function (userId, callback) {
-      db.Income.findAll({
-        where: {
-          userId: userId
-        }
-      })
-      .then(function (userIncome) {
-        if (userIncome) {
-          callback(userIncome)
-        } else{
-          callback(false)
-        };
-      })
-    },
-    put: function (incomeId, amount, source, callback) {
-      db.Income.find({
-        where: {
-          id: incomeId
-        }
-      })
-      .then(function (income) {
-        if(income !== null){
-          income.amount = amount;
-          income.source = source;
-          income.save();
-          callback(income)
-        } else{
-          callback(false)
-        };
-      })
-    }
-  }
 }

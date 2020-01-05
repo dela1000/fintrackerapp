@@ -84,7 +84,7 @@ var Income = sequelize.define('income', {
     paranoid: true
 });
 
-var Expense = sequelize.define('expense', {
+var Expenses = sequelize.define('expenses', {
     id: {
       primaryKey: true,
       type: Sequelize.INTEGER,
@@ -381,7 +381,7 @@ Income.belongsTo(User, {
   foreignKey: 'userId'
 });
 
-Expense.belongsTo(User, {
+Expenses.belongsTo(User, {
   foreignKey: 'userId'
 });
 
@@ -419,7 +419,7 @@ InvestAccount.belongsTo(User, {
 
 User.sync().then(function(){
   Income.sync().then(function(){
-    Expense.sync().then(function(){
+    Expenses.sync().then(function(){
       Savings.sync().then(function(){
         Invest.sync().then(function(){
           CurrentTotalIncome.sync().then(function(){
@@ -449,7 +449,7 @@ User.sync().then(function(){
 
 exports.User = User;
 exports.Income = Income;
-exports.Expense = Expense;
+exports.Expenses = Expenses;
 exports.Savings = Savings;
 exports.Invest = Invest;
 exports.CurrentTotalIncome = CurrentTotalIncome;
