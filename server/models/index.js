@@ -164,10 +164,10 @@ module.exports = {
         callback(false)
       };
     },
-    get: function (userId, callback) {
-      db.Expense.findAll({
+    get: function (payload, callback) {
+      db.Expenses.findAll({
         where: {
-          userId: userId
+          userId: payload.userId
         }
       })
       .then(function (allExpenses) {
@@ -179,7 +179,7 @@ module.exports = {
       })
     },
     put: function (expenseId, amount, comment, categoryId, callback) {
-      db.Expense.find({
+      db.Expenses.find({
         where: {
           id: expenseId
         }

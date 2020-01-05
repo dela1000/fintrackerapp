@@ -251,6 +251,9 @@ module.exports = controllers = {
         userId: req.headers.userId,
         expensesData: req.body.expensesData
       }
+      _.forEach(payload.expensesData, function(amount) {
+        amount['userId'] = req.headers.userId
+      })
       models.expenses.post(payload, function (expensesCreated) {
         if(expensesCreated){
           // UPDATE EXPENSES TOTAL
@@ -332,8 +335,10 @@ module.exports = controllers = {
       })
     },
     get: function (req, res) {
-      var userId = req.query.userId;
-      models.expenses.get(userId, function (allExpenses) {
+      var payload = {
+        userId: req.headers.userId
+      };
+      models.expenses.get(payload, function (allExpenses) {
         if (allExpenses) {
           res.status(200).json(allExpenses)
         } else{
