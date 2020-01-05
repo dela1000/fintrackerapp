@@ -219,8 +219,10 @@ module.exports = controllers = {
       })
     },
     get: function (req, res) {
-      var userId = req.query.userId
-      models.income.get(userId, function (userIncome) {
+      var payload = {
+        userId: req.headers.userId
+      }
+      models.income.get(payload, function (userIncome) {
         if (userIncome) {
           res.status(200).json(userIncome)
         } else{

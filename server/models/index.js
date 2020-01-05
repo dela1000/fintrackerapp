@@ -116,10 +116,10 @@ module.exports = {
        callback(false)
       };
     },
-    get: function (userId, callback) {
+    get: function (payload, callback) {
       db.Income.findAll({
         where: {
-          userId: userId
+          userId: payload.userId
         }
       })
       .then(function (userIncome) {
