@@ -200,7 +200,7 @@ module.exports = {
 
   totalAmount: {
     get: function (data, callback) {
-      var tableName = 'CurrentTotal' + data.type
+      var tableName = 'CurrentTotal' + data.type;
       db[tableName].find({
         where: {
           userId: data.userId

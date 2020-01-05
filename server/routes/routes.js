@@ -40,10 +40,6 @@ router.post('/income', utils.checkUser, function (req, res) {
   controllers.income.post(req, res)
 })
 
-router.post('/test_income', utils.checkUser, function (req, res) {
-  controllers.income.post(req, res)
-})
-
 router.get('/income', utils.checkUser, function (req, res) {
   controllers.income.get(req, res)
 })
