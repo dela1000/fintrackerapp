@@ -381,41 +381,81 @@ Income.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+User.hasMany(Income, {
+  foreignKey: 'userId'
+})
+
 Expenses.belongsTo(User, {
   foreignKey: 'userId'
 });
+
+User.hasMany(Expenses, {
+  foreignKey: 'userId'
+})
 
 Savings.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+User.hasMany(Savings, {
+  foreignKey: 'userId'
+})
+
 CurrentTotalIncome.belongsTo(User, {
   foreignKey: 'userId'
 });
+
+User.hasOne(CurrentTotalIncome, {
+  foreignKey: 'userId'
+})
 
 CurrentTotalExpenses.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+User.hasOne(CurrentTotalExpenses, {
+  foreignKey: 'userId'
+})
+
 CurrentTotalSavings.belongsTo(User, {
   foreignKey: 'userId'
 });
+
+User.hasOne(CurrentTotalSavings, {
+  foreignKey: 'userId'
+})
 
 CurrentTotalInvest.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+User.hasOne(CurrentTotalInvest, {
+  foreignKey: 'userId'
+})
+
 IncomeAccount.belongsTo(User, {
   foreignKey: 'userId'
 });
+
+User.hasMany(IncomeAccount, {
+  foreignKey: 'userId'
+})
 
 SavingsAccount.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+User.hasMany(SavingsAccount, {
+  foreignKey: 'userId'
+})
+
 InvestAccount.belongsTo(User, {
   foreignKey: 'userId'
 });
+
+User.hasMany(InvestAccount, {
+  foreignKey: 'userId'
+})
 
 
 

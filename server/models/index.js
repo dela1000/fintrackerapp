@@ -3,6 +3,7 @@ var db = require('../db/db.js');
 var utils = require('../helpers/utils.js');
 var Promise = require('bluebird');
 var _ = require('lodash');
+var moment = require('moment');
 
 
 module.exports = {
@@ -12,9 +13,10 @@ module.exports = {
       db.User.findOne({
         where: {
           username: payload.username
-        }
+        },
       })
       .then(function (found) {
+        console.log("+++ 20 index.js found: ", found)
         utils.checkPasswordHash(payload.password, found.password, function (res) {
           if (res) {
             callback(found)
@@ -78,7 +80,7 @@ module.exports = {
       db.User.findOne({
         where: {
           id: payload.userId
-        }
+        },
       })
         .then(function (user) {
           if(user){
@@ -117,9 +119,13 @@ module.exports = {
       };
     },
     get: function (payload, callback) {
+      console.log("+++ 121 index.js payload: ", payload)
       db.Income.findAll({
         where: {
-          userId: payload.userId
+          userId: payload.userId,
+          date: {
+              $gte: payload.endDate,
+          }
         }
       })
       .then(function (userIncome) {
@@ -167,7 +173,7 @@ module.exports = {
     get: function (payload, callback) {
       db.Expenses.findAll({
         where: {
-          userId: payload.userId
+          userId: payload.userId,
         }
       })
       .then(function (allExpenses) {

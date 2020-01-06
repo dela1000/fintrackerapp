@@ -93,7 +93,7 @@ module.exports = controllers = {
       }
       _.forEach(payload.initialAmounts, function(amount) {
         amount['userId'] = req.headers.userId
-        amount['date'] = moment(amount.date).startOf('day').format()
+        amount['date'] = moment(amount.date).startOf('day').format('YYYY-MM-DD HH:mm:ss')
       })
       if(payload.initialAmounts.length > 0){
         models.set_initials.post(payload, function (initialAmountCreated) {
@@ -182,7 +182,7 @@ module.exports = controllers = {
       }
       _.forEach(payload.incomeData, function(amount) {
         amount['userId'] = req.headers.userId
-        amount['date'] = moment(amount.date).startOf('day').format()
+        amount['date'] = moment(amount.date).startOf('day').format('YYYY-MM-DD HH:mm:ss')
       })
       models.income.post(payload, function (incomeCreated) {
         if(incomeCreated){
@@ -219,9 +219,23 @@ module.exports = controllers = {
       })
     },
     get: function (req, res) {
+      
       var payload = {
-        userId: req.headers.userId
+        userId: req.headers.userId,
       }
+      if(req.query.startDate){
+        payload['startDate'] = moment(req.query.startDate).format('YYYY-MM-DD HH:mm:ss');
+      } else{
+        payload['startDate'] = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
+        
+      };
+      if(req.query.endDate){
+        payload['endDate'] = moment(req.query.endDate).format('YYYY-MM-DD HH:mm:ss');
+      } else{
+        payload['endDate'] = moment().endOf('month').format('YYYY-MM-DD HH:mm:ss');
+      };
+
+      console.log("+++ 234 index.js payload: ", payload)
       models.income.get(payload, function (userIncome) {
         if (userIncome) {
           res.status(200).json(userIncome)
