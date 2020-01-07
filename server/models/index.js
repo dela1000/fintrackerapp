@@ -1,7 +1,7 @@
 // Models
 var db = require('../db/db.js');
 var Sequelize = require("sequelize");
-var utils = require('../helpers/utils.js');
+var authUtils = require('../helpers/authUtils.js');
 var Promise = require('bluebird');
 var _ = require('lodash');
 var moment = require('moment');
@@ -18,7 +18,7 @@ module.exports = {
       })
       .then(function (found) {
         if(found){
-          utils.checkPasswordHash(payload.password, found.password, function (res) {
+          authUtils.checkPasswordHash(payload.password, found.password, function (res) {
             if (res) {
               callback(found)
             } else {
@@ -45,7 +45,7 @@ module.exports = {
       })
       .spread(function (found, create) {
         if (create) {
-          utils.createPasswordHash(payload.password, function (passwordHash) {
+          authUtils.createPasswordHash(payload.password, function (passwordHash) {
             found.username = payload.username;
             found.password = passwordHash;
             found.email = payload.email;
@@ -158,20 +158,23 @@ module.exports = {
         };
       })
     },
-    put: function (incomeId, amount, source, callback) {
+    patch: function (payload, callback) {
       db.Income.find({
         where: {
-          id: incomeId
+          id: payload.id
         }
       })
       .then(function (income) {
         if(income !== null){
-          income.amount = amount;
-          income.source = source;
+          _.forEach(payload, function (value, key) {
+            if(key !== "id"){
+              income[key] = value;
+            }
+          })
           income.save();
           callback(income)
         } else{
-          callback(false)
+          callback(false, "Income not found")
         };
       })
     }

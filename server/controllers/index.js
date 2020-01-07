@@ -1,5 +1,6 @@
 var models = require('../models');
-var utils = require('../helpers/utils.js');
+var authUtils = require('../helpers/authUtils.js');
+var finUtils = require('../helpers/finUtils.js');
 var _ = require('lodash');
 var moment = require('moment');
 
@@ -13,7 +14,7 @@ module.exports = controllers = {
       }
       models.login.post(payload, function (isUser, message) {
         if (isUser) {
-          utils.createToken(req, res, isUser, function (token, name) {
+          authUtils.createToken(req, res, isUser, function (token, name) {
            res.status(200).send({
             success: true,
             data: {
@@ -47,7 +48,7 @@ module.exports = controllers = {
 
       models.signup.post(payload, function (isUser, message) {
         if(isUser){
-          utils.createToken(req, res, isUser, function (token, name) {
+          authUtils.createToken(req, res, isUser, function (token, name) {
            res.status(200).json({
             success: true,
             data: {
@@ -110,7 +111,6 @@ module.exports = controllers = {
                 type: type
               }
               models.totalAmount.patch(newTotalData, function (newTotalAmount) {
-                console.log("+++ 113 index.js set initial Done: ", type)
                 res.status(200).json({
                     success: true,
                     data: {
@@ -219,7 +219,6 @@ module.exports = controllers = {
       })
     },
     get: function (req, res) {
-      
       var payload = {
         userId: req.headers.userId,
       }
@@ -245,15 +244,32 @@ module.exports = controllers = {
       })
     },
     patch: function (req, res) {
-      var incomeId = req.body.incomeId;
-      var amount = req.body.amount;
-      var source = req.body.source;
-      models.income.put(incomeId, amount, source, function (updatedIncome) {
+      var payload = { 
+        id: req.body.id,
+      }
+      _.forEach(req.body, function (value, key) {
+        if(key === "date"){
+          payload[key] = moment(value).startOf('day').format('x')
+        } else{
+          payload[key] = value
+        }
+
+      })
+      models.income.patch(payload, function (updatedIncome, message) {
         if (updatedIncome) {
-          res.status(200).json(updatedIncome)
+          
+          res.status(200).json({
+            success: true,
+            payload: payload,
+            updatedIncome: updatedIncome
+          })
         }else{
-          console.log("That income does not exist")
-          res.sendStatus(404)
+          res.status(200).json({
+            success: false,
+            data: {
+              message: message
+            }
+          });
         }
       })
     }
@@ -358,24 +374,30 @@ module.exports = controllers = {
       })
     },
     patch: function (req, res) {
-      var expenseId = req.body.expenseId;
-      var amount = req.body.amount;
-      var comment = req.body.comment;
-      var categoryId = req.body.categoryId;
-      models.expenses.put(expenseId, amount, comment, categoryId, function (updatedExpense) {
-        if (updatedExpense) {
-          res.status(200).json(updatedExpense)
-        }else{
-          console.log("That expense does not exist")
-          res.sendStatus(404)
-        }
+      var payload = { 
+        id: req.body.id,
+        amount: req.body.amount,
+        comment: req.body.comment,
+        categoryId: req.body.categoryId,
+        date: req.body.date,
+      }
+      console.log("+++ 368 index.js payload: ", payload)
+      res.status(200).json({
+        success: true,
       })
+      // models.expenses.patch(payload, function (updatedExpense) {
+      //   if (updatedExpense) {
+      //     res.status(200).json(updatedExpense)
+      //   }else{
+      //     console.log("That expense does not exist")
+      //     res.sendStatus(404)
+      //   }
+      // })
     }
   },
 
   search_specifics: {
     get: function (req, res) {
-      
       var payload = {
         userId: req.headers.userId,
         table: req.query.table,
@@ -388,7 +410,6 @@ module.exports = controllers = {
         payload['startDate'] = moment(req.query.startDate).format('x');
       } else{
         payload['startDate'] = moment().startOf('month').format('x');
-        
       };
       if(req.query.endDate){
         payload['endDate'] = moment(req.query.endDate).format('x');
@@ -399,10 +420,10 @@ module.exports = controllers = {
       models.search_specifics.get(payload, function (data) {
         if (data) {
           res.status(200).json({
-              success: true,
-              table: payload.table,
-              data: data
-            });
+            success: true,
+            table: payload.table,
+            data: data
+          });
         } else{
           res.status(200).json({
             success: false,
@@ -416,7 +437,6 @@ module.exports = controllers = {
     },
   },
 
-
   expenses_totals: {
     get: function (req, res) {
       var payload = {
@@ -428,35 +448,14 @@ module.exports = controllers = {
       }
       models.expenses_totals.get(payload, function (expensesData, message) {
         if(expensesData){
-          var totalAmount = 0;
-          var totalsByCategory = {};
-          var totalsHolder = [];
-          _.forEach(expensesData, function (expense, index) {
-            if(!totalsByCategory[expense.category]){
-              totalsByCategory[expense.category] = {
-                categoryId: expense.categoryId,
-                category: expense.category,
-                amount: expense.amount
-              };
-            } else {
-              totalsByCategory[expense.category]['amount'] = totalsByCategory[expense.category]['amount'] + expense.amount;
-            }
-          })
-          _.forEach(totalsByCategory, function (totals) {
-            totalAmount = totalAmount + totals.amount;
-            totals.amount = totals.amount.toFixed(2);
-            totalsHolder.push(totals);
-          })
           
-          var sortedTotals = totalsHolder.sort(function(a, b){ 
-            return a.categoryId - b.categoryId;
-          });
+          var addedTotals = finUtils.addTotals(expensesData);
 
           var finalData = {
-            totals: sortedTotals,
+            totals: addedTotals.totals,
             timeframe: payload.timeframe,
             expensesCount: expensesData.length,
-            totalAmount: totalAmount.toFixed(2),
+            totalAmount: addedTotals.totalAmount.toFixed(2),
           }
           res.status(200).json({
             success: true,
@@ -481,36 +480,13 @@ module.exports = controllers = {
         timeframe: 'month'
       }
       models.primary_totals.get(payload, function (primaryTotals, expensesData, message) {
-        console.log("+++ 484 index.js primaryTotals: ", primaryTotals)
         if(primaryTotals && expensesData){
-          var totalAmount = 0;
-          var totalsByCategory = {};
-          var totalsHolder = [];
-          _.forEach(expensesData, function (expense, index) {
-            if(!totalsByCategory[expense.category]){
-              totalsByCategory[expense.category] = {
-                categoryId: expense.categoryId,
-                category: expense.category,
-                amount: expense.amount
-              };
-            } else {
-              totalsByCategory[expense.category]['amount'] = totalsByCategory[expense.category]['amount'] + expense.amount;
-            }
-          })
-          _.forEach(totalsByCategory, function (totals) {
-            totalAmount = totalAmount + totals.amount;
-            totals.amount = totals.amount.toFixed(2);
-            totalsHolder.push(totals);
-          })
-          
-          var sortedTotals = totalsHolder.sort(function(a, b){ 
-            return a.categoryId - b.categoryId;
-          });
+          var addedTotals = finUtils.addTotals(expensesData);
 
-          primaryTotals['currentMonthExpensesTotals'] = sortedTotals;
+          primaryTotals['currentMonthExpensesTotals'] = addedTotals.totals;
           primaryTotals['timeframe'] = payload.timeframe;
           primaryTotals['expensesCount'] = expensesData.length;
-          primaryTotals['totalAmount'] = totalAmount.toFixed(2);
+          primaryTotals['totalAmount'] = addedTotals.totalAmount.toFixed(2);
 
           res.status(200).json({
             success: true,
