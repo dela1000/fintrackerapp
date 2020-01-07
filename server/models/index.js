@@ -318,15 +318,87 @@ module.exports = {
       db.Expenses.findAll({
         where: searchData
       })
-        .then(function (foundData) {
-          if(foundData){
-            callback(foundData)
+        .then(function (expensesData) {
+          if(expensesData){
+            callback(expensesData)
           } else {
             callback(false, "No data found")
           }
         })
     }
   },
+
+  primary_totals: {
+    get: function (payload, callback) {
+      var primaryTotals = {};
+      db.User.findOne({
+        where: {
+          id: payload.userId
+        },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: db.CurrentTotalExpenses, 
+            attributes: ['amount'],
+            required: false 
+          },
+          {
+            model: db.CurrentTotalIncome, 
+            attributes: ['amount'],
+            required: false 
+          },{
+            model: db.CurrentTotalSavings, 
+            attributes: ['amount'],
+            required: false 
+          },{
+            model: db.CurrentTotalInvest, 
+            attributes: ['amount'],
+            required: false 
+          }]
+      })
+        .then(function (user) {
+          if(user){
+            primaryTotals['user'] = {
+              userId: user.id,
+              username: user.username,
+              email: user.email,
+            };
+            if(user.currenttotalexpense){
+              primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount
+            }
+            if(user.currenttotalincome){
+              primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount
+            }
+            if(user.currenttotalsaving){
+              primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount
+            }
+            if(user.currenttotalinvest){
+              primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount
+            }
+
+            db.Expenses.findAll({
+              where: {
+                userId: payload.userId,
+                date: {
+                  $gte: moment().startOf(payload.timeframe).format('x'),
+                  $lte: moment().endOf(payload.timeframe).format('x')
+                },
+                deleted: false
+              }
+            })
+              .then(function (expensesData) {
+                if(expensesData){
+                  callback(primaryTotals, expensesData)
+                } else {
+                  callback(false, null, "No expenses data found")
+                }
+              })
+          } else {
+            callback(false, null, "User not found")
+          }
+        })
+    }
+  }
 
 }
 

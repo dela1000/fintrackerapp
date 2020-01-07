@@ -73,6 +73,10 @@ router.get('/search_specifics', utils.checkUser, function (req, res) {
 
 //TOTALS
 
+router.get('/primary_totals', utils.checkUser, function (req, res) {
+  controllers.primary_totals.get(req, res)
+})
+
 router.get('/expenses_totals', utils.checkUser, function (req, res) {
   controllers.expenses_totals.get(req, res)
 })

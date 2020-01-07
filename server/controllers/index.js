@@ -426,27 +426,26 @@ module.exports = controllers = {
       if(req.query.timeframe == "year"){
         payload.timeframe = req.query.timeframe
       }
-      models.expenses_totals.get(payload, function (foundData, message) {
-        if(foundData){
+      models.expenses_totals.get(payload, function (expensesData, message) {
+        if(expensesData){
           var totalAmount = 0;
           var totalsByCategory = {};
           var totalsHolder = [];
-          _.forEach(foundData, function (expense, index) {
+          _.forEach(expensesData, function (expense, index) {
             if(!totalsByCategory[expense.category]){
               totalsByCategory[expense.category] = {
                 categoryId: expense.categoryId,
                 category: expense.category,
                 amount: expense.amount
               };
-              totalAmount = totalAmount + expense.amount;
             } else {
               totalsByCategory[expense.category]['amount'] = totalsByCategory[expense.category]['amount'] + expense.amount;
-              totalAmount = totalAmount + expense.amount;
             }
           })
           _.forEach(totalsByCategory, function (totals) {
-            totals.amount = totals.amount.toFixed(2)
-            totalsHolder.push(totals)
+            totalAmount = totalAmount + totals.amount;
+            totals.amount = totals.amount.toFixed(2);
+            totalsHolder.push(totals);
           })
           
           var sortedTotals = totalsHolder.sort(function(a, b){ 
@@ -456,8 +455,8 @@ module.exports = controllers = {
           var finalData = {
             totals: sortedTotals,
             timeframe: payload.timeframe,
-            expensesCount: foundData.length,
-            totalAmount: totalAmount,
+            expensesCount: expensesData.length,
+            totalAmount: totalAmount.toFixed(2),
           }
           res.status(200).json({
             success: true,
@@ -474,6 +473,62 @@ module.exports = controllers = {
       })
     }
   },
+
+  primary_totals: {
+    get: function (req, res) {
+      var payload = {
+        userId: req.headers.userId,
+        timeframe: 'month'
+      }
+      models.primary_totals.get(payload, function (primaryTotals, expensesData, message) {
+        console.log("+++ 484 index.js primaryTotals: ", primaryTotals)
+        if(primaryTotals && expensesData){
+          var totalAmount = 0;
+          var totalsByCategory = {};
+          var totalsHolder = [];
+          _.forEach(expensesData, function (expense, index) {
+            if(!totalsByCategory[expense.category]){
+              totalsByCategory[expense.category] = {
+                categoryId: expense.categoryId,
+                category: expense.category,
+                amount: expense.amount
+              };
+            } else {
+              totalsByCategory[expense.category]['amount'] = totalsByCategory[expense.category]['amount'] + expense.amount;
+            }
+          })
+          _.forEach(totalsByCategory, function (totals) {
+            totalAmount = totalAmount + totals.amount;
+            totals.amount = totals.amount.toFixed(2);
+            totalsHolder.push(totals);
+          })
+          
+          var sortedTotals = totalsHolder.sort(function(a, b){ 
+            return a.categoryId - b.categoryId;
+          });
+
+          primaryTotals['currentMonthExpensesTotals'] = sortedTotals;
+          primaryTotals['timeframe'] = payload.timeframe;
+          primaryTotals['expensesCount'] = expensesData.length;
+          primaryTotals['totalAmount'] = totalAmount.toFixed(2);
+
+          res.status(200).json({
+            success: true,
+            data: primaryTotals
+          });
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: message
+            }
+          });
+        };
+
+      })
+    }
+  },
+
 
   ping: {
     get: function (req, res){
