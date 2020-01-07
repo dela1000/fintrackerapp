@@ -83,31 +83,24 @@ module.exports = {
         where: {
           id: payload.userId
         },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
         include: [
           {
             model: db.CurrentTotalExpenses, 
-            attributes: { 
-              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
-            }, 
+            attributes: ['amount'],
             required: false 
           },
           {
             model: db.CurrentTotalIncome, 
-            attributes: { 
-              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
-            }, 
+            attributes: ['amount'],
             required: false 
           },{
             model: db.CurrentTotalSavings, 
-            attributes: { 
-              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
-            }, 
+            attributes: ['amount'],
             required: false 
           },{
             model: db.CurrentTotalInvest, 
-            attributes: { 
-              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
-            }, 
+            attributes: ['amount'],
             required: false 
           }]
       })
@@ -311,7 +304,7 @@ module.exports = {
     }
   },
 
-  get_expenses_totals: {
+  expenses_totals: {
     get: function (payload, callback) {
 
       var searchData = {
@@ -320,6 +313,7 @@ module.exports = {
           $gte: moment().startOf(payload.timeframe).format('x'),
           $lte: moment().endOf(payload.timeframe).format('x')
         },
+        deleted: false
       };
       db.Expenses.findAll({
         where: searchData

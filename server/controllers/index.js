@@ -417,7 +417,7 @@ module.exports = controllers = {
   },
 
 
-  get_expenses_totals: {
+  expenses_totals: {
     get: function (req, res) {
       var payload = {
         userId: req.headers.userId,
@@ -426,12 +426,12 @@ module.exports = controllers = {
       if(req.query.timeframe == "year"){
         payload.timeframe = req.query.timeframe
       }
-      models.get_expenses_totals.get(payload, function (foundData, message) {
-        var totalAmount = 0
+      models.expenses_totals.get(payload, function (foundData, message) {
         if(foundData){
-          var totalsByCategory = {
-          };
-          _.forEach(foundData, function (expense) {
+          var totalAmount = 0;
+          var totalsByCategory = {};
+          var totalsHolder = [];
+          _.forEach(foundData, function (expense, index) {
             if(!totalsByCategory[expense.category]){
               totalsByCategory[expense.category] = {
                 categoryId: expense.categoryId,
@@ -444,19 +444,19 @@ module.exports = controllers = {
               totalAmount = totalAmount + expense.amount;
             }
           })
-          var holder = [];
           _.forEach(totalsByCategory, function (totals) {
             totals.amount = totals.amount.toFixed(2)
-            holder.push(totals)
+            totalsHolder.push(totals)
           })
           
-          var temp = holder.sort(function(a,b){ 
-           return a.categoryId - b.categoryId;
+          var sortedTotals = totalsHolder.sort(function(a, b){ 
+            return a.categoryId - b.categoryId;
           });
 
           var finalData = {
-            totals: temp,
+            totals: sortedTotals,
             timeframe: payload.timeframe,
+            expensesCount: foundData.length,
             totalAmount: totalAmount,
           }
           res.status(200).json({
