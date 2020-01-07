@@ -378,7 +378,11 @@ module.exports = controllers = {
       
       var payload = {
         userId: req.headers.userId,
-        table: req.query.table
+        table: req.query.table,
+        categoryId: req.query.categoryId,
+        comment: req.query.comment,
+        minAmount: req.query.minAmount,
+        maxAmount: req.query.maxAmount
       }
       if(req.query.startDate){
         payload['startDate'] = moment(req.query.startDate).format('x');
@@ -391,12 +395,6 @@ module.exports = controllers = {
       } else{
         payload['endDate'] = moment().endOf('month').format('x');
       };
-      if(req.query.categoryId){
-        payload['categoryId'] = req.query.categoryId
-      }
-      if(req.query.comment){
-        payload['comment'] = req.query.comment
-      }
 
       models.search_specifics.get(payload, function (data) {
         if (data) {

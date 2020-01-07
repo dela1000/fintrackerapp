@@ -1,5 +1,6 @@
 // Models
 var db = require('../db/db.js');
+var Sequelize = require("sequelize");
 var utils = require('../helpers/utils.js');
 var Promise = require('bluebird');
 var _ = require('lodash');
@@ -271,22 +272,34 @@ module.exports = {
 
   search_specifics: {
     get: function (payload, callback) {
-      console.log("+++ 274 index.js payload: ", payload)
-      var tableName = payload.table.charAt(0).toUpperCase() + payload.table.slice(1)
-      console.log("+++ 275 index.js tableName: ", tableName)
-      db[tableName].findAll({
-        where: {
-          userId: payload.userId,
-          date: {
-              $gte: payload.startDate,
-              $lte: payload.endDate
-          },
-          categoryId: payload.categoryId,
-          comment: {
-            $like: "%" + payload.comment + "%"
-          }
-
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          $gte: payload.startDate,
+          $lte: payload.endDate
+        },
+      };
+      if(payload.categoryId){
+        searchData['categoryId'] = payload.categoryId
+      }
+      if(payload.comment){
+        searchData['comment'] = {
+          $like: "%" + payload.comment + "%"
         }
+      }
+      if(payload.minAmount || payload.maxAmount){
+        if(!payload.minAmount){
+          payload.minAmount = 0
+        };
+        if(!payload.maxAmount){
+          payload.maxAmount = 99999
+        };
+        searchData['amount'] = {$between: [payload.minAmount, payload.maxAmount]}
+      }
+
+      var tableName = payload.table.charAt(0).toUpperCase() + payload.table.slice(1)
+      db[tableName].findAll({
+        where: searchData
       })
       .then(function (userIncome) {
         if (userIncome) {
