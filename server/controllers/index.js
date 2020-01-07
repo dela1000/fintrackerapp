@@ -394,6 +394,9 @@ module.exports = controllers = {
       if(req.query.categoryId){
         payload['categoryId'] = req.query.categoryId
       }
+      if(req.query.comment){
+        payload['comment'] = req.query.comment
+      }
 
       models.search_specifics.get(payload, function (data) {
         if (data) {
@@ -403,7 +406,12 @@ module.exports = controllers = {
               data: data
             });
         } else{
-          res.status(404)
+          res.status(200).json({
+            success: false,
+            data: {
+              message: "no data found"
+            }
+          });
         };
 
       })

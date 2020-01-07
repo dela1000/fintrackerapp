@@ -128,7 +128,7 @@ exports.testData = function () {
         })
         
         _.each(incomeCategories, function (category) {
-        createdIncomeCategories.push(db.incomeCategory.create({
+        createdIncomeCategories.push(db.IncomeCategory.create({
             category: category.category
           }))
         })

@@ -271,7 +271,9 @@ module.exports = {
 
   search_specifics: {
     get: function (payload, callback) {
+      console.log("+++ 274 index.js payload: ", payload)
       var tableName = payload.table.charAt(0).toUpperCase() + payload.table.slice(1)
+      console.log("+++ 275 index.js tableName: ", tableName)
       db[tableName].findAll({
         where: {
           userId: payload.userId,
@@ -279,7 +281,11 @@ module.exports = {
               $gte: payload.startDate,
               $lte: payload.endDate
           },
-          categoryId: payload.categoryId
+          categoryId: payload.categoryId,
+          comment: {
+            $like: "%" + payload.comment + "%"
+          }
+
         }
       })
       .then(function (userIncome) {
