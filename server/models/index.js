@@ -147,12 +147,12 @@ module.exports = {
       };
     },
     get: function (payload, callback) {
-      console.log("+++ 121 index.js payload: ", payload)
       db.Income.findAll({
         where: {
           userId: payload.userId,
           date: {
-              $gte: payload.endDate,
+              $gte: payload.startDate,
+              $lte: payload.endDate
           }
         }
       })

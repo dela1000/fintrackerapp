@@ -235,7 +235,6 @@ module.exports = controllers = {
         payload['endDate'] = moment().endOf('month').format('x');
       };
 
-      console.log("+++ 234 index.js payload: ", payload)
       models.income.get(payload, function (userIncome) {
         if (userIncome) {
           res.status(200).json(userIncome)
