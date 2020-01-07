@@ -373,6 +373,40 @@ module.exports = controllers = {
     }
   },
 
+  search_specifics: {
+    get: function (req, res) {
+      var tableName = req.query.table.charAt(0).toUpperCase() + req.query.table.slice(1)
+      var payload = {
+        userId: req.headers.userId,
+        table: tableName
+      }
+      if(req.query.startDate){
+        payload['startDate'] = moment(req.query.startDate).format('x');
+      } else{
+        payload['startDate'] = moment().startOf('month').format('x');
+        
+      };
+      if(req.query.endDate){
+        payload['endDate'] = moment(req.query.endDate).format('x');
+      } else{
+        payload['endDate'] = moment().endOf('month').format('x');
+      };
+
+      models.search_specifics.get(payload, function (data) {
+        if (data) {
+          res.status(200).json({
+              success: true,
+              table: payload.table,
+              data: data
+            });
+        } else{
+          res.status(404)
+        };
+
+      })
+    },
+  },
+
   ping: {
     get: function (req, res){
       res.status(200).json({

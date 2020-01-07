@@ -32,7 +32,11 @@ router.post('/initials_done', utils.checkUser, function (req, res) {
   controllers.initials_done.post(req, res)
 })
 
+//Category routes
 // NEED TO ADD CATEGORIES ROUTES (CREATE, UPDATE, DELETE)
+router.get('/categories', utils.checkUser, function (req, res) {
+  controllers.categories.get(req, res)
+})
 
 
 //Income routes
@@ -62,10 +66,12 @@ router.patch('/expenses', utils.checkUser, function (req, res) {
   controllers.expenses.patch(req, res)
 })
 
-//Category routes
-router.get('/categories', utils.checkUser, function (req, res) {
-  controllers.categories.get(req, res)
+// SEARCH 
+
+router.get('/search_specifics', utils.checkUser, function (req, res) {
+  controllers.search_specifics.get(req, res)
 })
+
 
 // TEST Ping
 router.get('/ping', utils.checkUser, function (req, res) {

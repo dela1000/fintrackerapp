@@ -269,4 +269,25 @@ module.exports = {
     }
   },
 
+  search_specifics: {
+    get: function (payload, callback) {
+      db[payload.table].findAll({
+        where: {
+          userId: payload.userId,
+          date: {
+              $gte: payload.startDate,
+              $lte: payload.endDate
+          }
+        }
+      })
+      .then(function (userIncome) {
+        if (userIncome) {
+          callback(userIncome)
+        } else{
+          callback(false)
+        };
+      })
+    }
+  }
+
 }
