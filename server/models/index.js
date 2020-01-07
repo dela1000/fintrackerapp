@@ -16,21 +16,24 @@ module.exports = {
         },
       })
       .then(function (found) {
-        utils.checkPasswordHash(payload.password, found.password, function (res) {
-          if (res) {
-            callback(found)
-          } else {
-            callback(false)
-          }
-          
-        })
+        if(found){
+          utils.checkPasswordHash(payload.password, found.password, function (res) {
+            if (res) {
+              callback(found)
+            } else {
+              callback(false, 'incorect username and password')
+            }
+          })
+        } else{
+          callback(false, "username not found")
+        };
       })
     }
   },
 
   signup: {
     post: function (payload, callback) {
-      db.User.findOrCreate({ // TODO -- Something strange is going on here. Returns "Unhandled rejection SequelizeValidationError: notNull Violation: username cannot be null,"
+      db.User.findOrCreate({
         where: {
           $or:[{
             username: payload.username
@@ -40,7 +43,6 @@ module.exports = {
         }
       })
       .spread(function (found, create) {
-        console.log("+++ 40 index.js create: ", create)
         if (create) {
           utils.createPasswordHash(payload.password, function (passwordHash) {
             found.username = payload.username;
@@ -50,7 +52,7 @@ module.exports = {
             callback(found);
           })
         }else{
-          callback(false);
+          callback(false, "User name or email already used");
         }
       })
     }

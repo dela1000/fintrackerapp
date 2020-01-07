@@ -11,7 +11,7 @@ module.exports = controllers = {
         username: req.body.username,
         password: req.body.password
       }
-      models.login.post(payload, function (isUser) {
+      models.login.post(payload, function (isUser, message) {
         if (isUser) {
           utils.createToken(req, res, isUser, function (token, name) {
            res.status(200).send({
@@ -29,7 +29,7 @@ module.exports = controllers = {
          res.status(200).json({
             success: false,
             data: {
-              message: "Login unsuccessful"
+              message: message
             }
           });
         };
@@ -41,11 +41,11 @@ module.exports = controllers = {
     post: function (req, res) {
       var payload = {
         username: req.body.username,
-        password: req.body.password, // need to bcrypt
+        password: req.body.password,
         email: req.body.email
       }
 
-      models.signup.post(payload, function (isUser) {
+      models.signup.post(payload, function (isUser, message) {
         if(isUser){
           utils.createToken(req, res, isUser, function (token, name) {
            res.status(200).json({
@@ -63,7 +63,7 @@ module.exports = controllers = {
           res.status(200).json({
             success: false,
             data: {
-              message: "User name or email already used"
+              message: message
             }
           });
         };
@@ -93,7 +93,7 @@ module.exports = controllers = {
       }
       _.forEach(payload.initialAmounts, function(amount) {
         amount['userId'] = req.headers.userId
-        amount['date'] = moment(amount.date).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        amount['date'] = moment(amount.date).startOf('day').format('x')
       })
       if(payload.initialAmounts.length > 0){
         models.set_initials.post(payload, function (initialAmountCreated) {
@@ -182,7 +182,7 @@ module.exports = controllers = {
       }
       _.forEach(payload.incomeData, function(amount) {
         amount['userId'] = req.headers.userId
-        amount['date'] = moment(amount.date).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        amount['date'] = moment(amount.date).startOf('day').format('x')
       })
       models.income.post(payload, function (incomeCreated) {
         if(incomeCreated){
@@ -224,15 +224,15 @@ module.exports = controllers = {
         userId: req.headers.userId,
       }
       if(req.query.startDate){
-        payload['startDate'] = moment(req.query.startDate).format('YYYY-MM-DD HH:mm:ss');
+        payload['startDate'] = moment(req.query.startDate).format('x');
       } else{
-        payload['startDate'] = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
+        payload['startDate'] = moment().startOf('month').format('x');
         
       };
       if(req.query.endDate){
-        payload['endDate'] = moment(req.query.endDate).format('YYYY-MM-DD HH:mm:ss');
+        payload['endDate'] = moment(req.query.endDate).format('x');
       } else{
-        payload['endDate'] = moment().endOf('month').format('YYYY-MM-DD HH:mm:ss');
+        payload['endDate'] = moment().endOf('month').format('x');
       };
 
       console.log("+++ 234 index.js payload: ", payload)
@@ -268,7 +268,8 @@ module.exports = controllers = {
         expensesData: req.body.expensesData
       }
       _.forEach(payload.expensesData, function(amount) {
-        amount['userId'] = req.headers.userId
+        amount['userId'] = req.headers.userId,
+        amount['date'] = moment(amount.date).startOf('day').format('x')
       })
       models.expenses.post(payload, function (expensesCreated) {
         if(expensesCreated){
@@ -294,20 +295,14 @@ module.exports = controllers = {
                   type: "Income"
                 }
                 models.totalAmount.get(updatedIncomeTotal, function (currentIncomeTotalAmount) {
-                  console.log("+++ 274 index.js currentIncomeTotalAmount.dataValues.amount: ", currentIncomeTotalAmount.dataValues.amount)
-                  console.log("+++ 275 index.js newAmount: ", newAmount)
                   var newUpdatedAmount = currentIncomeTotalAmount.dataValues.amount - newAmount
                   newUpdatedAmount = newUpdatedAmount.toFixed(2);
-                  console.log("+++ 278 index.js newUpdatedAmount: ", newUpdatedAmount)
                   var newIncomeTotalData = {
                     newAmount: newUpdatedAmount,
                     userId: req.headers.userId,
                     type: "Income"
                   }
-                  console.log("+++ 280 index.js newIncomeTotalData: ", newIncomeTotalData)
                   models.totalAmount.patch(newIncomeTotalData, function (newIncomeTotalAmount) {
-                    console.log("+++ 281 index.js newIncomeTotalAmount: ", newIncomeTotalAmount)
-                    console.log("+++ 184 index.js Expenses Added: ", type)
                     if(newIncomeTotalAmount){
                       res.status(200).json({
                           success: true,
