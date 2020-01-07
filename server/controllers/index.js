@@ -416,6 +416,65 @@ module.exports = controllers = {
     },
   },
 
+
+  get_expenses_totals: {
+    get: function (req, res) {
+      var payload = {
+        userId: req.headers.userId,
+        timeframe: "month"
+      }
+      if(req.query.timeframe == "year"){
+        payload.timeframe = req.query.timeframe
+      }
+      models.get_expenses_totals.get(payload, function (foundData, message) {
+        var totalAmount = 0
+        if(foundData){
+          var totalsByCategory = {
+          };
+          _.forEach(foundData, function (expense) {
+            if(!totalsByCategory[expense.category]){
+              totalsByCategory[expense.category] = {
+                categoryId: expense.categoryId,
+                category: expense.category,
+                amount: expense.amount
+              };
+              totalAmount = totalAmount + expense.amount;
+            } else {
+              totalsByCategory[expense.category]['amount'] = totalsByCategory[expense.category]['amount'] + expense.amount;
+              totalAmount = totalAmount + expense.amount;
+            }
+          })
+          var holder = [];
+          _.forEach(totalsByCategory, function (totals) {
+            totals.amount = totals.amount.toFixed(2)
+            holder.push(totals)
+          })
+          
+          var temp = holder.sort(function(a,b){ 
+           return a.categoryId - b.categoryId;
+          });
+
+          var finalData = {
+            totals: temp,
+            timeframe: payload.timeframe,
+            totalAmount: totalAmount,
+          }
+          res.status(200).json({
+            success: true,
+            data: finalData
+          });
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: message
+            }
+          });
+        };
+      })
+    }
+  },
+
   ping: {
     get: function (req, res){
       res.status(200).json({

@@ -309,6 +309,55 @@ module.exports = {
         };
       })
     }
-  }
+  },
+
+  get_expenses_totals: {
+    get: function (payload, callback) {
+
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          $gte: moment().startOf(payload.timeframe).format('x'),
+          $lte: moment().endOf(payload.timeframe).format('x')
+        },
+      };
+      db.Expenses.findAll({
+        where: searchData
+      })
+        .then(function (foundData) {
+          if(foundData){
+            callback(foundData)
+          } else {
+            callback(false, "No data found")
+          }
+        })
+    }
+  },
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -67,10 +67,16 @@ router.patch('/expenses', utils.checkUser, function (req, res) {
 })
 
 // SEARCH 
-
 router.get('/search_specifics', utils.checkUser, function (req, res) {
   controllers.search_specifics.get(req, res)
 })
+
+//TOTALS
+
+router.get('/get_expenses_totals', utils.checkUser, function (req, res) {
+  controllers.get_expenses_totals.get(req, res)
+})
+
 
 
 // TEST Ping
