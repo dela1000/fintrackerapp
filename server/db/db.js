@@ -62,7 +62,7 @@ var Income = sequelize.define('income', {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    incomeCategoryId: {
+    categoryId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -98,7 +98,7 @@ var Expenses = sequelize.define('expenses', {
       type: Sequelize.TEXT,
       allowNull: true
     },
-    expensesCategoryId: {
+    categoryId: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
@@ -470,11 +470,11 @@ User.sync().then(function(){
                 CurrentTotalInvest.sync().then(function(){
                   incomeCategory.sync().then(function(){
                     incomeCategory.hasMany(Income, {
-                      foreignKey: 'incomeCategoryId'
+                      foreignKey: 'categoryId'
                     });
                     ExpensesCategory.sync().then(function(){
                       ExpensesCategory.hasMany(Expenses, {
-                        foreignKey: 'expensesCategoryId'
+                        foreignKey: 'categoryId'
                       });
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){

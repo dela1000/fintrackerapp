@@ -375,10 +375,10 @@ module.exports = controllers = {
 
   search_specifics: {
     get: function (req, res) {
-      var tableName = req.query.table.charAt(0).toUpperCase() + req.query.table.slice(1)
+      
       var payload = {
         userId: req.headers.userId,
-        table: tableName
+        table: req.query.table
       }
       if(req.query.startDate){
         payload['startDate'] = moment(req.query.startDate).format('x');
@@ -391,6 +391,9 @@ module.exports = controllers = {
       } else{
         payload['endDate'] = moment().endOf('month').format('x');
       };
+      if(req.query.categoryId){
+        payload['categoryId'] = req.query.categoryId
+      }
 
       models.search_specifics.get(payload, function (data) {
         if (data) {

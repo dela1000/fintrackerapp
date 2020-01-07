@@ -271,13 +271,15 @@ module.exports = {
 
   search_specifics: {
     get: function (payload, callback) {
-      db[payload.table].findAll({
+      var tableName = payload.table.charAt(0).toUpperCase() + payload.table.slice(1)
+      db[tableName].findAll({
         where: {
           userId: payload.userId,
           date: {
               $gte: payload.startDate,
               $lte: payload.endDate
-          }
+          },
+          categoryId: payload.categoryId
         }
       })
       .then(function (userIncome) {
