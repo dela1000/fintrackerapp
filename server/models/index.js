@@ -16,7 +16,6 @@ module.exports = {
         },
       })
       .then(function (found) {
-        console.log("+++ 20 index.js found: ", found)
         utils.checkPasswordHash(payload.password, found.password, function (res) {
           if (res) {
             callback(found)
@@ -81,6 +80,33 @@ module.exports = {
         where: {
           id: payload.userId
         },
+        include: [
+          {
+            model: db.CurrentTotalExpenses, 
+            attributes: { 
+              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
+            }, 
+            required: false 
+          },
+          {
+            model: db.CurrentTotalIncome, 
+            attributes: { 
+              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
+            }, 
+            required: false 
+          },{
+            model: db.CurrentTotalSavings, 
+            attributes: { 
+              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
+            }, 
+            required: false 
+          },{
+            model: db.CurrentTotalInvest, 
+            attributes: { 
+              exclude: ["id", "deleted", "createdAt", "updatedAt", "userId"] 
+            }, 
+            required: false 
+          }]
       })
         .then(function (user) {
           if(user){
