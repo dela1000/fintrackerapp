@@ -49,7 +49,6 @@ module.exports = {
             found.username = payload.username;
             found.password = passwordHash;
             found.email = payload.email;
-            console.log("+++ 52 index.js found: ", found)
             found.save();
             var createTotal = {
               amount: 0,
@@ -105,7 +104,7 @@ module.exports = {
           if (amountCreated) {
             callback(amountCreated)
           }else{
-            callback(false, "Item not created")
+            callback(false, payload.type + " item not created")
           };
         })
     }
@@ -166,8 +165,12 @@ module.exports = {
         })
     },
 
-    get: function (callback) {
-      db.Category.findAll()
+    get: function (payload, callback) {
+      db.Category.findAll({
+        where: {
+          id: payload.userId
+        }
+      })
       .then(function (allCategories) {
         callback(allCategories)
       })
@@ -185,7 +188,7 @@ module.exports = {
           if (accountsAdded) {
             callback(accountsAdded)
           }else{
-            callback(false, "New Account not added")
+            callback(false, payload.type + " new Account not added")
           };
         })
     },
@@ -317,45 +320,33 @@ module.exports = {
         };
       })
     },
-    patch: function (newTotalData, callback) {
-      var tableName = 'CurrentTotal' + newTotalData.type;
-      console.log("+++ 219 index.js tableName: ", tableName)
-      db[tableName].update(
-        {
-          amount: newTotalData.newAmount
-        },
-        {
-          returning: true, 
-          where: {
-            id: newTotalData.userId
-          } 
-        }
-      )
-        .then(function(updated) {
-          console.log("+++ 231 index.js updated: ", updated)
-          callback(updated)
-      })
-    }
   },
 
-  updateTotalAmount: {
+
+
+  increaseTotalAmount: {
     patch: function (payload, callback) {
-      db.CurrentTotalIncome.find({
+      var tableName = "CurrentTotal" + payload.type;
+      db[tableName].find({
         where: {
           id: payload.userId
-        }
+        },
+        attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
       })
-      .then(function (currentTotalIncome) {
-        if(currentTotalIncome !== null){
-          currentTotalIncome.amount = currentTotalIncome.amount - payload.previousAmount + payload.newAmount;
-          currentTotalIncome.save();
-          callback(currentTotalIncome)
+      .then(function (currentTotal) {
+        if(currentTotal !== null){
+          currentTotal.amount = currentTotal.amount + payload.amount;
+          currentTotal.amount = currentTotal.amount.toFixed(2);
+          currentTotal.save();
+          callback(currentTotal)
         } else{
-          callback(false, "Current Total Income not found")
+          callback(false, "Current Total " + payload.type + " not found")
         };
       })
     }
   },
+
+
 
   search_specifics: {
     get: function (payload, callback) {

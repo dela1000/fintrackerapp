@@ -47,7 +47,7 @@ var Income = sequelize.define('income', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     accountName: {
@@ -91,7 +91,7 @@ var Expenses = sequelize.define('expenses', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     comment: {
@@ -127,7 +127,7 @@ var Savings = sequelize.define('savings', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     comment: {
@@ -163,7 +163,7 @@ var Invest = sequelize.define('invest', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     comment: {
@@ -239,7 +239,7 @@ var CurrentTotalIncome = sequelize.define('currenttotalincome', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     deleted: {
@@ -259,7 +259,7 @@ var CurrentTotalExpenses = sequelize.define('currenttotalexpenses', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     deleted: {
@@ -279,7 +279,7 @@ var CurrentTotalSavings = sequelize.define('currenttotalsavings', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     deleted: {
@@ -299,7 +299,7 @@ var CurrentTotalInvest = sequelize.define('currenttotalinvest', {
       autoIncrement: true
     },
     amount: {
-      type: Sequelize.FLOAT(10,2),
+      type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
     deleted: {
