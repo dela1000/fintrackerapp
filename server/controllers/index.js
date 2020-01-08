@@ -2,6 +2,7 @@ var models = require('../models');
 var authUtils = require('../helpers/authUtils.js');
 var finUtils = require('../helpers/finUtils.js');
 var Promise = require('bluebird');
+var db = require('../db/db.js');
 var _ = require('lodash');
 var moment = require('moment');
 
@@ -125,31 +126,163 @@ module.exports = controllers = {
           });
         })
       })
-      var additionCompleted = [];
+      var createdIncomeCategories = [];
       var newIncomeCategoriesCreated;
+      var newAccountsAdded = {};
       // ADD NEW CATEGORIES
       models.categories.post(newIncomeCategories, function (categoriesAdded, categoriesMessage) {
         if(categoriesAdded){
-          newIncomeCategoriesCreated = categoriesAdded;
-          additionCompleted.push(categoriesAdded);
+
+          newIncomeCategoriesCreated = categoriesAdded[0].dataValues;
+
           // ADD NEW ACCOUNTS
-          _.forEach(newIncomeAccounts, function (newAccounts) {
-            if(newAccounts.data.length > 0){
-              models.accounts.post(newAccounts, function (accountsAdded, accountsMessage) {
-                additionCompleted.push(accountsAdded)
+          models.accounts.post(newIncomeAccounts.Income, function (incomeAccountsAdded, incomeAccountsMessage) {
+            if(incomeAccountsAdded){
+              newAccountsAdded['Income'] = incomeAccountsAdded
+              models.accounts.post(newIncomeAccounts.Savings, function (savingsAccountsAdded, savingAccountsMessage) {
+                if(savingsAccountsAdded){
+                  newAccountsAdded['Savings'] = savingsAccountsAdded
+                  models.accounts.post(newIncomeAccounts.Invest, function (investAccountsAdded, investAccountsMessage) {
+                    if(investAccountsAdded){
+                      newAccountsAdded['Invest'] = investAccountsAdded
+
+                      // COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS
+                      var finalInitial = {
+                        Income: {
+                          type: "Income",
+                          data: []
+                        },
+                        Savings: {
+                          type: "Savings",
+                          data: []
+                        },
+                        Invest: {
+                          type: "Invest",
+                          data: []
+                        },
+                      }
+                      totalAmounts = {
+                        Income: {
+                          type: "Income",
+                          amount: 0
+                        },
+                        Savings: {
+                          type: "Savings",
+                          amount: 0
+                        },
+                        Invest: {
+                          type: "Invest",
+                          amount: 0
+                        },
+                      }
+                      _.forEach(initialData, function (initialDataType, key) {
+                        if(key === "Income"){
+                          _.forEach(initialDataType, function (amount) {
+                            _.forEach(newAccountsAdded.Income, function (newAccount) {
+                              if(amount.accountName === newAccount.dataValues.name){
+                                amount.accountId = newAccount.dataValues.id;
+                                amount.categoryId = newIncomeCategoriesCreated.id;
+                                finalInitial.Income.data.push(amount);
+                                totalAmounts.Income.amount = totalAmounts.Income.amount + amount.amount;
+                              }
+                            })
+                          })
+                        }
+                        if(key === "Savings"){
+                          _.forEach(initialDataType, function (amount) {
+                            _.forEach(newAccountsAdded.Savings, function (newAccount) {
+                              if(amount.accountName === newAccount.dataValues.name){
+                                amount.accountId = newAccount.dataValues.id;
+                                amount.categoryId = newIncomeCategoriesCreated.id;
+                                finalInitial.Savings.data.push(amount);
+                                totalAmounts.Savings.amount = totalAmounts.Savings.amount + amount.amount;
+                              }
+                            })
+                          })
+
+                        }
+                        if(key === "Invest"){
+                          _.forEach(initialDataType, function (amount) {
+                            _.forEach(newAccountsAdded.Invest, function (newAccount) {
+                              if(amount.accountName === newAccount.dataValues.name){
+                                amount.accountId = newAccount.dataValues.id;
+                                amount.categoryId = newIncomeCategoriesCreated.id;
+                                finalInitial.Invest.data.push(amount);
+                                totalAmounts.Invest.amount = totalAmounts.Invest.amount + amount.amount;
+                              }
+                            })
+                          })
+                        }
+                      })
+                      console.log("+++ 200 index.js finalInitial: ", finalInitial)
+                      console.log("+++ 218 index.js totalAmounts: ", totalAmounts)
+                      // ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB
+                      models.bulk_add.post(finalInitial.Income, function (incomeResult, incomeMessage) {
+                        if(incomeResult){
+                          models.bulk_add.post(finalInitial.Savings, function (savingsResult, savingsMessage) {
+                            if(savingsResult){
+                              models.bulk_add.post(finalInitial.Invest, function (investResult, investMessage) {
+                                if(investResult){
+                                    console.log("+++ 226 index.js ALL INITIAL ITEMS ADDED")
+                                    
+                                } else{
+                                  res.status(200).json({
+                                    success: false,
+                                    data: {
+                                      message: "Invest " + investAccountsMessage
+                                    }
+                                  })
+                                };
+                              })
+                            }else{
+                              res.status(200).json({
+                                success: false,
+                                data: {
+                                  message: "Savings " + investAccountsMessage
+                                }
+                              })
+                            };
+                          })
+                        } else {
+                          res.status(200).json({
+                            success: false,
+                            data: {
+                              message: "Income " + investAccountsMessage
+                            }
+                          })
+                        }
+                      })
+                      
+
+
+                    } else{
+                      res.status(200).json({
+                        success: false,
+                        data: {
+                          message: "Initial " + investAccountsMessage
+                        }
+                      });
+                    };
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: "Initial " + savingAccountsMessage
+                    }
+                  });
+                  
+                }
               })
+            } else {
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: "Initial " + incomeAccountsMessage
+                }
+              });
             }
           })
-          // COMBINE CATEGORIES TO AMOUNTS
-          _.forEach(newIncomeCategoriesCreated, function (category) {
-            _.forEach(initialData.Income, function (amount) {
-              if(amount.categoryName === category.dataValues.name){
-                amount['categoryId'] = category.dataValues.id
-                console.log("+++ 148 index.js amount: ", amount)
-              }
-            })
-          })
-
         } else {
           res.status(200).json({
             success: false,
@@ -160,23 +293,6 @@ module.exports = controllers = {
         }
       })
 
-      console.log("+++ 121 index.js newIncomeAccounts: ", newIncomeAccounts)
-
-
-
-
-
-      Promise.all([
-          additionCompleted,
-        ])
-        .then(function () {
-          res.status(200).json({
-              success: true,
-              data: {
-                categoriesAdded: newIncomeCategoriesCreated,
-              }
-          });
-        })
     }
   },
 

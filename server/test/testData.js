@@ -52,7 +52,7 @@ exports.testData = function () {
 
         var incomeCategories = [
           {
-            category: "INITIAL"
+            category: "Initial"
           },
           {
             category: "UM"
@@ -122,19 +122,19 @@ exports.testData = function () {
         var createCurrentTotalInvest = [];
 
         _.each(expensesCategories, function (category) {
-        expensesCreatedCategories.push(db.ExpensesCategory.create({
-            category: category.category
+          expensesCreatedCategories.push(db.ExpensesCategory.create({
+            name: category.category
           }))
         })
         
         _.each(incomeCategories, function (category) {
-        createdIncomeCategories.push(db.IncomeCategory.create({
-            category: category.category
+          createdIncomeCategories.push(db.IncomeCategory.create({
+            name: category.category
           }))
         })
 
         _.each(IncomeAccounts, function (account) {
-        incomeCreatedNames.push(db.IncomeAccount.create({
+          incomeCreatedNames.push(db.IncomeAccount.create({
             name: account.name,
             userId: 1
           }))

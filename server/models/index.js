@@ -77,6 +77,23 @@ module.exports = {
     }
   },
 
+  bulk_add: {
+    post: function (payload, callback) {
+      var type = payload.type;
+      db[type].bulkCreate(
+        payload.data,
+        { individualHooks: true }
+      )
+        .then(function (amountCreated) {
+          if (amountCreated) {
+            callback(amountCreated)
+          }else{
+            callback(false, "Item not created")
+          };
+        })
+    }
+  },
+
   initials_done: {
     post: function (payload, callback) {
       db.User.findOne({
@@ -119,7 +136,10 @@ module.exports = {
   categories: {
     post: function (payload, callback) {
       var tableName = payload.type + 'Category';
-      db[tableName].bulkCreate(payload.data)
+      db[tableName].bulkCreate(
+          payload.data,
+          { individualHooks: true }
+        )
         .then(function (categoriesAdded) {
           if (categoriesAdded) {
             callback(categoriesAdded)
@@ -140,12 +160,15 @@ module.exports = {
   accounts: {
     post: function (payload, callback) {
       var tableName = payload.type + 'Account';
-      db[tableName].bulkCreate(payload.data)
+      db[tableName].bulkCreate(
+          payload.data,
+          { individualHooks: true }
+        )
         .then(function (accountsAdded) {
           if (accountsAdded) {
             callback(accountsAdded)
           }else{
-            callback(false)
+            callback(false, "New Account not added")
           };
         })
     },
@@ -154,7 +177,10 @@ module.exports = {
   income: {
     post: function (payload, callback) {
       if(payload && payload.incomeData.length > 0){
-        db.Income.bulkCreate(payload.incomeData)
+        db.Income.bulkCreate(
+          payload.incomeData,
+          { individualHooks: true }
+        )
           .then(function (incomeAdded) {
             if (incomeAdded) {
               callback(incomeAdded)
@@ -209,7 +235,10 @@ module.exports = {
   expenses: {
     post: function (payload, callback) {
       if(payload && payload.expensesData.length > 0){
-        db.Expenses.bulkCreate(payload.expensesData)
+        db.Expenses.bulkCreate(
+          payload.expensesData,
+          { individualHooks: true }
+        )
         .then(function (expensesAdded) {
           if (expensesAdded) {
             callback(expensesAdded)
