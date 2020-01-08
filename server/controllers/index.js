@@ -366,7 +366,10 @@ module.exports = controllers = {
 
   categories: {
     get: function (req, res) {
-      models.categories.get(function (allCategories) {
+      var payload = {
+        userId: req.headers.userId,
+      }
+      models.categories.get(payload, function (allCategories) {
         res.status(200).json({
             success: true,
             data: allCategories
