@@ -266,6 +266,25 @@ module.exports = {
     }
   },
 
+  updateTotalAmount: {
+    patch: function (payload, callback) {
+      db.CurrentTotalIncome.find({
+        where: {
+          id: payload.userId
+        }
+      })
+      .then(function (currentTotalIncome) {
+        if(currentTotalIncome !== null){
+          currentTotalIncome.amount = currentTotalIncome.amount - payload.previousAmount + payload.newAmount;
+          currentTotalIncome.save();
+          callback(currentTotalIncome)
+        } else{
+          callback(false, "Current Total Income not found")
+        };
+      })
+    }
+  },
+
   search_specifics: {
     get: function (payload, callback) {
       var searchData = {

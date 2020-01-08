@@ -257,12 +257,39 @@ module.exports = controllers = {
       })
       models.income.patch(payload, function (updatedIncome, message) {
         if (updatedIncome) {
-          
-          res.status(200).json({
-            success: true,
-            payload: payload,
-            updatedIncome: updatedIncome
-          })
+          console.log("+++ 260 index.js payload.amount: ", payload.amount)
+          if(payload.amount){
+            var updateTotalPayload = {
+              userId: payload.id,
+              newAmount: payload.amount,
+              previousAmount: updatedIncome._previousDataValues.amount,
+            }
+            console.log("+++ 265 index.js updateTotalPayload: ", updateTotalPayload)
+            models.updateTotalAmount.patch(updateTotalPayload, function (updatedTotal, message) {
+              if(updatedTotal){
+                res.status(200).json({
+                  success: true,
+                  data: {
+                    updatedIncome: updatedIncome,
+                    updatedTotal: updatedTotal
+                  }
+                })
+              } else{
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: message
+                  }
+                  
+                })
+              };
+            })
+          } else {
+            res.status(200).json({
+              success: true,
+              data : updatedIncome
+            })
+          }
         }else{
           res.status(200).json({
             success: false,
