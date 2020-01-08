@@ -49,8 +49,25 @@ module.exports = {
             found.username = payload.username;
             found.password = passwordHash;
             found.email = payload.email;
+            console.log("+++ 52 index.js found: ", found)
             found.save();
-            callback(found);
+            var createTotal = {
+              amount: 0,
+              userId: found.dataValues.id
+            }
+            db.CurrentTotalIncome.create(createTotal)
+              .then(function () {
+                db.CurrentTotalExpenses.create(createTotal)
+                  .then(function () {
+                    db.CurrentTotalSavings.create(createTotal)
+                      .then(function () {
+                        db.CurrentTotalInvest.create(createTotal)
+                          .then(function () {
+                            callback(found);
+                          })
+                      })
+                  })
+              })
           })
         }else{
           callback(false, "User name or email already used");

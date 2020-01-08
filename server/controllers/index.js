@@ -182,6 +182,7 @@ module.exports = controllers = {
                               if(amount.accountName === newAccount.dataValues.name){
                                 amount.accountId = newAccount.dataValues.id;
                                 amount.categoryId = newIncomeCategoriesCreated.id;
+                                amount.comment = "Initial amount added"
                                 finalInitial.Income.data.push(amount);
                                 totalAmounts.Income.amount = totalAmounts.Income.amount + amount.amount;
                               }
@@ -194,12 +195,12 @@ module.exports = controllers = {
                               if(amount.accountName === newAccount.dataValues.name){
                                 amount.accountId = newAccount.dataValues.id;
                                 amount.categoryId = newIncomeCategoriesCreated.id;
+                                amount.comment = "Initial amount added"
                                 finalInitial.Savings.data.push(amount);
                                 totalAmounts.Savings.amount = totalAmounts.Savings.amount + amount.amount;
                               }
                             })
                           })
-
                         }
                         if(key === "Invest"){
                           _.forEach(initialDataType, function (amount) {
@@ -207,6 +208,7 @@ module.exports = controllers = {
                               if(amount.accountName === newAccount.dataValues.name){
                                 amount.accountId = newAccount.dataValues.id;
                                 amount.categoryId = newIncomeCategoriesCreated.id;
+                                amount.comment = "Initial amount added"
                                 finalInitial.Invest.data.push(amount);
                                 totalAmounts.Invest.amount = totalAmounts.Invest.amount + amount.amount;
                               }
@@ -224,7 +226,7 @@ module.exports = controllers = {
                               models.bulk_add.post(finalInitial.Invest, function (investResult, investMessage) {
                                 if(investResult){
                                     console.log("+++ 226 index.js ALL INITIAL ITEMS ADDED")
-                                    
+
                                 } else{
                                   res.status(200).json({
                                     success: false,
