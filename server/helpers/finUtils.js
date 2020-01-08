@@ -32,6 +32,10 @@ exports.addTotals = function(data) {
   return finalData;
 }
 
+exports.unixDate = function(readableDate) {
+  return moment(readableDate).startOf('day').format('x')
+}
+
 exports.readableDate = function(unixDate) {
   return moment(unixDate).format("YYYY-MM-DD");
 }

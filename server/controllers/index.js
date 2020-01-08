@@ -1,6 +1,7 @@
 var models = require('../models');
 var authUtils = require('../helpers/authUtils.js');
 var finUtils = require('../helpers/finUtils.js');
+var Promise = require('bluebird');
 var _ = require('lodash');
 var moment = require('moment');
 
@@ -86,6 +87,80 @@ module.exports = controllers = {
   },
 
   set_initials: {
+    post: function (req, res) {
+      var initialData = req.body;
+      
+      var newIncomeCategories = {
+        type: "Income",
+        data: [
+          {
+            userId: req.headers.userId,
+            name: "Initial",
+          }
+        ]
+      }
+
+      var newIncomeAccounts = {
+        Income: {
+          type: "Income",
+          data: [] 
+        },
+        Savings: {
+          type: "Saving",
+          data: [] 
+        },
+        Invest: {
+          type: "Invest",
+          data: [] 
+        },
+      }
+
+      _.forEach(initialData, function(amounts, key) {
+        _.forEach(amounts, function (amount) {
+          amount['userId'] = req.headers.userId;
+          amount['date'] = finUtils.unixDate(amount.date);
+          console.log("+++ 110 index.js key: ", key)
+          newIncomeAccounts[key]['data'].push({
+            userId: req.headers.userId,
+            name: amount.account
+          });
+        })
+      })
+      console.log("+++ 120 index.js newIncomeCategories: ", newIncomeCategories)
+      var additionCompleted = [];
+      var newIncomeCategoriesCreated;
+      // ADD NEW CATEGORIES
+      models.categories.post(newIncomeCategories, function (categoriesAdded) {
+        if(categoriesAdded){
+          newIncomeCategoriesCreated = categoriesAdded;
+          additionCompleted.push(categoriesAdded);
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: "Initial Income Category not added"
+            }
+          });
+        }
+        
+      })
+
+      console.log("+++ 121 index.js newIncomeAccounts: ", newIncomeAccounts)
+
+
+
+
+
+      Promise.all([
+          additionCompleted,
+        ])
+        .then(function () {
+          console.log("created start data completed")
+        })
+    }
+  },
+
+  set_initials_old: {
     post: function (req, res) {
       var type = req.body.type;
       var payload = {

@@ -50,7 +50,7 @@ var Income = sequelize.define('income', {
       type: Sequelize.FLOAT(10,2),
       allowNull: false
     },
-    account: {
+    accountName: {
       type: Sequelize.TEXT,
       allowNull: true
     },
@@ -58,7 +58,7 @@ var Income = sequelize.define('income', {
       type: Sequelize.INTEGER,
       allowNull: false
     },
-    category: {
+    categoryName: {
       type: Sequelize.TEXT,
       allowNull: false
     },
@@ -102,7 +102,7 @@ var Expenses = sequelize.define('expenses', {
       type: Sequelize.INTEGER,
       allowNull: false
     },
-    category: {
+    categoryName: {
       type: Sequelize.TEXT,
       allowNull: false
     },
@@ -134,7 +134,7 @@ var Savings = sequelize.define('savings', {
       type: Sequelize.TEXT,
       allowNull: true
     },
-    account: {
+    accountName: {
       type: Sequelize.TEXT,
       allowNull: false
     },
@@ -170,7 +170,7 @@ var Invest = sequelize.define('invest', {
       type: Sequelize.TEXT,
       allowNull: true
     },
-    account: {
+    accountName: {
       type: Sequelize.TEXT,
       allowNull: false
     },
@@ -192,13 +192,13 @@ var Invest = sequelize.define('invest', {
     paranoid: true
 });
 
-var IncomeCategory = sequelize.define('category', {
+var IncomeCategory = sequelize.define('incomecategory', {
     id: {
       primaryKey: true,
       type: Sequelize.INTEGER,
       autoIncrement: true
     },
-    category: {
+    name: {
       type: Sequelize.STRING,
       allowNull: false
     },
@@ -218,7 +218,7 @@ var ExpensesCategory = sequelize.define('expensescategory', {
       type: Sequelize.INTEGER,
       autoIncrement: true
     },
-    category: {
+    name: {
       type: Sequelize.STRING,
       allowNull: false
     },
@@ -385,9 +385,17 @@ User.hasMany(Income, {
   foreignKey: 'userId'
 })
 
+User.hasMany(IncomeCategory, {
+  foreignKey: 'userId'
+})
+
 Expenses.belongsTo(User, {
   foreignKey: 'userId'
 });
+
+User.hasMany(ExpensesCategory, {
+  foreignKey: 'userId'
+})
 
 User.hasMany(Expenses, {
   foreignKey: 'userId'
@@ -485,7 +493,7 @@ User.sync().then(function(){
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){
                           SavingsAccount.sync().then(function(){
-                            testData();
+                            // testData();
                           })
                         })
                       })

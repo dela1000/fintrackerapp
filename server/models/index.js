@@ -117,6 +117,18 @@ module.exports = {
   },
 
   categories: {
+    post: function (payload, callback) {
+      var tableName = payload.type + 'Category';
+      db[tableName].bulkCreate(payload.data)
+        .then(function (categoriesAdded) {
+          if (categoriesAdded) {
+            callback(categoriesAdded)
+          }else{
+            callback(false)
+          };
+        })
+    },
+
     get: function (callback) {
       db.Category.findAll()
       .then(function (allCategories) {
