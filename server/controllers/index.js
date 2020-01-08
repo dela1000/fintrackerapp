@@ -95,7 +95,7 @@ module.exports = controllers = {
         data: [
           {
             userId: req.headers.userId,
-            name: "Initial",
+            name: "initial",
           }
         ]
       }
@@ -106,7 +106,7 @@ module.exports = controllers = {
           data: [] 
         },
         Savings: {
-          type: "Saving",
+          type: "Savings",
           data: [] 
         },
         Invest: {
@@ -119,30 +119,45 @@ module.exports = controllers = {
         _.forEach(amounts, function (amount) {
           amount['userId'] = req.headers.userId;
           amount['date'] = finUtils.unixDate(amount.date);
-          console.log("+++ 110 index.js key: ", key)
           newIncomeAccounts[key]['data'].push({
             userId: req.headers.userId,
-            name: amount.account
+            name: amount.accountName
           });
         })
       })
-      console.log("+++ 120 index.js newIncomeCategories: ", newIncomeCategories)
       var additionCompleted = [];
       var newIncomeCategoriesCreated;
       // ADD NEW CATEGORIES
-      models.categories.post(newIncomeCategories, function (categoriesAdded) {
+      models.categories.post(newIncomeCategories, function (categoriesAdded, categoriesMessage) {
         if(categoriesAdded){
           newIncomeCategoriesCreated = categoriesAdded;
           additionCompleted.push(categoriesAdded);
+          // ADD NEW ACCOUNTS
+          _.forEach(newIncomeAccounts, function (newAccounts) {
+            if(newAccounts.data.length > 0){
+              models.accounts.post(newAccounts, function (accountsAdded, accountsMessage) {
+                additionCompleted.push(accountsAdded)
+              })
+            }
+          })
+          // COMBINE CATEGORIES TO AMOUNTS
+          _.forEach(newIncomeCategoriesCreated, function (category) {
+            _.forEach(initialData.Income, function (amount) {
+              if(amount.categoryName === category.dataValues.name){
+                amount['categoryId'] = category.dataValues.id
+                console.log("+++ 148 index.js amount: ", amount)
+              }
+            })
+          })
+
         } else {
           res.status(200).json({
             success: false,
             data: {
-              message: "Initial Income Category not added"
+              message: "Initial " + categoriesMessage
             }
           });
         }
-        
       })
 
       console.log("+++ 121 index.js newIncomeAccounts: ", newIncomeAccounts)
@@ -155,7 +170,12 @@ module.exports = controllers = {
           additionCompleted,
         ])
         .then(function () {
-          console.log("created start data completed")
+          res.status(200).json({
+              success: true,
+              data: {
+                categoriesAdded: newIncomeCategoriesCreated,
+              }
+          });
         })
     }
   },

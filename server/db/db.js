@@ -385,6 +385,10 @@ User.hasMany(Income, {
   foreignKey: 'userId'
 })
 
+IncomeCategory.belongsTo(User, {
+  foreignKey: 'userId'
+});
+
 User.hasMany(IncomeCategory, {
   foreignKey: 'userId'
 })

@@ -124,7 +124,7 @@ module.exports = {
           if (categoriesAdded) {
             callback(categoriesAdded)
           }else{
-            callback(false)
+            callback(false, "New Categories not added")
           };
         })
     },
@@ -135,6 +135,20 @@ module.exports = {
         callback(allCategories)
       })
     }
+  },
+
+  accounts: {
+    post: function (payload, callback) {
+      var tableName = payload.type + 'Account';
+      db[tableName].bulkCreate(payload.data)
+        .then(function (accountsAdded) {
+          if (accountsAdded) {
+            callback(accountsAdded)
+          }else{
+            callback(false)
+          };
+        })
+    },
   },
 
   income: {
