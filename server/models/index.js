@@ -75,23 +75,6 @@ module.exports = {
     }
   },
 
-  bulk_add: {
-    post: function (payload, callback) {
-      var type = payload.type;
-      db[type].bulkCreate(
-        payload.data,
-        { individualHooks: true }
-      )
-        .then(function (amountCreated) {
-          if (amountCreated) {
-            callback(amountCreated)
-          }else{
-            callback(false, payload.type + " item not created")
-          };
-        })
-    }
-  },
-
   initials_done: {
     post: function (payload, callback) {
       db.User.findOne({
@@ -216,6 +199,23 @@ module.exports = {
           };
         })
     },
+  },
+
+  bulk_add: {
+    post: function (payload, callback) {
+      var type = payload.type;
+      db[type].bulkCreate(
+        payload.data,
+        { individualHooks: true }
+      )
+        .then(function (amountCreated) {
+          if (amountCreated) {
+            callback(amountCreated)
+          }else{
+            callback(false, payload.type + " item not created")
+          };
+        })
+    }
   },
 
   income: {

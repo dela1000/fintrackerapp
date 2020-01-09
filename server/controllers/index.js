@@ -474,7 +474,7 @@ module.exports = controllers = {
                 success: true,
                 data: {
                   amountCreated: amountCreated,
-                  currentIncome: currentTotal,
+                  currentIncome: Number(currentTotal.amount),
                 }
               })
             } else{
@@ -787,7 +787,7 @@ module.exports = controllers = {
     }
   },
 
-
+  // TEST PING
   ping: {
     get: function (req, res){
       res.status(200).json({

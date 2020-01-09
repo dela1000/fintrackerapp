@@ -393,6 +393,7 @@ User.hasMany(IncomeCategory, {
   foreignKey: 'userId'
 })
 
+
 Expenses.belongsTo(User, {
   foreignKey: 'userId'
 });
@@ -409,6 +410,7 @@ User.hasMany(Expenses, {
   foreignKey: 'userId'
 })
 
+
 Savings.belongsTo(User, {
   foreignKey: 'userId'
 });
@@ -416,6 +418,24 @@ Savings.belongsTo(User, {
 User.hasMany(Savings, {
   foreignKey: 'userId'
 })
+
+User.hasMany(Savings, {
+  foreignKey: 'userId'
+})
+
+
+Invest.belongsTo(User, {
+  foreignKey: 'userId'
+});
+
+User.hasMany(Invest, {
+  foreignKey: 'userId'
+})
+
+User.hasMany(Invest, {
+  foreignKey: 'userId'
+})
+
 
 CurrentTotalIncome.belongsTo(User, {
   foreignKey: 'userId'
