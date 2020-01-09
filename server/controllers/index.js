@@ -427,48 +427,54 @@ module.exports = controllers = {
 
   income: {
     post: function (req, res) {
+      var userId = req.headers.userId;
       var type = req.body.type;
       var payload = {
-        userId: req.headers.userId,
-        incomeData: req.body.incomeData
+        type: type,
+        data: req.body.incomeData
       }
-      _.forEach(payload.incomeData, function(amount) {
-        amount['userId'] = req.headers.userId
-        amount['date'] = moment(amount.date).startOf('day').format('x')
+      totalAmounts = {
+        userId: userId,
+        type: "Income",
+        amount: 0
+      };
+      _.forEach(payload.data, function(amount) {
+        amount['userId'] = userId;
+        amount['date'] = finUtils.unixDate(amount.date);
+        totalAmounts['amount'] = totalAmounts['amount'] + amount.amount;
       })
-      models.income.post(payload, function (incomeCreated) {
-        if(incomeCreated){
-          var data = {
-            userId: req.headers.userId,
-            type: type
-          }
-          models.totalAmount.get(data, function (currentTotalAmount) {
-            var totalAmount = _.sumBy(incomeCreated, 'amount');
-            newTotalData = {
-              newAmount: currentTotalAmount.dataValues.amount + totalAmount,
-              userId: req.headers.userId,
-              type: type
-            }
-            models.totalAmount.patch(newTotalData, function (newTotalAmount) {
+      models.bulk_add.post(payload, function (amountCreated, bulkMessage) {
+        if(amountCreated){
+          models.increaseTotalAmount.patch(totalAmounts, function (currentTotal, currentIncomeMessage) {
+            if(currentTotal){
               res.status(200).json({
-                  success: true,
-                  data: {
-                    type: type,
-                    incomeAdded: incomeCreated, 
-                    newTotalData: newTotalData.newAmount
-                  }
-              });
-            })
+                success: true,
+                data: {
+                  amountCreated: amountCreated,
+                  currentIncome: currentTotal,
+                }
+              })
+            } else{
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: currentIncomeMessage
+                }
+              })
+            };
           })
         } else {
           res.status(200).json({
             success: false,
             data: {
-              message: "Income not added"
+              message: bulkMessage
             }
-          });
+            
+          })
         }
       })
+
+
     },
     get: function (req, res) {
       var payload = {
