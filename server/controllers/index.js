@@ -513,7 +513,6 @@ module.exports = controllers = {
       })
       models.income.patch(payload, function (updatedIncome, message) {
         if (updatedIncome) {
-          console.log("+++ 260 index.js payload.amount: ", payload.amount)
           if(payload.amount){
             var updateTotalPayload = {
               userId: payload.id,
@@ -521,7 +520,7 @@ module.exports = controllers = {
               previousAmount: updatedIncome._previousDataValues.amount,
             }
             console.log("+++ 265 index.js updateTotalPayload: ", updateTotalPayload)
-            models.updateTotalAmount.patch(updateTotalPayload, function (updatedTotal, message) {
+            models.updateTotalIncome.patch(updateTotalPayload, function (updatedTotal, message) {
               if(updatedTotal){
                 res.status(200).json({
                   success: true,
@@ -561,77 +560,54 @@ module.exports = controllers = {
   expenses: {
     post: function (req, res) {
       var type = finUtils.type(req.body.type);
+      var userId = req.headers.userId;
       var payload = {
-        userId: req.headers.userId,
+        userId: userId,
         expensesData: req.body.expensesData
       }
+      var newExpensesTotal = {
+        type: type,
+        userId: userId,
+        amount: 0
+      };
       _.forEach(payload.expensesData, function(amount) {
-        amount['userId'] = req.headers.userId,
-        amount['date'] = moment(amount.date).startOf('day').format('x')
+        amount['userId'] = req.headers.userId;
+        amount['date'] = finUtils.unixDate(amount.date);
+        newExpensesTotal.amount = newExpensesTotal.amount + amount.amount;
       })
       models.expenses.post(payload, function (expensesCreated) {
         if(expensesCreated){
           // UPDATE EXPENSES TOTAL
-          var data = {
-            userId: req.headers.userId,
-            type: type
-          }
-          models.totalAmount.get(data, function (currentTotalAmount) {
-            var totalAmount = _.sumBy(expensesCreated, 'amount');
-            var newAmount = currentTotalAmount.dataValues.amount + totalAmount
-            newAmount = newAmount.toFixed(2);
-            newTotalData = {
-              newAmount: newAmount,
-              userId: req.headers.userId,
-              type: type
-            }
-            models.totalAmount.patch(newTotalData, function (newExpensesTotalAmount) {
-              // UPDATE INCOME TOTAL
-              if(newExpensesTotalAmount){
-                var updatedIncomeTotal = {
-                  userId: req.headers.userId,
-                  type: "Income"
+          models.increaseTotalAmount.patch(newExpensesTotal, function (newTotalExpenses, totalExpensesMessage) {
+            if(newTotalExpenses){
+              models.updateTotalIncomeAfterExpenses.patch(newExpensesTotal, function (newTotalIncome, totalIncomeMessage) {
+                if(newTotalIncome){
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      expensesCreated: expensesCreated,
+                      newTotalExpenses: Number(newTotalExpenses.amount),
+                      newTotalIncome: Number(newTotalIncome.amount),
+                    }
+                  });
+                } else{
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: totalIncomeMessage
+                    }
+                  });
+                };
+              })
+            } else {
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: totalExpensesMessage
                 }
-                models.totalAmount.get(updatedIncomeTotal, function (currentIncomeTotalAmount) {
-                  var newUpdatedAmount = currentIncomeTotalAmount.dataValues.amount - newAmount
-                  newUpdatedAmount = newUpdatedAmount.toFixed(2);
-                  var newIncomeTotalData = {
-                    newAmount: newUpdatedAmount,
-                    userId: req.headers.userId,
-                    type: "Income"
-                  }
-                  models.totalAmount.patch(newIncomeTotalData, function (newIncomeTotalAmount) {
-                    if(newIncomeTotalAmount){
-                      res.status(200).json({
-                          success: true,
-                          data: {
-                            type: type,
-                            expensesCreated: expensesCreated, 
-                            totalExpensesAdded: newTotalData.newAmount,
-                            newIncomeTotalAmount: newIncomeTotalData.newAmount
-                          }
-                      });
-                    } else{
-                      res.status(200).json({
-                        success: false,
-                        data: {
-                          message: "Something went wrong"
-                        }
-                      });
-                    };
+              });
+            }
 
-                  })
-                })
-
-              } else {
-                res.status(200).json({
-                  success: false,
-                  data: {
-                    message: "Something went wrong"
-                  }
-                });
-              }
-            })
           })
         } else {
           res.status(200).json({

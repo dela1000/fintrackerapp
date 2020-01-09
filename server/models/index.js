@@ -326,8 +326,6 @@ module.exports = {
     },
   },
 
-
-
   increaseTotalAmount: {
     patch: function (payload, callback) {
       var tableName = "CurrentTotal" + payload.type;
@@ -350,7 +348,42 @@ module.exports = {
     }
   },
 
+  updateTotalIncomeAfterExpenses: {
+    patch: function (payload, callback) {
+      db.CurrentTotalIncome.find({
+        where: {
+          id: payload.userId
+        },
+        attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
+      })
+      .then(function (currentIncomeTotal) {
+        currentIncomeTotal.amount = currentIncomeTotal.amount - payload.amount;
+        currentIncomeTotal.amount = currentIncomeTotal.amount.toFixed(2);
+        currentIncomeTotal.save();
+        console.log("+++ 390 index.js currentIncomeTotal.dataValues: ", currentIncomeTotal.dataValues)
+        callback(currentIncomeTotal)
+      })
+    }
+  },
 
+  updateTotalIncome: {
+    patch: function (payload, callback) {
+      db.CurrentTotalIncome.find({
+        where: {
+          id: payload.userId
+        }
+      })
+      .then(function (currentTotalIncome) {
+        if(currentTotalIncome !== null){
+          currentTotalIncome.amount = currentTotalIncome.amount - payload.previousAmount + payload.newAmount;
+          currentTotalIncome.save();
+          callback(currentTotalIncome)
+        } else{
+          callback(false, "Current Total Income not found")
+        };
+      })
+    }
+  },
 
   search_specifics: {
     get: function (payload, callback) {
