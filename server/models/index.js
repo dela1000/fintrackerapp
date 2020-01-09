@@ -178,6 +178,26 @@ module.exports = {
           callback(false, "No categories found")
         };
       })
+    },
+
+    patch: function (payload, callback) {
+      var tableName = payload.type + 'Category';
+
+      db[tableName].find({
+        where: {
+          id: payload.id,
+          userId: payload.userId
+        }
+      })
+      .then(function (category) {
+        if(category !== null){
+          category.name = payload.name;
+          category.save();
+          callback(category);
+        } else{
+          callback(false, payload.type + " category not found")
+        };
+      })
     }
   },
 
@@ -307,7 +327,7 @@ module.exports = {
       })
     }
   },
-
+  // Single Total Amount 
   totalAmount: {
     get: function (data, callback) {
       var tableName = 'CurrentTotal' + data.type;

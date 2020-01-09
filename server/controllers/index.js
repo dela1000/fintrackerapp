@@ -365,12 +365,44 @@ module.exports = controllers = {
     }
   },
 
-  all_categories: {
+  categories: {
+
+    post: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var data = req.body.newCategories;
+      _.forEach(data, function (item) {
+        item['userId'] = req.headers.userId;
+        item['name'] = item['name'].toLowerCase();
+      })
+      var payload = {
+        type: type,
+        data: data
+      };
+      models.categories.post(payload, function (categoriesAdded, categoriesMessage) {
+        if(categoriesAdded){
+          res.status(200).json({
+              success: true,
+              data: {
+                type: type,
+                categoriesAdded: categoriesAdded
+              }
+          });
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: categoriesMessage
+            }
+          });
+        };
+      })
+    },
+
     get: function (req, res) {
       var payload = {
         userId: req.headers.userId,
       }
-      models.categories.get(payload, function (allCategories,message) {
+      models.categories.get(payload, function (allCategories, categoriesMessage) {
         if(allCategories){
           res.status(200).json({
               success: true,
@@ -383,45 +415,36 @@ module.exports = controllers = {
           res.status(200).json({
               success: false,
               data: {
-                message: message
+                message: categoriesMessage
               }
             });
         };
       })
-    }
-  },
+    },
 
-  add_categories: {
-    post: function (req, res) {
-      var type = finUtils.type(req.body.type);
-      var data = req.body.newCategories;
-      _.forEach(data, function (item) {
-        item['userId'] = req.headers.userId;
-        item['name'] = item['name'].toLowerCase();
-      })
+    patch: function (req, res) {
       var payload = {
-        type: type,
-        data: data
+        userId: req.headers.userId,
+        type: finUtils.type(req.body.type),
+        name: req.body.name,
+        id: req.body.id,
       };
-    models.categories.post(payload, function (categoriesAdded, categoriesMessage) {
-      if(categoriesAdded){
-        res.status(200).json({
-            success: true,
-            data: {
-              type: type,
-              categoriesAdded: categoriesAdded
-            }
-        });
+      models.categories.patch(payload, function (categoriesAdded, categoriesMessage) {
+        if (categoriesAdded) {
+          res.status(200).json({
+              success: true,
+              data: categoriesAdded
+            });
+        } else {
+          res.status(200).json({
+              success: false,
+              data: {
+                message: categoriesMessage
+              }
+            });
+        }
 
-      } else{
-        res.status(200).json({
-          success: false,
-          data: {
-            message: categoriesMessage
-          }
-        });
-      };
-    })
+      })
     }
   },
 

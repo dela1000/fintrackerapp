@@ -30,31 +30,34 @@ router.post('/set_initials', authUtils.checkUser, function (req, res) {
 
 //Category routes
 // NEED TO ADD CATEGORIES ROUTES (CREATE, UPDATE, DELETE)
-router.get('/all_categories', authUtils.checkUser, function (req, res) {
-  controllers.all_categories.get(req, res)
+router.post('/categories', authUtils.checkUser, function (req, res) {
+  controllers.categories.post(req, res)
 })
 
-router.post('/add_categories', authUtils.checkUser, function (req, res) {
-  controllers.add_categories.post(req, res)
+router.get('/categories', authUtils.checkUser, function (req, res) {
+  controllers.categories.get(req, res)
 })
 
-
-
-
-
+router.patch('/categories', authUtils.checkUser, function (req, res) {
+  controllers.categories.patch(req, res)
+})
 
 //Income routes
 router.post('/income', authUtils.checkUser, function (req, res) {
   controllers.income.post(req, res)
 })
 
-// router.get('/income', authUtils.checkUser, function (req, res) {
-//   controllers.income.get(req, res)
-// })
-
 router.patch('/income', authUtils.checkUser, function (req, res) {
   controllers.income.patch(req, res)
 })
+
+
+
+
+
+// router.get('/income', authUtils.checkUser, function (req, res) {
+//   controllers.income.get(req, res)
+// })
 
 
 //Expenses routes
