@@ -251,10 +251,11 @@ module.exports = controllers = {
                                                     res.status(200).json({
                                                       success: true,
                                                       data: {
-                                                        finalInitial: finalInitial,
-                                                        currentTotalIncome: currentIncome.amount, 
-                                                        currentTotalSavings: currentSavings.amount,
-                                                        currentTotalInvest: currentInvest.amount,
+                                                        itemsAdded: finalInitial,
+                                                        currentTotalIncome: Number(currentIncome.amount), 
+                                                        currentTotalSavings: Number(currentSavings.amount),
+                                                        currentTotalInvest: Number(currentInvest.amount),
+                                                        currentTotalExpenses: 0,
                                                       }
                                                     });
                                                   } else{

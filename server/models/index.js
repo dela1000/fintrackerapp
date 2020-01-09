@@ -75,24 +75,6 @@ module.exports = {
     }
   },
 
-  set_initials: {
-    post: function (payload, callback) {
-      var type = payload.type
-      if(payload && payload.initialAmounts.length > 0){
-         db[type].bulkCreate(payload.initialAmounts)
-           .then(function (initialAmountCreated) {
-             if (initialAmountCreated) {
-               callback(initialAmountCreated)
-             }else{
-               callback(false)
-             };
-           })
-      } else{
-        callback(false)
-      };
-    }
-  },
-
   bulk_add: {
     post: function (payload, callback) {
       var type = payload.type;
