@@ -131,18 +131,18 @@ module.exports = {
     }
   },
 
-  all_categories: {
+  categories: {
     post: function (payload, callback) {
       var tableName = payload.type + 'Category';
       db[tableName].bulkCreate(
           payload.data,
-          { individualHooks: true }
+          { individualHooks: true },
         )
         .then(function (categoriesAdded) {
           if (categoriesAdded) {
             callback(categoriesAdded)
           }else{
-            callback(false, "New Categories not added")
+            callback(false, "New " + payload.type + " categories not added")
           };
         })
     },

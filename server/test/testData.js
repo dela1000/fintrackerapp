@@ -16,98 +16,98 @@ exports.testData = function () {
       .then(function (user) {
         var expensesCategories = [
           {
-            category: "Groceries"
+            category: "groceries"
           },
           {
-            category: "Dining"
+            category: "dining"
           },
           {
-            category: "Me"
+            category: "me"
           },
           {
-            category: "Small Fun"
+            category: "small fun"
           },
           {
-            category: "Big Fun"
+            category: "big fun"
           },
           {
-            category: "Housing"
+            category: "housing"
           },
           {
-            category: "Bills"
+            category: "bills"
           },
           {
-            category: "Misc."
+            category: "misc."
           },
           {
-            category: "Trasit"
+            category: "trasit"
           },
           {
-            category: "Travel"
+            category: "travel"
           },
           {
-            category: "Cash"
+            category: "cash"
           },
         ]
 
         var incomeCategories = [
           {
-            category: "Initial"
+            category: "initial"
           },
           {
-            category: "UM"
+            category: "um"
           },
           {
-            category: "Acro"
+            category: "acro"
           },
           {
-            category: "Taxes"
+            category: "taxes"
           },
           {
-            category: "IntAlly"
+            category: "interest Aally"
           },
           {
-            category: "IntChaSch"
+            category: "interest charles schwab"
           },
           {
-            category: "IntChase"
+            category: "interert chase"
           },
           {
-            category: "Freelance"
+            category: "freelance"
           },
           {
-            category: "Other"
+            category: "other"
           },
         ]
 
         var IncomeAccounts = [
           {
-            name: "Chase",
+            name: "chase",
             primary: 1
           },
           {
-            name: "Charles Schwab"
+            name: "charles schwab"
           },
           {
-            name: "Revolut"
+            name: "revolut"
           },
         ]
 
         var SavingsAccounts = [
           {
-            name: "Chase"
+            name: "chase"
           },
           {
-            name: "Ally"
+            name: "ally"
           },
         ]
 
         var InvestAccounts = [
           {
-            name: "Charles Schwab"
+            name: "charles schwab"
           },
           {
-            name: "Vanguard"
+            name: "vanguard"
           },
         ]
 

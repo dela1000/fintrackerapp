@@ -370,8 +370,7 @@ module.exports = controllers = {
       var payload = {
         userId: req.headers.userId,
       }
-      console.log("+++ 373 index.js payload: ", payload)
-      models.all_categories.get(payload, function (allCategories,message) {
+      models.categories.get(payload, function (allCategories,message) {
         if(allCategories){
           res.status(200).json({
               success: true,
@@ -389,6 +388,40 @@ module.exports = controllers = {
             });
         };
       })
+    }
+  },
+
+  add_categories: {
+    post: function (req, res) {
+      var type = req.body.type;
+      var data = req.body.newCategories;
+      _.forEach(data, function (item) {
+        item['userId'] = req.headers.userId;
+        item['name'] = item['name'].toLowerCase();
+      })
+      var payload = {
+        type: type,
+        data: data
+      };
+    models.categories.post(payload, function (categoriesAdded, categoriesMessage) {
+      if(categoriesAdded){
+        res.status(200).json({
+            success: true,
+            data: {
+              type: type,
+              categoriesAdded: categoriesAdded
+            }
+        });
+
+      } else{
+        res.status(200).json({
+          success: false,
+          data: {
+            message: categoriesMessage
+          }
+        });
+      };
+    })
     }
   },
 
