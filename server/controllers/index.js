@@ -365,16 +365,29 @@ module.exports = controllers = {
     }
   },
 
-  categories: {
+  all_categories: {
     get: function (req, res) {
       var payload = {
         userId: req.headers.userId,
       }
-      models.categories.get(payload, function (allCategories) {
-        res.status(200).json({
-            success: true,
-            data: allCategories
-          });
+      console.log("+++ 373 index.js payload: ", payload)
+      models.all_categories.get(payload, function (allCategories,message) {
+        if(allCategories){
+          res.status(200).json({
+              success: true,
+              data: {
+                expensesCategories: allCategories.expensescategories,
+                incomeCategories: allCategories.incomecategories
+              }
+            });
+        } else{
+          res.status(200).json({
+              success: false,
+              data: {
+                message: message
+              }
+            });
+        };
       })
     }
   },

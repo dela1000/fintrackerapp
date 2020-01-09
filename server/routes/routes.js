@@ -28,10 +28,14 @@ router.post('/set_initials', authUtils.checkUser, function (req, res) {
   controllers.set_initials.post(req, res)
 })
 
+
+
+
+
 //Category routes
 // NEED TO ADD CATEGORIES ROUTES (CREATE, UPDATE, DELETE)
-router.get('/categories', authUtils.checkUser, function (req, res) {
-  controllers.categories.get(req, res)
+router.get('/all_categories', authUtils.checkUser, function (req, res) {
+  controllers.all_categories.get(req, res)
 })
 
 

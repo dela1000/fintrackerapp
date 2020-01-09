@@ -131,7 +131,7 @@ module.exports = {
     }
   },
 
-  categories: {
+  all_categories: {
     post: function (payload, callback) {
       var tableName = payload.type + 'Category';
       db[tableName].bulkCreate(
@@ -148,13 +148,35 @@ module.exports = {
     },
 
     get: function (payload, callback) {
-      db.Category.findAll({
+      db.User.findOne({
         where: {
-          id: payload.userId
-        }
+          id: payload.userId,
+        },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: db.IncomeCategory, 
+            where: {
+              deleted: false
+            },
+            attributes: ['name', 'id'],
+            required: false 
+          },
+          {
+            model: db.ExpensesCategory, 
+            where: {
+              deleted: false
+            },
+            attributes: ['name', 'id'],
+            required: false 
+          }]
       })
       .then(function (allCategories) {
-        callback(allCategories)
+        if(allCategories){
+          callback(allCategories)
+        } else{
+          callback(false, "No categories found")
+        };
       })
     }
   },

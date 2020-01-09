@@ -123,13 +123,15 @@ exports.testData = function () {
 
         _.each(expensesCategories, function (category) {
           expensesCreatedCategories.push(db.ExpensesCategory.create({
-            name: category.category
+            name: category.category,
+            userId: 1
           }))
         })
         
         _.each(incomeCategories, function (category) {
           createdIncomeCategories.push(db.IncomeCategory.create({
-            name: category.category
+            name: category.category,
+            userId: 1
           }))
         })
 

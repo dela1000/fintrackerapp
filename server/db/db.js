@@ -401,6 +401,10 @@ User.hasMany(ExpensesCategory, {
   foreignKey: 'userId'
 })
 
+ExpensesCategory.belongsTo(User, {
+  foreignKey: 'userId'
+})
+
 User.hasMany(Expenses, {
   foreignKey: 'userId'
 })
@@ -482,22 +486,22 @@ User.sync().then(function(){
                 CurrentTotalInvest.sync().then(function(){
                   IncomeCategory.sync().then(function(){
                     IncomeCategory.hasMany(Income, {
-                      foreignKey: 'categoryId'
+                      foreignKey: 'id'
                     });
                     Income.hasMany(IncomeCategory, {
-                      foreignKey: 'categoryId'
+                      foreignKey: 'id'
                     });
                     ExpensesCategory.sync().then(function(){
                       ExpensesCategory.hasMany(Expenses, {
-                        foreignKey: 'categoryId'
+                        foreignKey: 'id'
                       });
                       Expenses.hasOne(ExpensesCategory, {
-                        foreignKey: 'categoryId'
+                        foreignKey: 'id'
                       });
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){
                           SavingsAccount.sync().then(function(){
-                            // testData();
+                            testData();
                           })
                         })
                       })
