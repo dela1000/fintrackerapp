@@ -39,3 +39,7 @@ exports.unixDate = function(readableDate) {
 exports.readableDate = function(unixDate) {
   return moment(unixDate).format("YYYY-MM-DD");
 }
+
+exports.type = function (type) {
+  return type.charAt(0).toUpperCase() + type.slice(1)
+}

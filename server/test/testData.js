@@ -16,67 +16,67 @@ exports.testData = function () {
       .then(function (user) {
         var expensesCategories = [
           {
-            category: "groceries"
+            "name": "groceries"
           },
           {
-            category: "dining"
+            "name": "dining"
           },
           {
-            category: "me"
+            "name": "me"
           },
           {
-            category: "small fun"
+            "name": "small fun"
           },
           {
-            category: "big fun"
+            "name": "big fun"
           },
           {
-            category: "housing"
+            "name": "housing"
           },
           {
-            category: "bills"
+            "name": "bills"
           },
           {
-            category: "misc."
+            "name": "misc."
           },
           {
-            category: "trasit"
+            "name": "trasit"
           },
           {
-            category: "travel"
+            "name": "travel"
           },
           {
-            category: "cash"
+            "name": "cash"
           },
         ]
 
         var incomeCategories = [
           {
-            category: "initial"
+            "name": "initial"
           },
           {
-            category: "um"
+            "name": "um"
           },
           {
-            category: "acro"
+            "name": "acro"
           },
           {
-            category: "taxes"
+            "name": "taxes"
           },
           {
-            category: "interest Aally"
+            "name": "interest Aally"
           },
           {
-            category: "interest charles schwab"
+            "name": "interest charles schwab"
           },
           {
-            category: "interert chase"
+            "name": "interert chase"
           },
           {
-            category: "freelance"
+            "name": "freelance"
           },
           {
-            category: "other"
+            "name": "other"
           },
         ]
 
@@ -123,14 +123,14 @@ exports.testData = function () {
 
         _.each(expensesCategories, function (category) {
           expensesCreatedCategories.push(db.ExpensesCategory.create({
-            name: category.category,
+            name: category.name,
             userId: 1
           }))
         })
         
         _.each(incomeCategories, function (category) {
           createdIncomeCategories.push(db.IncomeCategory.create({
-            name: category.category,
+            name: category.name,
             userId: 1
           }))
         })

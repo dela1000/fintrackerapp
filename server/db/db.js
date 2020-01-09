@@ -501,7 +501,7 @@ User.sync().then(function(){
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){
                           SavingsAccount.sync().then(function(){
-                            testData();
+                            // testData();
                           })
                         })
                       })

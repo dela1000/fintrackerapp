@@ -371,15 +371,15 @@ module.exports = {
       }
       if(payload.minAmount || payload.maxAmount){
         if(!payload.minAmount){
-          payload.minAmount = 0
+          payload.minAmount = 0;
         };
         if(!payload.maxAmount){
-          payload.maxAmount = 99999
+          payload.maxAmount = 99999;
         };
         searchData['amount'] = {$between: [payload.minAmount, payload.maxAmount]}
       }
 
-      var tableName = payload.table.charAt(0).toUpperCase() + payload.table.slice(1)
+      var tableName = payload.type;
       db[tableName].findAll({
         where: searchData
       })

@@ -393,7 +393,7 @@ module.exports = controllers = {
 
   add_categories: {
     post: function (req, res) {
-      var type = req.body.type;
+      var type = finUtils.type(req.body.type);
       var data = req.body.newCategories;
       _.forEach(data, function (item) {
         item['userId'] = req.headers.userId;
@@ -428,14 +428,14 @@ module.exports = controllers = {
   income: {
     post: function (req, res) {
       var userId = req.headers.userId;
-      var type = req.body.type;
+      var type = finUtils.type(req.body.type);
       var payload = {
         type: type,
         data: req.body.incomeData
       }
       totalAmounts = {
         userId: userId,
-        type: "Income",
+        type: type,
         amount: 0
       };
       _.forEach(payload.data, function(amount) {
@@ -473,8 +473,6 @@ module.exports = controllers = {
           })
         }
       })
-
-
     },
     get: function (req, res) {
       var payload = {
@@ -562,7 +560,7 @@ module.exports = controllers = {
 
   expenses: {
     post: function (req, res) {
-      var type = req.body.type;
+      var type = finUtils.type(req.body.type);
       var payload = {
         userId: req.headers.userId,
         expensesData: req.body.expensesData
@@ -685,7 +683,7 @@ module.exports = controllers = {
     get: function (req, res) {
       var payload = {
         userId: req.headers.userId,
-        table: req.query.table,
+        type: finUtils.type(req.query.type),
         categoryId: req.query.categoryId,
         comment: req.query.comment,
         minAmount: req.query.minAmount,
@@ -706,7 +704,7 @@ module.exports = controllers = {
         if (data) {
           res.status(200).json({
             success: true,
-            table: payload.table,
+            type: payload.type,
             data: data
           });
         } else{
