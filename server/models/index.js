@@ -443,7 +443,7 @@ module.exports = {
         if (foundResults.length > 0) {
           callback(foundResults)
         } else{
-          callback(false)
+          callback(false, "No " + payload.type + " data found")
         };
       })
     }

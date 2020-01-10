@@ -719,66 +719,47 @@ module.exports = controllers = {
         })
       }
       
-      models.search_specifics.get(payload, function (foundResults) {
+      models.search_specifics.get(payload, function (foundResults, message) {
         if (foundResults) {
           var finalData  = [];
-          if(payload.type === "Income" || payload.type === "Expenses"){
-            _.forEach(foundResults, function (found) {
-              var lowerType = finUtils.lowerType(payload.type);
-              var item = {
-                id: found.id,
-                amount: found.amount,
-                comment: found.comment,
-                categoryId: found.categoryId,
-                date: found.date,
-                deleted: found.deleted,
-                createdAt: found.createdAt,
-                updatedAt: found.updatedAt,
-                userId: found.userId,
-              }
-              var category = lowerType + "category";
-              if (category) {
-                var addCategory = lowerType + "Category";
-                item[addCategory] = found[category].name
-              }
-              finalData.push(item)
-            })
-          }
-          if(type === "Income" || type === "Savings" || type === "Invest"){
 
-            _.forEach(foundResults, function (found) {
-              var lowerType = finUtils.lowerType(payload.type);
-              var item = {
-                id: found.id,
-                amount: found.amount,
-                comment: found.comment,
-                categoryId: found.categoryId,
-                date: found.date,
-                deleted: found.deleted,
-                createdAt: found.createdAt,
-                updatedAt: found.updatedAt,
-                userId: found.userId,
-              }
-              var account = lowerType + "account";
-              if (account) {
+          _.forEach(foundResults, function (found) {
+            var lowerType = finUtils.lowerType(payload.type);
+            var item = {
+              id: found.id,
+              amount: found.amount,
+              comment: found.comment,
+              categoryId: found.categoryId,
+              accountId: found.accountId,
+              date: found.date,
+              deleted: found.deleted,
+              createdAt: found.createdAt,
+              updatedAt: found.updatedAt,
+              userId: found.userId,
+            }
+            if(type === "Income" || type === "Expenses"){
+              var category = lowerType + "category";
+              var addCategory = lowerType + "Category";
+              item[addCategory] = found[category].name
+            }
+            if(type === "Income" || type === "Savings" || type === "Invest"){
+                var account = lowerType + "account";
                 var addAccount = lowerType + "Account";
                 item[addAccount] = found[account].name
-              }
-              finalData.push(item)
-            })
-            
-          }
+            }
+            finalData.push(item)
+          })
+
           res.status(200).json({
             success: true,
             type: payload.type,
-            foundResults: foundResults,
             data: finalData,
           });
         } else{
           res.status(200).json({
             success: false,
             data: {
-              message: "no data found"
+              message: message
             }
           });
         };
