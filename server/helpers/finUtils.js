@@ -43,3 +43,19 @@ exports.readableDate = function(unixDate) {
 exports.type = function (type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
+
+exports.lowerType = function (type) {
+  return type.toLowerCase();
+}
+
+exports.startOfDay = function (date) {
+  return moment().startOf('day').format('x');
+}
+
+exports.startOfMonth = function () {
+  return moment().startOf('month').format('x');
+}
+
+exports.endOfMonth = function () {
+  return moment().endOf('month').format('x');
+}

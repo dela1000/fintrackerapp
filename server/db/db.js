@@ -94,10 +94,6 @@ var Expenses = sequelize.define('expenses', {
       type: Sequelize.INTEGER,
       allowNull: false
     },
-    categoryName: {
-      type: Sequelize.TEXT,
-      allowNull: false
-    },
     date: {
       type: Sequelize.BIGINT,
       allowNull: false
@@ -125,10 +121,6 @@ var Savings = sequelize.define('savings', {
     comment: {
       type: Sequelize.TEXT,
       allowNull: true
-    },
-    accountName: {
-      type: Sequelize.TEXT,
-      allowNull: false
     },
     accountId: {
       type: Sequelize.INTEGER,
@@ -161,10 +153,6 @@ var Invest = sequelize.define('invest', {
     comment: {
       type: Sequelize.TEXT,
       allowNull: true
-    },
-    accountName: {
-      type: Sequelize.TEXT,
-      allowNull: false
     },
     accountId: {
       type: Sequelize.INTEGER,
@@ -511,6 +499,12 @@ User.sync().then(function(){
                         foreignKey: 'categoryId'
                       });
                       InvestAccount.sync().then(function(){
+                        InvestAccount.hasMany(Invest, {
+                          foreignKey: 'accountId'
+                        });
+                        Invest.belongsTo(InvestAccount, {
+                          foreignKey: 'accountId'
+                        });
                         IncomeAccount.sync().then(function(){
                           IncomeAccount.hasMany(Income, {
                             foreignKey: 'accountId'

@@ -413,6 +413,7 @@ module.exports = {
           $gte: payload.startDate,
           $lte: payload.endDate
         },
+        deleted: payload.deleted
       };
       if(payload.categoryId){
         searchData['categoryId'] = payload.categoryId
@@ -433,12 +434,14 @@ module.exports = {
       }
 
       var tableName = payload.type;
-      db[tableName].findAll({
-        where: searchData
-      })
-      .then(function (userIncome) {
-        if (userIncome) {
-          callback(userIncome)
+      var query = {
+          where: searchData,
+          include: payload.include
+      }
+      db[tableName].findAll(query)
+      .then(function (foundResults) {
+        if (foundResults.length > 0) {
+          callback(foundResults)
         } else{
           callback(false)
         };

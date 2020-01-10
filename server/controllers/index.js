@@ -502,15 +502,15 @@ module.exports = controllers = {
         userId: req.headers.userId,
       }
       if(req.query.startDate){
-        payload['startDate'] = moment(req.query.startDate).format('x');
+        payload['startDate'] = finUtils.unixDate(req.query.startDate);
       } else{
-        payload['startDate'] = moment().startOf('month').format('x');
+        payload['startDate'] = finUtils.startOfMonth();
         
       };
       if(req.query.endDate){
-        payload['endDate'] = moment(req.query.endDate).format('x');
+        payload['endDate'] = finUtils.unixDate(req.query.endDate);
       } else{
-        payload['endDate'] = moment().endOf('month').format('x');
+        payload['endDate'] = finUtils.endOfMonth();
       };
 
       models.income.get(payload, function (userIncome) {
@@ -528,7 +528,7 @@ module.exports = controllers = {
       }
       _.forEach(req.body, function (value, key) {
         if(key === "date"){
-          payload[key] = moment(value).startOf('day').format('x')
+          payload[key] = finUtils.startOfDay(value);
         } else{
           payload[key] = value
         }
@@ -679,31 +679,100 @@ module.exports = controllers = {
 
   search_specifics: {
     get: function (req, res) {
+      var type = finUtils.type(req.query.type);
       var payload = {
         userId: req.headers.userId,
-        type: finUtils.type(req.query.type),
+        type: type,
         categoryId: req.query.categoryId,
         comment: req.query.comment,
         minAmount: req.query.minAmount,
-        maxAmount: req.query.maxAmount
+        maxAmount: req.query.maxAmount,
+        deleted: false,
+        include: [],
+      }
+      if(req.query.deleted){
+        payload.deleted = true;
       }
       if(req.query.startDate){
-        payload['startDate'] = moment(req.query.startDate).format('x');
+        payload['startDate'] = finUtils.unixDate(req.query.startDate)
       } else{
-        payload['startDate'] = moment().startOf('month').format('x');
+        payload['startDate'] = finUtils.startOfMonth();
       };
       if(req.query.endDate){
-        payload['endDate'] = moment(req.query.endDate).format('x');
+        payload['endDate'] = finUtils.unixDate(req.query.endDate);
       } else{
-        payload['endDate'] = moment().endOf('month').format('x');
+        payload['endDate'] = finUtils.endOfMonth();
       };
 
-      models.search_specifics.get(payload, function (data) {
-        if (data) {
+      if(type === "Income" || type === "Expenses"){
+        var categoryModel = type + "Category"
+        payload.include.push({
+          model: db[categoryModel], 
+          attributes: ['name'],
+        })
+      }
+      if(type === "Income" || type === "Savings" || type === "Invest"){
+        var accountModel = type + "Account";
+        payload.include.push({
+          model: db[accountModel], 
+          attributes: ['name'],
+        })
+      }
+      
+      models.search_specifics.get(payload, function (foundResults) {
+        if (foundResults) {
+          var finalData  = [];
+          if(payload.type === "Income" || payload.type === "Expenses"){
+            _.forEach(foundResults, function (found) {
+              var lowerType = finUtils.lowerType(payload.type);
+              var item = {
+                id: found.id,
+                amount: found.amount,
+                comment: found.comment,
+                categoryId: found.categoryId,
+                date: found.date,
+                deleted: found.deleted,
+                createdAt: found.createdAt,
+                updatedAt: found.updatedAt,
+                userId: found.userId,
+              }
+              var category = lowerType + "category";
+              if (category) {
+                var addCategory = lowerType + "Category";
+                item[addCategory] = found[category].name
+              }
+              finalData.push(item)
+            })
+          }
+          if(type === "Income" || type === "Savings" || type === "Invest"){
+
+            _.forEach(foundResults, function (found) {
+              var lowerType = finUtils.lowerType(payload.type);
+              var item = {
+                id: found.id,
+                amount: found.amount,
+                comment: found.comment,
+                categoryId: found.categoryId,
+                date: found.date,
+                deleted: found.deleted,
+                createdAt: found.createdAt,
+                updatedAt: found.updatedAt,
+                userId: found.userId,
+              }
+              var account = lowerType + "account";
+              if (account) {
+                var addAccount = lowerType + "Account";
+                item[addAccount] = found[account].name
+              }
+              finalData.push(item)
+            })
+            
+          }
           res.status(200).json({
             success: true,
             type: payload.type,
-            data: data
+            foundResults: foundResults,
+            data: finalData,
           });
         } else{
           res.status(200).json({
