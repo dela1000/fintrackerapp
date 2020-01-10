@@ -128,12 +128,12 @@ exports.testData = function () {
           }))
         })
         
-        _.each(incomeCategories, function (category) {
-          createdIncomeCategories.push(db.IncomeCategory.create({
-            name: category.name,
-            userId: 1
-          }))
-        })
+        // _.each(incomeCategories, function (category) {
+        //   createdIncomeCategories.push(db.IncomeCategory.create({
+        //     name: category.name,
+        //     userId: 1
+        //   }))
+        // })
 
         _.each(IncomeAccounts, function (account) {
           incomeCreatedNames.push(db.IncomeAccount.create({

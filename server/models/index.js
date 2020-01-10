@@ -540,6 +540,33 @@ module.exports = {
           }
         })
     }
+  },
+
+  test: {
+    get: function (payload, callback) {
+      console.log("+++ 547 index.js payload: ", payload)
+      db.Income.findAll({ 
+        where: {
+          userId: payload.userId
+        }, 
+        include: [{
+          model: db.IncomeCategory, 
+          attributes: ['name'],
+          required: false 
+        }, {
+          model: db.IncomeAccount,
+          attributes: ['name'],
+          required: false 
+        }]
+      })
+      .then(function (foundData) {
+        if(foundData){
+          callback(foundData)
+        } else{
+          callback(false, "no data found")
+        };
+      })
+    }
   }
 
 }

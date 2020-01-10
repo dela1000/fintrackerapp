@@ -542,7 +542,6 @@ module.exports = controllers = {
               newAmount: payload.amount,
               previousAmount: updatedIncome._previousDataValues.amount,
             }
-            console.log("+++ 265 index.js updateTotalPayload: ", updateTotalPayload)
             models.updateTotalIncome.patch(updateTotalPayload, function (updatedTotal, message) {
               if(updatedTotal){
                 res.status(200).json({
@@ -664,9 +663,9 @@ module.exports = controllers = {
         date: req.body.date,
       }
       console.log("+++ 368 index.js payload: ", payload)
-      res.status(200).json({
-        success: true,
-      })
+      // res.status(200).json({
+      //   success: true,
+      // })
       // models.expenses.patch(payload, function (updatedExpense) {
       //   if (updatedExpense) {
       //     res.status(200).json(updatedExpense)
@@ -795,5 +794,22 @@ module.exports = controllers = {
         headers:req.headers
       })
     }
+  },
+
+  test: {
+    get: (function (req, res) {
+      payload = {
+        userId: 1,
+      }
+      models.test.get(payload, function (foundData, message) {
+        if(foundData){
+          res.status(200).json({found: foundData})
+        } else {
+          res.status(200).json({message: message})
+        }
+      })
+    })
   }
+
+
 }

@@ -55,12 +55,6 @@ router.patch('/income', authUtils.checkUser, function (req, res) {
   controllers.income.patch(req, res)
 })
 
-
-
-
-
-
-
 //Expenses routes
 router.post('/expenses', authUtils.checkUser, function (req, res) {
   controllers.expenses.post(req, res)
@@ -73,6 +67,12 @@ router.post('/expenses', authUtils.checkUser, function (req, res) {
 router.patch('/expenses', authUtils.checkUser, function (req, res) {
   controllers.expenses.patch(req, res)
 })
+
+
+
+
+
+
 
 // SEARCH 
 router.get('/search_specifics', authUtils.checkUser, function (req, res) {
@@ -94,6 +94,10 @@ router.get('/expenses_totals', authUtils.checkUser, function (req, res) {
 // TEST Ping
 router.get('/ping', authUtils.checkUser, function (req, res) {
   controllers.ping.get(req, res)
+})
+
+router.get('/test', authUtils.checkUser, function (req, res) {
+  controllers.test.get(req, res)
 })
 
 module.exports = router;

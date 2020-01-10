@@ -50,16 +50,8 @@ var Income = sequelize.define('income', {
       type: Sequelize.FLOAT(20,2),
       allowNull: false
     },
-    accountName: {
-      type: Sequelize.TEXT,
-      allowNull: true
-    },
     accountId: {
       type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    categoryName: {
-      type: Sequelize.TEXT,
       allowNull: false
     },
     categoryId: {
@@ -506,22 +498,34 @@ User.sync().then(function(){
                 CurrentTotalInvest.sync().then(function(){
                   IncomeCategory.sync().then(function(){
                     IncomeCategory.hasMany(Income, {
-                      foreignKey: 'id'
+                      foreignKey: 'categoryId'
                     });
-                    Income.hasMany(IncomeCategory, {
-                      foreignKey: 'id'
+                    Income.belongsTo(IncomeCategory, {
+                      foreignKey: 'categoryId'
                     });
                     ExpensesCategory.sync().then(function(){
                       ExpensesCategory.hasMany(Expenses, {
-                        foreignKey: 'id'
+                        foreignKey: 'categoryId'
                       });
-                      Expenses.hasOne(ExpensesCategory, {
-                        foreignKey: 'id'
+                      Expenses.belongsTo(ExpensesCategory, {
+                        foreignKey: 'categoryId'
                       });
                       InvestAccount.sync().then(function(){
                         IncomeAccount.sync().then(function(){
+                          IncomeAccount.hasMany(Income, {
+                            foreignKey: 'accountId'
+                          });
+                          Income.belongsTo(IncomeAccount, {
+                            foreignKey: 'accountId'
+                          });
                           SavingsAccount.sync().then(function(){
-                            // testData();
+                            SavingsAccount.hasMany(Savings, {
+                              foreignKey: 'accountId'
+                            });
+                            Savings.belongsTo(SavingsAccount, {
+                              foreignKey: 'accountId'
+                            });
+                            testData();
                           })
                         })
                       })
