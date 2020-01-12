@@ -93,14 +93,12 @@ module.exports = controllers = {
       var userId = req.headers.userId;
       var initialData = req.body;
       
-      var newIncomeCategories = {
+      var initialIncomeCategories = {
         type: "Income",
-        data: [
-          {
-            userId: userId,
-            name: "initial",
-          }
-        ]
+        data: {
+          userId: userId,
+          name: "initial",
+        }
       }
 
       var newIncomeAccounts = {
@@ -128,15 +126,15 @@ module.exports = controllers = {
           });
         })
       })
-      var createdIncomeCategories = [];
-      var newIncomeCategoriesCreated;
+      var initialCategoryCreated;
       var newAccountsAdded = {};
       // ADD NEW CATEGORIES
       console.log("controllers: ADD NEW CATEGORIES")
-      models.categories.post(newIncomeCategories, function (categoriesAdded, categoriesMessage) {
-        if(categoriesAdded){
+      models.categories.post(initialIncomeCategories, function (categoryAdded, categoriesMessage) {
+        console.log("+++ 134 index.js categoryAdded: ", categoryAdded)
+        if(categoryAdded){
 
-          newIncomeCategoriesCreated = categoriesAdded[0].dataValues;
+          initialCategoryCreated = categoryAdded.dataValues;
 
           // ADD NEW ACCOUNTS
           console.log("controllers: ADD NEW ACCOUNTS")
@@ -184,45 +182,17 @@ module.exports = controllers = {
                         },
                       }
                       _.forEach(initialData, function (initialDataType, key) {
-                        if(key === "Income"){
-                          _.forEach(initialDataType, function (amount) {
-                            _.forEach(newAccountsAdded.Income, function (newAccount) {
-                              if(amount.accountName === newAccount.dataValues.name){
-                                amount.accountId = newAccount.dataValues.id;
-                                amount.categoryId = newIncomeCategoriesCreated.id;
-                                amount.comment = "Initial amount added"
-                                finalInitial.Income.data.push(amount);
-                                totalAmounts.Income.amount = totalAmounts.Income.amount + amount.amount;
-                              }
-                            })
+                        _.forEach(initialDataType, function (amount) {
+                          _.forEach(newAccountsAdded[key], function (newAccount) {
+                            if(amount.accountName === newAccount.dataValues.name){
+                              amount.accountId = newAccount.dataValues.id;
+                              amount.categoryId = initialCategoryCreated.id;
+                              amount.comment = "Initial amount added";
+                              finalInitial[key].data.push(amount);
+                              totalAmounts[key].amount = totalAmounts[key].amount + amount.amount;
+                            }
                           })
-                        }
-                        if(key === "Savings"){
-                          _.forEach(initialDataType, function (amount) {
-                            _.forEach(newAccountsAdded.Savings, function (newAccount) {
-                              if(amount.accountName === newAccount.dataValues.name){
-                                amount.accountId = newAccount.dataValues.id;
-                                amount.categoryId = newIncomeCategoriesCreated.id;
-                                amount.comment = "Initial amount added"
-                                finalInitial.Savings.data.push(amount);
-                                totalAmounts.Savings.amount = totalAmounts.Savings.amount + amount.amount;
-                              }
-                            })
-                          })
-                        }
-                        if(key === "Invest"){
-                          _.forEach(initialDataType, function (amount) {
-                            _.forEach(newAccountsAdded.Invest, function (newAccount) {
-                              if(amount.accountName === newAccount.dataValues.name){
-                                amount.accountId = newAccount.dataValues.id;
-                                amount.categoryId = newIncomeCategoriesCreated.id;
-                                amount.comment = "Initial amount added"
-                                finalInitial.Invest.data.push(amount);
-                                totalAmounts.Invest.amount = totalAmounts.Invest.amount + amount.amount;
-                              }
-                            })
-                          })
-                        }
+                        })
                       })
                       // ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB
                       console.log("controllers: ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB")

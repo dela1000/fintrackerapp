@@ -96,8 +96,7 @@ module.exports = {
             model: db.CurrentTotalExpenses, 
             attributes: ['amount'],
             required: false 
-          },
-          {
+          },{
             model: db.CurrentTotalIncome, 
             attributes: ['amount'],
             required: false 
@@ -123,18 +122,48 @@ module.exports = {
     }
   },
 
-  categories: {
+  categories_bulk: {
     post: function (payload, callback) {
       var tableName = payload.type + 'Category';
       db[tableName].bulkCreate(
           payload.data,
-          { individualHooks: true },
+          {
+            ignoreDuplicates: true,
+            individualHooks: true
+          }
         )
         .then(function (categoriesAdded) {
           if (categoriesAdded) {
             callback(categoriesAdded)
           }else{
             callback(false, "New " + payload.type + " categories not added")
+          };
+        })
+    },
+  }
+
+  categories: {
+    post: function (payload, callback) {
+      console.log("+++ 147 index.js payload: ", payload)
+      var tableName = payload.type + 'Category';
+
+        db[tableName].findOrCreate({
+          where: {
+            [Op.and]: [
+            {
+              name: payload.data.name
+            }, {
+              userId: payload.data.userId
+            }]
+          }
+        })
+        .spread(function (found, create) {
+          if (create) {
+            found.name = payload.name;
+            found.userId = payload.userId;
+            found.save()
+          } else{
+            callback(found)
           };
         })
     },
