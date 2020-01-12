@@ -140,7 +140,7 @@ module.exports = {
           };
         })
     },
-  }
+  },
 
   categories: {
     post: function (payload, callback) {
