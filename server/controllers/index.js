@@ -126,15 +126,12 @@ module.exports = controllers = {
           });
         })
       })
-      var initialCategoryCreated;
       var newAccountsAdded = {};
       // ADD NEW CATEGORIES
       console.log("controllers: ADD NEW CATEGORIES")
       models.categories.post(initialIncomeCategories, function (categoryAdded, categoriesMessage) {
-        console.log("+++ 134 index.js categoryAdded: ", categoryAdded)
         if(categoryAdded){
-
-          initialCategoryCreated = categoryAdded.dataValues;
+          var initialCategoryCreated = categoryAdded.dataValues;
 
           // ADD NEW ACCOUNTS
           console.log("controllers: ADD NEW ACCOUNTS")

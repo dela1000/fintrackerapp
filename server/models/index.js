@@ -144,28 +144,23 @@ module.exports = {
 
   categories: {
     post: function (payload, callback) {
-      console.log("+++ 147 index.js payload: ", payload)
       var tableName = payload.type + 'Category';
-
-        db[tableName].findOrCreate({
-          where: {
-            [Op.and]: [
-            {
-              name: payload.data.name
-            }, {
-              userId: payload.data.userId
-            }]
-          }
-        })
-        .spread(function (found, create) {
-          if (create) {
-            found.name = payload.name;
-            found.userId = payload.userId;
-            found.save()
-          } else{
-            callback(found)
-          };
-        })
+      db[tableName].findOrCreate({
+        where: {
+          name: payload.data.name,
+          userId: payload.data.userId,
+        }
+      })
+      .spread(function (found, create) {
+        if (create) {
+          found.name = payload.data.name;
+          found.userId = payload.data.userId;
+          found.save()
+          callback(found)
+        } else{
+          callback(found)
+        };
+      })
     },
 
     get: function (payload, callback) {
