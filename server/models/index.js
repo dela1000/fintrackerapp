@@ -1,7 +1,9 @@
 // Models
 var db = require('../db/db.js');
 var Sequelize = require("sequelize");
+var Op = Sequelize.Op;
 var authUtils = require('../helpers/authUtils.js');
+var finUtils = require('../helpers/finUtils.js');
 var Promise = require('bluebird');
 var _ = require('lodash');
 var moment = require('moment');
@@ -34,13 +36,20 @@ module.exports = {
 
   signup: {
     post: function (payload, callback) {
+      console.log("+++ 37 index.js payload: ", payload)
       db.User.findOrCreate({
         where: {
-          $or:[{
-            username: payload.username
-          }, {
-            email: payload.email
-          }]
+          [Op.or]: [
+            {
+              username: {
+                [Op.like]: payload.username
+              }
+            }, {
+              email: {
+                [Op.like]: payload.email
+              }
+            }
+          ]
         }
       })
       .spread(function (found, create) {
@@ -166,7 +175,7 @@ module.exports = {
     patch: function (payload, callback) {
       var tableName = payload.type + 'Category';
 
-      db[tableName].find({
+      db[tableName].findOne({
         where: {
           id: payload.id,
           userId: payload.userId
@@ -331,7 +340,7 @@ module.exports = {
   totalAmount: {
     get: function (data, callback) {
       var tableName = 'CurrentTotal' + data.type;
-      db[tableName].find({
+      db[tableName].findOne({
         where: {
           userId: data.userId
         }
@@ -349,7 +358,7 @@ module.exports = {
   increaseTotalAmount: {
     patch: function (payload, callback) {
       var tableName = "CurrentTotal" + payload.type;
-      db[tableName].find({
+      db[tableName].findOne({
         where: {
           id: payload.userId
         },
@@ -370,7 +379,7 @@ module.exports = {
 
   updateTotalIncomeAfterExpenses: {
     patch: function (payload, callback) {
-      db.CurrentTotalIncome.find({
+      db.CurrentTotalIncome.findOne({
         where: {
           id: payload.userId
         },
@@ -388,7 +397,7 @@ module.exports = {
 
   updateTotalIncome: {
     patch: function (payload, callback) {
-      db.CurrentTotalIncome.find({
+      db.CurrentTotalIncome.findOne({
         where: {
           id: payload.userId
         }
@@ -410,8 +419,8 @@ module.exports = {
       var searchData = {
         userId: payload.userId,
         date: {
-          $gte: payload.startDate,
-          $lte: payload.endDate
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate
         },
         deleted: payload.deleted
       };
@@ -420,7 +429,7 @@ module.exports = {
       }
       if(payload.comment){
         searchData['comment'] = {
-          $like: "%" + payload.comment + "%"
+          [Op.like]: "%" + payload.comment + "%"
         }
       }
       if(payload.minAmount || payload.maxAmount){
@@ -438,6 +447,8 @@ module.exports = {
           where: searchData,
           include: payload.include
       }
+
+      console.log("query: ", JSON.stringify(query, null, "\t"));
       db[tableName].findAll(query)
       .then(function (foundResults) {
         if (foundResults.length > 0) {
@@ -455,8 +466,8 @@ module.exports = {
       var searchData = {
         userId: payload.userId,
         date: {
-          $gte: moment().startOf(payload.timeframe).format('x'),
-          $lte: moment().endOf(payload.timeframe).format('x')
+          [Op.gte]: moment().startOf(payload.timeframe).format('x'),
+          [Op.lte]: moment().endOf(payload.timeframe).format('x')
         },
         deleted: false
       };
@@ -509,27 +520,33 @@ module.exports = {
               email: user.email,
             };
             if(user.currenttotalexpense){
-              primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount
+              primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount;
             }
             if(user.currenttotalincome){
-              primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount
+              primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount;
             }
             if(user.currenttotalsaving){
-              primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount
+              primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount;
             }
             if(user.currenttotalinvest){
-              primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount
+              primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
             }
 
             db.Expenses.findAll({
               where: {
                 userId: payload.userId,
+                deleted: false,
                 date: {
-                  $gte: moment().startOf(payload.timeframe).format('x'),
-                  $lte: moment().endOf(payload.timeframe).format('x')
+                  [Op.gte]: finUtils.startOfMonth(),
+                  [Op.lte]: finUtils.endOfMonth()
                 },
-                deleted: false
-              }
+              },
+              include: [
+                {
+                  model: db.ExpensesCategory, 
+                  attributes: ['name'],
+                },
+              ]
             })
               .then(function (expensesData) {
                 if(expensesData){

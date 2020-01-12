@@ -3,7 +3,7 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 
 exports.testData = function () {
-  db.User.find({
+  db.User.findAll({
       username: "aa"
   })
   .then(function (found) {

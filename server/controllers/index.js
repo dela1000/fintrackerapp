@@ -731,7 +731,7 @@ module.exports = controllers = {
               comment: found.comment,
               categoryId: found.categoryId,
               accountId: found.accountId,
-              date: found.date,
+              date: finUtils.readableDate(found.date),
               deleted: found.deleted,
               createdAt: found.createdAt,
               updatedAt: found.updatedAt,

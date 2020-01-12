@@ -1,7 +1,10 @@
 var Sequelize = require("sequelize");
 var testData = require("../test/testData.js").testData;
 var secrets = require('../../secrets/secrets.js');
-var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass);
+var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
+  host: 'localhost',
+  dialect: 'mysql'
+});
 
 
 var User = sequelize.define('user', {
@@ -519,7 +522,7 @@ User.sync().then(function(){
                             Savings.belongsTo(SavingsAccount, {
                               foreignKey: 'accountId'
                             });
-                            testData();
+                            // testData();
                           })
                         })
                       })
