@@ -111,15 +111,15 @@ module.exports = {
             required: false 
           }]
       })
-        .then(function (user) {
-          if(user){
-            user.initial = true;
-            user.save();
-            callback(user);
-          } else {
-            callback(false)
-          }
-        })
+      .then(function (user) {
+        if(user){
+          user.initial = true;
+          user.save();
+          callback(user);
+        } else {
+          callback(false)
+        }
+      })
     }
   },
 
@@ -217,13 +217,13 @@ module.exports = {
         payload.data,
         { individualHooks: true }
       )
-        .then(function (amountCreated) {
-          if (amountCreated) {
-            callback(amountCreated)
-          }else{
-            callback(false, payload.type + " item not created")
-          };
-        })
+      .then(function (amountCreated) {
+        if (amountCreated) {
+          callback(amountCreated)
+        }else{
+          callback(false, payload.type + " item not created")
+        };
+      })
     }
   },
 
@@ -234,13 +234,13 @@ module.exports = {
           payload.incomeData,
           { individualHooks: true }
         )
-          .then(function (incomeAdded) {
-            if (incomeAdded) {
-              callback(incomeAdded)
-            }else{
-              callback(false)
-            };
-          })
+        .then(function (incomeAdded) {
+          if (incomeAdded) {
+            callback(incomeAdded)
+          }else{
+            callback(false)
+          };
+        })
       } else{
        callback(false)
       };
@@ -444,8 +444,8 @@ module.exports = {
 
       var tableName = payload.type;
       var query = {
-          where: searchData,
-          include: payload.include
+        where: searchData,
+        include: payload.include
       }
 
       console.log("query: ", JSON.stringify(query, null, "\t"));
@@ -472,15 +472,19 @@ module.exports = {
         deleted: false
       };
       db.Expenses.findAll({
-        where: searchData
+        where: searchData,
+        include: [{
+          model: db.ExpensesCategory, 
+          attributes: ['name'],
+        }]
       })
-        .then(function (expensesData) {
-          if(expensesData){
-            callback(expensesData)
-          } else {
-            callback(false, "No data found")
-          }
-        })
+      .then(function (expensesData) {
+        if(expensesData){
+          callback(expensesData)
+        } else {
+          callback(false, "No data found")
+        }
+      })
     }
   },
 
@@ -512,53 +516,53 @@ module.exports = {
             required: false 
           }]
       })
-        .then(function (user) {
-          if(user){
-            primaryTotals['user'] = {
-              userId: user.id,
-              username: user.username,
-              email: user.email,
-            };
-            if(user.currenttotalexpense){
-              primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount;
-            }
-            if(user.currenttotalincome){
-              primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount;
-            }
-            if(user.currenttotalsaving){
-              primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount;
-            }
-            if(user.currenttotalinvest){
-              primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
-            }
-
-            db.Expenses.findAll({
-              where: {
-                userId: payload.userId,
-                deleted: false,
-                date: {
-                  [Op.gte]: finUtils.startOfMonth(),
-                  [Op.lte]: finUtils.endOfMonth()
-                },
-              },
-              include: [
-                {
-                  model: db.ExpensesCategory, 
-                  attributes: ['name'],
-                },
-              ]
-            })
-              .then(function (expensesData) {
-                if(expensesData){
-                  callback(primaryTotals, expensesData)
-                } else {
-                  callback(false, null, "No expenses data found")
-                }
-              })
-          } else {
-            callback(false, null, "User not found")
+      .then(function (user) {
+        if(user){
+          primaryTotals['user'] = {
+            userId: user.id,
+            username: user.username,
+            email: user.email,
+          };
+          if(user.currenttotalexpense){
+            primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount;
           }
-        })
+          if(user.currenttotalincome){
+            primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount;
+          }
+          if(user.currenttotalsaving){
+            primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount;
+          }
+          if(user.currenttotalinvest){
+            primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
+          }
+
+          db.Expenses.findAll({
+            where: {
+              userId: payload.userId,
+              deleted: false,
+              date: {
+                [Op.gte]: finUtils.startOfMonth(),
+                [Op.lte]: finUtils.endOfMonth()
+              },
+            },
+            include: [
+              {
+                model: db.ExpensesCategory, 
+                attributes: ['name'],
+              },
+            ]
+          })
+            .then(function (expensesData) {
+              if(expensesData){
+                callback(primaryTotals, expensesData)
+              } else {
+                callback(false, null, "No expenses data found")
+              }
+            })
+        } else {
+          callback(false, null, "User not found")
+        }
+      })
     }
   },
 
