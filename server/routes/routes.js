@@ -5,7 +5,7 @@ var path = require('path')
 var authUtils = require('../helpers/authUtils.js');
 
 router.get('/', function(req, res){
-  res.status(202).sendFile(path.resolve(__dirname + "../../desktop_client/index.html"));
+  res.status(202).sendFile(path.resolve(__dirname + "../../client/index.html"));
 })
 
 //Auth routes

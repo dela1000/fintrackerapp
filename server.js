@@ -1,12 +1,12 @@
 var mysql = require('mysql');
 var express = require('express');
 var path = require('path');
-var db = require(__dirname + '/db/db.js');
-var secrets = require('../secrets/secrets.js');
+var db = require(__dirname + '/server/db/db.js');
+var secrets = require(__dirname + '/secrets/secrets.js');
 
 //Middleware
 var parser = require('body-parser');
-var router = require(__dirname + '/routes/routes.js');
+var router = require(__dirname + '/server/routes/routes.js');
 
 // Router
 var app = express();
@@ -27,8 +27,8 @@ app.use(function(req, res, next) {
 });
 
 // Serving static files from client directory.
-app.use(express.static(__dirname + '../desktop_client'));
-app.use('/',  express.static(path.join(__dirname, '../desktop_client/')));
+app.use(express.static(__dirname + '../client'));
+app.use('/',  express.static(path.join(__dirname, '../client/')));
 // Set up our routes
 app.use("/", router);
 
