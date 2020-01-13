@@ -42,6 +42,12 @@ router.patch('/categories', authUtils.checkUser, function (req, res) {
   controllers.categories.patch(req, res)
 })
 
+// ADD CATEGORIES IN BULK
+router.post('/categories_bulk', authUtils.checkUser, function (req, res) {
+  controllers.categories_bulk.post(req, res)
+})
+
+
 //Income routes
 router.post('/income', authUtils.checkUser, function (req, res) {
   controllers.income.post(req, res)

@@ -127,10 +127,6 @@ module.exports = {
       var tableName = payload.type + 'Category';
       db[tableName].bulkCreate(
           payload.data,
-          {
-            ignoreDuplicates: true,
-            individualHooks: true
-          }
         )
         .then(function (categoriesAdded) {
           if (categoriesAdded) {

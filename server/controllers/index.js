@@ -332,8 +332,7 @@ module.exports = controllers = {
     }
   },
 
-  categories: {
-
+  categories_bulk: {
     post: function (req, res) {
       var type = finUtils.type(req.body.type);
       var data = req.body.newCategories;
@@ -345,6 +344,40 @@ module.exports = controllers = {
         type: type,
         data: data
       };
+      models.categories_bulk.post(payload, function (categoriesAdded, categoriesMessage) {
+        if(categoriesAdded){
+          res.status(200).json({
+              success: true,
+              data: {
+                type: type,
+                categoriesAdded: categoriesAdded
+              }
+          });
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: categoriesMessage
+            }
+          });
+        };
+      })
+    },
+  },
+
+  categories: {
+    post: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var data = req.body.newCategories;
+      _.forEach(data, function (item) {
+        item['userId'] = req.headers.userId;
+        item['name'] = item['name'].toLowerCase();
+      })
+      var payload = {
+        type: type,
+        data: data
+      };
+      console.log("+++ 347 index.js payload: ", payload)
       models.categories.post(payload, function (categoriesAdded, categoriesMessage) {
         if(categoriesAdded){
           res.status(200).json({
