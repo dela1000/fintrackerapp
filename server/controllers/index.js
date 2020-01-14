@@ -843,7 +843,7 @@ module.exports = controllers = {
         if(data){
           _.forEach(data, function (db) {
             if(db.Database === "fin"){
-              finDB = db.Database + " DB PRESENT AND WORKING!";
+              finDB = "DB PRESENT AND WORKING: " + db.Database;
             }
           })
           res.status(200).json({

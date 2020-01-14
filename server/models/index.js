@@ -604,11 +604,7 @@ module.exports = {
     // }
     get: function (callback) {
       console.log("+++ 605 index.js Here")
-      var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
-        host: 'localhost',
-        dialect: 'mysql'
-      });
-      sequelize.query('show databases')
+      db.sequelize.query('show databases')
         .then(function(rows) {
             callback(rows[0])
         })

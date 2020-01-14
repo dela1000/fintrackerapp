@@ -553,3 +553,6 @@ exports.IncomeAccount = IncomeAccount;
 exports.SavingsAccount = SavingsAccount;
 exports.InvestAccount = InvestAccount;
 
+// MAIN RETURN FOR SEQUELIZE CONNECTION. GOOD FOR RAW SQL QUERIES
+// with db.sql.query(add_raw_query_here)
+exports.sequelize = sequelize;
