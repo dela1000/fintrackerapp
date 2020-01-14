@@ -838,9 +838,32 @@ module.exports = controllers = {
   // TEST PING
   ping: {
     get: function (req, res){
-      res.status(200).json({
-        ping: "System Working",
-        headers:req.headers
+      models.ping.get(function (data) {
+        var finDB = "NOT PRESENT";
+        if(data){
+          _.forEach(data, function (db) {
+            if(db.Database === "fin"){
+              finDB = db.Database + " DB PRESENT AND WORKING!";
+            }
+          })
+          res.status(200).json({
+            success: true,
+            data: {
+              ping: "API WORKING",
+              finDB: finDB,
+              headers:req.headers
+            }
+          })
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              ping: "API WORKING",
+              finDB: finDB,
+              headers:req.headers
+            }
+          })
+        };
       })
     }
   },

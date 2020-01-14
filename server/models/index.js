@@ -2,6 +2,7 @@
 var db = require('../db/db.js');
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
+var secrets = require('../../secrets/secrets.js');
 var authUtils = require('../helpers/authUtils.js');
 var finUtils = require('../helpers/finUtils.js');
 var Promise = require('bluebird');
@@ -591,6 +592,29 @@ module.exports = {
           callback(false, null, "User not found")
         }
       })
+    }
+  },
+
+  ping: {
+    // get: function (callback) {
+    //   db.User.findAll()
+    //   .then(function (data) {
+    //     callbackdata
+    //   })
+    // }
+    get: function (callback) {
+      console.log("+++ 605 index.js Here")
+      var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
+        host: 'localhost',
+        dialect: 'mysql'
+      });
+      sequelize.query('show databases')
+        .then(function(rows) {
+            callback(rows[0])
+        })
+        .catch((err) => {
+            callback(false)
+        })
     }
   },
 
