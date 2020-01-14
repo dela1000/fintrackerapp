@@ -113,7 +113,7 @@ module.exports = {
       })
       .then(function (user) {
         if(user){
-          user.initial = true;
+          user.initials_done = true;
           user.save();
           callback(user);
         } else {
@@ -579,7 +579,7 @@ module.exports = {
               [Op.lte]: finUtils.endOfYear()
             }
           }
-          console.log("+++ 581 index.js searchData: ", searchData)
+
           db.Expenses.findAll(searchData)
             .then(function (expensesData) {
               if(expensesData){
@@ -596,12 +596,6 @@ module.exports = {
   },
 
   ping: {
-    // get: function (callback) {
-    //   db.User.findAll()
-    //   .then(function (data) {
-    //     callbackdata
-    //   })
-    // }
     get: function (callback) {
       console.log("+++ 605 index.js Here")
       db.sequelize.query('show databases')

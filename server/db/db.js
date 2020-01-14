@@ -29,7 +29,7 @@ var User = sequelize.define('user', {
       type: Sequelize.STRING,
       unique: true
     },
-    initial: {
+    initials_done: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
