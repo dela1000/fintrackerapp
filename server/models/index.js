@@ -508,7 +508,7 @@ module.exports = {
     }
   },
 
-  primary_totals: {
+  all_totals: {
     get: function (payload, callback) {
       var primaryTotals = {};
       db.User.findOne({
@@ -555,8 +555,7 @@ module.exports = {
           if(user.currenttotalinvest){
             primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
           }
-
-          db.Expenses.findAll({
+          var searchData = {
             where: {
               userId: payload.userId,
               deleted: false,
@@ -571,7 +570,16 @@ module.exports = {
                 attributes: ['name'],
               },
             ]
-          })
+          }
+
+          if(payload.timeframe === 'year'){
+            searchData['where']['date'] = {
+              [Op.gte]: finUtils.startOfYear(),
+              [Op.lte]: finUtils.endOfYear()
+            }
+          }
+          console.log("+++ 581 index.js searchData: ", searchData)
+          db.Expenses.findAll(searchData)
             .then(function (expensesData) {
               if(expensesData){
                 callback(primaryTotals, expensesData)

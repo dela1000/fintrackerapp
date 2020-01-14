@@ -59,3 +59,11 @@ exports.startOfMonth = function () {
 exports.endOfMonth = function () {
   return moment().endOf('month').format('x');
 }
+
+exports.startOfYear = function () {
+  return moment().startOf('year').format('x');
+}
+
+exports.endOfYear = function () {
+  return moment().endOf('year').format('x');
+}

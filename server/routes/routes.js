@@ -28,6 +28,11 @@ router.post('/set_initials', authUtils.checkUser, function (req, res) {
   controllers.set_initials.post(req, res)
 })
 
+// ADD CATEGORIES IN BULK
+router.post('/categories_bulk', authUtils.checkUser, function (req, res) {
+  controllers.categories_bulk.post(req, res)
+})
+
 //Category routes
 // NEED TO ADD CATEGORIES ROUTES (CREATE, UPDATE, DELETE)
 router.post('/categories', authUtils.checkUser, function (req, res) {
@@ -42,23 +47,10 @@ router.patch('/categories', authUtils.checkUser, function (req, res) {
   controllers.categories.patch(req, res)
 })
 
-// ADD CATEGORIES IN BULK
-router.post('/categories_bulk', authUtils.checkUser, function (req, res) {
-  controllers.categories_bulk.post(req, res)
-})
-
 
 //Income routes
 router.post('/income', authUtils.checkUser, function (req, res) {
   controllers.income.post(req, res)
-})
-
-// router.get('/income', authUtils.checkUser, function (req, res) {
-//   controllers.income.get(req, res)
-// })
-
-router.patch('/income', authUtils.checkUser, function (req, res) {
-  controllers.income.patch(req, res)
 })
 
 //Expenses routes
@@ -66,9 +58,13 @@ router.post('/expenses', authUtils.checkUser, function (req, res) {
   controllers.expenses.post(req, res)
 })
 
-// router.get('/expenses', authUtils.checkUser, function (req, res) {
-//   controllers.expenses.get(req, res)
-// })
+
+
+
+router.patch('/income', authUtils.checkUser, function (req, res) {
+  controllers.income.patch(req, res)
+})
+
 
 router.patch('/expenses', authUtils.checkUser, function (req, res) {
   controllers.expenses.patch(req, res)
@@ -86,9 +82,8 @@ router.get('/search_specifics', authUtils.checkUser, function (req, res) {
 })
 
 //TOTALS
-
-router.get('/primary_totals', authUtils.checkUser, function (req, res) {
-  controllers.primary_totals.get(req, res)
+router.get('/all_totals', authUtils.checkUser, function (req, res) {
+  controllers.all_totals.get(req, res)
 })
 
 router.get('/expenses_totals', authUtils.checkUser, function (req, res) {

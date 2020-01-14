@@ -800,20 +800,23 @@ module.exports = controllers = {
     }
   },
 
-  primary_totals: {
+  all_totals: {
     get: function (req, res) {
       var payload = {
         userId: req.headers.userId,
         timeframe: 'month'
       }
-      models.primary_totals.get(payload, function (primaryTotals, expensesData, message) {
+      if(req.query.timeframe == "year"){
+        payload.timeframe = req.query.timeframe
+      }
+      models.all_totals.get(payload, function (primaryTotals, expensesData, message) {
         if(primaryTotals && expensesData){
           var addedTotals = finUtils.addTotals(expensesData);
 
           primaryTotals['currentMonthExpensesTotals'] = addedTotals.totals;
           primaryTotals['timeframe'] = payload.timeframe;
           primaryTotals['expensesCount'] = expensesData.length;
-          primaryTotals['totalAmount'] = addedTotals.totalAmount.toFixed(2);
+          primaryTotals['totalExpensesAmount'] = addedTotals.totalAmount.toFixed(2);
 
           res.status(200).json({
             success: true,
