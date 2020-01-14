@@ -368,16 +368,12 @@ module.exports = controllers = {
   categories: {
     post: function (req, res) {
       var type = finUtils.type(req.body.type);
-      var data = req.body.newCategories;
-      _.forEach(data, function (item) {
-        item['userId'] = req.headers.userId;
-        item['name'] = item['name'].toLowerCase();
-      })
+      var data = req.body.newCategory;
+      data['userId'] = req.headers.userId;
       var payload = {
         type: type,
         data: data
       };
-      console.log("+++ 347 index.js payload: ", payload)
       models.categories.post(payload, function (categoriesAdded, categoriesMessage) {
         if(categoriesAdded){
           res.status(200).json({
