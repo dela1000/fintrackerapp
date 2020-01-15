@@ -414,7 +414,6 @@ module.exports = {
         currentIncomeTotal.amount = currentIncomeTotal.amount - payload.amount;
         currentIncomeTotal.amount = currentIncomeTotal.amount.toFixed(2);
         currentIncomeTotal.save();
-        console.log("+++ 390 index.js currentIncomeTotal.dataValues: ", currentIncomeTotal.dataValues)
         callback(currentIncomeTotal)
       })
     }
