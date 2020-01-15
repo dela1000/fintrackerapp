@@ -77,6 +77,10 @@ router.get('/search_specifics', authUtils.checkUser, function (req, res) {
   controllers.search_specifics.get(req, res)
 })
 
+router.post('/savings', authUtils.checkUser, function (req, res) {
+  controllers.savings.post(req, res)
+})
+
 
 
 //TO FIX

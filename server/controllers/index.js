@@ -520,7 +520,7 @@ module.exports = controllers = {
     },
     patch: function (req, res) {
       var payload = { 
-        id: req.body.id,
+        userId: req.headers.userId,
       }
       _.forEach(req.body, function (value, key) {
         if(key === "date"){
@@ -534,11 +534,11 @@ module.exports = controllers = {
         if (updatedIncome) {
           if(payload.amount){
             var updateTotalPayload = {
-              userId: payload.id,
+              userId: payload.userId,
               newAmount: payload.amount,
               previousAmount: updatedIncome._previousDataValues.amount,
             }
-            models.updateTotalIncome.patch(updateTotalPayload, function (updatedTotal, message) {
+            models.updateTotalIncome.patch(updateTotalPayload, function (updatedTotal, patchMessage) {
               if(updatedTotal){
                 res.status(200).json({
                   success: true,
@@ -551,7 +551,7 @@ module.exports = controllers = {
                 res.status(200).json({
                   success: false,
                   data: {
-                    message: message
+                    message: patchMessage
                   }
                   
                 })

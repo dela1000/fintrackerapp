@@ -285,20 +285,24 @@ module.exports = {
       })
     },
     patch: function (payload, callback) {
-      db.Income.find({
+      console.log("+++ 288 index.js payload: ", payload)
+      db.Income.findOne({
         where: {
-          id: payload.id
+          userId: payload.userId,
+          id: payload.id,
         }
       })
-      .then(function (income) {
-        if(income !== null){
+      .then(function (incomeLine) {
+        if(incomeLine){
           _.forEach(payload, function (value, key) {
-            if(key !== "id"){
-              income[key] = value;
+            if(key !== "id" && key !== "userId"){
+              if(incomeLine[key]){
+                incomeLine[key] = value;
+              }
             }
           })
-          income.save();
-          callback(income)
+          incomeLine.save();
+          callback(incomeLine)
         } else{
           callback(false, "Income not found")
         };
@@ -420,11 +424,11 @@ module.exports = {
     patch: function (payload, callback) {
       db.CurrentTotalIncome.findOne({
         where: {
-          id: payload.userId
+          userId: payload.userId
         }
       })
       .then(function (currentTotalIncome) {
-        if(currentTotalIncome !== null){
+        if(currentTotalIncome){
           currentTotalIncome.amount = currentTotalIncome.amount - payload.previousAmount + payload.newAmount;
           currentTotalIncome.save();
           callback(currentTotalIncome)
