@@ -208,29 +208,48 @@ module.exports = controllers = {
                                           if(currentSavings){
                                             models.increaseTotalAmount.patch(totalAmounts.Invest, function (currentInvest, currentInvestMessage) {
                                               if (currentInvest) {
-                                                var data = {
-                                                  userId: userId
+                                                var currentAvailableValues = {
+                                                  userId: userId,
+                                                  currentIncome: Number(currentIncome.amount), 
+                                                  currentExpenses: 0
                                                 }
-                                                console.log("controllers: UPDATE INITIAL USER FLAG")
-                                                models.initials_done.post(data, function (updated) {
-                                                  if(updated){
-                                                    console.log("controllers: INITIALS DONE - RETURNING DATA TO CLIENT")
+                                                models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                                                  if (currentAvailable) {
+                                                    console.log("controllers: UPDATE INITIAL USER FLAG")
+                                                    var userData = {
+                                                      userId: userId
+                                                    }
+                                                    models.initials_done.post(userData, function (updated, userInitialsMessage) {
+                                                      if(updated){
+                                                        console.log("controllers: INITIALS DONE - RETURNING DATA TO CLIENT")
+                                                        res.status(200).json({
+                                                          success: true,
+                                                          data: {
+                                                            itemsAdded: finalInitial,
+                                                            currentTotalIncome: Number(currentIncome.amount), 
+                                                            currentTotalSavings: Number(currentSavings.amount),
+                                                            currentTotalInvest: Number(currentInvest.amount),
+                                                            currentAvailable:  Number(currentAvailable.amount),
+                                                            currentTotalExpenses: 0,
+                                                          }
+                                                        });
+                                                      } else{
+                                                        res.status(200).json({
+                                                          success: false,
+                                                          data: {
+                                                            message: userInitialsMessage
+                                                          }
+                                                        })
+                                                      };
+                                                    })
+                                                  } else {
                                                     res.status(200).json({
-                                                      success: true,
+                                                      success: false,
                                                       data: {
-                                                        itemsAdded: finalInitial,
-                                                        currentTotalIncome: Number(currentIncome.amount), 
-                                                        currentTotalSavings: Number(currentSavings.amount),
-                                                        currentTotalInvest: Number(currentInvest.amount),
-                                                        currentTotalExpenses: 0,
+                                                        message: currentAvailableMessage
                                                       }
-                                                    });
-                                                  } else{
-                                                    res.status(200).json({
-                                                        success: false,
-                                                        message: "User not updated"
-                                                      });
-                                                  };
+                                                    })
+                                                  }
                                                 })
                                                 
                                               } else {
@@ -652,24 +671,30 @@ module.exports = controllers = {
     },
     patch: function (req, res) {
       var payload = { 
-        id: req.body.id,
-        amount: req.body.amount,
-        comment: req.body.comment,
-        categoryId: req.body.categoryId,
-        date: req.body.date,
+        userId: req.headers.userId,
       }
-      console.log("+++ 368 index.js payload: ", payload)
-      // res.status(200).json({
-      //   success: true,
-      // })
-      // models.expenses.patch(payload, function (updatedExpense) {
-      //   if (updatedExpense) {
-      //     res.status(200).json(updatedExpense)
-      //   }else{
-      //     console.log("That expense does not exist")
-      //     res.sendStatus(404)
-      //   }
-      // })
+      _.forEach(req.body, function (value, key) {
+        if(key === "date"){
+          payload[key] = finUtils.startOfDay(value);
+        } else{
+          payload[key] = value
+        }
+      })
+      console.log("+++ 664 index.js payload: ", payload)
+      models.expenses.patch(payload, function (updatedIncome, message) {
+        console.log("+++ 666 index.js updatedIncome: ", updatedIncome)
+        if (updatedIncome) {
+          console.log("+++ 668 index.js updatedIncome: ", updatedIncome)
+          // CONTINUE TO WORK HERE
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: message
+            }
+          });
+        };
+      })
     }
   },
 

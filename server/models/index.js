@@ -72,7 +72,10 @@ module.exports = {
                       .then(function () {
                         db.CurrentTotalInvest.create(createTotal)
                           .then(function () {
-                            callback(found);
+                            db.CurrentAvailable.create(createTotal)
+                              .then(function () {
+                                callback(found);
+                              })
                           })
                       })
                   })
@@ -117,7 +120,7 @@ module.exports = {
           user.save();
           callback(user);
         } else {
-          callback(false)
+          callback(false, "User Initials not updated")
         }
       })
     }
@@ -285,7 +288,6 @@ module.exports = {
       })
     },
     patch: function (payload, callback) {
-      console.log("+++ 288 index.js payload: ", payload)
       db.Income.findOne({
         where: {
           userId: payload.userId,
@@ -342,21 +344,26 @@ module.exports = {
         };
       })
     },
-    put: function (expenseId, amount, comment, categoryId, callback) {
-      db.Expenses.find({
+    patch: function (payload, callback) {
+      db.Expenses.findOne({
         where: {
-          id: expenseId
+          userId: payload.userId,
+          id: payload.id,
         }
       })
-      .then(function (expense) {
-        if(expense !== null){
-          expense.amount = amount;
-          expense.comment = comment;
-          expense.categoryid = categoryId;
-          expense.save();
-          callback(expense)
+      .then(function (expenseLine) {
+        if(expenseLine){
+          _.forEach(payload, function (value, key) {
+            if(key !== "id" && key !== "userId"){
+              if(expenseLine[key]){
+                expenseLine[key] = value;
+              }
+            }
+          })
+          expenseLine.save();
+          callback(expenseLine)
         } else{
-          callback(false)
+          callback(false, "Income not found")
         };
       })
     }
@@ -419,6 +426,23 @@ module.exports = {
     }
   },
 
+  updateCurrentAvailable: {
+    patch: function (payload, callback) {
+      db.CurrentAvailable.findOne({
+        where: {
+          userId: payload.userId
+        },
+        attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
+      })
+      .then(function (currentAvailable) {
+        currentAvailable.amount = payload.currentIncome - payload.currentExpenses
+        currentAvailable.amount = currentAvailable.amount.toFixed(2);
+        currentAvailable.save();
+        callback(currentAvailable)
+      })
+    }
+  },
+
   updateTotalIncome: {
     patch: function (payload, callback) {
       db.CurrentTotalIncome.findOne({
@@ -431,6 +455,25 @@ module.exports = {
           currentTotalIncome.amount = currentTotalIncome.amount - payload.previousAmount + payload.newAmount;
           currentTotalIncome.save();
           callback(currentTotalIncome)
+        } else{
+          callback(false, "Current Total Income not found")
+        };
+      })
+    }
+  },
+
+  updateTotalExpenses: {
+    patch: function (payload, callback) {
+      db.CurrentTotalExpenses.findOne({
+        where: {
+          userId: payload.userId
+        }
+      })
+      .then(function (currentTotalExpenses) {
+        if(currentTotalExpenses){
+          currentTotalExpenses.amount = currentTotalExpenses.amount - payload.previousAmount + payload.newAmount;
+          currentTotalExpenses.save();
+          callback(currentTotalExpenses)
         } else{
           callback(false, "Current Total Income not found")
         };

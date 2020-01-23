@@ -359,6 +359,26 @@ var InvestAccount = sequelize.define('investaccount', {
     paranoid: true
 });
 
+var CurrentAvailable = sequelize.define('currentavailable', {
+      id: {
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+        autoIncrement: true
+      },
+      amount: {
+        type: Sequelize.FLOAT(20,2),
+        allowNull: false
+      },
+      deleted: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      }
+    }, {
+      timestamps: true
+    }, {
+      paranoid: true
+});
+
 //Users have many Expenses, Expenses have one user
 Income.belongsTo(User, {
   foreignKey: 'userId'
@@ -476,6 +496,14 @@ User.hasMany(InvestAccount, {
   foreignKey: 'userId'
 })
 
+CurrentAvailable.belongsTo(User, {
+  foreignKey: 'userId'
+});
+
+User.hasOne(CurrentAvailable, {
+  foreignKey: 'userId'
+})
+
 
 
 User.sync().then(function(){
@@ -522,7 +550,9 @@ User.sync().then(function(){
                             Savings.belongsTo(SavingsAccount, {
                               foreignKey: 'accountId'
                             });
-                            // testData();
+                            CurrentAvailable.sync().then(function(){
+                              // testData();
+                            })
                           })
                         })
                       })
@@ -552,6 +582,7 @@ exports.ExpensesCategory = ExpensesCategory;
 exports.IncomeAccount = IncomeAccount;
 exports.SavingsAccount = SavingsAccount;
 exports.InvestAccount = InvestAccount;
+exports.CurrentAvailable = CurrentAvailable;
 
 // MAIN RETURN FOR SEQUELIZE CONNECTION. GOOD FOR RAW SQL QUERIES
 // with db.sql.query(add_raw_query_here)
