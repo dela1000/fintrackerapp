@@ -210,9 +210,9 @@ module.exports = controllers = {
                                               if (currentInvest) {
                                                 var currentAvailableValues = {
                                                   userId: userId,
-                                                  currentIncome: Number(currentIncome.amount), 
-                                                  currentExpenses: 0
+                                                  totalToUpdate: Number(currentIncome.amount)
                                                 }
+                                                console.log("controllers: UPDATE CURRENT AVAILABLE")
                                                 models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
                                                   if (currentAvailable) {
                                                     console.log("controllers: UPDATE INITIAL USER FLAG")
@@ -471,7 +471,7 @@ module.exports = controllers = {
         type: type,
         data: req.body.incomeData
       }
-      totalAmounts = {
+      var totalAmounts = {
         userId: userId,
         type: type,
         amount: 0
@@ -481,15 +481,31 @@ module.exports = controllers = {
         amount['date'] = finUtils.unixDate(amount.date);
         totalAmounts['amount'] = totalAmounts['amount'] + amount.amount;
       })
-      models.bulk_add.post(payload, function (amountCreated, bulkMessage) {
-        if(amountCreated){
-          models.increaseTotalAmount.patch(totalAmounts, function (currentTotal, currentIncomeMessage) {
-            if(currentTotal){
-              res.status(200).json({
-                success: true,
-                data: {
-                  amountCreated: amountCreated,
-                  currentIncome: Number(currentTotal.amount),
+      models.bulk_add.post(payload, function (amountsCreated, bulkMessage) {
+        if(amountsCreated){
+          models.increaseTotalAmount.patch(totalAmounts, function (currentTotalIncome, currentIncomeMessage) {
+            if(currentTotalIncome){
+              var currentAvailableValues = {
+                userId: userId,
+                totalToUpdate: totalAmounts['amount']
+              }
+              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                if (currentAvailable) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      amountsCreated: amountsCreated,
+                      currentTotalIncome: Number(currentTotalIncome.amount),
+                      currentAvailable: Number(currentAvailable.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: currentAvailableMessage
+                    }
+                  })
                 }
               })
             } else{
@@ -617,24 +633,29 @@ module.exports = controllers = {
           // UPDATE EXPENSES TOTAL
           models.increaseTotalAmount.patch(newExpensesTotal, function (newTotalExpenses, totalExpensesMessage) {
             if(newTotalExpenses){
-              models.updateTotalIncomeAfterExpenses.patch(newExpensesTotal, function (newTotalIncome, totalIncomeMessage) {
-                if(newTotalIncome){
+              // ADD THIS HERE!!!!
+              var currentAvailableValues = {
+                userId: userId,
+                totalToUpdate: -newExpensesTotal.amount
+              }
+              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                if (currentAvailable) {
                   res.status(200).json({
                     success: true,
                     data: {
                       expensesCreated: expensesCreated,
                       newTotalExpenses: Number(newTotalExpenses.amount),
-                      newTotalIncome: Number(newTotalIncome.amount),
+                      currentAvailable: Number(currentAvailable.amount),
                     }
-                  });
-                } else{
+                  })
+                } else {
                   res.status(200).json({
                     success: false,
                     data: {
-                      message: totalIncomeMessage
+                      message: currentAvailableMessage
                     }
-                  });
-                };
+                  })
+                }
               })
             } else {
               res.status(200).json({

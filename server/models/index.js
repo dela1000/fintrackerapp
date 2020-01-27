@@ -428,6 +428,7 @@ module.exports = {
 
   updateCurrentAvailable: {
     patch: function (payload, callback) {
+      console.log("+++ 431 index.js payload: ", payload)
       db.CurrentAvailable.findOne({
         where: {
           userId: payload.userId
@@ -435,7 +436,7 @@ module.exports = {
         attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
       })
       .then(function (currentAvailable) {
-        currentAvailable.amount = payload.currentIncome - payload.currentExpenses
+        currentAvailable.amount = currentAvailable.amount + payload.totalToUpdate;
         currentAvailable.amount = currentAvailable.amount.toFixed(2);
         currentAvailable.save();
         callback(currentAvailable)
