@@ -847,7 +847,7 @@ module.exports = controllers = {
             userId: userId,
             amount: -expenses.dataValues.amount
           }
-          models.increaseTotalAmount.patch(deletedAmount, function (currentTotalExpenses, currentIncomeMessage) {
+          models.increaseTotalAmount.patch(deletedAmount, function (currentTotalExpenses, currentExpensesMessage) {
             if(currentTotalExpenses){
               var currentAvailableValues = {
                 userId: userId,
@@ -877,7 +877,7 @@ module.exports = controllers = {
               res.status(200).json({
                 success: false,
                 data: {
-                  message: currentIncomeMessage
+                  message: currentExpensesMessage
                 }
               })
             };
@@ -886,7 +886,7 @@ module.exports = controllers = {
           res.status(200).json({
             success: false,
             data: {
-              message: incomeMessage
+              message: expensesMessage
             }
           });
         }
