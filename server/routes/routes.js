@@ -58,13 +58,28 @@ router.post('/income', authUtils.checkUser, function (req, res) {
   controllers.income.post(req, res)
 })
 
+router.patch('/income', authUtils.checkUser, function (req, res) {
+  controllers.income.patch(req, res)
+})
+
+router.delete('/income', authUtils.checkUser, function (req, res) {
+  controllers.income.delete(req, res)
+})
+
 //Expenses routes
 router.post('/expenses', authUtils.checkUser, function (req, res) {
   controllers.expenses.post(req, res)
 })
 
-//TOTALS
+router.patch('/expenses', authUtils.checkUser, function (req, res) {
+  controllers.expenses.patch(req, res)
+})
 
+router.delete('/expenses', authUtils.checkUser, function (req, res) {
+  controllers.expenses.delete(req, res)
+})
+
+//TOTALS
 router.get('/all_totals', authUtils.checkUser, function (req, res) {
   controllers.all_totals.get(req, res)
 })
@@ -77,20 +92,9 @@ router.get('/search_specifics', authUtils.checkUser, function (req, res) {
   controllers.search_specifics.get(req, res)
 })
 
+//TO DO
 router.post('/savings', authUtils.checkUser, function (req, res) {
   controllers.savings.post(req, res)
-})
-
-
-
-//TO FIX
-router.patch('/income', authUtils.checkUser, function (req, res) {
-  controllers.income.patch(req, res)
-})
-
-
-router.patch('/expenses', authUtils.checkUser, function (req, res) {
-  controllers.expenses.patch(req, res)
 })
 
 

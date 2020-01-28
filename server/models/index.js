@@ -37,7 +37,6 @@ module.exports = {
 
   signup: {
     post: function (payload, callback) {
-      console.log("+++ 37 index.js payload: ", payload)
       db.User.findOrCreate({
         where: {
           [Op.or]: [
@@ -273,9 +272,10 @@ module.exports = {
       db.Income.findAll({
         where: {
           userId: payload.userId,
+          deleted: false,
           date: {
-              $gte: payload.startDate,
-              $lte: payload.endDate
+            $gte: payload.startDate,
+            $lte: payload.endDate
           }
         }
       })
@@ -309,6 +309,23 @@ module.exports = {
           callback(false, "Income not found")
         };
       })
+    },
+    delete: function (payload, callback) {
+      db.Income.findOne({
+        where: {
+          userId: payload.userId,
+          id: payload.id,
+        }
+      })
+      .then(function (incomeLine) {
+        if(incomeLine){
+          incomeLine.deleted = true;
+          incomeLine.save();
+          callback(incomeLine)
+        } else{
+          callback(false, "Income not found")
+        };
+      })
     }
   },
 
@@ -334,6 +351,11 @@ module.exports = {
       db.Expenses.findAll({
         where: {
           userId: payload.userId,
+          deleted: false,
+          date: {
+            $gte: payload.startDate,
+            $lte: payload.endDate
+          }
         }
       })
       .then(function (allExpenses) {
@@ -363,7 +385,24 @@ module.exports = {
           expenseLine.save();
           callback(expenseLine)
         } else{
-          callback(false, "Income not found")
+          callback(false, "Expenses not found")
+        };
+      })
+    },
+    delete: function (payload, callback) {
+      db.Expenses.findOne({
+        where: {
+          userId: payload.userId,
+          id: payload.id,
+        }
+      })
+      .then(function (expensesLine) {
+        if(expensesLine){
+          expensesLine.deleted = true;
+          expensesLine.save();
+          callback(expensesLine)
+        } else{
+          callback(false, "Expenses not found")
         };
       })
     }
@@ -428,7 +467,6 @@ module.exports = {
 
   updateCurrentAvailable: {
     patch: function (payload, callback) {
-      console.log("+++ 431 index.js payload: ", payload)
       db.CurrentAvailable.findOne({
         where: {
           userId: payload.userId

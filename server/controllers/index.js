@@ -624,6 +624,65 @@ module.exports = controllers = {
           });
         }
       })
+    },
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var type = "Income";
+      var payload = {
+        id: req.body.id,
+        userId: userId,
+      }
+      models.income.delete(payload, function (income, incomeMessage) {
+        if (income) {
+          var deletedAmount = {
+            type: type,
+            userId: userId,
+            amount: -income.dataValues.amount
+          }
+          models.increaseTotalAmount.patch(deletedAmount, function (currentTotalIncome, currentIncomeMessage) {
+            if(currentTotalIncome){
+              var currentAvailableValues = {
+                userId: userId,
+                totalToUpdate: -income.dataValues.amount
+              }
+              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                if (currentAvailable) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      id: income.dataValues.id,
+                      incomeDeleted: true,
+                      currentTotalIncome: Number(currentTotalIncome.amount),
+                      currentAvailable: Number(currentAvailable.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: currentAvailableMessage
+                    }
+                  })
+                }
+              })
+            } else{
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: currentIncomeMessage
+                }
+              })
+            };
+          })
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: incomeMessage
+            }
+          });
+        }
+      })
     }
   },
 
@@ -697,6 +756,19 @@ module.exports = controllers = {
       var payload = {
         userId: req.headers.userId
       };
+
+      if(req.query.startDate){
+        payload['startDate'] = finUtils.unixDate(req.query.startDate);
+      } else{
+        payload['startDate'] = finUtils.startOfMonth();
+        
+      };
+      if(req.query.endDate){
+        payload['endDate'] = finUtils.unixDate(req.query.endDate);
+      } else{
+        payload['endDate'] = finUtils.endOfMonth();
+      };
+
       models.expenses.get(payload, function (allExpenses) {
         if (allExpenses) {
           res.status(200).json(allExpenses)
@@ -759,6 +831,65 @@ module.exports = controllers = {
             }
           });
         };
+      })
+    },
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var type = "Expenses";
+      var payload = {
+        id: req.body.id,
+        userId: userId,
+      }
+      models.expenses.delete(payload, function (expenses, expensesMessage) {
+        if (expenses) {
+          var deletedAmount = {
+            type: type,
+            userId: userId,
+            amount: -expenses.dataValues.amount
+          }
+          models.increaseTotalAmount.patch(deletedAmount, function (currentTotalExpenses, currentIncomeMessage) {
+            if(currentTotalExpenses){
+              var currentAvailableValues = {
+                userId: userId,
+                totalToUpdate: -expenses.dataValues.amount
+              }
+              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                if (currentAvailable) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      id: expenses.dataValues.id,
+                      expensesDeleted: true,
+                      currentTotalExpenses: Number(currentTotalExpenses.amount),
+                      currentAvailable: Number(currentAvailable.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: currentAvailableMessage
+                    }
+                  })
+                }
+              })
+            } else{
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: currentIncomeMessage
+                }
+              })
+            };
+          })
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: incomeMessage
+            }
+          });
+        }
       })
     }
   },
