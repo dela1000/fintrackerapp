@@ -633,7 +633,6 @@ module.exports = controllers = {
           // UPDATE EXPENSES TOTAL
           models.increaseTotalAmount.patch(newExpensesTotal, function (newTotalExpenses, totalExpensesMessage) {
             if(newTotalExpenses){
-              // ADD THIS HERE!!!!
               var currentAvailableValues = {
                 userId: userId,
                 totalToUpdate: -newExpensesTotal.amount
@@ -691,8 +690,9 @@ module.exports = controllers = {
       })
     },
     patch: function (req, res) {
+      var userId = req.headers.userId;
       var payload = { 
-        userId: req.headers.userId,
+        userId: userId,
       }
       _.forEach(req.body, function (value, key) {
         if(key === "date"){
@@ -701,17 +701,44 @@ module.exports = controllers = {
           payload[key] = value
         }
       })
-      console.log("+++ 664 index.js payload: ", payload)
-      models.expenses.patch(payload, function (updatedIncome, message) {
-        console.log("+++ 666 index.js updatedIncome: ", updatedIncome)
+      models.expenses.patch(payload, function (updatedIncome, expensesMessage) {
         if (updatedIncome) {
-          console.log("+++ 668 index.js updatedIncome: ", updatedIncome)
           // CONTINUE TO WORK HERE
+          if(payload.amount){
+            var totalToUpdate = updatedIncome._previousDataValues.amount - payload.amount;
+            var currentAvailableValues = {
+              userId: userId,
+              totalToUpdate: totalToUpdate
+            }
+            models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+              if (currentAvailable) {
+                res.status(200).json({
+                  success: true,
+                  data: {
+                    updatedIncome: updatedIncome,
+                    currentAvailable: Number(currentAvailable.amount),
+                  }
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: currentAvailableMessage
+                  }
+                })
+              }
+            })
+          } else {
+            res.status(200).json({
+              success: true,
+              updatedIncome: updatedIncome
+            });
+          }
         } else{
           res.status(200).json({
             success: false,
             data: {
-              message: message
+              message: expensesMessage
             }
           });
         };
