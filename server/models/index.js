@@ -252,7 +252,7 @@ module.exports = {
 
   income: {
     post: function (payload, callback) {
-      if(payload && payload.incomeData.length > 0){
+      if(payload && payload.incomeData && payload.incomeData.length > 0){
         db.Income.bulkCreate(
           payload.incomeData,
           { individualHooks: true }
@@ -332,7 +332,7 @@ module.exports = {
 
   expenses: {
     post: function (payload, callback) {
-      if(payload && payload.expensesData.length > 0){
+      if(payload && payload.expensesData && payload.expensesData.length > 0){
         db.Expenses.bulkCreate(
           payload.expensesData,
           { individualHooks: true }
@@ -409,6 +409,26 @@ module.exports = {
       })
     }
   },
+
+  savings: {
+    post: function (payload, callback) {
+      if(payload && payload.savingsData && payload.savingsData.length > 0){
+        db.Savings.bulkCreate(
+          payload.savingsData,
+          { individualHooks: true }
+        )
+        .then(function (savingsAdded) {
+          if (savingsAdded) {
+            callback(savingsAdded)
+          } else{
+            callback(false)
+          };
+        })
+      } else {
+        callback(false, "Savings not added")
+      };
+    },
+  },
   // Single Total Amount 
   totalAmount: {
     get: function (data, callback) {
@@ -428,7 +448,7 @@ module.exports = {
     },
   },
 
-  increaseTotalAmount: {
+  updateTotalAmount: {
     patch: function (payload, callback) {
       var tableName = "CurrentTotal" + payload.type;
       db[tableName].findOne({
@@ -446,23 +466,6 @@ module.exports = {
         } else{
           callback(false, "Current Total " + payload.type + " not found")
         };
-      })
-    }
-  },
-
-  updateTotalIncomeAfterExpenses: {
-    patch: function (payload, callback) {
-      db.CurrentTotalIncome.findOne({
-        where: {
-          id: payload.userId
-        },
-        attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
-      })
-      .then(function (currentIncomeTotal) {
-        currentIncomeTotal.amount = currentIncomeTotal.amount - payload.amount;
-        currentIncomeTotal.amount = currentIncomeTotal.amount.toFixed(2);
-        currentIncomeTotal.save();
-        callback(currentIncomeTotal)
       })
     }
   },

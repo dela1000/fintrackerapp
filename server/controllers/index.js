@@ -208,11 +208,11 @@ module.exports = controllers = {
                                           console.log("+++ 226 index.js ALL INITIAL ITEMS ADDED")
                                           // UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS
                                           console.log("controllers: UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS")
-                                          models.increaseTotalAmount.patch(totalAmounts.Income, function (currentIncome, currentIncomeMessage) {
+                                          models.updateTotalAmount.patch(totalAmounts.Income, function (currentIncome, currentIncomeMessage) {
                                             if(currentIncome){
-                                              models.increaseTotalAmount.patch(totalAmounts.Savings, function (currentSavings, currentSavingsMessage) {
+                                              models.updateTotalAmount.patch(totalAmounts.Savings, function (currentSavings, currentSavingsMessage) {
                                                 if(currentSavings){
-                                                  models.increaseTotalAmount.patch(totalAmounts.Invest, function (currentInvest, currentInvestMessage) {
+                                                  models.updateTotalAmount.patch(totalAmounts.Invest, function (currentInvest, currentInvestMessage) {
                                                     if (currentInvest) {
                                                       var currentAvailableValues = {
                                                         userId: userId,
@@ -500,7 +500,7 @@ module.exports = controllers = {
       })
       models.bulk_add.post(payload, function (amountsCreated, bulkMessage) {
         if(amountsCreated){
-          models.increaseTotalAmount.patch(totalAmounts, function (currentTotalIncome, currentIncomeMessage) {
+          models.updateTotalAmount.patch(totalAmounts, function (currentTotalIncome, currentIncomeMessage) {
             if(currentTotalIncome){
               var currentAvailableValues = {
                 userId: userId,
@@ -639,7 +639,7 @@ module.exports = controllers = {
             userId: userId,
             amount: -income.dataValues.amount
           }
-          models.increaseTotalAmount.patch(deletedAmount, function (currentTotalIncome, currentIncomeMessage) {
+          models.updateTotalAmount.patch(deletedAmount, function (currentTotalIncome, currentIncomeMessage) {
             if(currentTotalIncome){
               var currentAvailableValues = {
                 userId: userId,
@@ -707,7 +707,7 @@ module.exports = controllers = {
       models.expenses.post(payload, function (expensesCreated) {
         if(expensesCreated){
           // UPDATE EXPENSES TOTAL
-          models.increaseTotalAmount.patch(newExpensesTotal, function (newTotalExpenses, totalExpensesMessage) {
+          models.updateTotalAmount.patch(newExpensesTotal, function (newTotalExpenses, totalExpensesMessage) {
             if(newTotalExpenses){
               var currentAvailableValues = {
                 userId: userId,
@@ -847,7 +847,7 @@ module.exports = controllers = {
             userId: userId,
             amount: -expenses.dataValues.amount
           }
-          models.increaseTotalAmount.patch(deletedAmount, function (currentTotalExpenses, currentExpensesMessage) {
+          models.updateTotalAmount.patch(deletedAmount, function (currentTotalExpenses, currentExpensesMessage) {
             if(currentTotalExpenses){
               var currentAvailableValues = {
                 userId: userId,
@@ -887,6 +887,75 @@ module.exports = controllers = {
             success: false,
             data: {
               message: expensesMessage
+            }
+          });
+        }
+      })
+    }
+  },
+
+  savings: {
+    post: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var userId = req.headers.userId;
+      var payload = {
+        userId: userId,
+        savingsData: req.body.savingsData
+      }
+      var newSavingsTotal = {
+        type: type,
+        userId: userId,
+        amount: 0
+      };
+      _.forEach(payload.savingsData, function(amount) {
+        amount['userId'] = req.headers.userId;
+        amount['date'] = finUtils.unixDate(amount.date);
+        newSavingsTotal.amount = newSavingsTotal.amount + amount.amount;
+      })
+      console.log("+++ 915 index.js payload: ", payload)
+      models.savings.post(payload, function (savingsCreated, savingsMessage) {
+        if (savingsCreated) {
+          models.updateTotalAmount.patch(newSavingsTotal, function (newTotalSavings, totalSavingsMessage){
+            if (newTotalSavings) {
+              var newIncomeTotal = {
+                type: "Income",
+                userId: userId,
+                amount: -newSavingsTotal.amount
+              }
+              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
+                if (newTotalIncome) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      savingsCreated: savingsCreated,
+                      newTotalSavings: Number(newTotalSavings.amount),
+                      newTotalIncome: Number(newTotalIncome.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: totalIncomeMessage
+                    }
+                  });
+                }
+              })
+            } else {
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: totalSavingsMessage
+                }
+              });
+            }
+          })
+          
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: savingsMessage
             }
           });
         }
