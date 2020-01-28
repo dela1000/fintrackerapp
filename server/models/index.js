@@ -292,6 +292,7 @@ module.exports = {
         where: {
           userId: payload.userId,
           id: payload.id,
+          deleted: false,
         }
       })
       .then(function (incomeLine) {
@@ -372,19 +373,20 @@ module.exports = {
         where: {
           userId: payload.userId,
           id: payload.id,
+          deleted: false,
         }
       })
-      .then(function (expenseLine) {
-        if(expenseLine){
+      .then(function (expensesLine) {
+        if(expensesLine){
           _.forEach(payload, function (value, key) {
             if(key !== "id" && key !== "userId"){
-              if(expenseLine[key]){
-                expenseLine[key] = value;
+              if(expensesLine[key]){
+                expensesLine[key] = value;
               }
             }
           })
-          expenseLine.save();
-          callback(expenseLine)
+          expensesLine.save();
+          callback(expensesLine)
         } else{
           callback(false, "Expenses not found")
         };
@@ -428,6 +430,30 @@ module.exports = {
         callback(false, "Savings not added")
       };
     },
+    patch: function (payload, callback) {
+      db.Savings.findOne({
+        where: {
+          userId: payload.userId,
+          id: payload.id,
+          deleted: false,
+        }
+      })
+      .then(function (savingsLine) {
+        if(savingsLine){
+          _.forEach(payload, function (value, key) {
+            if(key !== "id" && key !== "userId"){
+              if(savingsLine[key]){
+                savingsLine[key] = value;
+              }
+            }
+          })
+          savingsLine.save();
+          callback(savingsLine)
+        } else{
+          callback(false, "Savings not found")
+        };
+      })
+    },
     delete: function (payload, callback) {
       db.Savings.findOne({
         where: {
@@ -443,24 +469,6 @@ module.exports = {
           callback(savingsLine)
         } else{
           callback(false, "Savings not found")
-        };
-      })
-    },
-  },
-  // Single Total Amount 
-  totalAmount: {
-    get: function (data, callback) {
-      var tableName = 'CurrentTotal' + data.type;
-      db[tableName].findOne({
-        where: {
-          userId: data.userId
-        }
-      })
-      .then(function (currentTotalIncome) {
-        if (currentTotalIncome) {
-          callback(currentTotalIncome)
-        } else{
-          callback(false)
         };
       })
     },
@@ -484,6 +492,30 @@ module.exports = {
         callback(false, "Invest not added")
       };
     },
+    patch: function (payload, callback) {
+      db.Invest.findOne({
+        where: {
+          userId: payload.userId,
+          id: payload.id,
+          deleted: false,
+        }
+      })
+      .then(function (investLine) {
+        if(investLine){
+          _.forEach(payload, function (value, key) {
+            if(key !== "id" && key !== "userId"){
+              if(investLine[key]){
+                investLine[key] = value;
+              }
+            }
+          })
+          investLine.save();
+          callback(investLine)
+        } else{
+          callback(false, "Invest not found")
+        };
+      })
+    },
     delete: function (payload, callback) {
       db.Invest.findOne({
         where: {
@@ -499,6 +531,25 @@ module.exports = {
           callback(investLine)
         } else{
           callback(false, "Invest not found")
+        };
+      })
+    },
+  },
+
+  // Single Total Amount 
+  totalAmount: {
+    get: function (data, callback) {
+      var tableName = 'CurrentTotal' + data.type;
+      db[tableName].findOne({
+        where: {
+          userId: data.userId
+        }
+      })
+      .then(function (currentTotalIncome) {
+        if (currentTotalIncome) {
+          callback(currentTotalIncome)
+        } else{
+          callback(false)
         };
       })
     },

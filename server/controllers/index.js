@@ -791,11 +791,10 @@ module.exports = controllers = {
           payload[key] = value
         }
       })
-      models.expenses.patch(payload, function (updatedIncome, expensesMessage) {
-        if (updatedIncome) {
-          // CONTINUE TO WORK HERE
+      models.expenses.patch(payload, function (updatedExpenses, expensesMessage) {
+        if (updatedExpenses) {
           if(payload.amount){
-            var totalToUpdate = updatedIncome._previousDataValues.amount - payload.amount;
+            var totalToUpdate = updatedExpenses._previousDataValues.amount - payload.amount;
             var currentAvailableValues = {
               userId: userId,
               totalToUpdate: totalToUpdate
@@ -805,7 +804,7 @@ module.exports = controllers = {
                 res.status(200).json({
                   success: true,
                   data: {
-                    updatedIncome: updatedIncome,
+                    updatedExpenses: updatedExpenses,
                     currentAvailable: Number(currentAvailable.amount),
                   }
                 })
@@ -821,7 +820,7 @@ module.exports = controllers = {
           } else {
             res.status(200).json({
               success: true,
-              updatedIncome: updatedIncome
+              updatedExpenses: updatedExpenses
             });
           }
         } else{
@@ -962,6 +961,78 @@ module.exports = controllers = {
         }
       })
     },
+    patch: function (req, res) {
+      var userId = req.headers.userId;
+      var payload = { 
+        userId: userId,
+      }
+      _.forEach(req.body, function (value, key) {
+        if(key === "date"){
+          payload[key] = finUtils.startOfDay(value);
+        } else{
+          payload[key] = value
+        }
+      })
+      models.savings.patch(payload, function (updatedSavings, savingsMessage) {
+        if (updatedSavings) {
+          if(payload.amount){
+            var totalToUpdate = updatedSavings._previousDataValues.amount - payload.amount;
+            var updateAmount = {
+              userId: userId,
+              type: "Savings",
+              amount: -totalToUpdate,
+            };
+            models.updateTotalAmount.patch(updateAmount, function (newTotalSavings, totalSavingsMessage){
+              if (newTotalSavings) {
+                var updateIncomeTotal = {
+                  userId: userId,
+                  type: "Income",
+                  amount: totalToUpdate,
+                };
+                models.updateTotalAmount.patch(updateIncomeTotal, function (newTotalIncome, totalIncomeMessage){
+                  if (newTotalIncome) {
+                    res.status(200).json({
+                      success: true,
+                      data: {
+                        newTotalSavings: newTotalSavings,
+                        newTotalIncome: Number(newTotalIncome.amount),
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: totalIncomeMessage
+                      }
+                    })
+                  }
+
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalSavingsMessage
+                  }
+                })
+              }
+            })
+          } else {
+            res.status(200).json({
+              success: true,
+              updatedSavings: updatedSavings
+            });
+          }
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: savingsMessage
+            }
+          });
+        };
+      })
+    },
     delete: function (req, res) {
       var userId = req.headers.userId;
       var type = "Savings";
@@ -1089,6 +1160,78 @@ module.exports = controllers = {
             }
           });
         }
+      })
+    },
+    patch: function (req, res) {
+      var userId = req.headers.userId;
+      var payload = { 
+        userId: userId,
+      }
+      _.forEach(req.body, function (value, key) {
+        if(key === "date"){
+          payload[key] = finUtils.startOfDay(value);
+        } else{
+          payload[key] = value
+        }
+      })
+      models.invest.patch(payload, function (updatedInvest, investMessage) {
+        if (updatedInvest) {
+          if(payload.amount){
+            var totalToUpdate = updatedInvest._previousDataValues.amount - payload.amount;
+            var updateAmount = {
+              userId: userId,
+              type: "Invest",
+              amount: -totalToUpdate,
+            };
+            models.updateTotalAmount.patch(updateAmount, function (newTotalInvest, totalInvestMessage){
+              if (newTotalInvest) {
+                var updateIncomeTotal = {
+                  userId: userId,
+                  type: "Income",
+                  amount: totalToUpdate,
+                };
+                models.updateTotalAmount.patch(updateIncomeTotal, function (newTotalIncome, totalIncomeMessage){
+                  if (newTotalIncome) {
+                    res.status(200).json({
+                      success: true,
+                      data: {
+                        newTotalInvest: newTotalInvest,
+                        newTotalIncome: Number(newTotalIncome.amount),
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: totalIncomeMessage
+                      }
+                    })
+                  }
+
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalInvestMessage
+                  }
+                })
+              }
+            })
+          } else {
+            res.status(200).json({
+              success: true,
+              updatedInvest: updatedInvest
+            });
+          }
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: investMessage
+            }
+          });
+        };
       })
     },
     delete: function (req, res) {

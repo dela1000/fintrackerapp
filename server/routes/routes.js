@@ -84,13 +84,22 @@ router.post('/savings', authUtils.checkUser, function (req, res) {
   controllers.savings.post(req, res)
 })
 
+router.patch('/savings', authUtils.checkUser, function (req, res) {
+  controllers.savings.patch(req, res)
+})
+
 router.delete('/savings', authUtils.checkUser, function (req, res) {
   controllers.savings.delete(req, res)
 })
 
+
 //Invest routes
 router.post('/invest', authUtils.checkUser, function (req, res) {
   controllers.invest.post(req, res)
+})
+
+router.patch('/invest', authUtils.checkUser, function (req, res) {
+  controllers.invest.patch(req, res)
 })
 
 router.delete('/invest', authUtils.checkUser, function (req, res) {
