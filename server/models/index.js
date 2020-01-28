@@ -594,44 +594,6 @@ module.exports = {
     }
   },
 
-  updateTotalIncome: {
-    patch: function (payload, callback) {
-      db.CurrentTotalIncome.findOne({
-        where: {
-          userId: payload.userId
-        }
-      })
-      .then(function (currentTotalIncome) {
-        if(currentTotalIncome){
-          currentTotalIncome.amount = currentTotalIncome.amount - payload.previousAmount + payload.newAmount;
-          currentTotalIncome.save();
-          callback(currentTotalIncome)
-        } else{
-          callback(false, "Current Total Income not found")
-        };
-      })
-    }
-  },
-
-  updateTotalExpenses: {
-    patch: function (payload, callback) {
-      db.CurrentTotalExpenses.findOne({
-        where: {
-          userId: payload.userId
-        }
-      })
-      .then(function (currentTotalExpenses) {
-        if(currentTotalExpenses){
-          currentTotalExpenses.amount = currentTotalExpenses.amount - payload.previousAmount + payload.newAmount;
-          currentTotalExpenses.save();
-          callback(currentTotalExpenses)
-        } else{
-          callback(false, "Current Total Income not found")
-        };
-      })
-    }
-  },
-
   search_specifics: {
     get: function (payload, callback) {
       var searchData = {

@@ -585,18 +585,19 @@ module.exports = controllers = {
       models.income.patch(payload, function (updatedIncome, message) {
         if (updatedIncome) {
           if(payload.amount){
+            var amount = updatedIncome._previousDataValues.amount - payload.amount;
             var updateTotalPayload = {
+              type: "Income",
               userId: payload.userId,
-              newAmount: payload.amount,
-              previousAmount: updatedIncome._previousDataValues.amount,
+              amount: -amount
             }
-            models.updateTotalIncome.patch(updateTotalPayload, function (updatedTotal, patchMessage) {
+            models.updateTotalAmount.patch(updateTotalPayload, function (updatedTotal, patchMessage) {
               if(updatedTotal){
                 res.status(200).json({
                   success: true,
                   data: {
                     updatedIncome: updatedIncome,
-                    updatedTotal: updatedTotal
+                    updatedTotal: Number(updatedTotal.amount)
                   }
                 })
               } else{
