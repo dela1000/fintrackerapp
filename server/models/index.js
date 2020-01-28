@@ -607,7 +607,6 @@ module.exports = {
           if(user.currenttotalinvest){
             primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
           }
-          console.log("+++ 610 index.js user.currentavailable: ", user.currentavailable)
           if(user.currentavailable){
             primaryTotals['currentAvailable'] = user.currentavailable.amount;
           }

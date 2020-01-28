@@ -92,10 +92,10 @@ module.exports = controllers = {
       var userId = req.headers.userId;
       var initialData = req.body;
       //Check that user has not set his initials yet.
-      var getUserData = {
+      var userData = {
         userId: userId
-      };
-      models.get_user.get(getUserData, function (user, getUserMessage) {
+      }
+      models.get_user.get(userData, function (user, getUserMessage) {
         if(user) {
           if(!user.dataValues.initials_done){
             console.log("controllers: BEGIN SETTING INITIAL AMOUNTS")
@@ -222,9 +222,6 @@ module.exports = controllers = {
                                                       models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
                                                         if (currentAvailable) {
                                                           console.log("controllers: UPDATE INITIAL USER FLAG")
-                                                          var userData = {
-                                                            userId: userId
-                                                          }
                                                           models.initials_done.post(userData, function (updated, userInitialsMessage) {
                                                             if(updated){
                                                               console.log("controllers: INITIALS DONE - RETURNING DATA TO CLIENT")
