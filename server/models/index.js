@@ -625,7 +625,11 @@ module.exports = {
       var tableName = payload.type;
       var query = {
         where: searchData,
-        include: payload.include
+        include: payload.include,
+        order: [ [ payload.orderBy, payload.order ]]
+      }
+      if(payload.limit){
+        query['limit'] = payload.limit
       }
 
       console.log("query: ", JSON.stringify(query, null, "\t"));
@@ -776,28 +780,30 @@ module.exports = {
 
   test: {
     get: function (payload, callback) {
-      console.log("+++ 547 index.js payload: ", payload)
-      db.Income.findAll({ 
-        where: {
-          userId: payload.userId
-        }, 
-        include: [{
-          model: db.IncomeCategory, 
-          attributes: ['name'],
-          required: false 
-        }, {
-          model: db.IncomeAccount,
-          attributes: ['name'],
-          required: false 
-        }]
-      })
-      .then(function (foundData) {
-        if(foundData){
-          callback(foundData)
-        } else{
-          callback(false, "no data found")
-        };
-      })
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate
+        },
+        deleted: payload.deleted
+      };
+
+      var query = {
+        where: searchData,
+        include: payload.include,
+        order: [ [ 'date', 'DESC' ]]
+      }
+      if(payload.limit){
+        query['limit'] = payload.limit;
+      }
+      var tableName = payload.type;
+      
+      console.log("+++ 792 index.js query: ", query)
+      db[tableName].findAll(query)
+      .then(function(entries){
+        callback(entries)
+      });
     }
   }
 
