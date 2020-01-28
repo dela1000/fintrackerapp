@@ -925,12 +925,29 @@ module.exports = controllers = {
               }
               models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
                 if (newTotalIncome) {
-                  res.status(200).json({
-                    success: true,
-                    data: {
-                      savingsCreated: savingsCreated,
-                      newTotalSavings: Number(newTotalSavings.amount),
-                      newTotalIncome: Number(newTotalIncome.amount),
+                  var currentAvailableValues = {
+                    userId: userId,
+                    totalToUpdate: -newSavingsTotal.amount
+                  }
+                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                    if (currentAvailable) {
+                      res.status(200).json({
+                        success: true,
+                        data: {
+                          savingsCreated: savingsCreated,
+                          newTotalSavings: Number(newTotalSavings.amount),
+                          newTotalIncome: Number(newTotalIncome.amount),
+                          currentAvailable: Number(currentAvailable.amount)
+                        }
+                      })
+                      
+                    } else {
+                      res.status(200).json({
+                        success: false,
+                        data: {
+                          message: totalIncomeMessage
+                        }
+                      });
                     }
                   })
                 } else {
@@ -992,11 +1009,29 @@ module.exports = controllers = {
                 };
                 models.updateTotalAmount.patch(updateIncomeTotal, function (newTotalIncome, totalIncomeMessage){
                   if (newTotalIncome) {
-                    res.status(200).json({
-                      success: true,
-                      data: {
-                        newTotalSavings: newTotalSavings,
-                        newTotalIncome: Number(newTotalIncome.amount),
+                    var currentAvailableValues = {
+                      userId: userId,
+                      type: "Savings",
+                      totalToUpdate: totalToUpdate
+                    }
+                    models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                      if (currentAvailable) {
+                        res.status(200).json({
+                          success: true,
+                          data: {
+                            newTotalSavings: newTotalSavings,
+                            newTotalIncome: Number(newTotalIncome.amount),
+                            currentAvailable: Number(currentAvailable.amount)
+                          }
+                        })
+                        
+                      } else {
+                        res.status(200).json({
+                          success: false,
+                          data: {
+                            message: currentAvailableMessage
+                          }
+                        })
                       }
                     })
                   } else {
@@ -1058,15 +1093,34 @@ module.exports = controllers = {
               }
               models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
                 if (newTotalIncome) {
-                  res.status(200).json({
-                    success: true,
-                    data: {
-                      id: savings.dataValues.id,
-                      savingsDeleted: true,
-                      currentTotalSavings: Number(currentTotalSavings.amount),
-                      newTotalIncome: Number(newTotalIncome.amount),
+                  var currentAvailableValues = {
+                    userId: userId,
+                    type: "Savings",
+                    totalToUpdate: savings.amount
+                  }
+                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                    if (currentAvailable) {
+                      res.status(200).json({
+                        success: true,
+                        data: {
+                          id: savings.dataValues.id,
+                          savingsDeleted: true,
+                          currentTotalSavings: Number(currentTotalSavings.amount),
+                          newTotalIncome: Number(newTotalIncome.amount),
+                          currentAvailable: Number(currentAvailable.amount)
+                        }
+                      })
+                    } else {
+                      res.status(200).json({
+                        success: false,
+                        data: {
+                          message: currentAvailableMessage
+                        }
+                      })
                     }
+
                   })
+                  
                 } else {
                   res.status(200).json({
                     success: false,
@@ -1371,7 +1425,6 @@ module.exports = controllers = {
           attributes: ['name'],
         })
       }
-      console.log("+++ 1372 index.js payload: ", payload)
       models.search_specifics.get(payload, function (foundResults, message) {
         if (foundResults) {
           var finalData = [];
@@ -1398,6 +1451,12 @@ module.exports = controllers = {
             }
             finalData.push(item)
           })
+          var totalAmountFound = 0;
+          if(finalData.length > 0){
+            _.forEach(finalData, function (item) {
+              totalAmountFound = totalAmountFound + item.amount;
+            })
+          }
 
           res.status(200).json({
             success: true,
@@ -1405,6 +1464,7 @@ module.exports = controllers = {
             data: {
               results: finalData,
               totalFound: finalData.length,
+              totalAmountFound: totalAmountFound,
               queryLimit: payload.limit
             },
           });
@@ -1414,7 +1474,7 @@ module.exports = controllers = {
             data: {
               message: message,
               totalFound: 0,
-              queryLimit: payload.limit
+              queryLimit: payload.limit || "not set"
             }
           });
         };
