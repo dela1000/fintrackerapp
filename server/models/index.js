@@ -428,6 +428,24 @@ module.exports = {
         callback(false, "Savings not added")
       };
     },
+    delete: function (payload, callback) {
+      db.Savings.findOne({
+        where: {
+          userId: payload.userId,
+          id: payload.id,
+          deleted: false,
+        }
+      })
+      .then(function (savingsLine) {
+        if(savingsLine){
+          savingsLine.deleted = true;
+          savingsLine.save();
+          callback(savingsLine)
+        } else{
+          callback(false, "Savings not found")
+        };
+      })
+    },
   },
   // Single Total Amount 
   totalAmount: {

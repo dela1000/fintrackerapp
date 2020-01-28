@@ -629,6 +629,7 @@ module.exports = controllers = {
       var userId = req.headers.userId;
       var type = "Income";
       var payload = {
+        type: type,
         id: req.body.id,
         userId: userId,
       }
@@ -837,6 +838,7 @@ module.exports = controllers = {
       var userId = req.headers.userId;
       var type = "Expenses";
       var payload = {
+        type: type,
         id: req.body.id,
         userId: userId,
       }
@@ -912,7 +914,6 @@ module.exports = controllers = {
         amount['date'] = finUtils.unixDate(amount.date);
         newSavingsTotal.amount = newSavingsTotal.amount + amount.amount;
       })
-      console.log("+++ 915 index.js payload: ", payload)
       models.savings.post(payload, function (savingsCreated, savingsMessage) {
         if (savingsCreated) {
           models.updateTotalAmount.patch(newSavingsTotal, function (newTotalSavings, totalSavingsMessage){
@@ -951,6 +952,67 @@ module.exports = controllers = {
             }
           })
           
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: savingsMessage
+            }
+          });
+        }
+      })
+    },
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var type = "Savings";
+      var payload = {
+        type: type,
+        id: req.body.id,
+        userId: userId,
+      }
+      models.savings.delete(payload, function (savings, savingsMessage) {
+        if(savings){
+          var deletedAmount = {
+            type: type,
+            userId: userId,
+            amount: -savings.dataValues.amount
+          }
+          models.updateTotalAmount.patch(deletedAmount, function (currentTotalSavings, currentSavingsMessage) {
+            if (currentTotalSavings) {
+              var newIncomeTotal = {
+                type: "Income",
+                userId: userId,
+                amount: savings.amount
+              }
+              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
+                if (newTotalIncome) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      id: savings.dataValues.id,
+                      savingsDeleted: true,
+                      currentTotalSavings: Number(currentTotalSavings.amount),
+                      newTotalIncome: Number(newTotalIncome.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: totalIncomeMessage
+                    }
+                  });
+                }
+              })
+            } else {
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: currentSavingsMessage
+                }
+              })
+            }
+          })
         } else {
           res.status(200).json({
             success: false,

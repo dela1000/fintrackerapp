@@ -79,6 +79,15 @@ router.delete('/expenses', authUtils.checkUser, function (req, res) {
   controllers.expenses.delete(req, res)
 })
 
+//Savings routes
+router.post('/savings', authUtils.checkUser, function (req, res) {
+  controllers.savings.post(req, res)
+})
+
+router.delete('/savings', authUtils.checkUser, function (req, res) {
+  controllers.savings.delete(req, res)
+})
+
 //TOTALS
 router.get('/all_totals', authUtils.checkUser, function (req, res) {
   controllers.all_totals.get(req, res)
@@ -91,12 +100,6 @@ router.get('/expenses_totals', authUtils.checkUser, function (req, res) {
 router.get('/search_specifics', authUtils.checkUser, function (req, res) {
   controllers.search_specifics.get(req, res)
 })
-
-//TO DO
-router.post('/savings', authUtils.checkUser, function (req, res) {
-  controllers.savings.post(req, res)
-})
-
 
 
 router.get('/test', authUtils.checkUser, function (req, res) {
