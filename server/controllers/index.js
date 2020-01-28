@@ -889,7 +889,7 @@ module.exports = controllers = {
           primaryTotals['currentMonthExpensesTotals'] = addedTotals.totals;
           primaryTotals['timeframe'] = payload.timeframe;
           primaryTotals['expensesCount'] = expensesData.length;
-          primaryTotals['totalExpensesAmount'] = addedTotals.totalAmount.toFixed(2);
+          primaryTotals['totalExpensesAmount'] = Number(addedTotals.totalAmount.toFixed(2));
 
           res.status(200).json({
             success: true,

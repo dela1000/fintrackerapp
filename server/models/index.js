@@ -582,6 +582,10 @@ module.exports = {
             model: db.CurrentTotalInvest, 
             attributes: ['amount'],
             required: false 
+          },{
+            model: db.CurrentAvailable, 
+            attributes: ['amount'],
+            required: false 
           }]
       })
       .then(function (user) {
@@ -602,6 +606,10 @@ module.exports = {
           }
           if(user.currenttotalinvest){
             primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
+          }
+          console.log("+++ 610 index.js user.currentavailable: ", user.currentavailable)
+          if(user.currentavailable){
+            primaryTotals['currentAvailable'] = user.currentavailable.amount;
           }
           var searchData = {
             where: {

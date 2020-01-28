@@ -7,15 +7,15 @@ exports.addTotals = function(data) {
   var totalsHolder = [];
   _.forEach(data, function (lineItem) {
     var item = lineItem.dataValues;
-      if(!totalsByCategory[item.categoryId]){
-        totalsByCategory[item.categoryId] = {
-          amount: item.amount,
-          categoryName: item.expensescategory.name,
-          categoryId: item.categoryId,
-        };
-      } else {
-        totalsByCategory[item.categoryId]['amount'] = totalsByCategory[item.categoryId]['amount'] + item.amount;
-      }
+    if(!totalsByCategory[item.categoryId]){
+      totalsByCategory[item.categoryId] = {
+        amount: item.amount,
+        categoryName: item.expensescategory.dataValues.name,
+        categoryId: item.categoryId,
+      };
+    } else {
+      totalsByCategory[item.categoryId]['amount'] = totalsByCategory[item.categoryId]['amount'] + item.amount;
+    }
   })
   _.forEach(totalsByCategory, function (totals) {
     totalAmount = totalAmount + totals.amount;
