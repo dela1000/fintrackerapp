@@ -1025,6 +1025,135 @@ module.exports = controllers = {
     }
   },
 
+  invest: {
+    post: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var userId = req.headers.userId;
+      var payload = {
+        userId: userId,
+        investData: req.body.investData
+      }
+      var newInvestTotal = {
+        type: type,
+        userId: userId,
+        amount: 0
+      };
+      _.forEach(payload.investData, function(amount) {
+        amount['userId'] = req.headers.userId;
+        amount['date'] = finUtils.unixDate(amount.date);
+        newInvestTotal.amount = newInvestTotal.amount + amount.amount;
+      })
+      models.invest.post(payload, function (investCreated, investMessage) {
+        if (investCreated) {
+          models.updateTotalAmount.patch(newInvestTotal, function (newTotalInvest, totalInvestMessage){
+            if (newTotalInvest) {
+              var newIncomeTotal = {
+                type: "Income",
+                userId: userId,
+                amount: -newInvestTotal.amount
+              }
+              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
+                if (newTotalIncome) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      investCreated: investCreated,
+                      newTotalInvest: Number(newTotalInvest.amount),
+                      newTotalIncome: Number(newTotalIncome.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: totalIncomeMessage
+                    }
+                  });
+                }
+              })
+            } else {
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: totalInvestMessage
+                }
+              });
+            }
+          })
+          
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: investMessage
+            }
+          });
+        }
+      })
+    },
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var type = "Invest";
+      var payload = {
+        type: type,
+        id: req.body.id,
+        userId: userId,
+      }
+      models.invest.delete(payload, function (invest, investMessage) {
+        if(invest){
+          var deletedAmount = {
+            type: type,
+            userId: userId,
+            amount: -invest.dataValues.amount
+          }
+          models.updateTotalAmount.patch(deletedAmount, function (currentTotalInvest, currentInvestMessage) {
+            if (currentTotalInvest) {
+              var newIncomeTotal = {
+                type: "Income",
+                userId: userId,
+                amount: invest.amount
+              }
+              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
+                if (newTotalIncome) {
+                  res.status(200).json({
+                    success: true,
+                    data: {
+                      id: invest.dataValues.id,
+                      investDeleted: true,
+                      currentTotalInvest: Number(currentTotalInvest.amount),
+                      newTotalIncome: Number(newTotalIncome.amount),
+                    }
+                  })
+                } else {
+                  res.status(200).json({
+                    success: false,
+                    data: {
+                      message: totalIncomeMessage
+                    }
+                  });
+                }
+              })
+            } else {
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: currentInvestMessage
+                }
+              })
+            }
+          })
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: investMessage
+            }
+          });
+        }
+      })
+    }
+  },
+
   search_specifics: {
     get: function (req, res) {
       var type = finUtils.type(req.query.type);

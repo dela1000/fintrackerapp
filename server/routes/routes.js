@@ -88,6 +88,15 @@ router.delete('/savings', authUtils.checkUser, function (req, res) {
   controllers.savings.delete(req, res)
 })
 
+//Invest routes
+router.post('/invest', authUtils.checkUser, function (req, res) {
+  controllers.invest.post(req, res)
+})
+
+router.delete('/invest', authUtils.checkUser, function (req, res) {
+  controllers.invest.delete(req, res)
+})
+
 //TOTALS
 router.get('/all_totals', authUtils.checkUser, function (req, res) {
   controllers.all_totals.get(req, res)

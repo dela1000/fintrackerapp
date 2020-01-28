@@ -466,6 +466,44 @@ module.exports = {
     },
   },
 
+  invest: {
+    post: function (payload, callback) {
+      if(payload && payload.investData && payload.investData.length > 0){
+        db.Invest.bulkCreate(
+          payload.investData,
+          { individualHooks: true }
+        )
+        .then(function (investAdded) {
+          if (investAdded) {
+            callback(investAdded)
+          } else{
+            callback(false)
+          };
+        })
+      } else {
+        callback(false, "Invest not added")
+      };
+    },
+    delete: function (payload, callback) {
+      db.Invest.findOne({
+        where: {
+          userId: payload.userId,
+          id: payload.id,
+          deleted: false,
+        }
+      })
+      .then(function (investLine) {
+        if(investLine){
+          investLine.deleted = true;
+          investLine.save();
+          callback(investLine)
+        } else{
+          callback(false, "Invest not found")
+        };
+      })
+    },
+  },
+
   updateTotalAmount: {
     patch: function (payload, callback) {
       var tableName = "CurrentTotal" + payload.type;
