@@ -89,262 +89,282 @@ module.exports = controllers = {
 
   set_initials: {
     post: function (req, res) {
-      console.log("controllers: BEGIN SETTING INITIAL AMOUNTS")
       var userId = req.headers.userId;
       var initialData = req.body;
-      
-      var initialIncomeCategories = {
-        type: "Income",
-        data: {
-          userId: userId,
-          name: "initial",
-        }
-      }
+      //Check that user has not set his initials yet.
+      var getUserData = {
+        userId: userId
+      };
+      models.get_user.get(getUserData, function (user, getUserMessage) {
+        if(user) {
+          if(!user.dataValues.initials_done){
+            console.log("controllers: BEGIN SETTING INITIAL AMOUNTS")
+            var initialIncomeCategories = {
+              type: "Income",
+              data: {
+                userId: userId,
+                name: "initial",
+              }
+            }
 
-      var newIncomeAccounts = {
-        Income: {
-          type: "Income",
-          data: [] 
-        },
-        Savings: {
-          type: "Savings",
-          data: [] 
-        },
-        Invest: {
-          type: "Invest",
-          data: [] 
-        },
-      }
+            var newIncomeAccounts = {
+              Income: {
+                type: "Income",
+                data: [] 
+              },
+              Savings: {
+                type: "Savings",
+                data: [] 
+              },
+              Invest: {
+                type: "Invest",
+                data: [] 
+              },
+            }
 
-      _.forEach(initialData, function(amounts, key) {
-        _.forEach(amounts, function (amount) {
-          amount['userId'] = userId;
-          amount['date'] = finUtils.unixDate(amount.date);
-          newIncomeAccounts[key]['data'].push({
-            userId: userId,
-            name: amount.accountName
-          });
-        })
-      })
-      var newAccountsAdded = {};
-      // ADD NEW CATEGORIES
-      console.log("controllers: ADD NEW CATEGORIES")
-      models.categories.post(initialIncomeCategories, function (categoryAdded, categoriesMessage) {
-        if(categoryAdded){
-          var initialCategoryCreated = categoryAdded.dataValues;
+            _.forEach(initialData, function(amounts, key) {
+              _.forEach(amounts, function (amount) {
+                amount['userId'] = userId;
+                amount['date'] = finUtils.unixDate(amount.date);
+                newIncomeAccounts[key]['data'].push({
+                  userId: userId,
+                  name: amount.accountName
+                });
+              })
+            })
+            //if initials_done is false continue
+            // ADD NEW CATEGORIES
+            console.log("controllers: ADD NEW CATEGORIES")
+            models.categories.post(initialIncomeCategories, function (categoryAdded, categoriesMessage) {
+              if(categoryAdded){
+                var initialCategoryCreated = categoryAdded.dataValues;
+                // ADD NEW ACCOUNTS
+                console.log("controllers: ADD NEW ACCOUNTS")
+                var newAccountsAdded = {};
+                models.accounts.post(newIncomeAccounts.Income, function (incomeAccountsAdded, incomeAccountsMessage) {
+                  if(incomeAccountsAdded){
+                    newAccountsAdded['Income'] = incomeAccountsAdded
+                    models.accounts.post(newIncomeAccounts.Savings, function (savingsAccountsAdded, savingAccountsMessage) {
+                      if(savingsAccountsAdded){
+                        newAccountsAdded['Savings'] = savingsAccountsAdded
+                        models.accounts.post(newIncomeAccounts.Invest, function (investAccountsAdded, investAccountsMessage) {
+                          if(investAccountsAdded){
+                            newAccountsAdded['Invest'] = investAccountsAdded
 
-          // ADD NEW ACCOUNTS
-          console.log("controllers: ADD NEW ACCOUNTS")
-          models.accounts.post(newIncomeAccounts.Income, function (incomeAccountsAdded, incomeAccountsMessage) {
-            if(incomeAccountsAdded){
-              newAccountsAdded['Income'] = incomeAccountsAdded
-              models.accounts.post(newIncomeAccounts.Savings, function (savingsAccountsAdded, savingAccountsMessage) {
-                if(savingsAccountsAdded){
-                  newAccountsAdded['Savings'] = savingsAccountsAdded
-                  models.accounts.post(newIncomeAccounts.Invest, function (investAccountsAdded, investAccountsMessage) {
-                    if(investAccountsAdded){
-                      newAccountsAdded['Invest'] = investAccountsAdded
-
-                      // COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS
-                      console.log("controllers: COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS")
-                      var finalInitial = {
-                        Income: {
-                          type: "Income",
-                          data: []
-                        },
-                        Savings: {
-                          type: "Savings",
-                          data: []
-                        },
-                        Invest: {
-                          type: "Invest",
-                          data: []
-                        },
-                      }
-                      totalAmounts = {
-                        Income: {
-                          userId: userId,
-                          type: "Income",
-                          amount: 0
-                        },
-                        Savings: {
-                          userId: userId,
-                          type: "Savings",
-                          amount: 0
-                        },
-                        Invest: {
-                          userId: userId,
-                          type: "Invest",
-                          amount: 0
-                        },
-                      }
-                      _.forEach(initialData, function (initialDataType, key) {
-                        _.forEach(initialDataType, function (amount) {
-                          _.forEach(newAccountsAdded[key], function (newAccount) {
-                            if(amount.accountName === newAccount.dataValues.name){
-                              amount.accountId = newAccount.dataValues.id;
-                              amount.categoryId = initialCategoryCreated.id;
-                              amount.comment = "Initial amount added";
-                              finalInitial[key].data.push(amount);
-                              totalAmounts[key].amount = totalAmounts[key].amount + amount.amount;
+                            // COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS
+                            console.log("controllers: COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS")
+                            var finalInitial = {
+                              Income: {
+                                type: "Income",
+                                data: []
+                              },
+                              Savings: {
+                                type: "Savings",
+                                data: []
+                              },
+                              Invest: {
+                                type: "Invest",
+                                data: []
+                              },
                             }
-                          })
-                        })
-                      })
-                      // ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB
-                      console.log("controllers: ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB")
-                      models.bulk_add.post(finalInitial.Income, function (incomeResult, incomeMessage) {
-                        if(incomeResult){
-                          models.bulk_add.post(finalInitial.Savings, function (savingsResult, savingsMessage) {
-                            if(savingsResult){
-                              models.bulk_add.post(finalInitial.Invest, function (investResult, investMessage) {
-                                if(investResult){
-                                    console.log("+++ 226 index.js ALL INITIAL ITEMS ADDED")
-                                    // UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS
-                                    console.log("controllers: UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS")
-                                    models.increaseTotalAmount.patch(totalAmounts.Income, function (currentIncome, currentIncomeMessage) {
-                                      if(currentIncome){
-                                        models.increaseTotalAmount.patch(totalAmounts.Savings, function (currentSavings, currentSavingsMessage) {
-                                          if(currentSavings){
-                                            models.increaseTotalAmount.patch(totalAmounts.Invest, function (currentInvest, currentInvestMessage) {
-                                              if (currentInvest) {
-                                                var currentAvailableValues = {
-                                                  userId: userId,
-                                                  totalToUpdate: Number(currentIncome.amount)
-                                                }
-                                                console.log("controllers: UPDATE CURRENT AVAILABLE")
-                                                models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                                                  if (currentAvailable) {
-                                                    console.log("controllers: UPDATE INITIAL USER FLAG")
-                                                    var userData = {
-                                                      userId: userId
-                                                    }
-                                                    models.initials_done.post(userData, function (updated, userInitialsMessage) {
-                                                      if(updated){
-                                                        console.log("controllers: INITIALS DONE - RETURNING DATA TO CLIENT")
-                                                        res.status(200).json({
-                                                          success: true,
-                                                          data: {
-                                                            itemsAdded: finalInitial,
-                                                            currentTotalIncome: Number(currentIncome.amount), 
-                                                            currentTotalSavings: Number(currentSavings.amount),
-                                                            currentTotalInvest: Number(currentInvest.amount),
-                                                            currentAvailable:  Number(currentAvailable.amount),
-                                                            currentTotalExpenses: 0,
-                                                          }
-                                                        });
-                                                      } else{
-                                                        res.status(200).json({
-                                                          success: false,
-                                                          data: {
-                                                            message: userInitialsMessage
-                                                          }
-                                                        })
-                                                      };
-                                                    })
-                                                  } else {
-                                                    res.status(200).json({
-                                                      success: false,
-                                                      data: {
-                                                        message: currentAvailableMessage
+                            totalAmounts = {
+                              Income: {
+                                userId: userId,
+                                type: "Income",
+                                amount: 0
+                              },
+                              Savings: {
+                                userId: userId,
+                                type: "Savings",
+                                amount: 0
+                              },
+                              Invest: {
+                                userId: userId,
+                                type: "Invest",
+                                amount: 0
+                              },
+                            }
+                            _.forEach(initialData, function (initialDataType, key) {
+                              _.forEach(initialDataType, function (amount) {
+                                _.forEach(newAccountsAdded[key], function (newAccount) {
+                                  if(amount.accountName === newAccount.dataValues.name){
+                                    amount.accountId = newAccount.dataValues.id;
+                                    amount.categoryId = initialCategoryCreated.id;
+                                    amount.comment = "Initial amount added";
+                                    finalInitial[key].data.push(amount);
+                                    totalAmounts[key].amount = totalAmounts[key].amount + amount.amount;
+                                  }
+                                })
+                              })
+                            })
+                            // ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB
+                            console.log("controllers: ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB")
+                            models.bulk_add.post(finalInitial.Income, function (incomeResult, incomeMessage) {
+                              if(incomeResult){
+                                models.bulk_add.post(finalInitial.Savings, function (savingsResult, savingsMessage) {
+                                  if(savingsResult){
+                                    models.bulk_add.post(finalInitial.Invest, function (investResult, investMessage) {
+                                      if(investResult){
+                                          console.log("+++ 226 index.js ALL INITIAL ITEMS ADDED")
+                                          // UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS
+                                          console.log("controllers: UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS")
+                                          models.increaseTotalAmount.patch(totalAmounts.Income, function (currentIncome, currentIncomeMessage) {
+                                            if(currentIncome){
+                                              models.increaseTotalAmount.patch(totalAmounts.Savings, function (currentSavings, currentSavingsMessage) {
+                                                if(currentSavings){
+                                                  models.increaseTotalAmount.patch(totalAmounts.Invest, function (currentInvest, currentInvestMessage) {
+                                                    if (currentInvest) {
+                                                      var currentAvailableValues = {
+                                                        userId: userId,
+                                                        totalToUpdate: Number(currentIncome.amount)
                                                       }
-                                                    })
-                                                  }
-                                                })
-                                                
-                                              } else {
-                                                res.status(200).json({
-                                                  success: false,
-                                                  data: {
-                                                    message: currentInvestMessage
-                                                  }
-                                                })
-                                              }
+                                                      console.log("controllers: UPDATE CURRENT AVAILABLE")
+                                                      models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                                                        if (currentAvailable) {
+                                                          console.log("controllers: UPDATE INITIAL USER FLAG")
+                                                          var userData = {
+                                                            userId: userId
+                                                          }
+                                                          models.initials_done.post(userData, function (updated, userInitialsMessage) {
+                                                            if(updated){
+                                                              console.log("controllers: INITIALS DONE - RETURNING DATA TO CLIENT")
+                                                              res.status(200).json({
+                                                                success: true,
+                                                                data: {
+                                                                  itemsAdded: finalInitial,
+                                                                  currentTotalIncome: Number(currentIncome.amount), 
+                                                                  currentTotalSavings: Number(currentSavings.amount),
+                                                                  currentTotalInvest: Number(currentInvest.amount),
+                                                                  currentAvailable:  Number(currentAvailable.amount),
+                                                                  currentTotalExpenses: 0,
+                                                                }
+                                                              });
+                                                            } else{
+                                                              res.status(200).json({
+                                                                success: false,
+                                                                data: {
+                                                                  message: userInitialsMessage
+                                                                }
+                                                              })
+                                                            };
+                                                          })
+                                                        } else {
+                                                          res.status(200).json({
+                                                            success: false,
+                                                            data: {
+                                                              message: currentAvailableMessage
+                                                            }
+                                                          })
+                                                        }
+                                                      })
+                                                      
+                                                    } else {
+                                                      res.status(200).json({
+                                                        success: false,
+                                                        data: {
+                                                          message: currentInvestMessage
+                                                        }
+                                                      })
+                                                    }
 
-                                            })
-                                          } else{
-                                            res.status(200).json({
-                                              success: false,
-                                              data: {
-                                                message: currentSavingsMessage
-                                              }
-                                            })
-                                          };
-                                        })
-                                      } else {
+                                                  })
+                                                } else{
+                                                  res.status(200).json({
+                                                    success: false,
+                                                    data: {
+                                                      message: currentSavingsMessage
+                                                    }
+                                                  })
+                                                };
+                                              })
+                                            } else {
+                                              res.status(200).json({
+                                                success: false,
+                                                data: {
+                                                  message: currentIncomeMessage
+                                                }
+                                              })
+                                            }
+                                          })
+                                      } else{
                                         res.status(200).json({
                                           success: false,
                                           data: {
-                                            message: currentIncomeMessage
+                                            message: investMessage
                                           }
                                         })
+                                      };
+                                    })
+                                  }else{
+                                    res.status(200).json({
+                                      success: false,
+                                      data: {
+                                        message: savingsMessage
                                       }
                                     })
-                                } else{
-                                  res.status(200).json({
-                                    success: false,
-                                    data: {
-                                      message: investMessage
-                                    }
-                                  })
-                                };
-                              })
-                            }else{
-                              res.status(200).json({
-                                success: false,
-                                data: {
-                                  message: savingsMessage
-                                }
-                              })
-                            };
-                          })
-                        } else {
-                          res.status(200).json({
-                            success: false,
-                            data: {
-                              message: incomeMessage
-                            }
-                          })
-                        }
-                      })
-                      
-
-
-                    } else{
-                      res.status(200).json({
-                        success: false,
-                        data: {
-                          message: "Initial " + investAccountsMessage
-                        }
-                      });
-                    };
-                  })
-                } else {
-                  res.status(200).json({
-                    success: false,
-                    data: {
-                      message: "Initial " + savingAccountsMessage
-                    }
-                  });
-                  
-                }
-              })
-            } else {
-              res.status(200).json({
-                success: false,
-                data: {
-                  message: "Initial " + incomeAccountsMessage
-                }
-              });
-            }
-          })
+                                  };
+                                })
+                              } else {
+                                res.status(200).json({
+                                  success: false,
+                                  data: {
+                                    message: incomeMessage
+                                  }
+                                })
+                              }
+                            })
+                          } else{
+                            res.status(200).json({
+                              success: false,
+                              data: {
+                                message: "Initial " + investAccountsMessage
+                              }
+                            });
+                          };
+                        })
+                      } else {
+                        res.status(200).json({
+                          success: false,
+                          data: {
+                            message: "Initial " + savingAccountsMessage
+                          }
+                        });
+                        
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: "Initial " + incomeAccountsMessage
+                      }
+                    });
+                  }
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: "Initial " + categoriesMessage
+                  }
+                });
+              }
+            })
+          } else{
+            res.status(200).json({
+              success: false,
+              data: {
+                message: "User Initials already setup"
+              }
+            })
+          };
         } else {
           res.status(200).json({
             success: false,
             data: {
-              message: "Initial " + categoriesMessage
+              message: getUserMessage
             }
-          });
+          })
         }
       })
 

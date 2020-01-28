@@ -88,6 +88,24 @@ module.exports = {
     }
   },
 
+  get_user: {
+    get: function (payload, callback) {
+      db.User.findOne({
+        where: {
+          id: payload.userId
+        },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+      })
+      .then(function (user) {
+        if(user){
+          callback(user);
+        } else {
+          callback(false, "User not found")
+        }
+      })
+    }
+  },
+
   initials_done: {
     post: function (payload, callback) {
       db.User.findOne({
@@ -95,24 +113,6 @@ module.exports = {
           id: payload.userId
         },
         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
-        include: [
-          {
-            model: db.CurrentTotalExpenses, 
-            attributes: ['amount'],
-            required: false 
-          },{
-            model: db.CurrentTotalIncome, 
-            attributes: ['amount'],
-            required: false 
-          },{
-            model: db.CurrentTotalSavings, 
-            attributes: ['amount'],
-            required: false 
-          },{
-            model: db.CurrentTotalInvest, 
-            attributes: ['amount'],
-            required: false 
-          }]
       })
       .then(function (user) {
         if(user){
