@@ -1304,14 +1304,25 @@ module.exports = controllers = {
       var payload = {
         userId: req.headers.userId,
         type: type,
-        categoryId: req.query.categoryId,
-        comment: req.query.comment,
-        minAmount: req.query.minAmount,
-        maxAmount: req.query.maxAmount,
         deleted: false,
         include: [],
         orderBy: "date",
         order: "DESC"
+      }
+
+      if(req.query.categoryId){
+        if(type === "Income" || type === "Expenses"){
+          payload.categoryId = req.query.categoryId;
+        }
+      }
+      if(req.query.comment){
+        payload.comment = req.query.comment
+      }
+      if(req.query.minAmount){
+        payload.minAmount = req.query.minAmount
+      }
+      if(req.query.maxAmount){
+        payload.maxAmount = req.query.maxAmount
       }
       if(req.query.deleted){
         payload.deleted = true;
@@ -1360,7 +1371,7 @@ module.exports = controllers = {
           attributes: ['name'],
         })
       }
-      
+      console.log("+++ 1372 index.js payload: ", payload)
       models.search_specifics.get(payload, function (foundResults, message) {
         if (foundResults) {
           var finalData = [];
