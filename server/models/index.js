@@ -315,6 +315,7 @@ module.exports = {
         where: {
           userId: payload.userId,
           id: payload.id,
+          deleted: false,
         }
       })
       .then(function (incomeLine) {
@@ -394,6 +395,7 @@ module.exports = {
         where: {
           userId: payload.userId,
           id: payload.id,
+          deleted: false,
         }
       })
       .then(function (expensesLine) {
