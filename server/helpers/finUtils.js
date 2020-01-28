@@ -44,7 +44,7 @@ exports.type = function (type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
-exports.lowerType = function (type) {
+exports.toLowerCase = function (type) {
   return type.toLowerCase();
 }
 

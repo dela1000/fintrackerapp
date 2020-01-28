@@ -793,7 +793,7 @@ module.exports = controllers = {
           var finalData  = [];
 
           _.forEach(foundResults, function (found) {
-            var lowerType = finUtils.lowerType(payload.type);
+            var lowerType = finUtils.toLowerCase(payload.type);
             var item = {
               id: found.id,
               amount: found.amount,
