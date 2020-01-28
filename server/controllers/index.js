@@ -1401,7 +1401,9 @@ module.exports = controllers = {
           res.status(200).json({
             success: false,
             data: {
-              message: message
+              message: message,
+              totalFound: 0,
+              queryLimit: payload.limit
             }
           });
         };
