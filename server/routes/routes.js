@@ -54,6 +54,11 @@ router.delete('/categories', authUtils.checkUser, function (req, res) {
   controllers.categories.delete(req, res)
 })
 
+// ADD CATEGORIES IN BULK
+router.post('/accounts_bulk', authUtils.checkUser, function (req, res) {
+  controllers.accounts_bulk.post(req, res)
+})
+
 //Accounts routes
 router.post('/accounts', authUtils.checkUser, function (req, res) {
   controllers.accounts.post(req, res)

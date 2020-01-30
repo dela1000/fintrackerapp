@@ -485,8 +485,6 @@ module.exports = controllers = {
         userId: req.headers.userId,
         categoryId: req.body.id,
         deleted: false,
-        startDate: finUtils.unixDate(moment('2020-01-01')),
-        endDate: finUtils.unixDate(moment('2100-12-31')),
       };
       models.search_specifics.get(payload, function (results) {
         if(!results){
@@ -520,6 +518,39 @@ module.exports = controllers = {
         };
       })
     }
+  },
+
+  accounts_bulk: {
+    post: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var data = req.body.newAccounts;
+      _.forEach(data, function (item) {
+        item['userId'] = req.headers.userId;
+        item['name'] = item['name'].toLowerCase();
+      })
+      var payload = {
+        type: type,
+        data: data
+      };
+      models.accounts_bulk.post(payload, function (accountsAdded, accountsMessage) {
+        if(accountsAdded){
+          res.status(200).json({
+              success: true,
+              data: {
+                type: type,
+                accountsAdded: accountsAdded
+              }
+          });
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: accountsMessage
+            }
+          });
+        };
+      })
+    },
   },
 
   accounts: {
@@ -1587,6 +1618,11 @@ module.exports = controllers = {
           payload.categoryId = req.query.categoryId;
         }
       }
+      if(req.query.accountId){
+        if(type === "Income" || type === "Savings" || type === "Invest"){
+          payload.accountId = req.query.accountId;
+        }
+      }
       if(req.query.comment){
         payload.comment = req.query.comment
       }
@@ -1643,6 +1679,7 @@ module.exports = controllers = {
           attributes: ['name'],
         })
       }
+      console.log("payload: ", JSON.stringify(payload, null, "\t"));
       models.search_specifics.get(payload, function (foundResults, message) {
         if (foundResults) {
           var finalData = [];
@@ -1658,14 +1695,18 @@ module.exports = controllers = {
             if(type === "Income" || type === "Expenses"){
               var category = lowerType + "category";
               var addCategory = lowerType + "Category";
-              item[addCategory] = found[category].name;
-              delete item[category];
+              if(found[category]){
+                item[addCategory] = found[category].name;
+                delete item[category];
+              }
             }
             if(type === "Income" || type === "Savings" || type === "Invest"){
                 var account = lowerType + "account";
                 var addAccount = lowerType + "Account";
-                item[addAccount] = found[account].name;
-                delete item[account];
+                if(found[account]){
+                  item[addAccount] = found[account].name;
+                  delete item[account];
+                }
             }
             finalData.push(item)
           })
