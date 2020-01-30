@@ -161,7 +161,6 @@ module.exports = {
         };
       })
     },
-
     get: function (payload, callback) {
       db.User.findOne({
         where: {
@@ -194,7 +193,6 @@ module.exports = {
         };
       })
     },
-
     patch: function (payload, callback) {
       var tableName = payload.type + 'Category';
 
@@ -272,7 +270,6 @@ module.exports = {
         };
       })
     },
-
     get: function (payload, callback) {
       db.User.findOne({
         where: {
@@ -313,7 +310,6 @@ module.exports = {
         };
       })
     },
-
     patch: function (payload, callback) {
       var tableName = payload.type + 'Account';
 
