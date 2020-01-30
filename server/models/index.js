@@ -786,30 +786,30 @@ module.exports = {
           userId: payload.userId
         }
       })
-      .then(function(incomeResults){
+      .then(function(income){
         db.Expenses.findAll({
           where: {
             userId: payload.userId
           }
         })
-        .then(function(expensesResults){
+        .then(function(expenses){
           db.Savings.findAll({
             where: {
               userId: payload.userId
             }
           })
-          .then(function(savingsResults){
+          .then(function(savings){
             db.Invest.findAll({
               where: {
                 userId: payload.userId
               }
             })
-            .then(function(investResults){
+            .then(function(invest){
               callback({
-                incomeResults: incomeResults,
-                expensesResults: expensesResults,
-                savingsResults: savingsResults,
-                investResults: investResults,
+                income: income,
+                expenses: expenses,
+                savings: savings,
+                invest: invest,
               })
             })
           })
