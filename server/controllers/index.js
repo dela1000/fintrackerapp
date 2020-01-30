@@ -477,6 +477,49 @@ module.exports = controllers = {
         }
 
       })
+    },
+    delete: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var payload = {
+        type: type,
+        userId: req.headers.userId,
+        categoryId: req.body.id,
+        deleted: false,
+        startDate: finUtils.unixDate(moment('2020-01-01')),
+        endDate: finUtils.unixDate(moment('2100-12-31')),
+      };
+      models.search_specifics.get(payload, function (results) {
+        if(!results){
+          models.categories.delete(payload, function (result, categoriesMessage) {
+            if(result){
+              res.status(200).json({
+                  success: true,
+                  data: {
+                    id: result.dataValues.id,
+                    categoryDeleted: true,
+                    result: result.dataValues
+                  }
+                });
+            }else{
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: categoriesMessage
+                }
+              });
+            };
+          })
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: "This category is being used by " +  results.length + " lines in " + type,
+              found: results
+            }
+          });
+        };
+      })
+
     }
   },
 
@@ -1698,6 +1741,4 @@ module.exports = controllers = {
       })
     }
   },
-
-
 }

@@ -213,6 +213,25 @@ module.exports = {
           callback(false, payload.type + " category not found")
         };
       })
+    },
+    delete: function (payload, callback) {
+      var tableName = payload.type + 'Category';
+      db[tableName].findOne({
+        where: {
+          id: payload.categoryId,
+          userId: payload.userId,
+          deleted: false
+        }
+      })
+      .then(function (result) {
+        if(result){
+          result.deleted = true;
+          result.save()
+          callback(result)
+        } else{
+          callback(false, "No category found")
+        };
+      })
     }
   },
 
@@ -624,12 +643,21 @@ module.exports = {
 
       var tableName = payload.type;
       var query = {
-        where: searchData,
-        include: payload.include,
-        order: [ [ payload.orderBy, payload.order ]]
+        where: searchData
       }
       if(payload.limit){
         query['limit'] = payload.limit
+      }
+      if (payload.include) {
+        query['include'] = payload.include;
+      }
+      if(payload.orderBy){
+        query['order'] = [];
+        if(payload.order){
+          query['order'].push([payload.orderBy, payload.order])
+        } else {
+          query['order'].push([payload.orderBy])
+        }
       }
 
       console.log("query: ", JSON.stringify(query, null, "\t"));

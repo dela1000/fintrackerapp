@@ -48,8 +48,12 @@ exports.toLowerCase = function (type) {
   return type.toLowerCase();
 }
 
-exports.startOfDay = function (date) {
+exports.startOfDay = function () {
   return moment().startOf('day').format('x');
+}
+
+exports.endOfDay = function () {
+  return moment().endOf('day').format('x');
 }
 
 exports.startOfMonth = function () {

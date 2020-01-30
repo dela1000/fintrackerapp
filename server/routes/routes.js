@@ -14,7 +14,6 @@ router.get('/ping', function (req, res) {
 })
 
 //Auth routes
-//ADD AUTHENTICATION MIDDLEWARE AT SOME POINT
 router.post('/signup', function (req, res) {
   controllers.signup.post(req, res)
 })
@@ -39,7 +38,6 @@ router.post('/categories_bulk', authUtils.checkUser, function (req, res) {
 })
 
 //Category routes
-// NEED TO ADD CATEGORIES ROUTES (CREATE, UPDATE, DELETE)
 router.post('/categories', authUtils.checkUser, function (req, res) {
   controllers.categories.post(req, res)
 })
@@ -50,6 +48,10 @@ router.get('/categories', authUtils.checkUser, function (req, res) {
 
 router.patch('/categories', authUtils.checkUser, function (req, res) {
   controllers.categories.patch(req, res)
+})
+
+router.delete('/categories', authUtils.checkUser, function (req, res) {
+  controllers.categories.delete(req, res)
 })
 
 
