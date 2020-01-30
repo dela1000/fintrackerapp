@@ -54,6 +54,23 @@ router.delete('/categories', authUtils.checkUser, function (req, res) {
   controllers.categories.delete(req, res)
 })
 
+//Accounts routes
+router.post('/accounts', authUtils.checkUser, function (req, res) {
+  controllers.accounts.post(req, res)
+})
+
+router.get('/accounts', authUtils.checkUser, function (req, res) {
+  controllers.accounts.get(req, res)
+})
+
+router.patch('/accounts', authUtils.checkUser, function (req, res) {
+  controllers.accounts.patch(req, res)
+})
+
+router.delete('/accounts', authUtils.checkUser, function (req, res) {
+  controllers.accounts.delete(req, res)
+})
+
 
 //Income routes
 router.post('/income', authUtils.checkUser, function (req, res) {

@@ -235,7 +235,7 @@ module.exports = {
     }
   },
 
-  accounts: {
+  accounts_bulk: {
     post: function (payload, callback) {
       var tableName = payload.type + 'Account';
       db[tableName].bulkCreate(
@@ -250,6 +250,108 @@ module.exports = {
           };
         })
     },
+  },
+
+  accounts: {
+    post: function (payload, callback) {
+      var tableName = payload.type + 'Account';
+      db[tableName].findOrCreate({
+        where: {
+          name: payload.data.name,
+          userId: payload.data.userId,
+        }
+      })
+      .spread(function (found, create) {
+        if (create) {
+          found.name = payload.data.name;
+          found.userId = payload.data.userId;
+          found.save()
+          callback(found)
+        } else{
+          callback(found)
+        };
+      })
+    },
+
+    get: function (payload, callback) {
+      db.User.findOne({
+        where: {
+          id: payload.userId,
+        },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: db.IncomeAccount, 
+            where: {
+              deleted: false
+            },
+            attributes: ['name', 'id'],
+            required: false 
+          },
+          {
+            model: db.SavingsAccount, 
+            where: {
+              deleted: false
+            },
+            attributes: ['name', 'id'],
+            required: false 
+          },
+          {
+            model: db.InvestAccount, 
+            where: {
+              deleted: false
+            },
+            attributes: ['name', 'id'],
+            required: false 
+          }]
+      })
+      .then(function (allAccounts) {
+        if(allAccounts){
+          callback(allAccounts)
+        } else{
+          callback(false, "No accounts found")
+        };
+      })
+    },
+
+    patch: function (payload, callback) {
+      var tableName = payload.type + 'Account';
+
+      db[tableName].findOne({
+        where: {
+          id: payload.id,
+          userId: payload.userId
+        }
+      })
+      .then(function (account) {
+        if(account !== null){
+          account.name = payload.name;
+          account.save();
+          callback(account);
+        } else{
+          callback(false, payload.type + " account not found")
+        };
+      })
+    },
+    delete: function (payload, callback) {
+      var tableName = payload.type + 'Account';
+      db[tableName].findOne({
+        where: {
+          id: payload.accountId,
+          userId: payload.userId,
+          deleted: false
+        }
+      })
+      .then(function (result) {
+        if(result){
+          result.deleted = true;
+          result.save()
+          callback(result)
+        } else{
+          callback(false, "No account found")
+        };
+      })
+    }
   },
 
   bulk_add: {

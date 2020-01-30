@@ -141,13 +141,13 @@ module.exports = controllers = {
                 // ADD NEW ACCOUNTS
                 console.log("controllers: ADD NEW ACCOUNTS")
                 var newAccountsAdded = {};
-                models.accounts.post(newIncomeAccounts.Income, function (incomeAccountsAdded, incomeAccountsMessage) {
+                models.accounts_bulk.post(newIncomeAccounts.Income, function (incomeAccountsAdded, incomeAccountsMessage) {
                   if(incomeAccountsAdded){
                     newAccountsAdded['Income'] = incomeAccountsAdded
-                    models.accounts.post(newIncomeAccounts.Savings, function (savingsAccountsAdded, savingAccountsMessage) {
+                    models.accounts_bulk.post(newIncomeAccounts.Savings, function (savingsAccountsAdded, savingAccountsMessage) {
                       if(savingsAccountsAdded){
                         newAccountsAdded['Savings'] = savingsAccountsAdded
-                        models.accounts.post(newIncomeAccounts.Invest, function (investAccountsAdded, investAccountsMessage) {
+                        models.accounts_bulk.post(newIncomeAccounts.Invest, function (investAccountsAdded, investAccountsMessage) {
                           if(investAccountsAdded){
                             newAccountsAdded['Invest'] = investAccountsAdded
 
@@ -519,7 +519,128 @@ module.exports = controllers = {
           });
         };
       })
+    }
+  },
 
+  accounts: {
+    post: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var data = req.body.newAccount;
+      data['userId'] = req.headers.userId;
+      var payload = {
+        type: type,
+        data: data
+      };
+      models.accounts.post(payload, function (accountsAdded, accountsMessage) {
+        if(accountsAdded){
+          res.status(200).json({
+              success: true,
+              data: {
+                type: type,
+                accountsAdded: accountsAdded
+              }
+          });
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: accountsMessage
+            }
+          });
+        };
+      })
+    },
+
+    get: function (req, res) {
+      var payload = {
+        userId: req.headers.userId,
+      }
+      models.accounts.get(payload, function (allAccounts, accountsMessage) {
+        if(allAccounts){
+          res.status(200).json({
+              success: true,
+              data: {
+                incomeAccounts: allAccounts.incomeaccounts,
+                savingsAccounts: allAccounts.savingsaccounts,
+                investAccounts: allAccounts.investaccounts,
+              }
+            });
+        } else{
+          res.status(200).json({
+              success: false,
+              data: {
+                message: accountsMessage
+              }
+            });
+        };
+      })
+    },
+
+    patch: function (req, res) {
+      var payload = {
+        userId: req.headers.userId,
+        type: finUtils.type(req.body.type),
+        name: req.body.name,
+        id: req.body.id,
+      };
+      models.accounts.patch(payload, function (accountsAdded, accountsMessage) {
+        if (accountsAdded) {
+          res.status(200).json({
+              success: true,
+              data: accountsAdded
+            });
+        } else {
+          res.status(200).json({
+              success: false,
+              data: {
+                message: accountsMessage
+              }
+            });
+        }
+
+      })
+    },
+    delete: function (req, res) {
+      var type = finUtils.type(req.body.type);
+      var payload = {
+        type: type,
+        userId: req.headers.userId,
+        accountId: req.body.id,
+        deleted: false,
+        startDate: finUtils.unixDate(moment('2020-01-01')),
+        endDate: finUtils.unixDate(moment('2100-12-31')),
+      };
+      models.search_specifics.get(payload, function (results) {
+        if(!results){
+          models.accounts.delete(payload, function (result, accountsMessage) {
+            if(result){
+              res.status(200).json({
+                  success: true,
+                  data: {
+                    id: result.dataValues.id,
+                    accountDeleted: true,
+                    result: result.dataValues
+                  }
+                });
+            }else{
+              res.status(200).json({
+                success: false,
+                data: {
+                  message: accountsMessage
+                }
+              });
+            };
+          })
+        } else{
+          res.status(200).json({
+            success: false,
+            data: {
+              message: "This account is being used by " +  results.length + " lines in " + type,
+              found: results
+            }
+          });
+        };
+      })
     }
   },
 
