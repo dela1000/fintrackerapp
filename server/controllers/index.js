@@ -1610,49 +1610,58 @@ module.exports = controllers = {
 
   recalculate_totals: {
     get: function (req, res) {
-      var start = moment().format('LTS')
+      var start = moment().format('HH:mm:ss:SSS')
       console.log("+++ 1647 index.js start: ", start)
       var userId = req.headers.userId;
       var payload = {
         userId: userId
       }
       models.recalculate_totals.get(payload, function (results, resultsMessage) {
-        var subsequent = {};
-        var initials = {};
-        _.forEach(results, function (collection, key) {
-          subsequent[key] = 0;
-          if (key !== "expenses") {
-            initials[key] = 0;
-          }
-          _.forEach(collection, function (item) {
-            if(item.dataValues.comment && item.dataValues.comment === "Initial amount added"){
-              initials[key] = initials[key] + item.dataValues.amount;
-              initials[key] = Number(initials[key].toFixed(2))
-            } else {
-              subsequent[key] = subsequent[key] + item.dataValues.amount;
-              subsequent[key] = Number(subsequent[key].toFixed(2))
+        if (results) {
+          var subsequent = {};
+          var initials = {};
+          _.forEach(results, function (collection, key) {
+            subsequent[key] = 0;
+            if (key !== "expenses") {
+              initials[key] = 0;
             }
+            _.forEach(collection, function (item) {
+              if(item.dataValues.comment && item.dataValues.comment === "Initial amount added"){
+                initials[key] = initials[key] + item.dataValues.amount;
+                initials[key] = Number(initials[key].toFixed(2))
+              } else {
+                subsequent[key] = subsequent[key] + item.dataValues.amount;
+                subsequent[key] = Number(subsequent[key].toFixed(2))
+              }
+            })
           })
-        })
-        
-        var totalIncome = initials.income + subsequent.income;
-        totalIncome = Number(totalIncome.toFixed(2))
-        var totalAvailable = totalIncome - subsequent.expenses - subsequent.savings - subsequent.invest;
-        totalAvailable = Number(totalAvailable.toFixed(2))
-        var totalUsed = subsequent.expenses + subsequent.savings + subsequent.invest;
-        totalUsed  = Number(totalUsed.toFixed(2))
-        var end = moment().format('LTS');
-        console.log("+++ 1678 index.js end: ", end)
-        res.status(200).json({
-          success: true,
-          data: {
-            initials: initials,
-            subsequent: subsequent,
-            totalIncome: totalIncome,
-            totalUsed: totalUsed,
-            totalAvailable: totalAvailable
-          }
-        });
+          
+          var totalIncome = initials.income + subsequent.income;
+          totalIncome = Number(totalIncome.toFixed(2))
+          var totalAvailable = totalIncome - subsequent.expenses - subsequent.savings - subsequent.invest;
+          totalAvailable = Number(totalAvailable.toFixed(2))
+          var totalUsed = subsequent.expenses + subsequent.savings + subsequent.invest;
+          totalUsed  = Number(totalUsed.toFixed(2))
+          var end = moment().format('HH:mm:ss:SSS');
+          console.log("+++ 1678 index.js end: ", end)
+          res.status(200).json({
+            success: true,
+            data: {
+              initials: initials,
+              subsequent: subsequent,
+              totalIncome: totalIncome,
+              totalUsed: totalUsed,
+              totalAvailable: totalAvailable
+            }
+          });
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: "Something went wrong"
+            }
+          });
+        }
       })
     }
   },
