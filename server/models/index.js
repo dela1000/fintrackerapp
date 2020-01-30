@@ -778,31 +778,42 @@ module.exports = {
     }
   },
 
-  test: {
+  recalculate_totals: {
     get: function (payload, callback) {
-      var searchData = {
-        userId: payload.userId,
-        date: {
-          [Op.gte]: payload.startDate,
-          [Op.lte]: payload.endDate
-        },
-        deleted: payload.deleted
-      };
-
-      var query = {
-        where: searchData,
-        include: payload.include,
-        order: [ [ 'date', 'DESC' ]]
-      }
-      if(payload.limit){
-        query['limit'] = payload.limit;
-      }
-      var tableName = payload.type;
       
-      console.log("+++ 792 index.js query: ", query)
-      db[tableName].findAll(query)
-      .then(function(entries){
-        callback(entries)
+      db.Income.findAll({
+        where: {
+          userId: payload.userId
+        }
+      })
+      .then(function(incomeResults){
+        db.Expenses.findAll({
+          where: {
+            userId: payload.userId
+          }
+        })
+        .then(function(expensesResults){
+          db.Savings.findAll({
+            where: {
+              userId: payload.userId
+            }
+          })
+          .then(function(savingsResults){
+            db.Invest.findAll({
+              where: {
+                userId: payload.userId
+              }
+            })
+            .then(function(investResults){
+              callback({
+                incomeResults: incomeResults,
+                expensesResults: expensesResults,
+                savingsResults: savingsResults,
+                investResults: investResults,
+              })
+            })
+          })
+        })
       });
     }
   }

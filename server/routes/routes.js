@@ -119,6 +119,10 @@ router.get('/search_specifics', authUtils.checkUser, function (req, res) {
   controllers.search_specifics.get(req, res)
 })
 
+// UTILS
+router.get('/recalculate_totals', authUtils.checkUser, function (req, res) {
+  controllers.recalculate_totals.get(req, res)
+})
 
 router.get('/test', authUtils.checkUser, function (req, res) {
   controllers.test.get(req, res)

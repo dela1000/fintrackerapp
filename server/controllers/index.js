@@ -1180,12 +1180,29 @@ module.exports = controllers = {
               }
               models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
                 if (newTotalIncome) {
-                  res.status(200).json({
-                    success: true,
-                    data: {
-                      investCreated: investCreated,
-                      newTotalInvest: Number(newTotalInvest.amount),
-                      newTotalIncome: Number(newTotalIncome.amount),
+                  var currentAvailableValues = {
+                    userId: userId,
+                    totalToUpdate: -newInvestTotal.amount
+                  }
+                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                    if (currentAvailable) {
+                      res.status(200).json({
+                        success: true,
+                        data: {
+                          investCreated: investCreated,
+                          newTotalInvest: Number(newTotalInvest.amount),
+                          newTotalIncome: Number(newTotalIncome.amount),
+                          currentAvailable: Number(currentAvailable.amount)
+                        }
+                      })
+                      
+                    } else {
+                      res.status(200).json({
+                        success: false,
+                        data: {
+                          message: totalIncomeMessage
+                        }
+                      });
                     }
                   })
                 } else {
@@ -1247,11 +1264,29 @@ module.exports = controllers = {
                 };
                 models.updateTotalAmount.patch(updateIncomeTotal, function (newTotalIncome, totalIncomeMessage){
                   if (newTotalIncome) {
-                    res.status(200).json({
-                      success: true,
-                      data: {
-                        newTotalInvest: newTotalInvest,
-                        newTotalIncome: Number(newTotalIncome.amount),
+                    var currentAvailableValues = {
+                      userId: userId,
+                      totalToUpdate: totalToUpdate
+                    }
+                    console.log("+++ 1271 index.js currentAvailableValues: ", currentAvailableValues)
+                    models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                      if (currentAvailable) {
+                        res.status(200).json({
+                          success: true,
+                          data: {
+                            newTotalInvest: newTotalInvest,
+                            newTotalIncome: Number(newTotalIncome.amount),
+                            currentAvailable: Number(currentAvailable.amount)
+                          }
+                        })
+                        
+                      } else {
+                        res.status(200).json({
+                          success: false,
+                          data: {
+                            message: currentAvailableMessage
+                          }
+                        })
                       }
                     })
                   } else {
@@ -1313,15 +1348,34 @@ module.exports = controllers = {
               }
               models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
                 if (newTotalIncome) {
-                  res.status(200).json({
-                    success: true,
-                    data: {
-                      id: invest.dataValues.id,
-                      investDeleted: true,
-                      currentTotalInvest: Number(currentTotalInvest.amount),
-                      newTotalIncome: Number(newTotalIncome.amount),
+                  var currentAvailableValues = {
+                    userId: userId,
+                    type: "Invest",
+                    totalToUpdate: invest.amount
+                  }
+                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                    if (currentAvailable) {
+                      res.status(200).json({
+                        success: true,
+                        data: {
+                          id: invest.dataValues.id,
+                          investDeleted: true,
+                          currentTotalInvest: Number(currentTotalInvest.amount),
+                          newTotalIncome: Number(newTotalIncome.amount),
+                          currentAvailable: Number(currentAvailable.amount)
+                        }
+                      })
+                    } else {
+                      res.status(200).json({
+                        success: false,
+                        data: {
+                          message: currentAvailableMessage
+                        }
+                      })
                     }
+
                   })
+                  
                 } else {
                   res.status(200).json({
                     success: false,
@@ -1587,90 +1641,53 @@ module.exports = controllers = {
     }
   },
 
-  test: {
-    get: (function (req, res) {
-      var type = "Income";
-      payload = {
-        userId: 1,
-        deleted: false,
-        include: [],
-        type: type
-
+  recalculate_totals: {
+    get: function (req, res) {
+      var start = moment().format('LTS')
+      console.log("+++ 1647 index.js start: ", start)
+      var userId = req.headers.userId;
+      var payload = {
+        userId: userId
       }
-      if(req.query.deleted){
-        payload.deleted = true;
-      }
-      if(req.query.limit){
-        payload.limit = 3;
-      }
-      if(req.query.startDate){
-        payload['startDate'] = finUtils.unixDate(req.query.startDate)
-      } else{
-        payload['startDate'] = finUtils.startOfMonth();
-      };
-      if(req.query.endDate){
-        payload['endDate'] = finUtils.unixDate(req.query.endDate);
-      } else{
-        payload['endDate'] = finUtils.endOfMonth();
-      };
-      if(type === "Income" || type === "Expenses"){
-        var categoryModel = type + "Category"
-        payload.include.push({
-          model: db[categoryModel], 
-          attributes: ['name'],
-        })
-      }
-      if(type === "Income" || type === "Savings" || type === "Invest"){
-        var accountModel = type + "Account";
-        payload.include.push({
-          model: db[accountModel], 
-          attributes: ['name'],
-        })
-      }
-      console.log("+++ 1533 index.js payload: ", payload)
-      models.test.get(payload, function (foundData, message) {
-        if(foundData){
-          var finalData = [];
-
-          _.forEach(foundData, function (found) {
-            var lowerType = finUtils.toLowerCase(payload.type);
-            var item = {
-              id: found.id,
-              amount: found.amount,
-              comment: found.comment,
-              categoryId: found.categoryId,
-              accountId: found.accountId,
-              date: finUtils.readableDate(found.date),
-              deleted: found.deleted,
-              createdAt: found.createdAt,
-              updatedAt: found.updatedAt,
-              userId: found.userId,
+      models.recalculate_totals.get(payload, function (results, resultsMessage) {
+        var subsequent = {};
+        var initials = {};
+        _.forEach(results, function (collection, key) {
+          subsequent[key] = 0;
+          if (key !== "expensesResults") {
+            initials[key] = 0;
+          }
+          _.forEach(collection, function (item) {
+            if(item.dataValues.comment && item.dataValues.comment === "Initial amount added"){
+              initials[key] = initials[key] + item.dataValues.amount;
+              initials[key] = Number(initials[key].toFixed(2))
+            } else {
+              subsequent[key] = subsequent[key] + item.dataValues.amount;
+              subsequent[key] = Number(subsequent[key].toFixed(2))
             }
-            if(type === "Income" || type === "Expenses"){
-              var category = lowerType + "category";
-              var addCategory = lowerType + "Category";
-              item[addCategory] = found[category].name
-            }
-            if(type === "Income" || type === "Savings" || type === "Invest"){
-                var account = lowerType + "account";
-                var addAccount = lowerType + "Account";
-                item[addAccount] = found[account].name
-            }
-            finalData.push(item)
           })
-
-          res.status(200).json({
-            success: true,
-            type: payload.type,
-            data: {
-              results: finalData
-            }
-          });
-        } else {
-          res.status(200).json({message: message})
-        }
+        })
+        
+        var totalIncome = initials.incomeResults + subsequent.incomeResults;
+        totalIncome = Number(totalIncome.toFixed(2))
+        var totalAvailable = totalIncome - subsequent.expensesResults - subsequent.savingsResults - subsequent.investResults;
+        totalAvailable = Number(totalAvailable.toFixed(2))
+        var totalUsed = subsequent.expensesResults + subsequent.savingsResults + subsequent.investResults;
+        totalUsed  = Number(totalUsed.toFixed(2))
+        var end = moment().format('LTS');
+        console.log("+++ 1678 index.js end: ", end)
+        res.status(200).json({
+          success: true,
+          data: {
+            initials: initials,
+            subsequent: subsequent,
+            totalIncome: totalIncome,
+            totalUsed: totalUsed,
+            totalAvailable: totalAvailable
+          }
+        });
       })
-    })
+    }
   }
 
 
