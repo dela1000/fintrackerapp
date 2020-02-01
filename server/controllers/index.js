@@ -767,8 +767,9 @@ module.exports = controllers = {
       })
     },
     patch: function (req, res) {
+      var userId = req.headers.userId;
       var payload = { 
-        userId: req.headers.userId,
+        userId: userId,
       }
       _.forEach(req.body, function (value, key) {
         if(key === "date"){
@@ -776,35 +777,32 @@ module.exports = controllers = {
         } else{
           payload[key] = value
         }
-
       })
       models.income.patch(payload, function (updatedIncome, message) {
         if (updatedIncome) {
           if(payload.amount){
-            var amount = updatedIncome._previousDataValues.amount - payload.amount;
-            var updateTotalPayload = {
-              type: "Income",
-              userId: payload.userId,
-              amount: -amount
+            var totalToUpdate = updatedIncome._previousDataValues.amount - payload.amount;
+            var currentAvailableValues = {
+              userId: userId,
+              totalToUpdate: -totalToUpdate
             }
-            models.updateTotalAmount.patch(updateTotalPayload, function (updatedTotal, patchMessage) {
-              if(updatedTotal){
+            models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+              if (currentAvailable) {
                 res.status(200).json({
                   success: true,
                   data: {
                     updatedIncome: updatedIncome,
-                    updatedTotal: Number(updatedTotal.amount)
+                    currentAvailable: Number(currentAvailable.amount),
                   }
                 })
-              } else{
+              } else {
                 res.status(200).json({
                   success: false,
                   data: {
-                    message: patchMessage
+                    message: currentAvailableMessage
                   }
-                  
                 })
-              };
+              }
             })
           } else {
             res.status(200).json({
