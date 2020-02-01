@@ -487,7 +487,7 @@ module.exports = controllers = {
         categoryId: req.body.id,
         deleted: false,
       };
-      models.search_specifics.get(payload, function (results) {
+      models.search.get(payload, function (results) {
         if(!results){
           models.categories.delete(payload, function (result, categoriesMessage) {
             if(result){
@@ -642,7 +642,7 @@ module.exports = controllers = {
         startDate: '2020-01-01',
         endDate: '2100-12-31',
       };
-      models.search_specifics.get(payload, function (results) {
+      models.search.get(payload, function (results) {
         if(!results){
           models.accounts.delete(payload, function (result, accountsMessage) {
             if(result){
@@ -1602,7 +1602,7 @@ module.exports = controllers = {
     }
   },
 
-  search_specifics: {
+  search: {
     get: function (req, res) {
       var type = finUtils.type(req.query.type);
       var payload = {
@@ -1611,7 +1611,7 @@ module.exports = controllers = {
         deleted: false,
         include: [],
         orderBy: "date",
-        order: "ASC"
+        order: "asc"
       }
 
       if(req.query.categoryId){
@@ -1681,7 +1681,7 @@ module.exports = controllers = {
         })
       }
       console.log("payload: ", JSON.stringify(payload, null, "\t"));
-      models.search_specifics.get(payload, function (foundResults, message) {
+      models.search.get(payload, function (foundResults, message) {
         if (foundResults) {
           var finalData = [];
           _.forEach(foundResults, function (found) {

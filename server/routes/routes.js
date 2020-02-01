@@ -141,8 +141,8 @@ router.get('/expenses_totals', authUtils.checkUser, function (req, res) {
   controllers.expenses_totals.get(req, res)
 })
 // SEARCH 
-router.get('/search_specifics', authUtils.checkUser, function (req, res) {
-  controllers.search_specifics.get(req, res)
+router.get('/search', authUtils.checkUser, function (req, res) {
+  controllers.search.get(req, res)
 })
 
 // UTILS

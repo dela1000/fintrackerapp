@@ -711,7 +711,7 @@ module.exports = {
     }
   },
 
-  search_specifics: {
+  search: {
     get: function (payload, callback) {
       var searchData = {
         userId: payload.userId,
@@ -754,6 +754,14 @@ module.exports = {
       }
       if(payload.orderBy){
         query['order'] = [];
+        if(payload.type === "Income" || payload.type === "Expenses"){
+          query['order'].push(["categoryId", "asc"])
+        }
+        if(payload.type === "Income" || payload.type === "Savings" || payload.type === "Invest"){
+          query['order'].push(["accountId", "asc"])
+        }
+        query['order'].push(["amount", "desc"])
+
         if(payload.order){
           query['order'].push([payload.orderBy, payload.order])
         } else {
