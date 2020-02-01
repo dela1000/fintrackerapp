@@ -716,8 +716,8 @@ module.exports = {
       var searchData = {
         userId: payload.userId,
         date: {
-          [Op.gte]: moment(payload.startDate).toDate(),
-          [Op.lte]: moment(payload.endDate).toDate(),
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate,
         },
         deleted: payload.deleted
       };
@@ -739,7 +739,12 @@ module.exports = {
         if(!payload.maxAmount){
           payload.maxAmount = 99999;
         };
-        searchData['amount'] = {$between: [payload.minAmount, payload.maxAmount]}
+        searchData['amount'] = {
+          [Op.between]: [Number(payload.minAmount) - .001, Number(payload.maxAmount) + .001],
+          // // THIS BELOW DOES NOT INCLUDE LESS THAN OR EQUALS WHEN DECIMALS ARE INVOLVED
+          // [Op.gte]: Number(payload.minAmount) - .001,
+          // [Op.lte]: Number(payload.maxAmount) + .001
+        }
       }
 
       var tableName = payload.type;
@@ -768,8 +773,8 @@ module.exports = {
           query['order'].push([payload.orderBy])
         }
       }
-
-      console.log("query: ", JSON.stringify(query, null, "\t"));
+      console.log("+++ 771 index.js query.where.amount: ", query.where.amount)
+      console.log("+++ 771 index.js query: ", query)
       db[tableName].findAll(query)
       .then(function (foundResults) {
         if (foundResults.length > 0) {

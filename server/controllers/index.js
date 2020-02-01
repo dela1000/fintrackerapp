@@ -77,7 +77,7 @@ module.exports = controllers = {
 
   logout: {
     get: function (req, res) {
-      res.status(202).json({
+      res.status(200).json({
         success: true,
         data: {
           username: null,
@@ -639,8 +639,8 @@ module.exports = controllers = {
         userId: req.headers.userId,
         accountId: req.body.id,
         deleted: false,
-        startDate: '2020-01-01',
-        endDate: '2100-12-31',
+        startDate: '01-01-2020',
+        endDate: '12-31-2100',
       };
       models.search.get(payload, function (results) {
         if(!results){
@@ -1680,7 +1680,7 @@ module.exports = controllers = {
           attributes: ['name'],
         })
       }
-      console.log("payload: ", JSON.stringify(payload, null, "\t"));
+      console.log("+++ 1683 index.js payload: ", payload)
       models.search.get(payload, function (foundResults, message) {
         if (foundResults) {
           var finalData = [];
