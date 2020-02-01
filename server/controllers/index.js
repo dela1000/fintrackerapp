@@ -1211,48 +1211,12 @@ module.exports = controllers = {
           }
           models.updateTotalAmount.patch(deletedAmount, function (currentTotalSavings, currentSavingsMessage) {
             if (currentTotalSavings) {
-              var newIncomeTotal = {
-                type: "Income",
-                userId: userId,
-                amount: savings.amount
-              }
-              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
-                if (newTotalIncome) {
-                  var currentAvailableValues = {
-                    userId: userId,
-                    type: "Savings",
-                    totalToUpdate: savings.amount
-                  }
-                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                    if (currentAvailable) {
-                      res.status(200).json({
-                        success: true,
-                        data: {
-                          id: savings.dataValues.id,
-                          savingsDeleted: true,
-                          currentTotalSavings: Number(currentTotalSavings.amount),
-                          newTotalIncome: Number(newTotalIncome.amount),
-                          currentAvailable: Number(currentAvailable.amount)
-                        }
-                      })
-                    } else {
-                      res.status(200).json({
-                        success: false,
-                        data: {
-                          message: currentAvailableMessage
-                        }
-                      })
-                    }
-
-                  })
-                  
-                } else {
-                  res.status(200).json({
-                    success: false,
-                    data: {
-                      message: totalIncomeMessage
-                    }
-                  });
+              res.status(200).json({
+                success: true,
+                data: {
+                  id: savings.dataValues.id,
+                  savingsDeleted: true,
+                  currentTotalSavings: Number(currentTotalSavings.amount),
                 }
               })
             } else {
@@ -1298,45 +1262,11 @@ module.exports = controllers = {
         if (investCreated) {
           models.updateTotalAmount.patch(newInvestTotal, function (newTotalInvest, totalInvestMessage){
             if (newTotalInvest) {
-              var newIncomeTotal = {
-                type: "Income",
-                userId: userId,
-                amount: -newInvestTotal.amount
-              }
-              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
-                if (newTotalIncome) {
-                  var currentAvailableValues = {
-                    userId: userId,
-                    totalToUpdate: -newInvestTotal.amount
-                  }
-                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                    if (currentAvailable) {
-                      res.status(200).json({
-                        success: true,
-                        data: {
-                          investCreated: investCreated,
-                          newTotalInvest: Number(newTotalInvest.amount),
-                          newTotalIncome: Number(newTotalIncome.amount),
-                          currentAvailable: Number(currentAvailable.amount)
-                        }
-                      })
-                      
-                    } else {
-                      res.status(200).json({
-                        success: false,
-                        data: {
-                          message: totalIncomeMessage
-                        }
-                      });
-                    }
-                  })
-                } else {
-                  res.status(200).json({
-                    success: false,
-                    data: {
-                      message: totalIncomeMessage
-                    }
-                  });
+              res.status(200).json({
+                success: true,
+                data: {
+                  investCreated: investCreated,
+                  newTotalInvest: Number(newTotalInvest.amount),
                 }
               })
             } else {
@@ -1382,47 +1312,12 @@ module.exports = controllers = {
             };
             models.updateTotalAmount.patch(updateAmount, function (newTotalInvest, totalInvestMessage){
               if (newTotalInvest) {
-                var updateIncomeTotal = {
-                  userId: userId,
-                  type: "Income",
-                  amount: totalToUpdate,
-                };
-                models.updateTotalAmount.patch(updateIncomeTotal, function (newTotalIncome, totalIncomeMessage){
-                  if (newTotalIncome) {
-                    var currentAvailableValues = {
-                      userId: userId,
-                      totalToUpdate: totalToUpdate
-                    }
-                    console.log("+++ 1271 index.js currentAvailableValues: ", currentAvailableValues)
-                    models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                      if (currentAvailable) {
-                        res.status(200).json({
-                          success: true,
-                          data: {
-                            newTotalInvest: newTotalInvest,
-                            newTotalIncome: Number(newTotalIncome.amount),
-                            currentAvailable: Number(currentAvailable.amount)
-                          }
-                        })
-                        
-                      } else {
-                        res.status(200).json({
-                          success: false,
-                          data: {
-                            message: currentAvailableMessage
-                          }
-                        })
-                      }
-                    })
-                  } else {
-                    res.status(200).json({
-                      success: false,
-                      data: {
-                        message: totalIncomeMessage
-                      }
-                    })
+                res.status(200).json({
+                  success: true,
+                  data: {
+                    updatedInvest: updatedInvest,
+                    newTotalInvest: newTotalInvest,
                   }
-
                 })
               } else {
                 res.status(200).json({
@@ -1466,48 +1361,12 @@ module.exports = controllers = {
           }
           models.updateTotalAmount.patch(deletedAmount, function (currentTotalInvest, currentInvestMessage) {
             if (currentTotalInvest) {
-              var newIncomeTotal = {
-                type: "Income",
-                userId: userId,
-                amount: invest.amount
-              }
-              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
-                if (newTotalIncome) {
-                  var currentAvailableValues = {
-                    userId: userId,
-                    type: "Invest",
-                    totalToUpdate: invest.amount
-                  }
-                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                    if (currentAvailable) {
-                      res.status(200).json({
-                        success: true,
-                        data: {
-                          id: invest.dataValues.id,
-                          investDeleted: true,
-                          currentTotalInvest: Number(currentTotalInvest.amount),
-                          newTotalIncome: Number(newTotalIncome.amount),
-                          currentAvailable: Number(currentAvailable.amount)
-                        }
-                      })
-                    } else {
-                      res.status(200).json({
-                        success: false,
-                        data: {
-                          message: currentAvailableMessage
-                        }
-                      })
-                    }
-
-                  })
-                  
-                } else {
-                  res.status(200).json({
-                    success: false,
-                    data: {
-                      message: totalIncomeMessage
-                    }
-                  });
+              res.status(200).json({
+                success: true,
+                data: {
+                  id: invest.dataValues.id,
+                  investDeleted: true,
+                  currentTotalInvest: Number(currentTotalInvest.amount)
                 }
               })
             } else {
