@@ -126,7 +126,7 @@ module.exports = controllers = {
             _.forEach(initialData, function(amounts, key) {
               _.forEach(amounts, function (amount) {
                 amount['userId'] = userId;
-                amount['date'] = finUtils.unixDate(amount.date);
+                amount['date'] = amount.date;
                 newIncomeAccounts[key]['data'].push({
                   userId: userId,
                   name: amount.accountName
@@ -639,8 +639,8 @@ module.exports = controllers = {
         userId: req.headers.userId,
         accountId: req.body.id,
         deleted: false,
-        startDate: finUtils.unixDate(moment('2020-01-01')),
-        endDate: finUtils.unixDate(moment('2100-12-31')),
+        startDate: '2020-01-01',
+        endDate: '2100-12-31',
       };
       models.search_specifics.get(payload, function (results) {
         if(!results){
@@ -691,7 +691,7 @@ module.exports = controllers = {
       };
       _.forEach(payload.data, function(amount) {
         amount['userId'] = userId;
-        amount['date'] = finUtils.unixDate(amount.date);
+        amount['date'] = amount.date;
         totalAmounts['amount'] = totalAmounts['amount'] + amount.amount;
       })
       models.bulk_add.post(payload, function (amountsCreated, bulkMessage) {
@@ -746,13 +746,13 @@ module.exports = controllers = {
         userId: req.headers.userId,
       }
       if(req.query.startDate){
-        payload['startDate'] = finUtils.unixDate(req.query.startDate);
+        payload['startDate'] = req.query.startDate;
       } else{
         payload['startDate'] = finUtils.startOfMonth();
         
       };
       if(req.query.endDate){
-        payload['endDate'] = finUtils.unixDate(req.query.endDate);
+        payload['endDate'] = req.query.endDate;
       } else{
         payload['endDate'] = finUtils.endOfMonth();
       };
@@ -899,7 +899,7 @@ module.exports = controllers = {
       };
       _.forEach(payload.expensesData, function(amount) {
         amount['userId'] = req.headers.userId;
-        amount['date'] = finUtils.unixDate(amount.date);
+        amount['date'] = amount.date;
         newExpensesTotal.amount = newExpensesTotal.amount + amount.amount;
       })
       models.expenses.post(payload, function (expensesCreated) {
@@ -956,13 +956,13 @@ module.exports = controllers = {
       };
 
       if(req.query.startDate){
-        payload['startDate'] = finUtils.unixDate(req.query.startDate);
+        payload['startDate'] = req.query.startDate;
       } else{
         payload['startDate'] = finUtils.startOfMonth();
         
       };
       if(req.query.endDate){
-        payload['endDate'] = finUtils.unixDate(req.query.endDate);
+        payload['endDate'] = req.query.endDate;
       } else{
         payload['endDate'] = finUtils.endOfMonth();
       };
@@ -1107,7 +1107,7 @@ module.exports = controllers = {
       };
       _.forEach(payload.savingsData, function(amount) {
         amount['userId'] = req.headers.userId;
-        amount['date'] = finUtils.unixDate(amount.date);
+        amount['date'] = amount.date;
         newSavingsTotal.amount = newSavingsTotal.amount + amount.amount;
       })
       models.savings.post(payload, function (savingsCreated, savingsMessage) {
@@ -1362,7 +1362,7 @@ module.exports = controllers = {
       };
       _.forEach(payload.investData, function(amount) {
         amount['userId'] = req.headers.userId;
-        amount['date'] = finUtils.unixDate(amount.date);
+        amount['date'] = amount.date;
         newInvestTotal.amount = newInvestTotal.amount + amount.amount;
       })
       models.invest.post(payload, function (investCreated, investMessage) {
@@ -1611,7 +1611,7 @@ module.exports = controllers = {
         deleted: false,
         include: [],
         orderBy: "date",
-        order: "DESC"
+        order: "ASC"
       }
 
       if(req.query.categoryId){
@@ -1646,12 +1646,12 @@ module.exports = controllers = {
         payload.order = req.query.order;
       };
       if(req.query.startDate){
-        payload['startDate'] = finUtils.unixDate(req.query.startDate)
+        payload['startDate'] = req.query.startDate
       } else{
         payload['startDate'] = finUtils.startOfMonth();
       };
       if(req.query.endDate){
-        payload['endDate'] = finUtils.unixDate(req.query.endDate);
+        payload['endDate'] = req.query.endDate;
       } else{
         payload['endDate'] = finUtils.endOfMonth();
       };
@@ -1688,9 +1688,6 @@ module.exports = controllers = {
             var lowerType = finUtils.toLowerCase(payload.type);
             item = {};
             _.forEach(found.dataValues, function (value, key) {
-              if(key === "date") {
-                value = finUtils.readableDate(value)
-              }
               item[key] = value
             })
             if(type === "Income" || type === "Expenses"){
@@ -1724,7 +1721,7 @@ module.exports = controllers = {
             data: {
               results: finalData,
               totalFound: finalData.length,
-              totalAmountFound: totalAmountFound,
+              totalAmountFound: totalAmountFound.toFixed(2),
               queryLimit: payload.limit
             },
           });
@@ -1734,7 +1731,7 @@ module.exports = controllers = {
             data: {
               message: message,
               totalFound: 0,
-              queryLimit: payload.limit || "not set"
+              queryLimit: payload.limit
             }
           });
         };

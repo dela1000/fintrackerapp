@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var moment = require('moment');
+var dateFormat = "MM-DD-YYYY";
 
 exports.addTotals = function(data) {
   var totalAmount = 0;
@@ -32,14 +33,6 @@ exports.addTotals = function(data) {
   return finalData;
 }
 
-exports.unixDate = function(readableDate) {
-  return moment(readableDate).startOf('day').format('x')
-}
-
-exports.readableDate = function(unixDate) {
-  return moment(unixDate).format("YYYY-MM-DD");
-}
-
 exports.type = function (type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
@@ -49,25 +42,25 @@ exports.toLowerCase = function (type) {
 }
 
 exports.startOfDay = function () {
-  return moment().startOf('day').format('x');
+  return moment().startOf('day').format(dateFormat);
 }
 
 exports.endOfDay = function () {
-  return moment().endOf('day').format('x');
+  return moment().endOf('day').format(dateFormat);
 }
 
 exports.startOfMonth = function () {
-  return moment().startOf('month').format('x');
+  return moment().startOf('month').format(dateFormat);
 }
 
 exports.endOfMonth = function () {
-  return moment().endOf('month').format('x');
+  return moment().endOf('month').format(dateFormat);
 }
 
 exports.startOfYear = function () {
-  return moment().startOf('year').format('x');
+  return moment().startOf('year').format(dateFormat);
 }
 
 exports.endOfYear = function () {
-  return moment().endOf('year').format('x');
+  return moment().endOf('year').format(dateFormat);
 }

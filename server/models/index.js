@@ -716,8 +716,8 @@ module.exports = {
       var searchData = {
         userId: payload.userId,
         date: {
-          [Op.gte]: payload.startDate,
-          [Op.lte]: payload.endDate
+          [Op.gte]: moment(payload.startDate).toDate(),
+          [Op.lte]: moment(payload.endDate).toDate(),
         },
         deleted: payload.deleted
       };

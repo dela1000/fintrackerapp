@@ -66,7 +66,7 @@ var Income = sequelize.define('income', {
       allowNull: true
     },
     date: {
-      type: Sequelize.BIGINT,
+      type: Sequelize.TEXT,
       allowNull: false
     },
     deleted: {
@@ -98,7 +98,7 @@ var Expenses = sequelize.define('expenses', {
       allowNull: false
     },
     date: {
-      type: Sequelize.BIGINT,
+      type: Sequelize.TEXT,
       allowNull: false
     },
     deleted: {
@@ -130,7 +130,7 @@ var Savings = sequelize.define('savings', {
       allowNull: false
     },
     date: {
-      type: Sequelize.BIGINT,
+      type: Sequelize.TEXT,
       allowNull: false
     },
     deleted: {
@@ -162,7 +162,7 @@ var Invest = sequelize.define('invest', {
       allowNull: false
     },
     date: {
-      type: Sequelize.BIGINT,
+      type: Sequelize.TEXT,
       allowNull: false
     },
     deleted: {
