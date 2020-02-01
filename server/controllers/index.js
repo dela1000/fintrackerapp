@@ -1112,45 +1112,11 @@ module.exports = controllers = {
         if (savingsCreated) {
           models.updateTotalAmount.patch(newSavingsTotal, function (newTotalSavings, totalSavingsMessage){
             if (newTotalSavings) {
-              var newIncomeTotal = {
-                type: "Income",
-                userId: userId,
-                amount: -newSavingsTotal.amount
-              }
-              models.updateTotalAmount.patch(newIncomeTotal, function (newTotalIncome, totalIncomeMessage){
-                if (newTotalIncome) {
-                  var currentAvailableValues = {
-                    userId: userId,
-                    totalToUpdate: -newSavingsTotal.amount
-                  }
-                  models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                    if (currentAvailable) {
-                      res.status(200).json({
-                        success: true,
-                        data: {
-                          savingsCreated: savingsCreated,
-                          newTotalSavings: Number(newTotalSavings.amount),
-                          newTotalIncome: Number(newTotalIncome.amount),
-                          currentAvailable: Number(currentAvailable.amount)
-                        }
-                      })
-                      
-                    } else {
-                      res.status(200).json({
-                        success: false,
-                        data: {
-                          message: totalIncomeMessage
-                        }
-                      });
-                    }
-                  })
-                } else {
-                  res.status(200).json({
-                    success: false,
-                    data: {
-                      message: totalIncomeMessage
-                    }
-                  });
+              res.status(200).json({
+                success: true,
+                data: {
+                  savingsCreated: savingsCreated,
+                  newTotalSavings: Number(newTotalSavings.amount),
                 }
               })
             } else {
@@ -1196,47 +1162,12 @@ module.exports = controllers = {
             };
             models.updateTotalAmount.patch(updateAmount, function (newTotalSavings, totalSavingsMessage){
               if (newTotalSavings) {
-                var updateIncomeTotal = {
-                  userId: userId,
-                  type: "Income",
-                  amount: totalToUpdate,
-                };
-                models.updateTotalAmount.patch(updateIncomeTotal, function (newTotalIncome, totalIncomeMessage){
-                  if (newTotalIncome) {
-                    var currentAvailableValues = {
-                      userId: userId,
-                      type: "Savings",
-                      totalToUpdate: totalToUpdate
-                    }
-                    models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-                      if (currentAvailable) {
-                        res.status(200).json({
-                          success: true,
-                          data: {
-                            newTotalSavings: newTotalSavings,
-                            newTotalIncome: Number(newTotalIncome.amount),
-                            currentAvailable: Number(currentAvailable.amount)
-                          }
-                        })
-                        
-                      } else {
-                        res.status(200).json({
-                          success: false,
-                          data: {
-                            message: currentAvailableMessage
-                          }
-                        })
-                      }
-                    })
-                  } else {
-                    res.status(200).json({
-                      success: false,
-                      data: {
-                        message: totalIncomeMessage
-                      }
-                    })
+                res.status(200).json({
+                  success: true,
+                  data: {
+                    updatedSavings: updatedSavings,
+                    newTotalSavings: Number(newTotalSavings.amount),
                   }
-
                 })
               } else {
                 res.status(200).json({
