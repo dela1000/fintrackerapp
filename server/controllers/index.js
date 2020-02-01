@@ -708,6 +708,7 @@ module.exports = controllers = {
                     success: true,
                     data: {
                       amountsCreated: amountsCreated,
+                      amountIncrease: Number(totalAmounts['amount'].toFixed(2)),
                       currentTotalIncome: Number(currentTotalIncome.amount),
                       currentAvailable: Number(currentAvailable.amount),
                     }
@@ -1648,11 +1649,10 @@ module.exports = controllers = {
           })
           
           var totalIncome = initials.income + subsequent.income;
-          totalIncome = Number(totalIncome.toFixed(2))
-          var totalAvailable = totalIncome - subsequent.expenses - subsequent.savings - subsequent.invest;
-          totalAvailable = Number(totalAvailable.toFixed(2))
-          var totalUsed = subsequent.expenses + subsequent.savings + subsequent.invest;
-          totalUsed  = Number(totalUsed.toFixed(2))
+          var totalAvailable = totalIncome - subsequent.expenses;
+          var totalSpent = subsequent.expenses;
+          var totalSaved = initials.savings + subsequent.savings;
+          var totalInvested = initials.invest + subsequent.invest;
           var end = moment().format('HH:mm:ss:SSS');
           console.log("+++ 1678 index.js end: ", end)
           res.status(200).json({
@@ -1660,9 +1660,11 @@ module.exports = controllers = {
             data: {
               initials: initials,
               subsequent: subsequent,
-              totalIncome: totalIncome,
-              totalUsed: totalUsed,
-              totalAvailable: totalAvailable
+              totalIncome: Number(totalIncome.toFixed(2)),
+              totalSpent: Number(totalSpent.toFixed(2)),
+              totalAvailable: Number(totalAvailable.toFixed(2)),
+              totalSaved: Number(totalSaved.toFixed(2)),
+              totalInvested: Number(totalInvested.toFixed(2)),
             }
           });
         } else {

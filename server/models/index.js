@@ -925,25 +925,29 @@ module.exports = {
       
       db.Income.findAll({
         where: {
-          userId: payload.userId
+          userId: payload.userId,
+          deleted: false
         }
       })
       .then(function(income){
         db.Expenses.findAll({
           where: {
-            userId: payload.userId
+            userId: payload.userId,
+            deleted: false
           }
         })
         .then(function(expenses){
           db.Savings.findAll({
             where: {
-              userId: payload.userId
+              userId: payload.userId,
+              deleted: false
             }
           })
           .then(function(savings){
             db.Invest.findAll({
               where: {
-                userId: payload.userId
+                userId: payload.userId,
+                deleted: false
               }
             })
             .then(function(invest){
