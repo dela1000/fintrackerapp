@@ -16,15 +16,16 @@ module.exports = controllers = {
       }
       models.login.post(payload, function (isUser, message) {
         if (isUser) {
-          authUtils.createToken(req, res, isUser, function (token, name) {
+          authUtils.createToken(req, res, isUser, function (token) {
+            console.log("+++ 20 index.js isUser.dataValues: ", isUser.dataValues)
            res.status(200).send({
             success: true,
             data: {
-             username: name,
              fintrackToken: token,
              userId: isUser.dataValues.id,
-             initial: isUser.dataValues.initial,
+             username: isUser.dataValues.username,
              userEmail: isUser.dataValues.email,
+             initials_done: isUser.dataValues.initials_done,
             }
            });
           })
