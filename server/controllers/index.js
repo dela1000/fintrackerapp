@@ -782,27 +782,42 @@ module.exports = controllers = {
         if (updatedIncome) {
           if(payload.amount){
             var totalToUpdate = updatedIncome._previousDataValues.amount - payload.amount;
-            var currentAvailableValues = {
+            var updateAmount = {
               userId: userId,
+              type: "Income",
+              amount: -totalToUpdate,
               totalToUpdate: -totalToUpdate
-            }
-            models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-              if (currentAvailable) {
-                res.status(200).json({
-                  success: true,
-                  data: {
-                    updatedIncome: updatedIncome,
-                    currentAvailable: Number(currentAvailable.amount),
+            };
+            models.updateTotalAmount.patch(updateAmount, function (newTotalIncome, totalIncomeMessage){
+              if(newTotalIncome){
+                models.updateCurrentAvailable.patch(updateAmount, function (currentAvailable, currentAvailableMessage) {
+                  if (currentAvailable) {
+                    res.status(200).json({
+                      success: true,
+                      data: {
+                        updatedIncome: updatedIncome,
+                        newTotalIncome: Number(newTotalIncome.amount),
+                        currentAvailable: Number(currentAvailable.amount),
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: currentAvailableMessage
+                      }
+                    })
                   }
                 })
               } else {
                 res.status(200).json({
                   success: false,
                   data: {
-                    message: currentAvailableMessage
+                    message: totalIncomeMessage
                   }
                 })
               }
+
             })
           } else {
             res.status(200).json({
@@ -833,15 +848,12 @@ module.exports = controllers = {
           var deletedAmount = {
             type: type,
             userId: userId,
-            amount: -income.dataValues.amount
+            amount: -income.dataValues.amount,
+            totalToUpdate: -income.dataValues.amount
           }
           models.updateTotalAmount.patch(deletedAmount, function (currentTotalIncome, currentIncomeMessage) {
             if(currentTotalIncome){
-              var currentAvailableValues = {
-                userId: userId,
-                totalToUpdate: -income.dataValues.amount
-              }
-              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+              models.updateCurrentAvailable.patch(deletedAmount, function (currentAvailable, currentAvailableMessage) {
                 if (currentAvailable) {
                   res.status(200).json({
                     success: true,
@@ -900,16 +912,13 @@ module.exports = controllers = {
         amount['date'] = amount.date;
         newExpensesTotal.amount = newExpensesTotal.amount + amount.amount;
       })
+      newExpensesTotal['totalToUpdate'] = -newExpensesTotal.amount;
       models.expenses.post(payload, function (expensesCreated) {
         if(expensesCreated){
           // UPDATE EXPENSES TOTAL
           models.updateTotalAmount.patch(newExpensesTotal, function (newTotalExpenses, totalExpensesMessage) {
             if(newTotalExpenses){
-              var currentAvailableValues = {
-                userId: userId,
-                totalToUpdate: -newExpensesTotal.amount
-              }
-              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+              models.updateCurrentAvailable.patch(newExpensesTotal, function (currentAvailable, currentAvailableMessage) {
                 if (currentAvailable) {
                   res.status(200).json({
                     success: true,
@@ -990,27 +999,41 @@ module.exports = controllers = {
         if (updatedExpenses) {
           if(payload.amount){
             var totalToUpdate = updatedExpenses._previousDataValues.amount - payload.amount;
-            var currentAvailableValues = {
+            var updateAmount = {
               userId: userId,
+              type: "Expenses",
+              amount: -totalToUpdate,
               totalToUpdate: totalToUpdate
-            }
-            models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
-              if (currentAvailable) {
-                res.status(200).json({
-                  success: true,
-                  data: {
-                    updatedExpenses: updatedExpenses,
-                    currentAvailable: Number(currentAvailable.amount),
+            };
+            models.updateTotalAmount.patch(updateAmount, function (newTotalExpenses, totalExpensesMessage){
+              if(newTotalExpenses){
+                models.updateCurrentAvailable.patch(updateAmount, function (currentAvailable, currentAvailableMessage) {
+                  if (currentAvailable) {
+                    res.status(200).json({
+                      success: true,
+                      data: {
+                        updatedExpenses: updatedExpenses,
+                        newTotalExpenses: Number(newTotalExpenses.amount),
+                        currentAvailable: Number(currentAvailable.amount),
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: currentAvailableMessage
+                      }
+                    })
                   }
                 })
-              } else {
+              } else{
                 res.status(200).json({
                   success: false,
                   data: {
-                    message: currentAvailableMessage
+                    message: totalExpensesMessage
                   }
                 })
-              }
+              };
             })
           } else {
             res.status(200).json({
@@ -1041,15 +1064,12 @@ module.exports = controllers = {
           var deletedAmount = {
             type: type,
             userId: userId,
-            amount: -expenses.dataValues.amount
+            amount: -expenses.dataValues.amount,
+            totalToUpdate: expenses.dataValues.amount
           }
           models.updateTotalAmount.patch(deletedAmount, function (currentTotalExpenses, currentExpensesMessage) {
             if(currentTotalExpenses){
-              var currentAvailableValues = {
-                userId: userId,
-                totalToUpdate: -expenses.dataValues.amount
-              }
-              models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+              models.updateCurrentAvailable.patch(deletedAmount, function (currentAvailable, currentAvailableMessage) {
                 if (currentAvailable) {
                   res.status(200).json({
                     success: true,
@@ -1366,7 +1386,7 @@ module.exports = controllers = {
                 data: {
                   id: invest.dataValues.id,
                   investDeleted: true,
-                  currentTotalInvest: Number(currentTotalInvest.amount)
+                  currentTotalInvest: Number(currentTotalInvest.amount),
                 }
               })
             } else {
