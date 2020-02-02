@@ -369,9 +369,9 @@ module.exports = {
 
   income: {
     post: function (payload, callback) {
-      if(payload && payload.incomeData && payload.incomeData.length > 0){
+      if(payload && payload.data && payload.data.length > 0){
         db.Income.bulkCreate(
-          payload.incomeData,
+          payload.data,
           { individualHooks: true }
         )
         .then(function (incomeAdded) {
@@ -531,9 +531,9 @@ module.exports = {
 
   savings: {
     post: function (payload, callback) {
-      if(payload && payload.savingsData && payload.savingsData.length > 0){
+      if(payload && payload.data && payload.data.length > 0){
         db.Savings.bulkCreate(
-          payload.savingsData,
+          payload.data,
           { individualHooks: true }
         )
         .then(function (savingsAdded) {
@@ -593,9 +593,9 @@ module.exports = {
 
   invest: {
     post: function (payload, callback) {
-      if(payload && payload.investData && payload.investData.length > 0){
+      if(payload && payload.data && payload.data.length > 0){
         db.Invest.bulkCreate(
-          payload.investData,
+          payload.data,
           { individualHooks: true }
         )
         .then(function (investAdded) {

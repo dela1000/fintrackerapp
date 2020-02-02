@@ -69,6 +69,14 @@ var Income = sequelize.define('income', {
       type: Sequelize.TEXT,
       allowNull: false
     },
+    transferDetail: {
+      type: Sequelize.TEXT,
+      allowNull: true
+    },
+    transferAccountId: {
+      type: Sequelize.INTEGER,
+      allowNull: true
+    },
     deleted: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
@@ -133,6 +141,14 @@ var Savings = sequelize.define('savings', {
       type: Sequelize.TEXT,
       allowNull: false
     },
+    transferDetail: {
+      type: Sequelize.TEXT,
+      allowNull: true
+    },
+    transferAccountId: {
+      type: Sequelize.INTEGER,
+      allowNull: true
+    },
     deleted: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
@@ -164,6 +180,14 @@ var Invest = sequelize.define('invest', {
     date: {
       type: Sequelize.TEXT,
       allowNull: false
+    },
+    transferDetail: {
+      type: Sequelize.TEXT,
+      allowNull: true
+    },
+    transferAccountId: {
+      type: Sequelize.INTEGER,
+      allowNull: true
     },
     deleted: {
       type: Sequelize.BOOLEAN,

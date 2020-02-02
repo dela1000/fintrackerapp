@@ -102,10 +102,18 @@ module.exports = controllers = {
             console.log("controllers: BEGIN SETTING INITIAL AMOUNTS")
             var initialIncomeCategories = {
               type: "Income",
-              data: {
-                userId: userId,
-                name: "initial",
-              }
+              data: [
+                {
+                  userId: userId,
+                  type: "income",
+                  name: "initial",
+                },
+                {
+                  userId: userId,
+                  type: "income",
+                  name: "transfer",
+                },
+              ]
             }
 
             var newIncomeAccounts = {
@@ -136,9 +144,9 @@ module.exports = controllers = {
             //if initials_done is false continue
             // ADD NEW CATEGORIES
             console.log("controllers: ADD NEW CATEGORIES")
-            models.categories.post(initialIncomeCategories, function (categoryAdded, categoriesMessage) {
-              if(categoryAdded){
-                var initialCategoryCreated = categoryAdded.dataValues;
+            models.categories_bulk.post(initialIncomeCategories, function (categoriesAdded, categoriesMessage) {
+              if(categoriesAdded){
+                var initialCategoryCreated = categoriesAdded;
                 // ADD NEW ACCOUNTS
                 console.log("controllers: ADD NEW ACCOUNTS")
                 var newAccountsAdded = {};
@@ -185,12 +193,15 @@ module.exports = controllers = {
                                 amount: 0
                               },
                             }
+                            var initialCategory = initialCategoryCreated.find(function (item) {
+                              return item.dataValues.name  === 'initial';
+                            })
                             _.forEach(initialData, function (initialDataType, key) {
                               _.forEach(initialDataType, function (amount) {
                                 _.forEach(newAccountsAdded[key], function (newAccount) {
                                   if(amount.accountName === newAccount.dataValues.name){
                                     amount.accountId = newAccount.dataValues.id;
-                                    amount.categoryId = initialCategoryCreated.id;
+                                    amount.categoryId = initialCategory.id;
                                     amount.comment = "Initial amount added";
                                     finalInitial[key].data.push(amount);
                                     totalAmounts[key].amount = totalAmounts[key].amount + amount.amount;
@@ -682,7 +693,7 @@ module.exports = controllers = {
       var type = finUtils.type(req.body.type);
       var payload = {
         type: type,
-        data: req.body.incomeData
+        data: req.body.data
       }
       var totalAmounts = {
         userId: userId,
@@ -1117,14 +1128,14 @@ module.exports = controllers = {
       var userId = req.headers.userId;
       var payload = {
         userId: userId,
-        savingsData: req.body.savingsData
+        data: req.body.data
       }
       var newSavingsTotal = {
         type: type,
         userId: userId,
         amount: 0
       };
-      _.forEach(payload.savingsData, function(amount) {
+      _.forEach(payload.data, function(amount) {
         amount['userId'] = req.headers.userId;
         amount['date'] = amount.date;
         newSavingsTotal.amount = newSavingsTotal.amount + amount.amount;
@@ -1267,7 +1278,7 @@ module.exports = controllers = {
       var userId = req.headers.userId;
       var payload = {
         userId: userId,
-        investData: req.body.investData
+        data: req.body.data
       }
       var newInvestTotal = {
         type: type,
@@ -1408,6 +1419,206 @@ module.exports = controllers = {
           });
         }
       })
+    }
+  },
+
+  transfer: {
+    post: function (req, res) {
+      var userId = req.headers.userId;
+
+      var details = {
+        amount: req.body.amount,
+        fromType: finUtils.type(req.body.from),
+        fromAccountId: req.body.fromAccountId,
+        toType: finUtils.type(req.body.to),
+        toAccountId: req.body.toAccountId,
+        type: finUtils.type(req.body.to),
+        comment: req.body.comment,
+        date: req.body.date,
+        categoryId: req.body.categoryId
+      }
+
+      //Transfer Involving Income
+      if(details.fromType === "Income" || details.toType === "Income"){
+        if(details.fromType === "Income"){
+          details.model = finUtils.toLowerCase(details.type);
+          details.toUpdate = -details.amount;
+        }
+        if(details.toType === "Income"){
+          details.model = finUtils.toLowerCase(details.fromType);
+          details.toUpdate = details.amount;
+        }
+        var payload = {
+          userId: userId,
+          "data": [
+            {
+                userId: userId,
+                amount: details.amount,
+                accountId: details.toAccountId,
+                comment: details.comment,
+                date: details.date,
+                transferDetail: details.fromType,
+                transferAccountId: details.fromAccountId,
+                categoryId: details.categoryId
+            },
+          ]
+        }
+        models[details.model].post(payload, function (transferCreated, transferMessage) {
+          if (transferCreated) {
+            var newTotalAdded = {
+              type: details.toType,
+              userId: userId,
+              amount: details.amount,
+            };
+            models.updateTotalAmount.patch(newTotalAdded, function (newTotalTo, totalAddedMessage){
+              if(newTotalTo){
+                var newTotalIncome = {
+                  type: details.fromType,
+                  userId: userId,
+                  amount: -details.amount,
+                };
+                models.updateTotalAmount.patch(newTotalIncome, function (newTotalFrom, totalIncomeMessage){
+                  if (newTotalFrom) {
+                    var currentAvailableValues = {
+                      userId: userId,
+                      totalToUpdate: details.toUpdate
+                    }
+                    models.updateCurrentAvailable.patch(currentAvailableValues, function (currentAvailable, currentAvailableMessage) {
+                      if (currentAvailable) {
+                        var responseData = {
+                          transferCreated: transferCreated,
+                          currentAvailable: Number(currentAvailable.amount),
+                        }
+                        responseData['currentTotal' + details.fromType] = Number(newTotalFrom.amount);
+                        responseData['currentTotal' + details.toType] = Number(newTotalTo.amount);
+                        res.status(200).json({
+                          success: true,
+                          data: responseData
+                        })
+                      } else {
+                        res.status(200).json({
+                          success: false,
+                          data: {
+                            message: currentAvailableMessage
+                          }
+                        });
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: totalIncomeMessage
+                      }
+                    });
+                  }
+                })
+              }else{
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalAddedMessage
+                  }
+                });
+              };
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: transferMessage
+              }
+            });
+          }
+        })
+      } else {
+        // add toType Table
+        var payload = {
+          userId: userId,
+          "data": [
+            {
+                userId: userId,
+                amount: details.amount,
+                accountId: details.toAccountId,
+                comment: details.comment,
+                date: details.date,
+                transferDetail: details.fromType,
+                transferAccountId: details.fromAccountId,
+                categoryId: details.categoryId
+            },
+          ]
+        }
+        var toAddModel = finUtils.toLowerCase(details.toType);
+        payload.data[0].amount = details.amount
+        models[toAddModel].post(payload, function (transferAdded, transferAddedMessage) {
+          if (transferAdded) {
+            var newTotalAdded = {
+              type: details.toType,
+              userId: userId,
+              amount: details.amount,
+            };
+            models.updateTotalAmount.patch(newTotalAdded, function (newTotalTo, totalAddedMessage){
+              if (newTotalTo) {
+                var fromAddModel = finUtils.toLowerCase(details.fromType);
+                payload.data[0].amount = -details.amount
+                models[fromAddModel].post(payload, function (transferDeduct, transferDeductMessage) {
+                  if (transferDeduct) {
+                    var newTotalRemoved = {
+                      type: details.fromType,
+                      userId: userId,
+                      amount: -details.amount,
+                    };
+                    models.updateTotalAmount.patch(newTotalRemoved, function (newTotalFrom, totalRemovedMessage){
+                      if (newTotalFrom) {
+                        var responseData = {};
+                        responseData['transferAdd'] = transferAdded;
+                        responseData['transferDeduct'] = transferDeduct;
+                        responseData['currentTotal' + details.toType] = Number(newTotalTo.amount);
+                        responseData['currentTotal' + details.fromType] = Number(newTotalFrom.amount);
+                        res.status(200).json({
+                          success: true,
+                          data: responseData
+                        })
+                      } else {
+                        res.status(200).json({
+                          success: false,
+                          data: {
+                            message: totalRemovedMessage
+                          }
+                        });
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: transferDeductMessage
+                      }
+                    });
+                  }
+                })
+                
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalAddedMessage
+                  }
+                });
+              }
+
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: transferAddedMessage
+              }
+            });
+          }
+
+        })
+      }
     }
   },
 

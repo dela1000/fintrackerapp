@@ -130,7 +130,10 @@ router.delete('/invest', authUtils.checkUser, function (req, res) {
   controllers.invest.delete(req, res)
 })
 
-//ADD TRASNFER ROUTES!!!!
+router.post('/transfer', authUtils.checkUser, function (req, res) {
+  controllers.transfer.post(req, res)
+})
+
 
 //TOTALS
 router.get('/all_totals', authUtils.checkUser, function (req, res) {
