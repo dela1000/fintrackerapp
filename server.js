@@ -28,7 +28,7 @@ app.use(function(req, res, next) {
 
 // Serving static files from client directory.
 app.use(express.static(__dirname + '../client'));
-app.use('/',  express.static(path.join(__dirname, '../client/')));
+app.use('/', express.static(path.join(__dirname, '../client/')));
 // Set up our routes
 app.use("/", router);
 

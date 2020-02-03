@@ -6,27 +6,27 @@ exports.addTotals = function(data) {
   var totalAmount = 0;
   var totalsByCategory = {};
   var totalsHolder = [];
-  _.forEach(data, function (lineItem) {
-    
+  _.forEach(data, function(lineItem) {
+
     var item = lineItem.dataValues;
-    if(!totalsByCategory[item.categoryId]){
+    if (!totalsByCategory[item.categoryId]) {
       totalsByCategory[item.categoryId] = {
         amount: item.amount,
         categoryId: item.categoryId,
       };
-      if(item.expensescategory){
+      if (item.expensescategory) {
         totalsByCategory[item.categoryId].categoryName = item.expensescategory.dataValues.name;
       }
     } else {
       totalsByCategory[item.categoryId]['amount'] = totalsByCategory[item.categoryId]['amount'] + item.amount;
     }
   })
-  _.forEach(totalsByCategory, function (totals) {
+  _.forEach(totalsByCategory, function(totals) {
     totalAmount = totalAmount + totals.amount;
     totals.amount = totals.amount.toFixed(2);
     totalsHolder.push(totals);
   })
-  var totals = totalsHolder.sort(function(a, b){ 
+  var totals = totalsHolder.sort(function(a, b) {
     return a.categoryId - b.categoryId;
   });
   var finalData = {
@@ -36,34 +36,34 @@ exports.addTotals = function(data) {
   return finalData;
 }
 
-exports.type = function (type) {
+exports.type = function(type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
-exports.toLowerCase = function (type) {
+exports.toLowerCase = function(type) {
   return type.toLowerCase();
 }
 
-exports.startOfDay = function () {
+exports.startOfDay = function() {
   return moment().startOf('day').format(dateFormat);
 }
 
-exports.endOfDay = function () {
+exports.endOfDay = function() {
   return moment().endOf('day').format(dateFormat);
 }
 
-exports.startOfMonth = function () {
+exports.startOfMonth = function() {
   return moment().startOf('month').format(dateFormat);
 }
 
-exports.endOfMonth = function () {
+exports.endOfMonth = function() {
   return moment().endOf('month').format(dateFormat);
 }
 
-exports.startOfYear = function () {
+exports.startOfYear = function() {
   return moment().startOf('year').format(dateFormat);
 }
 
-exports.endOfYear = function () {
+exports.endOfYear = function() {
   return moment().endOf('year').format(dateFormat);
 }
