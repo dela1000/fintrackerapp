@@ -1532,19 +1532,19 @@ module.exports = controllers = {
           }
         })
       } else {
-        // add toType Table
+        // Transfers NOT involving Income
         var payload = {
           userId: userId,
           "data": [
             {
-                userId: userId,
-                amount: details.amount,
-                accountId: details.toAccountId,
-                comment: details.comment,
-                date: details.date,
-                transferDetail: details.fromType,
-                transferAccountId: details.fromAccountId,
-                categoryId: details.categoryId
+              userId: userId,
+              amount: details.amount,
+              accountId: details.toAccountId,
+              comment: details.comment,
+              date: details.date,
+              transferDetail: details.fromType,
+              transferAccountId: details.fromAccountId,
+              categoryId: details.categoryId
             },
           ]
         }
@@ -1560,7 +1560,7 @@ module.exports = controllers = {
             models.updateTotalAmount.patch(newTotalAdded, function (newTotalTo, totalAddedMessage){
               if (newTotalTo) {
                 var fromAddModel = finUtils.toLowerCase(details.fromType);
-                payload.data[0].amount = -details.amount
+                payload.data[0].amount = -details.amount;
                 models[fromAddModel].post(payload, function (transferDeduct, transferDeductMessage) {
                   if (transferDeduct) {
                     var newTotalRemoved = {
