@@ -773,7 +773,7 @@ module.exports = {
           query['order'].push([payload.orderBy])
         }
       }
-      console.log("+++ 771 index.js query.where.amount: ", query.where.amount)
+
       console.log("+++ 771 index.js query: ", query)
       db[tableName].findAll(query)
       .then(function (foundResults) {
@@ -788,12 +788,11 @@ module.exports = {
 
   expenses_totals: {
     get: function (payload, callback) {
-
       var searchData = {
         userId: payload.userId,
         date: {
-          [Op.gte]: moment().startOf(payload.timeframe).format('x'),
-          [Op.lte]: moment().endOf(payload.timeframe).format('x')
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate
         },
         deleted: false
       };

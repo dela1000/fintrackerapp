@@ -1452,14 +1452,14 @@ module.exports = controllers = {
           userId: userId,
           "data": [
             {
-                userId: userId,
-                amount: details.amount,
-                accountId: details.toAccountId,
-                comment: details.comment,
-                date: details.date,
-                transferDetail: details.fromType,
-                transferAccountId: details.fromAccountId,
-                categoryId: details.categoryId
+              userId: userId,
+              amount: details.amount,
+              accountId: details.toAccountId,
+              comment: details.comment,
+              date: details.date,
+              transferDetail: details.fromType,
+              transferAccountId: details.fromAccountId,
+              categoryId: details.categoryId
             },
           ]
         }
@@ -1764,16 +1764,20 @@ module.exports = controllers = {
     get: function (req, res) {
       var payload = {
         userId: req.headers.userId,
-        timeframe: "month"
       }
-      if(req.query.timeframe == "year"){
-        payload.timeframe = req.query.timeframe
+      
+      if(req.query.timeframe && req.query.timeframe === 'year'){
+        payload['startDate'] = finUtils.startOfYear();
+        payload['endDate'] = finUtils.endOfYear();
+        payload.timeframe = req.query.timeframe;
+      } else {
+        payload['startDate'] = finUtils.startOfMonth();
+        payload['endDate'] = finUtils.endOfMonth();
+        payload.timeframe = "month";
       }
       models.expenses_totals.get(payload, function (expensesData, message) {
         if(expensesData){
-          
           var addedTotals = finUtils.addTotals(expensesData);
-
           var finalData = {
             totals: addedTotals.totals,
             timeframe: payload.timeframe,
