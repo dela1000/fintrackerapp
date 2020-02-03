@@ -873,7 +873,7 @@ module.exports = {
                 attributes: ['name'],
               }, ]
             }
- if (payload.timeframe === 'year') {
+            if (payload.timeframe === 'year') {
               searchData['where']['date'] = {
                 [Op.gte]: finUtils.startOfYear(),
                 [Op.lte]: finUtils.endOfYear()
