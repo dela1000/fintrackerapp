@@ -1633,42 +1633,53 @@ module.exports = controllers = {
         date: req.body.date,
         categoryId: req.body.categoryId
       }
-      if (details.fromType === "Income") {
-        details.model = finUtils.toLowerCase(details.type);
-        details.toUpdate = -details.amount;
+      if (details.fromType === "Income" || details.toType === "Income") {
         var payload = {
           userId: userId,
           "data": [{
             userId: userId,
-            amount: details.amount,
             accountId: details.toAccountId,
             comment: details.comment,
             date: details.date,
             transferDetail: details.fromType,
             transferAccountId: details.fromAccountId,
-            categoryId: details.categoryId
+            categoryId: details.categoryId,
+            amount: details.amount,
           }]
+        }
+        var newTotalAdded = {
+          userId: userId,
+        };
+        var currentAvailableValues = {
+          userId: userId,
+        };
+        if (details.fromType === "Income") {
+          details.model = finUtils.toLowerCase(details.type);
+          payload.data[0].amount = details.amount;
+          newTotalAdded.type = details.type;
+          newTotalAdded.amount = details.amount;
+          currentAvailableValues.totalToUpdate = -details.amount;
+          var currentTotalItem = 'currentTotal' + details.type;
+        }
+        if (details.toType === "Income") {
+          details.model = finUtils.toLowerCase(details.fromType);
+          payload.data[0].amount = -details.amount;
+          newTotalAdded.type = details.fromType;
+          newTotalAdded.amount = -details.amount
+          currentAvailableValues.totalToUpdate = details.amount;
+          var currentTotalItem = 'currentTotal' + details.fromType;
         }
         models[details.model].post(payload, function(transferCreated, transferMessage) {
           if (transferCreated) {
-            var newTotalAdded = {
-              type: details.type,
-              userId: userId,
-              amount: details.amount,
-            };
             models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
               if (newTotal) {
-                var currentAvailableValues = {
-                  userId: userId,
-                  totalToUpdate: -details.toUpdate
-                }
                 models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
                   if (currentAvailable) {
                     var responseData = {
                       transferCreated: transferCreated,
                       currentAvailable: Number(currentAvailable.amount),
                     }
-                    responseData['currentTotal' + details.type] = Number(newTotal.amount);
+                    responseData[currentTotalItem] = Number(newTotal.amount);
                     res.status(200).json({
                       success: true,
                       data: responseData
@@ -1690,7 +1701,6 @@ module.exports = controllers = {
                   }
                 });
               }
-
             })
           } else {
             res.status(200).json({
@@ -1701,74 +1711,143 @@ module.exports = controllers = {
             });
           }
         })
-      } else if (details.toType === "Income") {
-        details.model = finUtils.toLowerCase(details.fromType);
-        details.toUpdate = details.amount;
-        var payload = {
-          userId: userId,
-          "data": [{
-            userId: userId,
-            amount: -details.amount,
-            accountId: details.toAccountId,
-            comment: details.comment,
-            date: details.date,
-            transferDetail: details.fromType,
-            transferAccountId: details.fromAccountId,
-            categoryId: details.categoryId
-          }]
-        }
-        models[details.model].post(payload, function(transferCreated, transferMessage) {
-          if (transferCreated) {
-            var newTotalAdded = {
-              type: details.fromType,
-              userId: userId,
-              amount: -details.amount,
-            };
-            models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
-              if (newTotal) {
-                var currentAvailableValues = {
-                  userId: userId,
-                  totalToUpdate: details.toUpdate
-                }
-                models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
-                  if (currentAvailable) {
-                    var responseData = {
-                      transferCreated: transferCreated,
-                      currentAvailable: Number(currentAvailable.amount),
-                    }
-                    responseData['currentTotal' + details.fromType] = Number(newTotal.amount);
-                    res.status(200).json({
-                      success: true,
-                      data: responseData
-                    })
-                  } else {
-                    res.status(200).json({
-                      success: false,
-                      data: {
-                        message: currentAvailableMessage
-                      }
-                    });
-                  }
-                })
-              } else {
-                res.status(200).json({
-                  success: false,
-                  data: {
-                    message: totalAddedMessage
-                  }
-                });
-              }
-            })
-          } else {
-            res.status(200).json({
-              success: false,
-              data: {
-                message: transferMessage
-              }
-            });
-          };
-        })
-      } else {
+      }
+
+      // if (details.fromType === "Income") {
+      //   details.model = finUtils.toLowerCase(details.type);
+      //   var payload = {
+      //     userId: userId,
+      //     "data": [{
+      //       userId: userId,
+      //       accountId: details.toAccountId,
+      //       comment: details.comment,
+      //       date: details.date,
+      //       transferDetail: details.fromType,
+      //       transferAccountId: details.fromAccountId,
+      //       categoryId: details.categoryId
+      //       amount: details.amount,
+      //     }]
+      //   }
+      //   models[details.model].post(payload, function(transferCreated, transferMessage) {
+      //     if (transferCreated) {
+      //       var newTotalAdded = {
+      //         type: details.type,
+      //         userId: userId,
+      //         amount: details.amount,
+      //       };
+      //       models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
+      //         if (newTotal) {
+      //           var currentAvailableValues = {
+      //             userId: userId,
+      //             totalToUpdate: -details.amount
+      //           }
+      //           models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+      //             if (currentAvailable) {
+      //               var responseData = {
+      //                 transferCreated: transferCreated,
+      //                 currentAvailable: Number(currentAvailable.amount),
+      //               }
+      //               responseData['currentTotal' + details.type] = Number(newTotal.amount);
+      //               res.status(200).json({
+      //                 success: true,
+      //                 data: responseData
+      //               })
+      //             } else {
+      //               res.status(200).json({
+      //                 success: false,
+      //                 data: {
+      //                   message: currentAvailableMessage
+      //                 }
+      //               });
+      //             }
+      //           })
+      //         } else {
+      //           res.status(200).json({
+      //             success: false,
+      //             data: {
+      //               message: totalAddedMessage
+      //             }
+      //           });
+      //         }
+
+      //       })
+      //     } else {
+      //       res.status(200).json({
+      //         success: false,
+      //         data: {
+      //           message: transferMessage
+      //         }
+      //       });
+      //     }
+      //   })
+      // } else if (details.toType === "Income") {
+      //   details.model = finUtils.toLowerCase(details.fromType);
+      //   var payload = {
+      //     userId: userId,
+      //     "data": [{
+      //       userId: userId,
+      //       accountId: details.toAccountId,
+      //       comment: details.comment,
+      //       date: details.date,
+      //       transferDetail: details.fromType,
+      //       transferAccountId: details.fromAccountId,
+      //       categoryId: details.categoryId
+      //       amount: -details.amount,
+      //     }]
+      //   }
+      //   models[details.model].post(payload, function(transferCreated, transferMessage) {
+      //     if (transferCreated) {
+      //       var newTotalAdded = {
+      //         type: details.fromType,
+      //         userId: userId,
+      //         amount: -details.amount,
+      //       };
+      //       models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
+      //         if (newTotal) {
+      //           var currentAvailableValues = {
+      //             userId: userId,
+      //             totalToUpdate: details.amount
+      //           }
+      //           models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+      //             if (currentAvailable) {
+      //               var responseData = {
+      //                 transferCreated: transferCreated,
+      //                 currentAvailable: Number(currentAvailable.amount),
+      //               }
+      //               responseData['currentTotal' + details.fromType] = Number(newTotal.amount);
+      //               res.status(200).json({
+      //                 success: true,
+      //                 data: responseData
+      //               })
+      //             } else {
+      //               res.status(200).json({
+      //                 success: false,
+      //                 data: {
+      //                   message: currentAvailableMessage
+      //                 }
+      //               });
+      //             }
+      //           })
+      //         } else {
+      //           res.status(200).json({
+      //             success: false,
+      //             data: {
+      //               message: totalAddedMessage
+      //             }
+      //           });
+      //         }
+      //       })
+      //     } else {
+      //       res.status(200).json({
+      //         success: false,
+      //         data: {
+      //           message: transferMessage
+      //         }
+      //       });
+      //     };
+      //   })
+      // } 
+      else {
         // Transfers NOT involving Income
         var payload = {
           userId: userId,
