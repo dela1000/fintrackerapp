@@ -1457,7 +1457,7 @@ module.exports = controllers = {
             transferDetail: details.fromType,
             transferAccountId: details.fromAccountId,
             categoryId: details.categoryId
-          }, ]
+          }]
         }
         models[details.model].post(payload, function(transferCreated, transferMessage) {
           if (transferCreated) {
@@ -1529,6 +1529,244 @@ module.exports = controllers = {
               }
             });
           }
+        })
+      } else {
+        // Transfers NOT involving Income
+        var payload = {
+          userId: userId,
+          "data": [{
+            userId: userId,
+            amount: details.amount,
+            accountId: details.toAccountId,
+            comment: details.comment,
+            date: details.date,
+            transferDetail: details.fromType,
+            transferAccountId: details.fromAccountId,
+            categoryId: details.categoryId
+          }, ]
+        }
+        var toAddModel = finUtils.toLowerCase(details.toType);
+        payload.data[0].amount = details.amount
+        models[toAddModel].post(payload, function(transferAdded, transferAddedMessage) {
+          if (transferAdded) {
+            var newTotalAdded = {
+              type: details.toType,
+              userId: userId,
+              amount: details.amount,
+            };
+            models.updateTotalAmount.patch(newTotalAdded, function(newTotalTo, totalAddedMessage) {
+              if (newTotalTo) {
+                var fromAddModel = finUtils.toLowerCase(details.fromType);
+                payload.data[0].amount = -details.amount;
+                models[fromAddModel].post(payload, function(transferDeduct, transferDeductMessage) {
+                  if (transferDeduct) {
+                    var newTotalRemoved = {
+                      type: details.fromType,
+                      userId: userId,
+                      amount: -details.amount,
+                    };
+                    models.updateTotalAmount.patch(newTotalRemoved, function(newTotalFrom, totalRemovedMessage) {
+                      if (newTotalFrom) {
+                        var responseData = {};
+                        responseData['transferAdd'] = transferAdded;
+                        responseData['transferDeduct'] = transferDeduct;
+                        responseData['currentTotal' + details.toType] = Number(newTotalTo.amount);
+                        responseData['currentTotal' + details.fromType] = Number(newTotalFrom.amount);
+                        res.status(200).json({
+                          success: true,
+                          data: responseData
+                        })
+                      } else {
+                        res.status(200).json({
+                          success: false,
+                          data: {
+                            message: totalRemovedMessage
+                          }
+                        });
+                      }
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: transferDeductMessage
+                      }
+                    });
+                  }
+                })
+
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalAddedMessage
+                  }
+                });
+              }
+
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: transferAddedMessage
+              }
+            });
+          }
+
+        })
+      }
+    }
+  },
+
+  transfers: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var details = {
+        amount: req.body.amount,
+        fromType: finUtils.type(req.body.from),
+        fromAccountId: req.body.fromAccountId,
+        toType: finUtils.type(req.body.to),
+        toAccountId: req.body.toAccountId,
+        type: finUtils.type(req.body.to),
+        comment: req.body.comment,
+        date: req.body.date,
+        categoryId: req.body.categoryId
+      }
+      if (details.fromType === "Income") {
+        details.model = finUtils.toLowerCase(details.type);
+        details.toUpdate = -details.amount;
+        var payload = {
+          userId: userId,
+          "data": [{
+            userId: userId,
+            amount: details.amount,
+            accountId: details.toAccountId,
+            comment: details.comment,
+            date: details.date,
+            transferDetail: details.fromType,
+            transferAccountId: details.fromAccountId,
+            categoryId: details.categoryId
+          }]
+        }
+        models[details.model].post(payload, function(transferCreated, transferMessage) {
+          if (transferCreated) {
+            var newTotalAdded = {
+              type: details.type,
+              userId: userId,
+              amount: details.amount,
+            };
+            models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
+              if (newTotal) {
+                var currentAvailableValues = {
+                  userId: userId,
+                  totalToUpdate: -details.toUpdate
+                }
+                models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+                  if (currentAvailable) {
+                    var responseData = {
+                      transferCreated: transferCreated,
+                      currentAvailable: Number(currentAvailable.amount),
+                    }
+                    responseData['currentTotal' + details.type] = Number(newTotal.amount);
+                    res.status(200).json({
+                      success: true,
+                      data: responseData
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: currentAvailableMessage
+                      }
+                    });
+                  }
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalAddedMessage
+                  }
+                });
+              }
+
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: transferMessage
+              }
+            });
+          }
+        })
+      } else if (details.toType === "Income") {
+        details.model = finUtils.toLowerCase(details.fromType);
+        details.toUpdate = details.amount;
+        var payload = {
+          userId: userId,
+          "data": [{
+            userId: userId,
+            amount: -details.amount,
+            accountId: details.toAccountId,
+            comment: details.comment,
+            date: details.date,
+            transferDetail: details.fromType,
+            transferAccountId: details.fromAccountId,
+            categoryId: details.categoryId
+          }]
+        }
+        models[details.model].post(payload, function(transferCreated, transferMessage) {
+          if (transferCreated) {
+            var newTotalAdded = {
+              type: details.fromType,
+              userId: userId,
+              amount: -details.amount,
+            };
+            models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
+              if (newTotal) {
+                var currentAvailableValues = {
+                  userId: userId,
+                  totalToUpdate: details.toUpdate
+                }
+                models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+                  if (currentAvailable) {
+                    var responseData = {
+                      transferCreated: transferCreated,
+                      currentAvailable: Number(currentAvailable.amount),
+                    }
+                    responseData['currentTotal' + details.fromType] = Number(newTotal.amount);
+                    res.status(200).json({
+                      success: true,
+                      data: responseData
+                    })
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      data: {
+                        message: currentAvailableMessage
+                      }
+                    });
+                  }
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: totalAddedMessage
+                  }
+                });
+              }
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: transferMessage
+              }
+            });
+          };
         })
       } else {
         // Transfers NOT involving Income
@@ -1842,10 +2080,16 @@ module.exports = controllers = {
       }
       models.recalculate_totals.get(payload, function(results, resultsMessage) {
         if (results) {
-          var subsequent = {};
           var initials = {};
+          var subsequent = {};
+          var transfers = {};
+          var transfersFromIncome = {};
+          var transfersNotFromIncome = {};
           _.forEach(results, function(collection, key) {
             subsequent[key] = 0;
+            transfers[key] = 0;
+            transfersFromIncome[key] = 0;
+            transfersNotFromIncome[key] = 0;
             if (key !== "expenses") {
               initials[key] = 0;
             }
@@ -1856,12 +2100,24 @@ module.exports = controllers = {
               } else {
                 subsequent[key] = subsequent[key] + item.dataValues.amount;
                 subsequent[key] = Number(subsequent[key].toFixed(2))
+                if(item.dataValues.transferDetail){
+                  transfers[key] = transfers[key] + item.dataValues.amount;
+                  transfers[key] = Number(transfers[key].toFixed(2))
+                }
+                if(item.dataValues.transferDetail === "Income"){
+                  transfersFromIncome[key] = transfersFromIncome[key] + item.dataValues.amount;
+                  transfersFromIncome[key] = Number(transfersFromIncome[key].toFixed(2))
+                }
+                
+                if(item.dataValues.transferDetail !== "Income"){
+                  transfersNotFromIncome[key] = transfersNotFromIncome[key] + item.dataValues.amount;
+                  transfersNotFromIncome[key] = Number(transfersNotFromIncome[key].toFixed(2))
+                }
               }
             })
           })
-
           var totalIncome = (initials.income + subsequent.income);
-          var totalAvailable = (initials.income + subsequent.income) - subsequent.expenses - subsequent.savings - subsequent.invest;
+          var totalAvailable = totalIncome - subsequent.expenses - subsequent.savings - subsequent.invest;
           var totalSpent = subsequent.expenses;
           var totalSaved = initials.savings + subsequent.savings;
           var totalInvested = initials.invest + subsequent.invest;
@@ -1872,11 +2128,14 @@ module.exports = controllers = {
             data: {
               initials: initials,
               subsequent: subsequent,
+              transfers: transfers,
+              transfersFromIncome: transfersFromIncome,
+              transfersNotFromIncome: transfersNotFromIncome,
               currentTotalSavings: Number(totalSaved.toFixed(2)),
               currentTotalInvest: Number(totalInvested.toFixed(2)),
               currentTotalIncome: Number(totalIncome.toFixed(2)),
-              totalSpent: Number(totalSpent.toFixed(2)),
               currentAvailable: Number(totalAvailable.toFixed(2)),
+              totalSpent: Number(totalSpent.toFixed(2)),
             }
           });
         } else {

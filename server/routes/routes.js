@@ -134,6 +134,10 @@ router.post('/transfer', authUtils.checkUser, function(req, res) {
   controllers.transfer.post(req, res)
 })
 
+router.post('/transfers', authUtils.checkUser, function(req, res) {
+  controllers.transfers.post(req, res)
+})
+
 
 //TOTALS
 router.get('/all_totals', authUtils.checkUser, function(req, res) {
