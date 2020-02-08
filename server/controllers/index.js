@@ -1708,143 +1708,7 @@ module.exports = controllers = {
             });
           }
         })
-      }
-
-      // if (details.fromType === "Income") {
-      //   details.model = finUtils.toLowerCase(details.type);
-      //   var payload = {
-      //     userId: userId,
-      //     "data": [{
-      //       userId: userId,
-      //       accountId: details.toAccountId,
-      //       comment: details.comment,
-      //       date: details.date,
-      //       transferDetail: details.fromType,
-      //       transferAccountId: details.fromAccountId,
-      //       categoryId: details.categoryId
-      //       amount: details.amount,
-      //     }]
-      //   }
-      //   models[details.model].post(payload, function(transferCreated, transferMessage) {
-      //     if (transferCreated) {
-      //       var newTotalAdded = {
-      //         type: details.type,
-      //         userId: userId,
-      //         amount: details.amount,
-      //       };
-      //       models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
-      //         if (newTotal) {
-      //           var currentAvailableValues = {
-      //             userId: userId,
-      //             totalToUpdate: -details.amount
-      //           }
-      //           models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
-      //             if (currentAvailable) {
-      //               var responseData = {
-      //                 transferCreated: transferCreated,
-      //                 currentAvailable: Number(currentAvailable.amount),
-      //               }
-      //               responseData['currentTotal' + details.type] = Number(newTotal.amount);
-      //               res.status(200).json({
-      //                 success: true,
-      //                 data: responseData
-      //               })
-      //             } else {
-      //               res.status(200).json({
-      //                 success: false,
-      //                 data: {
-      //                   message: currentAvailableMessage
-      //                 }
-      //               });
-      //             }
-      //           })
-      //         } else {
-      //           res.status(200).json({
-      //             success: false,
-      //             data: {
-      //               message: totalAddedMessage
-      //             }
-      //           });
-      //         }
-
-      //       })
-      //     } else {
-      //       res.status(200).json({
-      //         success: false,
-      //         data: {
-      //           message: transferMessage
-      //         }
-      //       });
-      //     }
-      //   })
-      // } else if (details.toType === "Income") {
-      //   details.model = finUtils.toLowerCase(details.fromType);
-      //   var payload = {
-      //     userId: userId,
-      //     "data": [{
-      //       userId: userId,
-      //       accountId: details.toAccountId,
-      //       comment: details.comment,
-      //       date: details.date,
-      //       transferDetail: details.fromType,
-      //       transferAccountId: details.fromAccountId,
-      //       categoryId: details.categoryId
-      //       amount: -details.amount,
-      //     }]
-      //   }
-      //   models[details.model].post(payload, function(transferCreated, transferMessage) {
-      //     if (transferCreated) {
-      //       var newTotalAdded = {
-      //         type: details.fromType,
-      //         userId: userId,
-      //         amount: -details.amount,
-      //       };
-      //       models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
-      //         if (newTotal) {
-      //           var currentAvailableValues = {
-      //             userId: userId,
-      //             totalToUpdate: details.amount
-      //           }
-      //           models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
-      //             if (currentAvailable) {
-      //               var responseData = {
-      //                 transferCreated: transferCreated,
-      //                 currentAvailable: Number(currentAvailable.amount),
-      //               }
-      //               responseData['currentTotal' + details.fromType] = Number(newTotal.amount);
-      //               res.status(200).json({
-      //                 success: true,
-      //                 data: responseData
-      //               })
-      //             } else {
-      //               res.status(200).json({
-      //                 success: false,
-      //                 data: {
-      //                   message: currentAvailableMessage
-      //                 }
-      //               });
-      //             }
-      //           })
-      //         } else {
-      //           res.status(200).json({
-      //             success: false,
-      //             data: {
-      //               message: totalAddedMessage
-      //             }
-      //           });
-      //         }
-      //       })
-      //     } else {
-      //       res.status(200).json({
-      //         success: false,
-      //         data: {
-      //           message: transferMessage
-      //         }
-      //       });
-      //     };
-      //   })
-      // } 
-      else {
+      } else {
         // Transfers NOT involving Income
         var payload = {
           userId: userId,
@@ -2176,16 +2040,16 @@ module.exports = controllers = {
               } else {
                 subsequent[key] = subsequent[key] + item.dataValues.amount;
                 subsequent[key] = Number(subsequent[key].toFixed(2))
-                if(item.dataValues.transferDetail){
+                if (item.dataValues.transferDetail) {
                   transfers[key] = transfers[key] + item.dataValues.amount;
                   transfers[key] = Number(transfers[key].toFixed(2))
                 }
-                if(item.dataValues.transferDetail === "Income"){
+                if (item.dataValues.transferDetail === "Income") {
                   transfersFromIncome[key] = transfersFromIncome[key] + item.dataValues.amount;
                   transfersFromIncome[key] = Number(transfersFromIncome[key].toFixed(2))
                 }
-                
-                if(item.dataValues.transferDetail !== "Income"){
+
+                if (item.dataValues.transferDetail !== "Income") {
                   transfersNotFromIncome[key] = transfersNotFromIncome[key] + item.dataValues.amount;
                   transfersNotFromIncome[key] = Number(transfersNotFromIncome[key].toFixed(2))
                 }
