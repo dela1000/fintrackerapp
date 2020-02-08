@@ -1980,9 +1980,10 @@ module.exports = controllers = {
         timeframe: "month",
         userId: req.headers.userId,
         deleted: false,
+        startDate: finUtils.startOfMonth(),
+        endDate: finUtils.endOfMonth()
       }
-      payload['startDate'] = finUtils.startOfMonth();
-      payload['endDate'] = finUtils.endOfMonth();
+      
       if (req.query.timeframe === 'year') {
         payload['timeframe'] = "year";
         payload['startDate'] = finUtils.startOfYear();
