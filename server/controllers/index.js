@@ -175,7 +175,7 @@ module.exports = controllers = {
                                 data: []
                               },
                             }
-                            totalAmounts = {
+                            var totalAmounts = {
                               Income: {
                                 userId: userId,
                                 type: "Income",
@@ -1977,6 +1977,7 @@ module.exports = controllers = {
 
   all_totals: {
     get: function(req, res) {
+      console.log("+++ all_totals start time: ", moment().format('HH:mm:ss:SSS'))
       var payload = {
         timeframe: "month",
         userId: req.headers.userId,
@@ -1992,34 +1993,25 @@ module.exports = controllers = {
       models.all_totals.get(payload, function(results, message) {
         if (results) {
           results.primaryTotals['timeframe'] = payload.timeframe;
-          if (results.user.dataValues.incomes) {
-            var addIncomeAccountsTotals = finUtils.addAccountsTotals(results.user.dataValues.incomes, "income")
-            results.primaryTotals['incomeTotals'] = addIncomeAccountsTotals.totals;
-            results.primaryTotals['incomeCount'] = results.user.dataValues.incomes.length;
-            results.primaryTotals['totalIncomeAmount'] = Number(addIncomeAccountsTotals.totalAmount.toFixed(2));
-          }
-          if (results.user.dataValues.savings) {
-            var addSavingsAccountsTotals = finUtils.addAccountsTotals(results.user.dataValues.savings, "savings")
-            results.primaryTotals['savingsTotals'] = addSavingsAccountsTotals.totals;
-            results.primaryTotals['savingsCount'] = results.user.dataValues.savings.length;
-            results.primaryTotals['totalSavingsAmount'] = Number(addSavingsAccountsTotals.totalAmount.toFixed(2));
-          }
-          if (results.user.dataValues.invests) {
-            var addInvestAccountsTotals = finUtils.addAccountsTotals(results.user.dataValues.invests, "invest")
-            results.primaryTotals['investTotals'] = addInvestAccountsTotals.totals;
-            results.primaryTotals['investsCount'] = results.user.dataValues.invests.length;
-            results.primaryTotals['totalInvestAmount'] = Number(addInvestAccountsTotals.totalAmount.toFixed(2));
-          }
-          if (results.user.dataValues.expenses) {
-            var addedExpensesTotals = finUtils.addExpensesTotals(results.user.dataValues.expenses);
-            results.primaryTotals['expensesTotals'] = addedExpensesTotals.totals;
-            results.primaryTotals['expensesCount'] = results.user.dataValues.expenses.length;
-            results.primaryTotals['totalExpensesAmount'] = Number(addedExpensesTotals.totalAmount.toFixed(2));
-          };
+          _.forEach(finUtils.types, function (type) {
+            if(results.user.dataValues[type.dbName]){
+              var totals;
+              if(type.name === "expenses"){
+                totals = finUtils.addExpensesTotals(results.user.dataValues.expenses);
+              } else {
+                totals = finUtils.addAccountsTotals(results.user.dataValues[type.dbName], type.name)
+              }
+              results.primaryTotals[type.name + 'Totals'] = totals.totals;
+              results.primaryTotals[type.name + 'Count'] = results.user.dataValues[type.dbName].length;
+              results.primaryTotals['total' + type.capitalName + 'Amount'] = Number(totals.totalAmount.toFixed(2));
+            }
+          })
           res.status(200).json({
             success: true,
             data: results.primaryTotals
           });
+          
+          console.log("+++ all_totals end time: ", moment().format('HH:mm:ss:SSS'))
         } else {
           res.status(200).json({
             success: false,
@@ -2083,8 +2075,6 @@ module.exports = controllers = {
           var totalSpent = subsequent.expenses;
           var totalSaved = initials.savings + subsequent.savings;
           var totalInvested = initials.invest + subsequent.invest;
-          var end = moment().format('HH:mm:ss:SSS');
-          console.log("+++ recalculate_totals end time: ", end)
           res.status(200).json({
             success: true,
             data: {
@@ -2100,6 +2090,8 @@ module.exports = controllers = {
               totalSpent: Number(totalSpent.toFixed(2)),
             }
           });
+          var end = moment().format('HH:mm:ss:SSS');
+          console.log("+++ recalculate_totals end time: ", end)
         } else {
           res.status(200).json({
             success: false,

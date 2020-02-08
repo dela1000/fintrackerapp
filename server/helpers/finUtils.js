@@ -2,6 +2,28 @@ var _ = require('lodash');
 var moment = require('moment');
 var dateFormat = "MM-DD-YYYY";
 
+exports.types = [{
+    name: "income",
+    capitalName: "Income",
+    dbName: "incomes",
+  },
+  {
+    name: "savings",
+    capitalName: "Savings",
+    dbName: "savings",
+  },
+  {
+    name: "invest",
+    capitalName: "Invest",
+    dbName: "invests",
+  },
+  {
+    name: "expenses",
+    capitalName: "Expenses",
+    dbName: "expenses",
+  },
+];
+
 exports.addExpensesTotals = function(data) {
   var totalAmount = 0;
   var totalsByCategory = {};
@@ -36,11 +58,11 @@ exports.addExpensesTotals = function(data) {
   return finalData;
 }
 
-exports.addAccountsTotals = function (data, type) {
+exports.addAccountsTotals = function(data, type) {
   var totalAmount = 0;
   var totalsByAccount = {};
   var totalsHolder = [];
-  _.forEach(data, function (lineItem) {
+  _.forEach(data, function(lineItem) {
     var item = lineItem.dataValues;
     if (!totalsByAccount[item.accountId]) {
       totalsByAccount[item.accountId] = {
