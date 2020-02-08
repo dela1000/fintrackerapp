@@ -1650,15 +1650,12 @@ module.exports = controllers = {
         var newTotalAdded = {
           userId: userId,
         };
-        var currentAvailableValues = {
-          userId: userId,
-        };
         if (details.fromType === "Income") {
           details.model = finUtils.toLowerCase(details.type);
           payload.data[0].amount = details.amount;
           newTotalAdded.type = details.type;
           newTotalAdded.amount = details.amount;
-          currentAvailableValues.totalToUpdate = -details.amount;
+          newTotalAdded.totalToUpdate = -details.amount;
           var currentTotalItem = 'currentTotal' + details.type;
         }
         if (details.toType === "Income") {
@@ -1666,14 +1663,14 @@ module.exports = controllers = {
           payload.data[0].amount = -details.amount;
           newTotalAdded.type = details.fromType;
           newTotalAdded.amount = -details.amount
-          currentAvailableValues.totalToUpdate = details.amount;
+          newTotalAdded.totalToUpdate = details.amount;
           var currentTotalItem = 'currentTotal' + details.fromType;
         }
         models[details.model].post(payload, function(transferCreated, transferMessage) {
           if (transferCreated) {
             models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
               if (newTotal) {
-                models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+                models.updateCurrentAvailable.patch(newTotalAdded, function(currentAvailable, currentAvailableMessage) {
                   if (currentAvailable) {
                     var responseData = {
                       transferCreated: transferCreated,
