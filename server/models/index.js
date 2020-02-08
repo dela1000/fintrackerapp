@@ -892,7 +892,7 @@ module.exports = {
             include: [{
               model: db.ExpensesCategory,
               where: {
-                deleted: false,
+                deleted: false
               },
               attributes: ['name', 'id'],
               required: false

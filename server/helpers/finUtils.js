@@ -2,7 +2,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var dateFormat = "MM-DD-YYYY";
 
-exports.addTotals = function(data) {
+exports.addExpensesTotals = function(data) {
   var totalAmount = 0;
   var totalsByCategory = {};
   var totalsHolder = [];
@@ -22,6 +22,39 @@ exports.addTotals = function(data) {
     }
   })
   _.forEach(totalsByCategory, function(totals) {
+    totalAmount = totalAmount + totals.amount;
+    totals.amount = Number(totals.amount.toFixed(2));
+    totalsHolder.push(totals);
+  })
+  var totals = totalsHolder.sort(function(a, b) {
+    return a.categoryId - b.categoryId;
+  });
+  var finalData = {
+    totals: totals,
+    totalAmount: totalAmount
+  };
+  return finalData;
+}
+
+exports.addAccountsTotals = function (data, type) {
+  var totalAmount = 0;
+  var totalsByAccount = {};
+  var totalsHolder = [];
+  _.forEach(data, function (lineItem) {
+    var item = lineItem.dataValues;
+    if (!totalsByAccount[item.accountId]) {
+      totalsByAccount[item.accountId] = {
+        amount: item.amount,
+        accountId: item.accountId,
+      };
+      if (item[type + 'account']) {
+        totalsByAccount[item.accountId].accountName = item[type + 'account'].dataValues.name;
+      }
+    } else {
+      totalsByAccount[item.accountId]['amount'] = totalsByAccount[item.accountId]['amount'] + item.amount;
+    }
+  })
+  _.forEach(totalsByAccount, function(totals) {
     totalAmount = totalAmount + totals.amount;
     totals.amount = Number(totals.amount.toFixed(2));
     totalsHolder.push(totals);

@@ -1952,12 +1952,12 @@ module.exports = controllers = {
       }
       models.expenses_totals.get(payload, function(expensesData, message) {
         if (expensesData) {
-          var addedTotals = finUtils.addTotals(expensesData);
+          var addedExpensesTotals = finUtils.addExpensesTotals(expensesData);
           var finalData = {
-            totals: addedTotals.totals,
+            totals: addedExpensesTotals.totals,
             timeframe: payload.timeframe,
             expensesCount: expensesData.length,
-            totalAmount: addedTotals.totalAmount.toFixed(2),
+            totalAmount: addedExpensesTotals.totalAmount.toFixed(2),
           }
           res.status(200).json({
             success: true,
@@ -1985,19 +1985,37 @@ module.exports = controllers = {
       payload['startDate'] = finUtils.startOfMonth();
       payload['endDate'] = finUtils.endOfMonth();
       if (req.query.timeframe === 'year') {
-        payload['timeframe'] =  "year";
+        payload['timeframe'] = "year";
         payload['startDate'] = finUtils.startOfYear();
         payload['endDate'] = finUtils.endOfYear();
       }
       models.all_totals.get(payload, function(results, message) {
         if (results) {
           results.primaryTotals['timeframe'] = payload.timeframe;
-          if(results.user.dataValues.expenses){
-            var addedTotals = finUtils.addTotals(results.user.dataValues.expenses);
-            results.primaryTotals['expensesCount'] = results.user.dataValues.expenses.length;
-            results.primaryTotals['expensesTotals'] = addedTotals.totals;
-            results.primaryTotals['totalExpensesAmount'] = Number(addedTotals.totalAmount.toFixed(2));
+          if (results.user.dataValues.incomes) {
+            var addIncomeAccountsTotals = finUtils.addAccountsTotals(results.user.dataValues.incomes, "income")
+            results.primaryTotals['incomeTotals'] = addIncomeAccountsTotals.totals;
+            results.primaryTotals['incomeCount'] = results.user.dataValues.incomes.length;
+            results.primaryTotals['totalIncomeAmount'] = Number(addIncomeAccountsTotals.totalAmount.toFixed(2));
           }
+          if (results.user.dataValues.savings) {
+            var addSavingsAccountsTotals = finUtils.addAccountsTotals(results.user.dataValues.savings, "savings")
+            results.primaryTotals['savingsTotals'] = addSavingsAccountsTotals.totals;
+            results.primaryTotals['savingsCount'] = results.user.dataValues.savings.length;
+            results.primaryTotals['totalSavingsAmount'] = Number(addSavingsAccountsTotals.totalAmount.toFixed(2));
+          }
+          if (results.user.dataValues.invests) {
+            var addInvestAccountsTotals = finUtils.addAccountsTotals(results.user.dataValues.invests, "invest")
+            results.primaryTotals['investTotals'] = addInvestAccountsTotals.totals;
+            results.primaryTotals['investsCount'] = results.user.dataValues.invests.length;
+            results.primaryTotals['totalInvestAmount'] = Number(addInvestAccountsTotals.totalAmount.toFixed(2));
+          }
+          if (results.user.dataValues.expenses) {
+            var addedExpensesTotals = finUtils.addExpensesTotals(results.user.dataValues.expenses);
+            results.primaryTotals['expensesTotals'] = addedExpensesTotals.totals;
+            results.primaryTotals['expensesCount'] = results.user.dataValues.expenses.length;
+            results.primaryTotals['totalExpensesAmount'] = Number(addedExpensesTotals.totalAmount.toFixed(2));
+          };
           res.status(200).json({
             success: true,
             data: results.primaryTotals
