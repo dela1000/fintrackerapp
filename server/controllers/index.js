@@ -1998,13 +1998,18 @@ module.exports = controllers = {
             results.primaryTotals['expensesTotals'] = addedTotals.totals;
             results.primaryTotals['totalExpensesAmount'] = Number(addedTotals.totalAmount.toFixed(2));
           }
-
           res.status(200).json({
             success: true,
             data: results.primaryTotals
           });
-        
-        } else {}
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: message
+            }
+          });
+        }
       })
     }
   },

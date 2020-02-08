@@ -822,84 +822,83 @@ module.exports = {
           },
           attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
           include: [{
-              model: db.CurrentTotalExpenses,
-              attributes: ['amount'],
-              required: false
-            }, {
-              model: db.CurrentTotalIncome,
-              attributes: ['amount'],
-              required: false
-            }, {
-              model: db.CurrentTotalSavings,
-              attributes: ['amount'],
-              required: false
-            }, {
-              model: db.CurrentTotalInvest,
-              attributes: ['amount'],
-              required: false
-            }, {
-              model: db.CurrentAvailable,
-              attributes: ['amount'],
-              required: false
-            }, {
-              model: db.Income,
-              where: searchData,
-              include: [{
-                  model: db.IncomeAccount,
-                  where: {
-                    deleted: false
-                  },
-                  attributes: ['name', 'id'],
-                  required: false
-                },
-                {
-                  model: db.IncomeCategory,
-                  where: {
-                    deleted: false
-                  },
-                  attributes: ['name', 'id'],
-                  required: false
-                }
-              ],
-              required: false
-            }, {
-              model: db.Savings,
-              where: searchData,
-              include: [{
-                model: db.SavingsAccount,
+            model: db.CurrentTotalExpenses,
+            attributes: ['amount'],
+            required: false
+          }, {
+            model: db.CurrentTotalIncome,
+            attributes: ['amount'],
+            required: false
+          }, {
+            model: db.CurrentTotalSavings,
+            attributes: ['amount'],
+            required: false
+          }, {
+            model: db.CurrentTotalInvest,
+            attributes: ['amount'],
+            required: false
+          }, {
+            model: db.CurrentAvailable,
+            attributes: ['amount'],
+            required: false
+          }, {
+            model: db.Income,
+            where: searchData,
+            include: [{
+                model: db.IncomeAccount,
                 where: {
                   deleted: false
                 },
                 attributes: ['name', 'id'],
                 required: false
-              }],
-              required: false
-            }, {
-              model: db.Invest,
-              where: searchData,
-              include: [{
-                model: db.InvestAccount,
+              },
+              {
+                model: db.IncomeCategory,
                 where: {
                   deleted: false
                 },
                 attributes: ['name', 'id'],
                 required: false
-              }],
+              }
+            ],
+            required: false
+          }, {
+            model: db.Savings,
+            where: searchData,
+            include: [{
+              model: db.SavingsAccount,
+              where: {
+                deleted: false
+              },
+              attributes: ['name', 'id'],
               required: false
-            }, {
-              model: db.Expenses,
-              where: searchData,
-              include: [{
-                model: db.ExpensesCategory,
-                where: {
-                  deleted: false,
-                },
-                attributes: ['name', 'id'],
-                required: false
-              }],
+            }],
+            required: false
+          }, {
+            model: db.Invest,
+            where: searchData,
+            include: [{
+              model: db.InvestAccount,
+              where: {
+                deleted: false
+              },
+              attributes: ['name', 'id'],
               required: false
-            }
-          ]
+            }],
+            required: false
+          }, {
+            model: db.Expenses,
+            where: searchData,
+            include: [{
+              model: db.ExpensesCategory,
+              where: {
+                deleted: false,
+              },
+              attributes: ['name', 'id'],
+              required: false
+            }],
+            required: false
+          }]
         })
         .then(function(user) {
           if (user) {
