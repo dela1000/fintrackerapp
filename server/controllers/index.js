@@ -1978,34 +1978,33 @@ module.exports = controllers = {
   all_totals: {
     get: function(req, res) {
       var payload = {
+        timeframe: "month",
         userId: req.headers.userId,
-        timeframe: 'month'
+        deleted: false,
       }
-      if (req.query.timeframe == "year") {
-        payload.timeframe = req.query.timeframe
+      payload['startDate'] = finUtils.startOfMonth();
+      payload['endDate'] = finUtils.endOfMonth();
+      if (req.query.timeframe === 'year') {
+        payload['timeframe'] =  "year";
+        payload['startDate'] = finUtils.startOfYear();
+        payload['endDate'] = finUtils.endOfYear();
       }
-      models.all_totals.get(payload, function(primaryTotals, expensesData, message) {
-        if (primaryTotals && expensesData) {
-          var addedTotals = finUtils.addTotals(expensesData);
-
-          primaryTotals['currentMonthExpensesTotals'] = addedTotals.totals;
-          primaryTotals['timeframe'] = payload.timeframe;
-          primaryTotals['expensesCount'] = expensesData.length;
-          primaryTotals['totalExpensesAmount'] = Number(addedTotals.totalAmount.toFixed(2));
+      models.all_totals.get(payload, function(results, message) {
+        if (results) {
+          results.primaryTotals['timeframe'] = payload.timeframe;
+          if(results.user.dataValues.expenses){
+            var addedTotals = finUtils.addTotals(results.user.dataValues.expenses);
+            results.primaryTotals['expensesCount'] = results.user.dataValues.expenses.length;
+            results.primaryTotals['expensesTotals'] = addedTotals.totals;
+            results.primaryTotals['totalExpensesAmount'] = Number(addedTotals.totalAmount.toFixed(2));
+          }
 
           res.status(200).json({
             success: true,
-            data: primaryTotals
+            data: results.primaryTotals
           });
-        } else {
-          res.status(200).json({
-            success: false,
-            data: {
-              message: message
-            }
-          });
-        };
-
+        
+        } else {}
       })
     }
   },

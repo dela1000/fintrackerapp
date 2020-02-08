@@ -23,7 +23,7 @@ exports.addTotals = function(data) {
   })
   _.forEach(totalsByCategory, function(totals) {
     totalAmount = totalAmount + totals.amount;
-    totals.amount = totals.amount.toFixed(2);
+    totals.amount = Number(totals.amount.toFixed(2));
     totalsHolder.push(totals);
   })
   var totals = totalsHolder.sort(function(a, b) {

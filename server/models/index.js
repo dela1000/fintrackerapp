@@ -808,6 +808,14 @@ module.exports = {
   all_totals: {
     get: function(payload, callback) {
       var primaryTotals = {};
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate,
+        },
+        deleted: payload.deleted
+      };
       db.User.findOne({
           where: {
             id: payload.userId
@@ -834,7 +842,68 @@ module.exports = {
               model: db.CurrentAvailable,
               attributes: ['amount'],
               required: false
-            }
+            },
+            {
+              model: db.Income,
+              where: searchData,
+              include: [{
+                  model: db.IncomeAccount,
+                  where: {
+                    deleted: false
+                  },
+                  attributes: ['name', 'id'],
+                  required: false
+                },
+                {
+                  model: db.IncomeCategory,
+                  where: {
+                    deleted: false
+                  },
+                  attributes: ['name', 'id'],
+                  required: false
+                }
+              ],
+              required: false
+            },
+            {
+              model: db.Savings,
+              where: searchData,
+              include: [{
+                model: db.SavingsAccount,
+                where: {
+                  deleted: false
+                },
+                attributes: ['name', 'id'],
+                required: false
+              }],
+              required: false
+            },
+            {
+              model: db.Invest,
+              where: searchData,
+              include: [{
+                model: db.InvestAccount,
+                where: {
+                  deleted: false
+                },
+                attributes: ['name', 'id'],
+                required: false
+              }],
+              required: false
+            },
+            {
+              model: db.Expenses,
+              where: searchData,
+              include: [{
+                model: db.ExpensesCategory,
+                where: {
+                  deleted: false,
+                },
+                attributes: ['name', 'id'],
+                required: false
+              }],
+              required: false
+            },
           ]
         })
         .then(function(user) {
@@ -859,35 +928,11 @@ module.exports = {
             if (user.currentavailable) {
               primaryTotals['currentAvailable'] = user.currentavailable.amount;
             }
-            var searchData = {
-              where: {
-                userId: payload.userId,
-                deleted: false,
-                date: {
-                  [Op.gte]: finUtils.startOfMonth(),
-                  [Op.lte]: finUtils.endOfMonth()
-                },
-              },
-              include: [{
-                model: db.ExpensesCategory,
-                attributes: ['name'],
-              }, ]
+            var results = {
+              user: user,
+              primaryTotals: primaryTotals,
             }
-            if (payload.timeframe === 'year') {
-              searchData['where']['date'] = {
-                [Op.gte]: finUtils.startOfYear(),
-                [Op.lte]: finUtils.endOfYear()
-              }
-            }
-
-            db.Expenses.findAll(searchData)
-              .then(function(expensesData) {
-                if (expensesData) {
-                  callback(primaryTotals, expensesData)
-                } else {
-                  callback(false, null, "No expenses data found")
-                }
-              })
+            callback(results)
           } else {
             callback(false, null, "User not found")
           }
