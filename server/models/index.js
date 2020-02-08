@@ -825,8 +825,7 @@ module.exports = {
               model: db.CurrentTotalExpenses,
               attributes: ['amount'],
               required: false
-            },
-            {
+            }, {
               model: db.CurrentTotalIncome,
               attributes: ['amount'],
               required: false
@@ -842,8 +841,7 @@ module.exports = {
               model: db.CurrentAvailable,
               attributes: ['amount'],
               required: false
-            },
-            {
+            }, {
               model: db.Income,
               where: searchData,
               include: [{
@@ -864,8 +862,7 @@ module.exports = {
                 }
               ],
               required: false
-            },
-            {
+            }, {
               model: db.Savings,
               where: searchData,
               include: [{
@@ -877,8 +874,7 @@ module.exports = {
                 required: false
               }],
               required: false
-            },
-            {
+            }, {
               model: db.Invest,
               where: searchData,
               include: [{
@@ -890,8 +886,7 @@ module.exports = {
                 required: false
               }],
               required: false
-            },
-            {
+            }, {
               model: db.Expenses,
               where: searchData,
               include: [{
@@ -903,7 +898,7 @@ module.exports = {
                 required: false
               }],
               required: false
-            },
+            }
           ]
         })
         .then(function(user) {
