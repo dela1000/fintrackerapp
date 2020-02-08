@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var express = require('express');
 var path = require('path');
+var responseTime = require('response-time');
 var db = require(__dirname + '/server/db/db.js');
 var secrets = require(__dirname + '/secrets/secrets.js');
 
@@ -17,6 +18,12 @@ app.set("port", process.env.PORT || 8888);
 
 // Logging and parsing
 app.use(parser.json());
+
+// log response time
+app.use(responseTime(function (req, res, time) {
+  console.log("+++ server.js PATH:", req.method + " " + req.route.path)
+  console.log("+++ server.js TIME IN SECONDS:", time / 1000)
+}))
 
 //Use cors
 app.use(function(req, res, next) {

@@ -17,7 +17,6 @@ module.exports = controllers = {
       models.login.post(payload, function(isUser, message) {
         if (isUser) {
           authUtils.createToken(req, res, isUser, function(token) {
-            console.log("+++ 20 index.js isUser.dataValues: ", isUser.dataValues)
             res.status(200).send({
               success: true,
               data: {
@@ -1977,7 +1976,6 @@ module.exports = controllers = {
 
   all_totals: {
     get: function(req, res) {
-      console.log("+++ all_totals start time: ", moment().format('HH:mm:ss:SSS'))
       var payload = {
         timeframe: "month",
         userId: req.headers.userId,
@@ -2010,8 +2008,6 @@ module.exports = controllers = {
             success: true,
             data: results.primaryTotals
           });
-          
-          console.log("+++ all_totals end time: ", moment().format('HH:mm:ss:SSS'))
         } else {
           res.status(200).json({
             success: false,
