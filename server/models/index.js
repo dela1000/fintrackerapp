@@ -928,7 +928,7 @@ module.exports = {
             }
             callback(results)
           } else {
-            callback(false, null, "User not found")
+            callback(false, "User not found")
           }
         })
     }

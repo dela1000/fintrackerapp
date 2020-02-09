@@ -1632,6 +1632,67 @@ module.exports = controllers = {
         date: req.body.date,
         categoryId: req.body.categoryId
       }
+      
+      if (details.fromType === details.toType) {
+        var payload = {
+          userId: userId,
+          "data": [{
+            userId: userId,
+            accountId: details.fromAccountId,
+            comment: details.comment,
+            date: details.date,
+            transferDetail: details.fromType + "To" + details.toType,
+            transferAccountId: details.fromAccountId,
+            categoryId: details.categoryId,
+            amount: details.amount,
+          }]
+        }
+
+        details.model = finUtils.toLowerCase(details.fromType);
+        payload.data[0].amount = -details.amount;
+        console.log("+++ 1653 index.js details.model: ", details.model)
+        console.log("+++ 1654 index.js payload: ", payload)
+        
+        models[details.model].post(payload, function(substractionCreated, substractionMessage) {
+          if (substractionCreated) {
+            details.model = finUtils.toLowerCase(details.toType);
+            payload.data[0].amount = details.amount;
+            payload.data[0].accountId = details.toAccountId;
+
+            console.log("+++ 1662 index.js details.model: ", details.model)
+            console.log("+++ 1663 index.js payload: ", payload)
+            models[details.model].post(payload, function(additionCreated, additionMessage) {
+              if (additionCreated) {
+                res.status(200).json({
+                  success: true,
+                  data: {
+                    substractionCreated: substractionCreated,
+                    additionCreated: additionCreated,
+                  }
+                })
+              } else {
+                res.status(200).json({
+                  success: false,
+                  data: {
+                    message: additionMessage
+                  }
+                });
+              }
+
+            })
+          } else {
+            res.status(200).json({
+              success: false,
+              data: {
+                message: substractionMessage
+              }
+            });
+          }
+
+        })
+        return;
+      }
+      console.log("+++ 1693 index.js NOT HERE")
       if (details.fromType === "Income" || details.toType === "Income") {
         var payload = {
           userId: userId,
