@@ -183,6 +183,45 @@ module.exports = controllers = {
       })
     }
   },
+  fundsource: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var source = req.body;
+      source.userId = userId
+      models.fund_source.post(source, function (sourceCreated, sourceMessage) {
+        if (sourceCreated) {
+          var data = {
+            sourceCreated: sourceCreated
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, sourceMessage)
+        }
+      })
+    }
+  },
+
+
+  fundsources: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var sources = req.body;
+      _.forEach(sources, function (source) {
+        source.userId = userId
+      })
+      models.fund_sources_bulk.post(sources, function (sourcesCreated, sourcesMessage) {
+        if (sourcesCreated) {
+          var data = {
+            sourcesCreated: sourcesCreated
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, sourcesMessage)
+        }
+      })
+    }
+  },
+
 
 }
 

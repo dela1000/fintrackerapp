@@ -83,7 +83,6 @@ module.exports = {
           attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
         })
         .then(function(user) {
-          console.log("+++ 86 index.js user: ", user)
           if (user) {
             callback(user);
           } else {
@@ -108,7 +107,6 @@ module.exports = {
 
   get_type: {
     get: function(payload, callback) {
-      console.log("+++ 110 index.js payload: ", payload)
       db.Types.findOne({
         where: {
           name: payload.type
@@ -177,9 +175,7 @@ module.exports = {
 
   user_accounts_bulk: {
     post: function(payload, callback) {
-      db.UserAccounts.bulkCreate(
-          payload,
-        )
+      db.UserAccounts.bulkCreate(payload)
         .then(function(userAccountsAdded) {
           if (userAccountsAdded) {
             callback(userAccountsAdded)
@@ -192,7 +188,6 @@ module.exports = {
   
   fund_source: {
     post: function(payload, callback) {
-      console.log("+++ 194 index.js payload: ", payload)
       db.FundSources.create(payload)
         .then(function(create) {
           if (create) {
@@ -204,11 +199,22 @@ module.exports = {
     },
   },
 
+  fund_sources_bulk: {
+    post: function(payload, callback) {
+      db.FundSources.bulkCreate(payload)
+        .then(function(sourcesCreated) {
+          if (sourcesCreated) {
+            callback(sourcesCreated)
+          } else {
+            callback(false, "Fund Sources not created")
+          };
+        })
+    },
+  },
+
   funds_bulk: {
     post: function(payload, callback) {
-      db.Funds.bulkCreate(
-          payload,
-        )
+      db.Funds.bulkCreate(payload)
         .then(function(funds) {
           if (funds) {
             callback(funds)
@@ -221,9 +227,7 @@ module.exports = {
 
   account_totals_bulk: {
     post: function(payload, callback) {
-      db.AccountTotals.bulkCreate(
-          payload,
-        )
+      db.AccountTotals.bulkCreate(payload)
         .then(function(accountTotals) {
           if (accountTotals) {
             callback(accountTotals)

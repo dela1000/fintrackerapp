@@ -285,6 +285,15 @@ AccountTotals.belongsTo(Types, {
   foreignKey: 'typeId'
 });
 
+UserAccounts.hasMany(AccountTotals, {
+  foreignKey: 'accountId'
+});
+
+
+Types.hasMany(AccountTotals, {
+  foreignKey: 'typeId'
+});
+
 Expenses.belongsTo(Users, {
   foreignKey: 'userId'
 });

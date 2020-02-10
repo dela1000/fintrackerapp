@@ -32,6 +32,17 @@ router.post('/set_initials', authUtils.checkUser, function(req, res) {
   controllers.set_initials.post(req, res)
 })
 
+router.post('/fundsource', authUtils.checkUser, function(req, res) {
+  controllers.fundsource.post(req, res)
+})
+
+router.post('/fundsources', authUtils.checkUser, function(req, res) {
+  controllers.fundsources.post(req, res)
+})
+
+
+
+
 
 module.exports = router;
 
