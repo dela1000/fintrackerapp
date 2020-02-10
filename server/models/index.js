@@ -173,7 +173,7 @@ module.exports = {
     }
   },
 
-  user_accounts_bulk: {
+  user_accounts: {
     post: function(payload, callback) {
       db.UserAccounts.bulkCreate(payload)
         .then(function(userAccountsAdded) {

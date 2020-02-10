@@ -32,20 +32,22 @@ router.post('/set_initials', authUtils.checkUser, function(req, res) {
   controllers.set_initials.post(req, res)
 })
 
-router.post('/fund_source', authUtils.checkUser, function(req, res) {
-  controllers.fund_source.post(req, res)
-})
-
+// Add sources in bulk
 router.post('/fund_sources', authUtils.checkUser, function(req, res) {
   controllers.fund_sources.post(req, res)
 })
 
-// ADD ACCOUNTS IN BULK
-router.post('/user_accounts_bulk', authUtils.checkUser, function(req, res) {
-  controllers.user_accounts_bulk.post(req, res)
+router.post('/fund_source', authUtils.checkUser, function(req, res) {
+  controllers.fund_source.post(req, res)
 })
 
-// ADD ACCOUNTS IN BULK
+
+// Add accounts in bulk
+router.post('/user_accounts', authUtils.checkUser, function(req, res) {
+  controllers.user_accounts.post(req, res)
+})
+
+// Add sing account
 router.post('/user_account', authUtils.checkUser, function(req, res) {
   controllers.user_account.post(req, res)
 })

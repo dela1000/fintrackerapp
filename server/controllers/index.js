@@ -131,7 +131,7 @@ module.exports = controllers = {
                     userData.totalToUpdate = userData.totalToUpdate + lineItem.amount;
                   }
                 })
-                models.user_accounts_bulk.post(lineItems, function (accountsAdded, accountsMessage) {
+                models.user_accounts.post(lineItems, function (accountsAdded, accountsMessage) {
                   if (accountsAdded) {
                     _.forEach(lineItems, function (lineItem) {
                       lineItem.comment = "Initial amount added";
@@ -147,13 +147,19 @@ module.exports = controllers = {
                           if (accountsTotals) {
                             models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
                               if (availableTotal) {
-                                var data = {
-                                  fundsAdded: lineItems,
-                                  accountsAdded: accountsAdded,
-                                  accountsTotals: accountsTotals,
-                                  availableTotal: Number(availableTotal.amount),
-                                }
-                                successResponse(res, data)
+                                models.initials_done.post(userData, function (userUpdated, userMessages) {
+                                  if (userUpdated) {
+                                    var data = {
+                                      fundsAdded: lineItems,
+                                      accountsAdded: accountsAdded,
+                                      accountsTotals: accountsTotals,
+                                      availableTotal: Number(availableTotal.amount),
+                                    }
+                                    successResponse(res, data)
+                                  } else {
+                                    failedResponse(res, userMessages)
+                                  }
+                                })
                               } else {
                                 failedResponse(res, availableMessage)
                               }
@@ -223,14 +229,14 @@ module.exports = controllers = {
     }
   },
 
-  user_accounts_bulk: {
+  user_accounts: {
     post: function(req, res) {
       var userId = req.headers.userId;
       var accounts = req.body;
       _.forEach(accounts, function (account) {
         account.userId = userId
       })
-      models.user_accounts_bulk.post(accounts, function (accountsCreated, accountsMessage) {
+      models.user_accounts.post(accounts, function (accountsCreated, accountsMessage) {
         if (accountsCreated) {
           var data = {
             accountsCreated: accountsCreated
