@@ -155,25 +155,7 @@ module.exports = {
     }
   },
 
-  user_accounts: {
-    get: function (payload, callback) {
-      db.UserAccounts.findOne({
-        where: {
-          userId: payload.userId,
-          name: "Initial"
-        }
-      })
-      .then(function(fundAccount) {
-        if (fundAccount) {
-          callback(fundAccount);
-        } else {
-          callback(false, "Fund Account not found")
-        }
-      })
-    }
-  },
-
-  user_accounts: {
+  user_accounts_bulk: {
     post: function(payload, callback) {
       db.UserAccounts.bulkCreate(payload)
         .then(function(userAccountsAdded) {
@@ -197,19 +179,21 @@ module.exports = {
           };
         })
     },
-  },
-  
-  fund_source: {
-    post: function(payload, callback) {
-      db.FundSources.create(payload)
-        .then(function(create) {
-          if (create) {
-            callback(create)
-          } else {
-            callback(false, "Fund Source not created")
-          };
-        })
-    },
+    get: function (payload, callback) {
+      db.UserAccounts.findOne({
+        where: {
+          userId: payload.userId,
+          name: payload.name
+        }
+      })
+      .then(function(fundAccount) {
+        if (fundAccount) {
+          callback(fundAccount);
+        } else {
+          callback(false, "Fund Account not found")
+        }
+      })
+    }
   },
 
   fund_sources_bulk: {
@@ -220,6 +204,19 @@ module.exports = {
             callback(sourcesCreated)
           } else {
             callback(false, "Fund Sources not created")
+          };
+        })
+    },
+  },
+
+  fund_source: {
+    post: function(payload, callback) {
+      db.FundSources.create(payload)
+        .then(function(create) {
+          if (create) {
+            callback(create)
+          } else {
+            callback(false, "Fund Source not created")
           };
         })
     },
@@ -268,6 +265,80 @@ module.exports = {
     }
   },
 
+  categories_bulk: {
+    post: function(payload, callback) {
+      db.ExpensesCategories.bulkCreate(payload)
+        .then(function(categoriesAdded) {
+          if (categoriesAdded) {
+            callback(categoriesAdded)
+          } else {
+            callback(false, "New categories not added")
+          };
+        })
+    },
+  },
+
+  categories: {
+    post: function(payload, callback) {
+      db.ExpensesCategories.create(payload)
+        .then(function(create) {
+          if (create) {
+            callback(create)
+          } else {
+            callback(false, "Category not created")
+          };
+        })
+    },
+    patch: function(payload, callback) {
+      db.ExpensesCategories.findOne({
+          where: {
+            id: payload.id,
+            userId: payload.userId
+          }
+        })
+        .then(function(category) {
+          if (category !== null) {
+            category.name = payload.name;
+            category.save();
+            callback(category);
+          } else {
+            callback(false, "Expenses Category not found")
+          };
+        })
+    },
+  },
+
+
+  account_totals: {
+    get_by_id: function (payload, callback){
+      db.AccountTotals.findAll({
+        where: {
+          [Op.or]: payload
+        }
+      })
+      .then(function (results) {
+        if(results){
+          callback(results)
+        } else{
+          callback(false, "No totals found")
+        };
+      })
+    },
+    upsert: function (payload, callback) {
+      db.AccountTotals.bulkCreate(payload, {
+        fields:["id", "amount", "accountId", "typeId"],
+        updateOnDuplicate: ["amount"] 
+      })
+      .then(function(results){
+        if (results) {
+          callback(results)
+        } else {
+          callback(false, "Accounts Totals not updated")
+        }
+        
+      })
+    }
+  }
 }
 
 

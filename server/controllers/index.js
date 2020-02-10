@@ -131,7 +131,7 @@ module.exports = controllers = {
                     userData.totalToUpdate = userData.totalToUpdate + lineItem.amount;
                   }
                 })
-                models.user_accounts.post(lineItems, function (accountsAdded, accountsMessage) {
+                models.user_accounts_bulk.post(lineItems, function (accountsAdded, accountsMessage) {
                   if (accountsAdded) {
                     _.forEach(lineItems, function (lineItem) {
                       lineItem.comment = "Initial amount added";
@@ -189,6 +189,27 @@ module.exports = controllers = {
       })
     }
   },
+
+  fund_sources: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var sources = req.body;
+      _.forEach(sources, function (source) {
+        source.userId = userId
+      })
+      models.fund_sources_bulk.post(sources, function (sourcesCreated, sourcesMessage) {
+        if (sourcesCreated) {
+          var data = {
+            sourcesCreated: sourcesCreated
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, sourcesMessage)
+        }
+      })
+    }
+  },
+
   fund_source: {
     post: function(req, res) {
       var userId = req.headers.userId;
@@ -207,28 +228,6 @@ module.exports = controllers = {
     }
   },
 
-
-  fund_sources: {
-    post: function(req, res) {
-      var userId = req.headers.userId;
-      var sources = req.body;
-      _.forEach(sources, function (source) {
-        source.userId = userId
-      })
-      console.log("+++ 212 index.js sources: ", sources)
-      models.fund_sources_bulk.post(sources, function (sourcesCreated, sourcesMessage) {
-        if (sourcesCreated) {
-          var data = {
-            sourcesCreated: sourcesCreated
-          }
-          successResponse(res, data)
-        } else {
-          failedResponse(res, sourcesMessage)
-        }
-      })
-    }
-  },
-
   user_accounts: {
     post: function(req, res) {
       var userId = req.headers.userId;
@@ -236,7 +235,7 @@ module.exports = controllers = {
       _.forEach(accounts, function (account) {
         account.userId = userId
       })
-      models.user_accounts.post(accounts, function (accountsCreated, accountsMessage) {
+      models.user_accounts_bulk.post(accounts, function (accountsCreated, accountsMessage) {
         if (accountsCreated) {
           var data = {
             accountsCreated: accountsCreated
@@ -264,6 +263,139 @@ module.exports = controllers = {
           failedResponse(res, accountMessage)
         }
       })
+    }
+  },
+
+  categories_bulk: {
+    post: function (req, res) {
+      var userId = req.headers.userId;
+      var categories = req.body;
+      _.forEach(categories, function (category) {
+        category.userId = userId
+      })
+      models.categories_bulk.post(categories, function (categoriesAdded, categoriesMessage) {
+        if (categoriesAdded) {
+          var data = {
+            categoriesAdded: categoriesAdded
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, categoriesMessage)
+        }
+      })
+    }
+  },
+
+  categories: {
+    post: function (req, res) {
+      var userId = req.headers.userId;
+      var category = req.body;
+      category.userId = userId
+      models.categories.post(category, function (categoryAdded, categoryMessage) {
+        if (categoryAdded) {
+          var data = {
+            categoryAdded: categoryAdded
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, categoryMessage)
+        }
+      })
+    },
+    patch: function(req, res) {
+      var payload = {
+        userId: req.headers.userId,
+        name: req.body.name,
+        id: req.body.id,
+      };
+      models.categories.patch(payload, function(categoriesAdded, categoriesMessage) {
+        if (categoriesAdded) {
+          res.status(200).json({
+            success: true,
+            data: categoriesAdded
+          });
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: categoriesMessage
+            }
+          });
+        }
+      })
+    },
+  },
+
+  funds: {
+    post: function (req, res) {
+      var userId = req.headers.userId;
+      var funds = req.body;
+      totalsByAccountId = {};
+      totalsData = [];
+      var userData = {
+        userId: userId,
+        totalToUpdate: 0
+      }
+      _.forEach(funds, function (fund) {
+        fund.userId = userId;
+        if(!totalsByAccountId[fund.accountId]){
+          totalsByAccountId[fund.accountId] = {
+            userId: userId,
+            accountId: fund.accountId,
+            amount: fund.amount
+          };
+          var item = {
+            userId: userId,
+            accountId: fund.accountId,
+          }
+          totalsData.push(item)
+        } else {
+          totalsByAccountId[fund.accountId].amount = totalsByAccountId[fund.accountId].amount + fund.amount;
+        }
+        if(fund.typeId === 1){
+          userData.totalToUpdate = userData.totalToUpdate + fund.amount;
+        }
+      })
+      models.funds_bulk.post(funds, function (fundsAdded, fundsMessage) {
+        if (fundsAdded) {
+          models.account_totals.get_by_id(totalsData, function (totalsResults, totalsMessage) {
+            newTotals = [];
+            _.forEach(totalsResults, function (total) {
+              newTotals.push({
+                id: total.id,
+                amount: total.amount + totalsByAccountId[total.id].amount,
+                accountId: total.accountId,
+                typeId: total.typeId,
+              })
+            })
+            models.account_totals.upsert(newTotals, function (updatedTotals, updateMessage) {
+              if (updatedTotals) {
+                _.forEach(updatedTotals, function (total) {
+                  total.amount = Number(total.amount.toFixed(2));
+                })
+                models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
+                  if (availableTotal) {
+                    var data = {
+                      fundsAdded: fundsAdded,
+                      updatedTotals: updatedTotals,
+                      availableTotal: Number(availableTotal.amount)
+                    };
+                    successResponse(res, data)
+                  } else{
+                    failedResponse(res, availableMessage)
+                  };
+                })
+                
+              } else {
+                failedResponse(res, updateMessage)
+              }
+            })
+          })
+        } else {
+          failedResponse(res, fundsMessage)
+        }
+      })
+
     }
   },
 

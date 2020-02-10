@@ -9,7 +9,7 @@ exports.defaults = function() {
   .then(function(found) {
     if (!found) {
       var types = [{
-        type: "incomes"
+        type: "checking"
       },
       {
         type: "savings"

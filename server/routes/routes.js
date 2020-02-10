@@ -52,58 +52,38 @@ router.post('/user_account', authUtils.checkUser, function(req, res) {
   controllers.user_account.post(req, res)
 })
 
+//Fund routes
+router.post('/funds', authUtils.checkUser, function(req, res) {
+  controllers.funds.post(req, res)
+})
+
+// Add categories in bulk
+router.post('/categories_bulk', authUtils.checkUser, function(req, res) {
+  controllers.categories_bulk.post(req, res)
+})
+
+// Add category
+router.post('/categories', authUtils.checkUser, function(req, res) {
+  controllers.categories.post(req, res)
+})
+
+router.patch('/categories', authUtils.checkUser, function(req, res) {
+  controllers.categories.patch(req, res)
+})
+
 
 
 
 module.exports = router;
 
-// // Set initial values for accounts
-// router.post('/set_initials', authUtils.checkUser, function(req, res) {
-//   controllers.set_initials.post(req, res)
-// })
-
-// // ADD CATEGORIES IN BULK
-// router.post('/categories_bulk', authUtils.checkUser, function(req, res) {
-//   controllers.categories_bulk.post(req, res)
-// })
-
-// //Category routes
-// router.post('/categories', authUtils.checkUser, function(req, res) {
-//   controllers.categories.post(req, res)
-// })
 
 // router.get('/categories', authUtils.checkUser, function(req, res) {
 //   controllers.categories.get(req, res)
 // })
 
-// router.patch('/categories', authUtils.checkUser, function(req, res) {
-//   controllers.categories.patch(req, res)
-// })
 
 // router.delete('/categories', authUtils.checkUser, function(req, res) {
 //   controllers.categories.delete(req, res)
-// })
-
-// // ADD CATEGORIES IN BULK
-// router.post('/accounts_bulk', authUtils.checkUser, function(req, res) {
-//   controllers.accounts_bulk.post(req, res)
-// })
-
-// //Accounts routes
-// router.post('/accounts', authUtils.checkUser, function(req, res) {
-//   controllers.accounts.post(req, res)
-// })
-
-// router.get('/accounts', authUtils.checkUser, function(req, res) {
-//   controllers.accounts.get(req, res)
-// })
-
-// router.patch('/accounts', authUtils.checkUser, function(req, res) {
-//   controllers.accounts.patch(req, res)
-// })
-
-// router.delete('/accounts', authUtils.checkUser, function(req, res) {
-//   controllers.accounts.delete(req, res)
 // })
 
 
