@@ -273,6 +273,18 @@ AccountTotals.belongsTo(Users, {
   foreignKey: 'userId'
 });
 
+AccountTotals.belongsTo(UserAccounts, {
+  foreignKey: 'accountId'
+});
+
+AccountTotals.belongsTo(UserAccounts, {
+  foreignKey: 'accountId'
+});
+
+AccountTotals.belongsTo(Types, {
+  foreignKey: 'typeId'
+});
+
 Expenses.belongsTo(Users, {
   foreignKey: 'userId'
 });

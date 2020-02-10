@@ -219,6 +219,21 @@ module.exports = {
     },
   },
 
+  account_totals_bulk: {
+    post: function(payload, callback) {
+      db.AccountTotals.bulkCreate(
+          payload,
+        )
+        .then(function(accountTotals) {
+          if (accountTotals) {
+            callback(accountTotals)
+          } else {
+            callback(false, "New Account Totals not added")
+          };
+        })
+    },
+  },
+
   updateCurrentAvailable: {
     patch: function(payload, callback) {
       db.CurrentAvailables.findOne({

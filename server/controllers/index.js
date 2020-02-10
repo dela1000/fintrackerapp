@@ -64,14 +64,12 @@ module.exports = controllers = {
 
   logout: {
     get: function(req, res) {
-      res.status(200).json({
-        success: true,
-        data: {
-          username: null,
-          fintrackToken: null,
-          userId: null
-        }
-      })
+      var data = {
+        username: null,
+        fintrackToken: null,
+        userId: null
+      }
+      successResponse(res, data)
     }
   },
 
@@ -145,16 +143,23 @@ module.exports = controllers = {
                     })
                     models.funds_bulk.post(lineItems, function (fundsAdded, fundsMessage) {
                       if (fundsAdded) {
-                        models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
-                          if (availableTotal) {
-                            var data = {
-                              fundsAdded: lineItems,
-                              accountsAdded: accountsAdded,
-                              availableTotal: Number(availableTotal.amount),
-                            }
-                            successResponse(res, data)
+                        models.account_totals_bulk.post(lineItems, function (accountsTotals, totalsMessage) {
+                          if (accountsTotals) {
+                            models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
+                              if (availableTotal) {
+                                var data = {
+                                  fundsAdded: lineItems,
+                                  accountsAdded: accountsAdded,
+                                  accountsTotals: accountsTotals,
+                                  availableTotal: Number(availableTotal.amount),
+                                }
+                                successResponse(res, data)
+                              } else {
+                                failedResponse(res, availableMessage)
+                              }
+                            })
                           } else {
-                            failedResponse(res, availableMessage)
+                            failedResponse(res, totalsMessage)
                           }
                         })
                       } else {
@@ -177,7 +182,8 @@ module.exports = controllers = {
         }
       })
     }
-  }
+  },
+
 }
 
 var successResponse = function (res, data) {
@@ -196,296 +202,6 @@ var failedResponse = function (res, message) {
   })
 }
 
-  // set_initials: {
-  //   post: function(req, res) {
-  //     var userId = req.headers.userId;
-  //     var initialData = req.body;
-  //     //Check that user has not set his initials yet.
-  //     var userData = {
-  //       userId: userId
-  //     }
-  //     models.get_user.get(userData, function(user, getUserMessage) {
-  //       if (user) {
-  //         if (!user.dataValues.initials_done) {
-  //           console.log("controllers: BEGIN SETTING INITIAL AMOUNTS")
-  //           var initialIncomeCategories = {
-  //             type: "Income",
-  //             data: [{
-  //                 userId: userId,
-  //                 type: "income",
-  //                 name: "initial",
-  //               },
-  //               {
-  //                 userId: userId,
-  //                 type: "income",
-  //                 name: "transfer",
-  //               },
-  //             ]
-  //           }
-
-  //           var newIncomeAccounts = {
-  //             Income: {
-  //               type: "Income",
-  //               data: []
-  //             },
-  //             Savings: {
-  //               type: "Savings",
-  //               data: []
-  //             },
-  //             Invest: {
-  //               type: "Invest",
-  //               data: []
-  //             },
-  //           }
-
-  //           _.forEach(initialData, function(amounts, key) {
-  //             _.forEach(amounts, function(amount) {
-  //               amount['userId'] = userId;
-  //               amount['date'] = amount.date;
-  //               newIncomeAccounts[key]['data'].push({
-  //                 userId: userId,
-  //                 name: amount.accountName
-  //               });
-  //             })
-  //           })
-  //           //if initials_done is false continue
-  //           // ADD NEW CATEGORIES
-  //           console.log("controllers: ADD NEW CATEGORIES")
-  //           models.categories_bulk.post(initialIncomeCategories, function(categoriesAdded, categoriesMessage) {
-  //             if (categoriesAdded) {
-  //               var initialCategoryCreated = categoriesAdded;
-  //               // ADD NEW ACCOUNTS
-  //               console.log("controllers: ADD NEW ACCOUNTS")
-  //               var newAccountsAdded = {};
-  //               models.accounts_bulk.post(newIncomeAccounts.Income, function(incomeAccountsAdded, incomeAccountsMessage) {
-  //                 if (incomeAccountsAdded) {
-  //                   newAccountsAdded['Income'] = incomeAccountsAdded
-  //                   models.accounts_bulk.post(newIncomeAccounts.Savings, function(savingsAccountsAdded, savingAccountsMessage) {
-  //                     if (savingsAccountsAdded) {
-  //                       newAccountsAdded['Savings'] = savingsAccountsAdded
-  //                       models.accounts_bulk.post(newIncomeAccounts.Invest, function(investAccountsAdded, investAccountsMessage) {
-  //                         if (investAccountsAdded) {
-  //                           newAccountsAdded['Invest'] = investAccountsAdded
-
-  //                           // COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS
-  //                           console.log("controllers: COMBINE CATEGORIES AND ACCOUNTS TO AMOUNTS")
-  //                           var finalInitial = {
-  //                             Income: {
-  //                               type: "Income",
-  //                               data: []
-  //                             },
-  //                             Savings: {
-  //                               type: "Savings",
-  //                               data: []
-  //                             },
-  //                             Invest: {
-  //                               type: "Invest",
-  //                               data: []
-  //                             },
-  //                           }
-  //                           var totalAmounts = {
-  //                             Income: {
-  //                               userId: userId,
-  //                               type: "Income",
-  //                               amount: 0
-  //                             },
-  //                             Savings: {
-  //                               userId: userId,
-  //                               type: "Savings",
-  //                               amount: 0
-  //                             },
-  //                             Invest: {
-  //                               userId: userId,
-  //                               type: "Invest",
-  //                               amount: 0
-  //                             },
-  //                           }
-  //                           var initialCategory = initialCategoryCreated.find(function(item) {
-  //                             return item.dataValues.name === 'initial';
-  //                           })
-  //                           _.forEach(initialData, function(initialDataType, key) {
-  //                             _.forEach(initialDataType, function(amount) {
-  //                               _.forEach(newAccountsAdded[key], function(newAccount) {
-  //                                 if (amount.accountName === newAccount.dataValues.name) {
-  //                                   amount.accountId = newAccount.dataValues.id;
-  //                                   amount.categoryId = initialCategory.id;
-  //                                   amount.comment = "Initial amount added";
-  //                                   finalInitial[key].data.push(amount);
-  //                                   totalAmounts[key].amount = totalAmounts[key].amount + amount.amount;
-  //                                 }
-  //                               })
-  //                             })
-  //                           })
-  //                           // ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB
-  //                           console.log("controllers: ADD INCOMES WITH CORRECT ACCOUNT AND CATEGORY IDS TO DB")
-  //                           models.bulk_add.post(finalInitial.Income, function(incomeResult, incomeMessage) {
-  //                             if (incomeResult) {
-  //                               models.bulk_add.post(finalInitial.Savings, function(savingsResult, savingsMessage) {
-  //                                 if (savingsResult) {
-  //                                   models.bulk_add.post(finalInitial.Invest, function(investResult, investMessage) {
-  //                                     if (investResult) {
-  //                                       console.log("+++ 226 index.js ALL INITIAL ITEMS ADDED")
-  //                                       // UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS
-  //                                       console.log("controllers: UPDATE CURRENT TOTALS WITH INITIAL AMOUNTS")
-  //                                       models.updateTotalAmount.patch(totalAmounts.Income, function(currentIncome, currentIncomeMessage) {
-  //                                         if (currentIncome) {
-  //                                           models.updateTotalAmount.patch(totalAmounts.Savings, function(currentSavings, currentSavingsMessage) {
-  //                                             if (currentSavings) {
-  //                                               models.updateTotalAmount.patch(totalAmounts.Invest, function(currentInvest, currentInvestMessage) {
-  //                                                 if (currentInvest) {
-  //                                                   var currentAvailableValues = {
-  //                                                     userId: userId,
-  //                                                     totalToUpdate: Number(currentIncome.amount)
-  //                                                   }
-  //                                                   console.log("controllers: UPDATE CURRENT AVAILABLE")
-  //                                                   models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
-  //                                                     if (currentAvailable) {
-  //                                                       console.log("controllers: UPDATE INITIAL USER FLAG")
-  //                                                       models.initials_done.post(userData, function(updated, userInitialsMessage) {
-  //                                                         if (updated) {
-  //                                                           console.log("controllers: INITIALS DONE - RETURNING DATA TO CLIENT")
-  //                                                           res.status(200).json({
-  //                                                             success: true,
-  //                                                             data: {
-  //                                                               itemsAdded: finalInitial,
-  //                                                               currentTotalIncome: Number(currentIncome.amount),
-  //                                                               currentTotalSavings: Number(currentSavings.amount),
-  //                                                               currentTotalInvest: Number(currentInvest.amount),
-  //                                                               currentAvailable: Number(currentAvailable.amount),
-  //                                                               currentTotalExpenses: 0,
-  //                                                             }
-  //                                                           });
-  //                                                         } else {
-  //                                                           res.status(200).json({
-  //                                                             success: false,
-  //                                                             data: {
-  //                                                               message: userInitialsMessage
-  //                                                             }
-  //                                                           })
-  //                                                         };
-  //                                                       })
-  //                                                     } else {
-  //                                                       res.status(200).json({
-  //                                                         success: false,
-  //                                                         data: {
-  //                                                           message: currentAvailableMessage
-  //                                                         }
-  //                                                       })
-  //                                                     }
-  //                                                   })
-
-  //                                                 } else {
-  //                                                   res.status(200).json({
-  //                                                     success: false,
-  //                                                     data: {
-  //                                                       message: currentInvestMessage
-  //                                                     }
-  //                                                   })
-  //                                                 }
-
-  //                                               })
-  //                                             } else {
-  //                                               res.status(200).json({
-  //                                                 success: false,
-  //                                                 data: {
-  //                                                   message: currentSavingsMessage
-  //                                                 }
-  //                                               })
-  //                                             };
-  //                                           })
-  //                                         } else {
-  //                                           res.status(200).json({
-  //                                             success: false,
-  //                                             data: {
-  //                                               message: currentIncomeMessage
-  //                                             }
-  //                                           })
-  //                                         }
-  //                                       })
-  //                                     } else {
-  //                                       res.status(200).json({
-  //                                         success: false,
-  //                                         data: {
-  //                                           message: investMessage
-  //                                         }
-  //                                       })
-  //                                     };
-  //                                   })
-  //                                 } else {
-  //                                   res.status(200).json({
-  //                                     success: false,
-  //                                     data: {
-  //                                       message: savingsMessage
-  //                                     }
-  //                                   })
-  //                                 };
-  //                               })
-  //                             } else {
-  //                               res.status(200).json({
-  //                                 success: false,
-  //                                 data: {
-  //                                   message: incomeMessage
-  //                                 }
-  //                               })
-  //                             }
-  //                           })
-  //                         } else {
-  //                           res.status(200).json({
-  //                             success: false,
-  //                             data: {
-  //                               message: "Initial " + investAccountsMessage
-  //                             }
-  //                           });
-  //                         };
-  //                       })
-  //                     } else {
-  //                       res.status(200).json({
-  //                         success: false,
-  //                         data: {
-  //                           message: "Initial " + savingAccountsMessage
-  //                         }
-  //                       });
-
-  //                     }
-  //                   })
-  //                 } else {
-  //                   res.status(200).json({
-  //                     success: false,
-  //                     data: {
-  //                       message: "Initial " + incomeAccountsMessage
-  //                     }
-  //                   });
-  //                 }
-  //               })
-  //             } else {
-  //               res.status(200).json({
-  //                 success: false,
-  //                 data: {
-  //                   message: "Initial " + categoriesMessage
-  //                 }
-  //               });
-  //             }
-  //           })
-  //         } else {
-  //           res.status(200).json({
-  //             success: false,
-  //             data: {
-  //               message: "User Initials already setup"
-  //             }
-  //           })
-  //         };
-  //       } else {
-  //         res.status(200).json({
-  //           success: false,
-  //           data: {
-  //             message: getUserMessage
-  //           }
-  //         })
-  //       }
-  //     })
-
-  //   }
-  // },
 
   // categories_bulk: {
   //   post: function(req, res) {
