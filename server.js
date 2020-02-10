@@ -21,8 +21,12 @@ app.use(parser.json());
 
 // log response time
 app.use(responseTime(function (req, res, time) {
-  console.log("+++ server.js PATH:", req.method + " " + req.route.path)
-  console.log("+++ server.js TIME IN SECONDS:", time / 1000)
+    if(req.route && req.route.path){
+      console.log("+++ server.js PATH:", req.method + " " + req.route.path)
+      console.log("+++ server.js TIME IN SECONDS:", time / 1000)
+    } else {
+        console.log("+++ server - No Route found")
+    }
 }))
 
 //Use cors

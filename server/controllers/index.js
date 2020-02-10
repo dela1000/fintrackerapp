@@ -183,7 +183,7 @@ module.exports = controllers = {
       })
     }
   },
-  fundsource: {
+  fund_source: {
     post: function(req, res) {
       var userId = req.headers.userId;
       var source = req.body;
@@ -202,13 +202,14 @@ module.exports = controllers = {
   },
 
 
-  fundsources: {
+  fund_sources: {
     post: function(req, res) {
       var userId = req.headers.userId;
       var sources = req.body;
       _.forEach(sources, function (source) {
         source.userId = userId
       })
+      console.log("+++ 212 index.js sources: ", sources)
       models.fund_sources_bulk.post(sources, function (sourcesCreated, sourcesMessage) {
         if (sourcesCreated) {
           var data = {
@@ -237,6 +238,24 @@ module.exports = controllers = {
           successResponse(res, data)
         } else {
           failedResponse(res, accountsMessage)
+        }
+      })
+    }
+  },
+
+  user_account: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var account = req.body;
+      account.userId = userId
+      models.user_account.post(account, function (accountCreated, accountMessage) {
+        if (accountCreated) {
+          var data = {
+            accountCreated: accountCreated
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, accountMessage)
         }
       })
     }

@@ -185,6 +185,19 @@ module.exports = {
         })
     },
   },
+
+  user_account: {
+    post: function(payload, callback) {
+      db.UserAccounts.create(payload)
+        .then(function(create) {
+          if (create) {
+            callback(create)
+          } else {
+            callback(false, "User Account not created")
+          };
+        })
+    },
+  },
   
   fund_source: {
     post: function(payload, callback) {
