@@ -40,6 +40,10 @@ router.post('/fundsources', authUtils.checkUser, function(req, res) {
   controllers.fundsources.post(req, res)
 })
 
+// ADD ACCOUNTS IN BULK
+router.post('/user_accounts_bulk', authUtils.checkUser, function(req, res) {
+  controllers.user_accounts_bulk.post(req, res)
+})
 
 
 

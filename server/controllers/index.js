@@ -222,6 +222,25 @@ module.exports = controllers = {
     }
   },
 
+  user_accounts_bulk: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var accounts = req.body;
+      _.forEach(accounts, function (account) {
+        account.userId = userId
+      })
+      models.user_accounts_bulk.post(accounts, function (accountsCreated, accountsMessage) {
+        if (accountsCreated) {
+          var data = {
+            accountsCreated: accountsCreated
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, accountsMessage)
+        }
+      })
+    }
+  },
 
 }
 
