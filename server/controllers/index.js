@@ -17,24 +17,18 @@ module.exports = controllers = {
       models.login.post(payload, function(isUser, message) {
         if (isUser) {
           authUtils.createToken(req, res, isUser, function(token) {
-            res.status(200).send({
-              success: true,
-              data: {
-                fintrackToken: token,
-                userId: isUser.dataValues.id,
-                username: isUser.dataValues.username,
-                userEmail: isUser.dataValues.email,
-                initials_done: isUser.dataValues.initials_done,
-              }
-            });
+            var data = {
+              fintrackToken: token,
+              userId: isUser.dataValues.id,
+              username: isUser.dataValues.username,
+              userEmail: isUser.dataValues.email,
+              initials_done: isUser.dataValues.initials_done,
+            }
+            successResponse(res, data)
+            
           })
         } else {
-          res.status(200).json({
-            success: false,
-            data: {
-              message: message
-            }
-          });
+          failedResponse(res, message)
         };
       })
     }
@@ -51,24 +45,18 @@ module.exports = controllers = {
       models.signup.post(payload, function(isUser, message) {
         if (isUser) {
           authUtils.createToken(req, res, isUser, function(token, name) {
-            res.status(200).json({
-              success: true,
-              data: {
-                username: name,
-                fintrackToken: token,
-                userId: isUser.dataValues.id,
-                initial: isUser.dataValues.initial,
-                userEmail: isUser.dataValues.email,
-              }
-            });
+            var data = {
+              username: name,
+              fintrackToken: token,
+              userId: isUser.dataValues.id,
+              initial: isUser.dataValues.initial,
+              userEmail: isUser.dataValues.email,
+            }
+            successResponse(res, data)
           })
         } else {
-          res.status(200).json({
-            success: false,
-            data: {
-              message: message
-            }
-          });
+          failedResponse(res, message)
+          
         };
       })
     }
@@ -120,6 +108,92 @@ module.exports = controllers = {
     }
   },
 
+  set_initials: {
+    post: function(req, res) {
+      var userId = req.headers.userId;
+      var lineItems = req.body;
+      var userData = {
+        userId: userId,
+        totalToUpdate: 0
+      }
+      models.get_user.get(userData, function(user, getUserMessage) {
+        if (user) {
+          if (!user.initials_done) {
+            var source = {
+              source: "Initial",
+              userId: userId
+            }
+            models.fund_source.post(source, function (sourceCreated, sourceMessage) {
+              if (sourceCreated) {
+                _.forEach(lineItems, function (lineItem) {
+                  lineItem.userId = userId;
+                  lineItem.sourceId = sourceCreated.id;
+                  lineItem.source = sourceCreated.source;
+                  if(lineItem.typeId === 1){
+                    userData.totalToUpdate = userData.totalToUpdate + lineItem.amount;
+                  }
+                })
+                models.user_accounts_bulk.post(lineItems, function (accountsAdded, accountsMessage) {
+                  if (accountsAdded) {
+                    _.forEach(lineItems, function (lineItem) {
+                      lineItem.comment = "Initial amount added";
+                      _.forEach(accountsAdded, function (accountData) {
+                        if(lineItem.typeId === accountData.typeId && lineItem.account === accountData.account){
+                          lineItem.accountId = accountData.id;
+                        }
+                      })
+                    })
+                    models.funds_bulk.post(lineItems, function (fundsAdded, fundsMessage) {
+                      if (fundsAdded) {
+                        models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
+                          if (availableTotal) {
+                            var data = {
+                              fundsAdded: lineItems,
+                              accountsAdded: accountsAdded,
+                              availableTotal: Number(availableTotal.amount),
+                            }
+                            successResponse(res, data)
+                          } else {
+                            failedResponse(res, availableMessage)
+                          }
+                        })
+                      } else {
+                        failedResponse(res, fundsMessage)
+                      }
+                    })
+                  } else {
+                    failedResponse(res, accountsMessage)
+                  }
+                })
+              } else {
+                failedResponse(res, sourceMessage)
+              }
+            })
+          } else {
+            failedResponse(res, "User Initials already setup")
+          }
+        } else {
+          failedResponse(res, getUserMessage)
+        }
+      })
+    }
+  }
+}
+
+var successResponse = function (res, data) {
+  res.status(200).json({
+    success: true,
+    data: data
+  })
+}
+
+var failedResponse = function (res, message) {
+  res.status(200).json({
+    success: false,
+    data: {
+      message: message
+    }
+  })
 }
 
   // set_initials: {

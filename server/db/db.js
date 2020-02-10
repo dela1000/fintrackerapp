@@ -50,7 +50,7 @@ var Types = sequelize.define('types', {
     type: Sequelize.INTEGER,
     autoIncrement: true
   },
-  name: {
+  type: {
     type: Sequelize.STRING,
     unique: true
   },
@@ -69,18 +69,6 @@ var Funds = sequelize.define('funds', {
   },
   amount: {
     type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  sourceId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  accountId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  typeId: {
-    type: Sequelize.INTEGER,
     allowNull: false
   },
   comment: {
@@ -102,7 +90,23 @@ var Funds = sequelize.define('funds', {
   deleted: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
-  }
+  },
+  typeId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  accountId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  sourceId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
 }, {
   timestamps: true
 }, {
@@ -110,13 +114,13 @@ var Funds = sequelize.define('funds', {
 });
 
 
-var FundAccounts = sequelize.define('fundaccounts', {
+var UserAccounts = sequelize.define('useraccounts', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true
   },
-  name: {
+  account: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -140,7 +144,7 @@ var FundSources = sequelize.define('fundsources', {
     type: Sequelize.INTEGER,
     autoIncrement: true
   },
-  name: {
+  source: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -293,8 +297,24 @@ Users.hasOne(CurrentAvailables, {
   foreignKey: 'userId'
 })
 
-FundAccounts.belongsTo(Users, {
+Types.hasMany(UserAccounts, {
+  foreignKey: 'typeId'
+})
+
+// UserAccounts.hasOne(Types, {
+//   foreignKey: 'id'
+// })
+
+UserAccounts.belongsTo(Users, {
   foreignKey: 'userId'
+});
+
+UserAccounts.hasMany(Funds, {
+  foreignKey: 'accountId'
+});
+
+Funds.belongsTo(UserAccounts, {
+  foreignKey: 'accountId'
 });
 
 FundSources.belongsTo(Users, {
@@ -305,16 +325,9 @@ Users.hasMany(FundSources, {
   foreignKey: 'userId'
 })
 
-Users.hasMany(FundAccounts, {
+Users.hasMany(UserAccounts, {
   foreignKey: 'userId'
 })
-
-FundAccounts.hasMany(Funds, {
-  foreignKey: 'accountId'
-});
-Funds.belongsTo(FundAccounts, {
-  foreignKey: 'accountId'
-});
 
 ExpensesCategories.hasMany(Expenses, {
   foreignKey: 'categoryId'
@@ -325,24 +338,41 @@ Expenses.belongsTo(ExpensesCategories, {
 });
 
 FundSources.hasMany(Funds, {
-  foreignKey: 'categoryId'
+  foreignKey: 'sourceId'
 });
+
 Funds.belongsTo(FundSources, {
-  foreignKey: 'categoryId'
+  foreignKey: 'sourceId'
+});
+
+UserAccounts.hasMany(Funds, {
+  foreignKey: 'accountId'
+});
+
+Funds.belongsTo(UserAccounts, {
+  foreignKey: 'accountId'
+});
+
+Funds.belongsTo(Types, {
+  foreignKey: 'typeId'
+});
+
+Types.hasMany(Funds, {
+  foreignKey: 'typeId'
 });
 
 
 Users.sync().then(function() {
   Types.sync().then(function() {
-    defaults();
-    FundAccounts.sync().then(function() {
+    UserAccounts.sync().then(function() {
       FundSources.sync().then(function() {
         Funds.sync().then(function() {
           AccountTotals.sync().then(function() {
             ExpensesCategories.sync().then(function() {
               Expenses.sync().then(function() {
                 CurrentAvailables.sync().then(function() {
-                  // testData();
+                  defaults();
+                  testData();
                 })
               })
             })
@@ -357,7 +387,7 @@ exports.AccountTotals = AccountTotals;
 exports.CurrentAvailables = CurrentAvailables;
 exports.Expenses = Expenses;
 exports.ExpensesCategories = ExpensesCategories;
-exports.FundAccounts = FundAccounts;
+exports.UserAccounts = UserAccounts;
 exports.Funds = Funds;
 exports.FundSources = FundSources;
 exports.Types = Types;

@@ -57,6 +57,7 @@ module.exports = {
               found.password = passwordHash;
               found.email = payload.email;
               found.save();
+
               var createTotal = {
                 amount: 0,
                 userId: found.dataValues.id
@@ -75,7 +76,57 @@ module.exports = {
 
   get_user: {
     get: function(payload, callback) {
-      db.User.findOne({
+      db.Users.findOne({
+          where: {
+            id: payload.userId
+          },
+          attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        })
+        .then(function(user) {
+          console.log("+++ 86 index.js user: ", user)
+          if (user) {
+            callback(user);
+          } else {
+            callback(false, "User not found")
+          }
+        })
+    }
+  },
+
+  get_types: {
+    get: function(callback) {
+      db.Types.findAll()
+        .then(function(types) {
+          if (types) {
+            callback(types);
+          } else {
+            callback(false, "Types not found")
+          }
+        })
+    }
+  },
+
+  get_type: {
+    get: function(payload, callback) {
+      console.log("+++ 110 index.js payload: ", payload)
+      db.Types.findOne({
+        where: {
+          name: payload.type
+        }
+      })
+        .then(function(type) {
+          if (type) {
+            callback(type);
+          } else {
+            callback(false, "Type not found")
+          }
+        })
+    }
+  },
+
+  initials_done: {
+    post: function(payload, callback) {
+      db.Users.findOne({
           where: {
             id: payload.userId
           },
@@ -83,9 +134,11 @@ module.exports = {
         })
         .then(function(user) {
           if (user) {
+            user.initials_done = true;
+            user.save();
             callback(user);
           } else {
-            callback(false, "User not found")
+            callback(false, "User Initials not updated")
           }
         })
     }
@@ -104,42 +157,87 @@ module.exports = {
     }
   },
 
-}
-//   initials_done: {
-//     post: function(payload, callback) {
-//       db.User.findOne({
-//           where: {
-//             id: payload.userId
-//           },
-//           attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
-//         })
-//         .then(function(user) {
-//           if (user) {
-//             user.initials_done = true;
-//             user.save();
-//             callback(user);
-//           } else {
-//             callback(false, "User Initials not updated")
-//           }
-//         })
-//     }
-//   },
+  user_accounts: {
+    get: function (payload, callback) {
+      db.UserAccounts.findOne({
+        where: {
+          userId: payload.userId,
+          name: "Initial"
+        }
+      })
+      .then(function(fundAccount) {
+        if (fundAccount) {
+          callback(fundAccount);
+        } else {
+          callback(false, "Fund Account not found")
+        }
+      })
+    }
+  },
 
-//   categories_bulk: {
-//     post: function(payload, callback) {
-//       var tableName = payload.type + 'Category';
-//       db[tableName].bulkCreate(
-//           payload.data,
-//         )
-//         .then(function(categoriesAdded) {
-//           if (categoriesAdded) {
-//             callback(categoriesAdded)
-//           } else {
-//             callback(false, "New " + payload.type + " categories not added")
-//           };
-//         })
-//     },
-//   },
+  user_accounts_bulk: {
+    post: function(payload, callback) {
+      db.UserAccounts.bulkCreate(
+          payload,
+        )
+        .then(function(userAccountsAdded) {
+          if (userAccountsAdded) {
+            callback(userAccountsAdded)
+          } else {
+            callback(false, "New fund accounts not added")
+          };
+        })
+    },
+  },
+  
+  fund_source: {
+    post: function(payload, callback) {
+      console.log("+++ 194 index.js payload: ", payload)
+      db.FundSources.create(payload)
+        .then(function(create) {
+          if (create) {
+            callback(create)
+          } else {
+            callback(false, "Fund Source not created")
+          };
+        })
+    },
+  },
+
+  funds_bulk: {
+    post: function(payload, callback) {
+      db.Funds.bulkCreate(
+          payload,
+        )
+        .then(function(funds) {
+          if (funds) {
+            callback(funds)
+          } else {
+            callback(false, "New fund not added")
+          };
+        })
+    },
+  },
+
+  updateCurrentAvailable: {
+    patch: function(payload, callback) {
+      db.CurrentAvailables.findOne({
+          where: {
+            userId: payload.userId
+          },
+          attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
+        })
+        .then(function(currentAvailable) {
+          currentAvailable.amount = currentAvailable.amount + payload.totalToUpdate;
+          currentAvailable.amount = currentAvailable.amount.toFixed(2);
+          currentAvailable.save();
+          callback(currentAvailable)
+        })
+    }
+  },
+
+}
+
 
 //   categories: {
 //     post: function(payload, callback) {

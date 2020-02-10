@@ -3,42 +3,31 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 
 exports.testData = function() {
-  db.Types.findOne({
-      name: "income"
-    })
-    .then(function(found) {
-      console.log("+++ 10 testData.js found: ", found)
-      if (!found) {
-        var types = [{
-          name: "initials"
-        },{
-          name: "incomes"
-        },{
-          name: "expenses"
-        },{
-          name: "savings"
-        },{
-          name: "investments"
-        },{
-          name: "transfers"
-        }]
-        var allTypes = [];
-        _.each(types, function(category) {
-          allTypes.push(db.Types.create({
-            name: category.name,
+  db.Users.findAll({
+    username: "aa"
+  })
+  .then(function(found) {
+    if (found.length < 1) {
+      db.Users.create({
+        username: "aa",
+        password: "$2b$08$.URoN6sElGsOPwjPxrVN8exWowHmMxhMp/ecIZELcPbgLalfkMXrW",
+        email: "1@1.com"
+      })
+        .then(function(user) {
+          db.CurrentAvailables.create({
+            amount: 0,
             userId: 1
-          }))
+          })
+          .then(function(available) {
+            console.log("created start data completed")
+          })
         })
-
-        Promise.all([
-          allTypes,
-        ])
-        .then(function() {
-          console.log("created start data completed")
-        })
-      }
-    })
+    } else{
+      console.log("+++ 20 testData.js Already Created")
+    };
+  })
 }
+
   // db.User.findAll({
   //     username: "aa"
   //   })

@@ -4,30 +4,26 @@ var Promise = require('bluebird');
 
 exports.defaults = function() {
   db.Types.findOne({
-    name: "income"
+    type: "income"
   })
   .then(function(found) {
     if (!found) {
       var types = [{
-        name: "initials"
+        type: "incomes"
       },
       {
-        name: "incomes"
+        type: "savings"
       },
       {
-        name: "savings"
+        type: "investments"
       },
       {
-        name: "investments"
-      },
-      {
-        name: "transfers"
+        type: "transfers"
       }]
       var allTypes = [];
       _.each(types, function(category) {
         allTypes.push(db.Types.create({
-          name: category.name,
-          userId: 1
+          type: category.type
         }))
       })
 
