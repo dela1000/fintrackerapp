@@ -1,5 +1,6 @@
 var Sequelize = require("sequelize");
 var testData = require("../test/testData.js").testData;
+var defaults = require("./defaults.js").defaults;
 var secrets = require('../../secrets/secrets.js');
 var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
   host: 'localhost',
@@ -7,7 +8,7 @@ var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
 });
 
 
-var User = sequelize.define('user', {
+var Users = sequelize.define('users', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
@@ -43,163 +44,7 @@ var User = sequelize.define('user', {
   paranoid: true
 });
 
-var Income = sequelize.define('income', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  accountId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  categoryId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  comment: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  date: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  transferDetail: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  transferAccountId: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  }
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var Expenses = sequelize.define('expenses', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  comment: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  categoryId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  date: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  }
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var Savings = sequelize.define('savings', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  comment: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  accountId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  date: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  transferDetail: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  transferAccountId: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  }
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var Invest = sequelize.define('invest', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  comment: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  accountId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  date: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  transferDetail: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
-  transferAccountId: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  }
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var IncomeCategory = sequelize.define('incomecategory', {
+var Types = sequelize.define('types', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
@@ -207,7 +52,52 @@ var IncomeCategory = sequelize.define('incomecategory', {
   },
   name: {
     type: Sequelize.STRING,
+    unique: true
+  },
+}, {
+  timestamps: true
+}, {
+  paranoid: true
+});
+
+
+var Funds = sequelize.define('funds', {
+  id: {
+    primaryKey: true,
+    type: Sequelize.INTEGER,
+    autoIncrement: true
+  },
+  amount: {
+    type: Sequelize.FLOAT(20, 2),
     allowNull: false
+  },
+  sourceId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  accountId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  typeId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  comment: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  date: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  transferDetail: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  transferAccountId: {
+    type: Sequelize.INTEGER,
+    allowNull: true
   },
   deleted: {
     type: Sequelize.BOOLEAN,
@@ -219,107 +109,8 @@ var IncomeCategory = sequelize.define('incomecategory', {
   paranoid: true
 });
 
-var ExpensesCategory = sequelize.define('expensescategory', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  }
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
 
-var CurrentTotalIncome = sequelize.define('currenttotalincome', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var CurrentTotalExpenses = sequelize.define('currenttotalexpenses', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var CurrentTotalSavings = sequelize.define('currenttotalsavings', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var CurrentTotalInvest = sequelize.define('currenttotalinvest', {
-  id: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true
-  },
-  amount: {
-    type: Sequelize.FLOAT(20, 2),
-    allowNull: false
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-}, {
-  timestamps: true
-}, {
-  paranoid: true
-});
-
-var IncomeAccount = sequelize.define('incomeaccount', {
+var FundAccounts = sequelize.define('fundaccounts', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
@@ -343,7 +134,7 @@ var IncomeAccount = sequelize.define('incomeaccount', {
   paranoid: true
 });
 
-var SavingsAccount = sequelize.define('savingsaccount', {
+var FundSources = sequelize.define('fundsources', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
@@ -363,7 +154,68 @@ var SavingsAccount = sequelize.define('savingsaccount', {
   paranoid: true
 });
 
-var InvestAccount = sequelize.define('investaccount', {
+var AccountTotals = sequelize.define('accounttotals', {
+  id: {
+    primaryKey: true,
+    type: Sequelize.INTEGER,
+    autoIncrement: true
+  },
+  amount: {
+    type: Sequelize.FLOAT(20, 2),
+    allowNull: false
+  },
+  accountId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  typeId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+}, {
+  timestamps: true
+}, {
+  paranoid: true
+});
+
+
+var Expenses = sequelize.define('expenses', {
+  id: {
+    primaryKey: true,
+    type: Sequelize.INTEGER,
+    autoIncrement: true
+  },
+  amount: {
+    type: Sequelize.FLOAT(20, 2),
+    allowNull: false
+  },
+  comment: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  categoryId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  date: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  fromAccountId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  deleted: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  }
+}, {
+  timestamps: true
+}, {
+  paranoid: true
+});
+
+var ExpensesCategories = sequelize.define('expensescategories', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
@@ -383,7 +235,7 @@ var InvestAccount = sequelize.define('investaccount', {
   paranoid: true
 });
 
-var CurrentAvailable = sequelize.define('currentavailable', {
+var CurrentAvailables = sequelize.define('currentavailables', {
   id: {
     primaryKey: true,
     type: Sequelize.INTEGER,
@@ -403,185 +255,94 @@ var CurrentAvailable = sequelize.define('currentavailable', {
   paranoid: true
 });
 
-//Users have many Expenses, Expenses have one user
-Income.belongsTo(User, {
+
+
+Users.hasMany(Funds, {
+  foreignKey: 'userId'
+})
+
+Users.hasMany(AccountTotals, {
+  foreignKey: 'userId'
+})
+
+AccountTotals.belongsTo(Users, {
   foreignKey: 'userId'
 });
 
-User.hasMany(Income, {
-  foreignKey: 'userId'
-})
-
-IncomeCategory.belongsTo(User, {
+Expenses.belongsTo(Users, {
   foreignKey: 'userId'
 });
 
-User.hasMany(IncomeCategory, {
+Users.hasMany(Expenses, {
   foreignKey: 'userId'
 })
 
+Users.hasMany(ExpensesCategories, {
+  foreignKey: 'userId'
+})
 
-Expenses.belongsTo(User, {
+ExpensesCategories.belongsTo(Users, {
+  foreignKey: 'userId'
+})
+
+CurrentAvailables.belongsTo(Users, {
   foreignKey: 'userId'
 });
 
-User.hasMany(ExpensesCategory, {
+Users.hasOne(CurrentAvailables, {
   foreignKey: 'userId'
 })
 
-ExpensesCategory.belongsTo(User, {
-  foreignKey: 'userId'
-})
-
-User.hasMany(Expenses, {
-  foreignKey: 'userId'
-})
-
-
-Savings.belongsTo(User, {
+FundAccounts.belongsTo(Users, {
   foreignKey: 'userId'
 });
 
-User.hasMany(Savings, {
-  foreignKey: 'userId'
-})
-
-User.hasMany(Savings, {
-  foreignKey: 'userId'
-})
-
-
-Invest.belongsTo(User, {
+FundSources.belongsTo(Users, {
   foreignKey: 'userId'
 });
 
-User.hasMany(Invest, {
+Users.hasMany(FundSources, {
   foreignKey: 'userId'
 })
 
-User.hasMany(Invest, {
+Users.hasMany(FundAccounts, {
   foreignKey: 'userId'
 })
 
-
-CurrentTotalIncome.belongsTo(User, {
-  foreignKey: 'userId'
+FundAccounts.hasMany(Funds, {
+  foreignKey: 'accountId'
+});
+Funds.belongsTo(FundAccounts, {
+  foreignKey: 'accountId'
 });
 
-User.hasOne(CurrentTotalIncome, {
-  foreignKey: 'userId'
-})
-
-CurrentTotalExpenses.belongsTo(User, {
-  foreignKey: 'userId'
+ExpensesCategories.hasMany(Expenses, {
+  foreignKey: 'categoryId'
 });
 
-User.hasOne(CurrentTotalExpenses, {
-  foreignKey: 'userId'
-})
-
-CurrentTotalSavings.belongsTo(User, {
-  foreignKey: 'userId'
+Expenses.belongsTo(ExpensesCategories, {
+  foreignKey: 'categoryId'
 });
 
-User.hasOne(CurrentTotalSavings, {
-  foreignKey: 'userId'
-})
-
-CurrentTotalInvest.belongsTo(User, {
-  foreignKey: 'userId'
+FundSources.hasMany(Funds, {
+  foreignKey: 'categoryId'
+});
+Funds.belongsTo(FundSources, {
+  foreignKey: 'categoryId'
 });
 
-User.hasOne(CurrentTotalInvest, {
-  foreignKey: 'userId'
-})
 
-IncomeAccount.belongsTo(User, {
-  foreignKey: 'userId'
-});
-
-User.hasMany(IncomeAccount, {
-  foreignKey: 'userId'
-})
-
-SavingsAccount.belongsTo(User, {
-  foreignKey: 'userId'
-});
-
-User.hasMany(SavingsAccount, {
-  foreignKey: 'userId'
-})
-
-InvestAccount.belongsTo(User, {
-  foreignKey: 'userId'
-});
-
-User.hasMany(InvestAccount, {
-  foreignKey: 'userId'
-})
-
-CurrentAvailable.belongsTo(User, {
-  foreignKey: 'userId'
-});
-
-User.hasOne(CurrentAvailable, {
-  foreignKey: 'userId'
-})
-
-
-
-User.sync().then(function() {
-  Income.sync().then(function() {
-    Expenses.sync().then(function() {
-      Savings.sync().then(function() {
-        Invest.sync().then(function() {
-          CurrentTotalIncome.sync().then(function() {
-            CurrentTotalExpenses.sync().then(function() {
-              CurrentTotalSavings.sync().then(function() {
-                CurrentTotalInvest.sync().then(function() {
-                  IncomeCategory.sync().then(function() {
-                    IncomeCategory.hasMany(Income, {
-                      foreignKey: 'categoryId'
-                    });
-                    Income.belongsTo(IncomeCategory, {
-                      foreignKey: 'categoryId'
-                    });
-                    ExpensesCategory.sync().then(function() {
-                      ExpensesCategory.hasMany(Expenses, {
-                        foreignKey: 'categoryId'
-                      });
-                      Expenses.belongsTo(ExpensesCategory, {
-                        foreignKey: 'categoryId'
-                      });
-                      InvestAccount.sync().then(function() {
-                        InvestAccount.hasMany(Invest, {
-                          foreignKey: 'accountId'
-                        });
-                        Invest.belongsTo(InvestAccount, {
-                          foreignKey: 'accountId'
-                        });
-                        IncomeAccount.sync().then(function() {
-                          IncomeAccount.hasMany(Income, {
-                            foreignKey: 'accountId'
-                          });
-                          Income.belongsTo(IncomeAccount, {
-                            foreignKey: 'accountId'
-                          });
-                          SavingsAccount.sync().then(function() {
-                            SavingsAccount.hasMany(Savings, {
-                              foreignKey: 'accountId'
-                            });
-                            Savings.belongsTo(SavingsAccount, {
-                              foreignKey: 'accountId'
-                            });
-                            CurrentAvailable.sync().then(function() {
-                              // testData();
-                            })
-                          })
-                        })
-                      })
-                    })
-                  })
+Users.sync().then(function() {
+  Types.sync().then(function() {
+    defaults();
+    FundAccounts.sync().then(function() {
+      FundSources.sync().then(function() {
+        Funds.sync().then(function() {
+          AccountTotals.sync().then(function() {
+            ExpensesCategories.sync().then(function() {
+              Expenses.sync().then(function() {
+                CurrentAvailables.sync().then(function() {
+                  // testData();
                 })
               })
             })
@@ -592,22 +353,557 @@ User.sync().then(function() {
   })
 });
 
-exports.User = User;
-exports.Income = Income;
+exports.AccountTotals = AccountTotals;
+exports.CurrentAvailables = CurrentAvailables;
 exports.Expenses = Expenses;
-exports.Savings = Savings;
-exports.Invest = Invest;
-exports.CurrentTotalIncome = CurrentTotalIncome;
-exports.CurrentTotalExpenses = CurrentTotalExpenses;
-exports.CurrentTotalSavings = CurrentTotalSavings;
-exports.CurrentTotalInvest = CurrentTotalInvest;
-exports.IncomeCategory = IncomeCategory;
-exports.ExpensesCategory = ExpensesCategory;
-exports.IncomeAccount = IncomeAccount;
-exports.SavingsAccount = SavingsAccount;
-exports.InvestAccount = InvestAccount;
-exports.CurrentAvailable = CurrentAvailable;
-
-// MAIN RETURN FOR SEQUELIZE CONNECTION. GOOD FOR RAW SQL QUERIES
-// with db.sql.query(add_raw_query_here)
+exports.ExpensesCategories = ExpensesCategories;
+exports.FundAccounts = FundAccounts;
+exports.Funds = Funds;
+exports.FundSources = FundSources;
+exports.Types = Types;
+exports.Users = Users;
+// // MAIN RETURN FOR SEQUELIZE CONNECTION. GOOD FOR RAW SQL QUERIES
+// // with db.sql.query(add_raw_query_here)
 exports.sequelize = sequelize;
+
+
+
+
+
+// var Expenses = sequelize.define('expenses', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   comment: {
+//     type: Sequelize.TEXT,
+//     allowNull: true
+//   },
+//   categoryId: {
+//     type: Sequelize.INTEGER,
+//     allowNull: false
+//   },
+//   date: {
+//     type: Sequelize.TEXT,
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var Savings = sequelize.define('savings', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   comment: {
+//     type: Sequelize.TEXT,
+//     allowNull: true
+//   },
+//   accountId: {
+//     type: Sequelize.INTEGER,
+//     allowNull: false
+//   },
+//   date: {
+//     type: Sequelize.TEXT,
+//     allowNull: false
+//   },
+//   transferDetail: {
+//     type: Sequelize.TEXT,
+//     allowNull: true
+//   },
+//   transferAccountId: {
+//     type: Sequelize.INTEGER,
+//     allowNull: true
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var Invest = sequelize.define('invest', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   comment: {
+//     type: Sequelize.TEXT,
+//     allowNull: true
+//   },
+//   accountId: {
+//     type: Sequelize.INTEGER,
+//     allowNull: false
+//   },
+//   date: {
+//     type: Sequelize.TEXT,
+//     allowNull: false
+//   },
+//   transferDetail: {
+//     type: Sequelize.TEXT,
+//     allowNull: true
+//   },
+//   transferAccountId: {
+//     type: Sequelize.INTEGER,
+//     allowNull: true
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var IncomeCategory = sequelize.define('incomecategory', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   name: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var ExpensesCategory = sequelize.define('expensescategory', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   name: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var CurrentTotalIncome = sequelize.define('currenttotalincome', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   },
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var CurrentTotalExpenses = sequelize.define('currenttotalexpenses', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   },
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var CurrentTotalSavings = sequelize.define('currenttotalsavings', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   },
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var CurrentTotalInvest = sequelize.define('currenttotalinvest', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   },
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var IncomeAccount = sequelize.define('incomeaccount', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   name: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   },
+//   primary: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   },
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var SavingsAccount = sequelize.define('savingsaccount', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   name: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var InvestAccount = sequelize.define('investaccount', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   name: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// var CurrentAvailables = sequelize.define('currentavailables', {
+//   id: {
+//     primaryKey: true,
+//     type: Sequelize.INTEGER,
+//     autoIncrement: true
+//   },
+//   amount: {
+//     type: Sequelize.FLOAT(20, 2),
+//     allowNull: false
+//   },
+//   deleted: {
+//     type: Sequelize.BOOLEAN,
+//     defaultValue: false
+//   }
+// }, {
+//   timestamps: true
+// }, {
+//   paranoid: true
+// });
+
+// //Users have many Expenses, Expenses have one user
+// Income.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// Users.hasMany(Funds, {
+//   foreignKey: 'userId'
+// })
+
+// Users.hasMany(AccountTotals, {
+//   foreignKey: 'userId'
+// })
+
+// AccountTotals.belongsTo(Users, {
+//   foreignKey: 'userId'
+// });
+
+// IncomeCategory.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(IncomeCategory, {
+//   foreignKey: 'userId'
+// })
+
+
+// Expenses.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(ExpensesCategory, {
+//   foreignKey: 'userId'
+// })
+
+// ExpensesCategory.belongsTo(User, {
+//   foreignKey: 'userId'
+// })
+
+// User.hasMany(Expenses, {
+//   foreignKey: 'userId'
+// })
+
+
+// Savings.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(Savings, {
+//   foreignKey: 'userId'
+// })
+
+// User.hasMany(Savings, {
+//   foreignKey: 'userId'
+// })
+
+
+// Invest.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(Invest, {
+//   foreignKey: 'userId'
+// })
+
+// User.hasMany(Invest, {
+//   foreignKey: 'userId'
+// })
+
+
+// CurrentTotalIncome.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasOne(CurrentTotalIncome, {
+//   foreignKey: 'userId'
+// })
+
+// CurrentTotalExpenses.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasOne(CurrentTotalExpenses, {
+//   foreignKey: 'userId'
+// })
+
+// CurrentTotalSavings.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasOne(CurrentTotalSavings, {
+//   foreignKey: 'userId'
+// })
+
+// CurrentTotalInvest.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasOne(CurrentTotalInvest, {
+//   foreignKey: 'userId'
+// })
+
+// IncomeAccount.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(IncomeAccount, {
+//   foreignKey: 'userId'
+// })
+
+// SavingsAccount.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(SavingsAccount, {
+//   foreignKey: 'userId'
+// })
+
+// InvestAccount.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasMany(InvestAccount, {
+//   foreignKey: 'userId'
+// })
+
+// CurrentAvailables.belongsTo(User, {
+//   foreignKey: 'userId'
+// });
+
+// User.hasOne(CurrentAvailables, {
+//   foreignKey: 'userId'
+// })
+
+
+
+// Users.sync().then(function() {
+//   Types.sync().then(function() {
+//       Funds.sync().then(function() {
+//         AccountTotals.sync().then(function() {
+//           testData()
+//     //     Expenses.sync().then(function() {
+//     //       Savings.sync().then(function() {
+//     //         Invest.sync().then(function() {
+//     //           CurrentTotalIncome.sync().then(function() {
+//     //             CurrentTotalExpenses.sync().then(function() {
+//     //               CurrentTotalSavings.sync().then(function() {
+//     //                 CurrentTotalInvest.sync().then(function() {
+//     //                   IncomeCategory.sync().then(function() {
+//     //                     IncomeCategory.hasMany(Income, {
+//     //                       foreignKey: 'categoryId'
+//     //                     });
+//     //                     Income.belongsTo(IncomeCategory, {
+//     //                       foreignKey: 'categoryId'
+//     //                     });
+//     //                     ExpensesCategory.sync().then(function() {
+//     //                       ExpensesCategory.hasMany(Expenses, {
+//     //                         foreignKey: 'categoryId'
+//     //                       });
+//     //                       Expenses.belongsTo(ExpensesCategory, {
+//     //                         foreignKey: 'categoryId'
+//     //                       });
+//     //                       InvestAccount.sync().then(function() {
+//     //                         InvestAccount.hasMany(Invest, {
+//     //                           foreignKey: 'accountId'
+//     //                         });
+//     //                         Invest.belongsTo(InvestAccount, {
+//     //                           foreignKey: 'accountId'
+//     //                         });
+//     //                         IncomeAccount.sync().then(function() {
+//     //                           IncomeAccount.hasMany(Income, {
+//     //                             foreignKey: 'accountId'
+//     //                           });
+//     //                           Income.belongsTo(IncomeAccount, {
+//     //                             foreignKey: 'accountId'
+//     //                           });
+//     //                           SavingsAccount.sync().then(function() {
+//     //                             SavingsAccount.hasMany(Savings, {
+//     //                               foreignKey: 'accountId'
+//     //                             });
+//     //                             Savings.belongsTo(SavingsAccount, {
+//     //                               foreignKey: 'accountId'
+//     //                             });
+//     //                             CurrentAvailables.sync().then(function() {
+//     //                               // testData();
+//     //                             })
+//     //                           })
+//     //                         })
+//     //                       })
+//     //                     })
+//     //                   })
+//     //                 })
+//     //               })
+//     //             })
+//     //           })
+//     //         })
+//       })
+//     })
+//   })
+// });
+
+// exports.Users = Users;
+// exports.Types = Types;
+// exports.Funds = Funds;
+// exports.AccountTotals = AccountTotals;
+
+// // exports.Savings = Savings;
+// // exports.Invest = Invest;
+// // exports.CurrentTotalIncome = CurrentTotalIncome;
+// // exports.CurrentTotalExpenses = CurrentTotalExpenses;
+// // exports.CurrentTotalSavings = CurrentTotalSavings;
+// // exports.CurrentTotalInvest = CurrentTotalInvest;
+// // exports.IncomeCategory = IncomeCategory;
+// // exports.ExpensesCategory = ExpensesCategory;
+// // exports.IncomeAccount = IncomeAccount;
+// // exports.SavingsAccount = SavingsAccount;
+// // exports.InvestAccount = InvestAccount;
+// // exports.CurrentAvailables = CurrentAvailables;
+
+// // MAIN RETURN FOR SEQUELIZE CONNECTION. GOOD FOR RAW SQL QUERIES
+// // with db.sql.query(add_raw_query_here)
+// exports.sequelize = sequelize;
