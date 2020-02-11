@@ -325,19 +325,11 @@ module.exports = controllers = {
         name: req.body.name,
         id: req.body.id,
       };
-      models.categories.patch(payload, function(categoriesAdded, categoriesMessage) {
-        if (categoriesAdded) {
-          res.status(200).json({
-            success: true,
-            data: categoriesAdded
-          });
+      models.categories.patch(payload, function(categoryUpdated, categoryMessage) {
+        if (categoryUpdated) {
+          successResponse(res, categoryUpdated)
         } else {
-          res.status(200).json({
-            success: false,
-            data: {
-              message: categoriesMessage
-            }
-          });
+          failedResponse(res, categoryMessage)
         }
       })
     },
