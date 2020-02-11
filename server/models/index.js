@@ -207,7 +207,24 @@ module.exports = {
           callback(false, "Fund Account not found")
         }
       })
-    }
+    },
+    patch: function(payload, callback) {
+      db.UserAccounts.findOne({
+          where: {
+            id: payload.id,
+            userId: payload.userId
+          }
+        })
+        .then(function(account) {
+          if (account !== null) {
+            account.account = payload.account;
+            account.save();
+            callback(account);
+          } else {
+            callback(false, "Account not found")
+          };
+        })
+    },
   },
 
   fund_sources_bulk: {

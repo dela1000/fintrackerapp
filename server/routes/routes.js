@@ -54,6 +54,10 @@ router.post('/user_account', authUtils.checkUser, function(req, res) {
   controllers.user_account.post(req, res)
 })
 
+router.patch('/user_account', authUtils.checkUser, function(req, res) {
+  controllers.user_account.patch(req, res)
+})
+
 //Fund routes
 // // Add Funds in bulk
 router.post('/funds_bulk', authUtils.checkUser, function(req, res) {

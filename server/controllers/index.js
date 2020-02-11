@@ -264,7 +264,21 @@ module.exports = controllers = {
           failedResponse(res, accountMessage)
         }
       })
-    }
+    },
+    patch: function(req, res) {
+      var payload = {
+        userId: req.headers.userId,
+        account: req.body.account,
+        id: req.body.id,
+      };
+      models.user_account.patch(payload, function(categoryUpdated, categoryMessage) {
+        if (categoryUpdated) {
+          successResponse(res, categoryUpdated)
+        } else {
+          failedResponse(res, categoryMessage)
+        }
+      })
+    },
   },
 
   categories_bulk: {
