@@ -43,6 +43,12 @@ router.post('/fund_source', authUtils.checkUser, function(req, res) {
   controllers.fund_source.post(req, res)
 })
 
+// Update source name
+router.patch('/fund_source', authUtils.checkUser, function(req, res) {
+  controllers.fund_source.patch(req, res)
+})
+
+
 // Accounts
 // // Add accounts in bulk
 router.post('/user_accounts', authUtils.checkUser, function(req, res) {

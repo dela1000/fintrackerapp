@@ -251,6 +251,23 @@ module.exports = {
           };
         })
     },
+    patch: function(payload, callback) {
+      db.FundSources.findOne({
+          where: {
+            id: payload.id,
+            userId: payload.userId
+          }
+        })
+        .then(function(source) {
+          if (source !== null) {
+            source.source = payload.source;
+            source.save();
+            callback(source);
+          } else {
+            callback(false, "Source not found")
+          };
+        })
+    },
   },
 
   funds_bulk: {

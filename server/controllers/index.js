@@ -226,7 +226,21 @@ module.exports = controllers = {
           failedResponse(res, sourceMessage)
         }
       })
-    }
+    },
+    patch: function(req, res) {
+      var payload = {
+        userId: req.headers.userId,
+        source: req.body.source,
+        id: req.body.id,
+      };
+      models.fund_source.patch(payload, function(sourceUpdated, sourceMessage) {
+        if (sourceUpdated) {
+          successResponse(res, sourceUpdated)
+        } else {
+          failedResponse(res, sourceMessage)
+        }
+      })
+    },
   },
 
   user_accounts: {
@@ -271,11 +285,11 @@ module.exports = controllers = {
         account: req.body.account,
         id: req.body.id,
       };
-      models.user_account.patch(payload, function(categoryUpdated, categoryMessage) {
-        if (categoryUpdated) {
-          successResponse(res, categoryUpdated)
+      models.user_account.patch(payload, function(accountUpdated, accountMessage) {
+        if (accountUpdated) {
+          successResponse(res, accountUpdated)
         } else {
-          failedResponse(res, categoryMessage)
+          failedResponse(res, accountMessage)
         }
       })
     },
