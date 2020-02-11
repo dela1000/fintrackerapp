@@ -1,6 +1,7 @@
 var models = require('../models');
 var authUtils = require('../helpers/authUtils.js');
 var finUtils = require('../helpers/finUtils.js');
+var calcUtils = require('../helpers/calcUtils.js');
 var Promise = require('bluebird');
 var db = require('../db/db.js');
 var _ = require('lodash');
@@ -326,7 +327,7 @@ module.exports = controllers = {
     },
   },
 
-  funds: {
+  funds_bulk: {
     post: function (req, res) {
       var userId = req.headers.userId;
       var funds = req.body;
@@ -396,122 +397,6 @@ module.exports = controllers = {
         }
       })
     },
-    // patch: function(req, res) {
-    //   var userId = req.headers.userId;
-    //   var payload = {
-    //     userId: userId,
-    //   }
-    //   _.forEach(req.body, function(value, key) {
-    //     if (key === "date") {
-    //       payload[key] = finUtils.startOfDay(value);
-    //     } else {
-    //       payload[key] = value
-    //     }
-    //   })
-    //   models.funds.patch(payload, function(fund, fundsMessage) {
-    //     if (fund) {
-    //       // When updating comment or date
-    //       if (payload.comment || payload.comment === null || payload.date) {
-    //         var data = {
-    //           fund: fund
-    //         };
-    //         successResponse(res, data)
-    //         return;
-    //       }
-    //       // When update is amount
-    //       if (payload.amount) {
-    //         var updatedAccount = {
-    //           userId: userId,
-    //           accountId: fund.accountId,
-    //         }
-    //         var totalsToGetArray = [updatedAccount];
-    //         models.account_totals.get_by_id(totalsToGetArray, function (totalsResult, totalsMessage) {
-    //           if(totalsResult){
-    //             var totalItem = totalsResult[0];
-    //             newTotals = [];
-    //             if(totalItem.accountId === fund.accountId){
-    //               newTotals.push({
-    //                 id: totalItem.id,
-    //                 amount: totalItem.amount - fund._previousDataValues.amount + fund.amount,
-    //                 accountId: totalItem.accountId,
-    //                 typeId: totalItem.typeId,
-    //               })
-    //             }
-
-    //             models.account_totals.upsert(newTotals, function (updatedTotal, updateMessage) {
-    //               if(updatedTotal){
-    //                 if(totalItem.typeId === 1){
-    //                   console.log("+++ 444 index.js Here")
-    //                   var updateData = {
-    //                     userId: userId,
-    //                     totalToUpdate = fund._previousDataValues.amount - fund.amount
-    //                   }
-    //                   models.current_available.patch(updateData, function(availableTotal, availableMessage) {
-
-    //                   })
-    //                 }
-    //               } else{
-    //                 failedResponse(res, updateMessage)
-    //               };
-    //             })
-    //           } else{
-    //             failedResponse(res, totalsMessage)
-    //           };
-    //         })
-    //         return;
-    //       }
-
-    //       if (payload.accountId) {
-    //         var newAccount = {
-    //           userId: userId,
-    //           accountId: payload.accountId,
-    //         }
-    //         var previousAccount = {
-    //           userId: userId,
-    //           accountId: funds._previousDataValues.accountId,
-    //         }
-    //         var totalsToGetArray = [newAccount, previousAccount];
-    //         models.account_totals.get_by_id(totalsToGetArray, function (totalsResults, totalsMessage) {
-    //           if(totalsResults){
-    //             newTotals = [];
-    //             _.forEach(totalsResults, function (total) {
-    //               if(total.accountId === newAccount.accountId){
-    //                 newTotals.push({
-    //                   id: total.id,
-    //                   amount: total.amount + funds.amount,
-    //                   accountId: total.accountId,
-    //                   typeId: total.typeId,
-    //                 })
-    //               }
-    //               if(total.accountId === previousAccount.accountId){
-    //                 newTotals.push({
-    //                   id: total.id,
-    //                   amount: total.amount - funds.amount,
-    //                   accountId: total.accountId,
-    //                   typeId: total.typeId,
-    //                 })
-    //               }
-    //             })
-    //             models.account_totals.upsert(newTotals, function (updatedTotals, updateMessage) {
-    //               if (updatedTotals) {
-    //                 console.log("+++ 458 index.js updatedTotals: ", updatedTotals)
-                    
-    //               } else {
-    //                 failedResponse(res, updateMessage)
-    //               }
-    //             })
-
-    //           }else{
-    //             failedResponse(res, totalsMessage)
-    //           };
-    //         })
-    //       }
-    //     } else {
-    //       failedResponse(res, fundsMessage)
-    //     }
-    //   })
-    // },
-    
   },
 
   expenses_bulk: {
@@ -586,9 +471,23 @@ module.exports = controllers = {
         }
       })
     }
-  }
+  },
+
+  calculate_totals: {
+    get: function (req, res) {
+      var userId =  req.headers.userId
+      calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+        if(data){
+          successResponse(res, data);
+        } else{
+          failedResponse(res, failMessage)
+        };
+      });
+    },
+  },
 }
 
+// HELPER FUNCTIONS
 var successResponse = function (res, data) {
   res.status(200).json({
     success: true,

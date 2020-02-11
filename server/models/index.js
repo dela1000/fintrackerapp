@@ -247,6 +247,20 @@ module.exports = {
           };
         })
     },
+    get: function (payload, callback) {
+      db.Funds.findAll({
+        where: {
+          userId: payload.userId,
+        }
+      })
+      .then(function (results) {
+        if(results){
+          callback(results)
+        } else{
+          callback(false, "Funds not found")
+        };
+      })
+    }
   },
 
   account_totals_bulk: {
@@ -264,7 +278,20 @@ module.exports = {
       db.AccountTotals.findAll({
         where: {
           userId: payload.userId,
-        }
+        },
+        include: [{
+            model: db.UserAccounts,
+            where: {
+              deleted: false
+            },
+            attributes: ['account', 'id'],
+            required: false
+          },
+          {
+            model: db.Types,
+            attributes: ['type', 'id'],
+            required: false
+          }]
       })
       .then(function (results) {
         if(results){
@@ -287,6 +314,26 @@ module.exports = {
         .then(function(currentAvailable) {
           if(currentAvailable){
             currentAvailable.amount = currentAvailable.amount + payload.totalToUpdate;
+            currentAvailable.amount = currentAvailable.amount.toFixed(2);
+            currentAvailable.save();
+            callback(currentAvailable)
+          } else {
+            callback(false, "Current Available not found")
+          }
+        })
+    }
+  },
+  recalculated_current_available: {
+    patch: function(payload, callback) {
+      db.CurrentAvailables.findOne({
+          where: {
+            userId: payload.userId
+          },
+          attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
+        })
+        .then(function(currentAvailable) {
+          if(currentAvailable){
+            currentAvailable.amount = payload.newCurrentAvailable;
             currentAvailable.amount = currentAvailable.amount.toFixed(2);
             currentAvailable.save();
             callback(currentAvailable)
@@ -410,7 +457,48 @@ module.exports = {
           };
         })
     },
-  }
+    get: function (payload, callback) {
+      db.Expenses.findAll({
+        where: {
+          userId: payload.userId,
+        }
+      })
+      .then(function (results) {
+        if(results){
+          callback(results)
+        } else{
+          callback(false, "Expenses not found")
+        };
+      })
+    }
+  },
+
+  expenses_totals: {
+    get: function(payload, callback) {
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate
+        },
+        deleted: false
+      };
+      db.Expenses.findAll({
+          where: searchData,
+          include: [{
+            model: db.ExpensesCategory,
+            attributes: ['name'],
+          }]
+        })
+        .then(function(expensesData) {
+          if (expensesData) {
+            callback(expensesData)
+          } else {
+            callback(false, "No data found")
+          }
+        })
+    }
+  },
 }
 
 
@@ -1049,33 +1137,6 @@ module.exports = {
 //           } else {
 //             callback(false, "No " + payload.type + " data found")
 //           };
-//         })
-//     }
-//   },
-
-//   expenses_totals: {
-//     get: function(payload, callback) {
-//       var searchData = {
-//         userId: payload.userId,
-//         date: {
-//           [Op.gte]: payload.startDate,
-//           [Op.lte]: payload.endDate
-//         },
-//         deleted: false
-//       };
-//       db.Expenses.findAll({
-//           where: searchData,
-//           include: [{
-//             model: db.ExpensesCategory,
-//             attributes: ['name'],
-//           }]
-//         })
-//         .then(function(expensesData) {
-//           if (expensesData) {
-//             callback(expensesData)
-//           } else {
-//             callback(false, "No data found")
-//           }
 //         })
 //     }
 //   },

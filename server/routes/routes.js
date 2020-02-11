@@ -27,58 +27,68 @@ router.get('/logout', function(req, res) {
 })
 
 
-// Set initial values for accounts
+// Set initial funds for accounts
 router.post('/set_initials', authUtils.checkUser, function(req, res) {
   controllers.set_initials.post(req, res)
 })
 
+// Sources
 // Add sources in bulk
 router.post('/fund_sources', authUtils.checkUser, function(req, res) {
   controllers.fund_sources.post(req, res)
 })
 
+// Add single sources 
 router.post('/fund_source', authUtils.checkUser, function(req, res) {
   controllers.fund_source.post(req, res)
 })
 
-
-// Add accounts in bulk
+// Accounts
+// // Add accounts in bulk
 router.post('/user_accounts', authUtils.checkUser, function(req, res) {
   controllers.user_accounts.post(req, res)
 })
 
-// Add sing account
+// // Add single account
 router.post('/user_account', authUtils.checkUser, function(req, res) {
   controllers.user_account.post(req, res)
 })
 
 //Fund routes
-router.post('/funds', authUtils.checkUser, function(req, res) {
-  controllers.funds.post(req, res)
+// // Add Funds in bulk
+router.post('/funds_bulk', authUtils.checkUser, function(req, res) {
+  controllers.funds_bulk.post(req, res)
 })
 
 // router.patch('/funds', authUtils.checkUser, function(req, res) {
 //   controllers.funds.patch(req, res)
 // })
 
+//Expenses routes
+// // Add Expenses in bulk
+router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
+  controllers.expenses_bulk.post(req, res)
+})
+
 // Add categories in bulk
 router.post('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.post(req, res)
 })
 
-// Add category
+// Add single category
 router.post('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.post(req, res)
 })
 
+// update category name 
 router.patch('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.patch(req, res)
 })
 
-//Expenses routes
-// // Add expenses in bulk
-router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
-  controllers.expenses_bulk.post(req, res)
+
+// // UTILS
+router.get('/calculate_totals', authUtils.checkUser, function(req, res) {
+  controllers.calculate_totals.get(req, res)
 })
 
 
