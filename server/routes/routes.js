@@ -57,6 +57,10 @@ router.post('/funds', authUtils.checkUser, function(req, res) {
   controllers.funds.post(req, res)
 })
 
+// router.patch('/funds', authUtils.checkUser, function(req, res) {
+//   controllers.funds.patch(req, res)
+// })
+
 // Add categories in bulk
 router.post('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.post(req, res)
@@ -69,6 +73,12 @@ router.post('/categories', authUtils.checkUser, function(req, res) {
 
 router.patch('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.patch(req, res)
+})
+
+//Expenses routes
+// // Add expenses in bulk
+router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
+  controllers.expenses_bulk.post(req, res)
 })
 
 
@@ -88,13 +98,7 @@ module.exports = router;
 
 
 // //Income routes
-// router.post('/income', authUtils.checkUser, function(req, res) {
-//   controllers.income.post(req, res)
-// })
 
-// router.patch('/income', authUtils.checkUser, function(req, res) {
-//   controllers.income.patch(req, res)
-// })
 
 // router.delete('/income', authUtils.checkUser, function(req, res) {
 //   controllers.income.delete(req, res)

@@ -166,6 +166,20 @@ module.exports = {
           };
         })
     },
+    get: function (payload, callback) {
+      db.UserAccounts.findAll({
+        where: {
+          userId: payload.userId,
+        }
+      })
+      .then(function (results) {
+        if(results){
+          callback(results)
+        } else{
+          callback(false, "User Accounts not found")
+        };
+      })
+    }
   },
 
   user_account: {
@@ -246,9 +260,23 @@ module.exports = {
           };
         })
     },
+    get: function (payload, callback) {
+      db.AccountTotals.findAll({
+        where: {
+          userId: payload.userId,
+        }
+      })
+      .then(function (results) {
+        if(results){
+          callback(results)
+        } else{
+          callback(false, "Account Totals not found")
+        };
+      })
+    }
   },
 
-  updateCurrentAvailable: {
+  current_available: {
     patch: function(payload, callback) {
       db.CurrentAvailables.findOne({
           where: {
@@ -257,10 +285,14 @@ module.exports = {
           attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
         })
         .then(function(currentAvailable) {
-          currentAvailable.amount = currentAvailable.amount + payload.totalToUpdate;
-          currentAvailable.amount = currentAvailable.amount.toFixed(2);
-          currentAvailable.save();
-          callback(currentAvailable)
+          if(currentAvailable){
+            currentAvailable.amount = currentAvailable.amount + payload.totalToUpdate;
+            currentAvailable.amount = currentAvailable.amount.toFixed(2);
+            currentAvailable.save();
+            callback(currentAvailable)
+          } else {
+            callback(false, "Current Available not found")
+          }
         })
     }
   },
@@ -337,7 +369,47 @@ module.exports = {
         }
         
       })
-    }
+    },
+  },
+
+  funds: {
+    patch: function (payload, callback) {
+      db.Funds.findOne({
+          where: {
+            userId: payload.userId,
+            id: payload.id,
+            deleted: false,
+          }
+        })
+        .then(function(fund) {
+          if (fund) {
+            _.forEach(payload, function(value, key) {
+              if (key !== "id" && key !== "userId") {
+                fund[key] = value;
+              }
+            })
+            fund.save();
+            callback(fund)
+          } else {
+            callback(false, "Fund not found")
+          };
+        })
+    },
+  },
+
+  expenses_bulk: {
+    post: function(payload, callback) {
+      db.Expenses.bulkCreate(
+          payload
+        )
+        .then(function(expensesAdded) {
+          if (expensesAdded) {
+            callback(expensesAdded)
+          } else {
+            callback(false, "Expenses not added")
+          };
+        })
+    },
   }
 }
 

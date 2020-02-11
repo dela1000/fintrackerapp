@@ -145,7 +145,7 @@ module.exports = controllers = {
                       if (fundsAdded) {
                         models.account_totals_bulk.post(lineItems, function (accountsTotals, totalsMessage) {
                           if (accountsTotals) {
-                            models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
+                            models.current_available.patch(userData, function(availableTotal, availableMessage) {
                               if (availableTotal) {
                                 models.initials_done.post(userData, function (userUpdated, userMessages) {
                                   if (userUpdated) {
@@ -373,7 +373,7 @@ module.exports = controllers = {
                 _.forEach(updatedTotals, function (total) {
                   total.amount = Number(total.amount.toFixed(2));
                 })
-                models.updateCurrentAvailable.patch(userData, function(availableTotal, availableMessage) {
+                models.current_available.patch(userData, function(availableTotal, availableMessage) {
                   if (availableTotal) {
                     var data = {
                       fundsAdded: fundsAdded,
@@ -395,10 +395,198 @@ module.exports = controllers = {
           failedResponse(res, fundsMessage)
         }
       })
+    },
+    // patch: function(req, res) {
+    //   var userId = req.headers.userId;
+    //   var payload = {
+    //     userId: userId,
+    //   }
+    //   _.forEach(req.body, function(value, key) {
+    //     if (key === "date") {
+    //       payload[key] = finUtils.startOfDay(value);
+    //     } else {
+    //       payload[key] = value
+    //     }
+    //   })
+    //   models.funds.patch(payload, function(fund, fundsMessage) {
+    //     if (fund) {
+    //       // When updating comment or date
+    //       if (payload.comment || payload.comment === null || payload.date) {
+    //         var data = {
+    //           fund: fund
+    //         };
+    //         successResponse(res, data)
+    //         return;
+    //       }
+    //       // When update is amount
+    //       if (payload.amount) {
+    //         var updatedAccount = {
+    //           userId: userId,
+    //           accountId: fund.accountId,
+    //         }
+    //         var totalsToGetArray = [updatedAccount];
+    //         models.account_totals.get_by_id(totalsToGetArray, function (totalsResult, totalsMessage) {
+    //           if(totalsResult){
+    //             var totalItem = totalsResult[0];
+    //             newTotals = [];
+    //             if(totalItem.accountId === fund.accountId){
+    //               newTotals.push({
+    //                 id: totalItem.id,
+    //                 amount: totalItem.amount - fund._previousDataValues.amount + fund.amount,
+    //                 accountId: totalItem.accountId,
+    //                 typeId: totalItem.typeId,
+    //               })
+    //             }
 
-    }
+    //             models.account_totals.upsert(newTotals, function (updatedTotal, updateMessage) {
+    //               if(updatedTotal){
+    //                 if(totalItem.typeId === 1){
+    //                   console.log("+++ 444 index.js Here")
+    //                   var updateData = {
+    //                     userId: userId,
+    //                     totalToUpdate = fund._previousDataValues.amount - fund.amount
+    //                   }
+    //                   models.current_available.patch(updateData, function(availableTotal, availableMessage) {
+
+    //                   })
+    //                 }
+    //               } else{
+    //                 failedResponse(res, updateMessage)
+    //               };
+    //             })
+    //           } else{
+    //             failedResponse(res, totalsMessage)
+    //           };
+    //         })
+    //         return;
+    //       }
+
+    //       if (payload.accountId) {
+    //         var newAccount = {
+    //           userId: userId,
+    //           accountId: payload.accountId,
+    //         }
+    //         var previousAccount = {
+    //           userId: userId,
+    //           accountId: funds._previousDataValues.accountId,
+    //         }
+    //         var totalsToGetArray = [newAccount, previousAccount];
+    //         models.account_totals.get_by_id(totalsToGetArray, function (totalsResults, totalsMessage) {
+    //           if(totalsResults){
+    //             newTotals = [];
+    //             _.forEach(totalsResults, function (total) {
+    //               if(total.accountId === newAccount.accountId){
+    //                 newTotals.push({
+    //                   id: total.id,
+    //                   amount: total.amount + funds.amount,
+    //                   accountId: total.accountId,
+    //                   typeId: total.typeId,
+    //                 })
+    //               }
+    //               if(total.accountId === previousAccount.accountId){
+    //                 newTotals.push({
+    //                   id: total.id,
+    //                   amount: total.amount - funds.amount,
+    //                   accountId: total.accountId,
+    //                   typeId: total.typeId,
+    //                 })
+    //               }
+    //             })
+    //             models.account_totals.upsert(newTotals, function (updatedTotals, updateMessage) {
+    //               if (updatedTotals) {
+    //                 console.log("+++ 458 index.js updatedTotals: ", updatedTotals)
+                    
+    //               } else {
+    //                 failedResponse(res, updateMessage)
+    //               }
+    //             })
+
+    //           }else{
+    //             failedResponse(res, totalsMessage)
+    //           };
+    //         })
+    //       }
+    //     } else {
+    //       failedResponse(res, fundsMessage)
+    //     }
+    //   })
+    // },
+    
   },
 
+  expenses_bulk: {
+    post: function (req, res) {
+      var userId = req.headers.userId;
+      var expenses = req.body;
+      var userData = {
+        userId: userId,
+        totalToUpdate: 0
+      }
+      addedTotals = {};
+
+      _.forEach(expenses, function (expense) {
+        expense.userId = userId;
+        userData.totalToUpdate = userData.totalToUpdate + expense.amount;
+        if(!addedTotals[expense.accountId]){
+          addedTotals[expense.accountId] = {
+            id: expense.accountId,
+            amount: expense.amount
+          };
+        } else {
+          addedTotals[expense.accountId].amount = addedTotals[expense.accountId].amount + expense.amount;
+        }
+      })
+      _.forEach(addedTotals, function (item, key) {
+        item.amount = Number(item.amount.toFixed(2));
+      })
+      userData.totalToUpdate = Number(-userData.totalToUpdate.toFixed(2));
+      models.expenses_bulk.post(expenses, function (expensesAdded, expensesMessage) {
+        if (expensesAdded) {
+          models.account_totals_bulk.get(userData, function (totalsData, totalsMessage) {
+            if (totalsData) {
+              var newAccountTotals = [];
+              _.forEach(totalsData, function (total) {
+                if(addedTotals[total.accountId] && addedTotals[total.accountId].id){
+                  if(total.accountId === addedTotals[total.accountId].id){
+                    total.amount = total.amount - addedTotals[total.accountId].amount;
+                    total.amount = Number(total.amount.toFixed(2));
+                    newAccountTotals.push({
+                      id: total.id,
+                      amount: total.amount,
+                      accountId: total.accountId,
+                      typeId: total.typeId,
+                    })
+                  }
+                }
+              })  
+              models.account_totals.upsert(newAccountTotals, function (updatedTotals, updateMessage) {
+                if (updatedTotals) {
+                  models.current_available.patch(userData, function(availableTotal, availableMessage) {
+                    if (availableTotal) {
+                      var data = {
+                        expensesAdded: expensesAdded,
+                        updatedTotals: updatedTotals,
+                        availableTotal: Number(availableTotal.amount)
+                      };
+                      successResponse(res, data)
+                    } else {
+                      failedResponse(res, availableMessage)
+                    }
+                  })
+                } else {
+                  failedResponse(res, updateMessage)
+                }
+              })
+            } else {
+              failedResponse(res, totalsMessage)
+            }
+          })
+        } else {
+          failedResponse(res, expensesMessage)
+        }
+      })
+    }
+  }
 }
 
 var successResponse = function (res, data) {
@@ -751,7 +939,7 @@ var failedResponse = function (res, message) {
   //               userId: userId,
   //               totalToUpdate: totalAmounts['amount']
   //             }
-  //             models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+  //             models.current_available.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
   //               if (currentAvailable) {
   //                 res.status(200).json({
   //                   success: true,
@@ -840,7 +1028,7 @@ var failedResponse = function (res, message) {
   //           };
   //           models.updateTotalAmount.patch(updateAmount, function(newTotalIncome, totalIncomeMessage) {
   //             if (newTotalIncome) {
-  //               models.updateCurrentAvailable.patch(updateAmount, function(currentAvailable, currentAvailableMessage) {
+  //               models.current_available.patch(updateAmount, function(currentAvailable, currentAvailableMessage) {
   //                 if (currentAvailable) {
   //                   res.status(200).json({
   //                     success: true,
@@ -903,7 +1091,7 @@ var failedResponse = function (res, message) {
   //         }
   //         models.updateTotalAmount.patch(deletedAmount, function(currentTotalIncome, currentIncomeMessage) {
   //           if (currentTotalIncome) {
-  //             models.updateCurrentAvailable.patch(deletedAmount, function(currentAvailable, currentAvailableMessage) {
+  //             models.current_available.patch(deletedAmount, function(currentAvailable, currentAvailableMessage) {
   //               if (currentAvailable) {
   //                 res.status(200).json({
   //                   success: true,
@@ -968,7 +1156,7 @@ var failedResponse = function (res, message) {
   //         // UPDATE EXPENSES TOTAL
   //         models.updateTotalAmount.patch(newExpensesTotal, function(newTotalExpenses, totalExpensesMessage) {
   //           if (newTotalExpenses) {
-  //             models.updateCurrentAvailable.patch(newExpensesTotal, function(currentAvailable, currentAvailableMessage) {
+  //             models.current_available.patch(newExpensesTotal, function(currentAvailable, currentAvailableMessage) {
   //               if (currentAvailable) {
   //                 res.status(200).json({
   //                   success: true,
@@ -1057,7 +1245,7 @@ var failedResponse = function (res, message) {
   //           };
   //           models.updateTotalAmount.patch(updateAmount, function(newTotalExpenses, totalExpensesMessage) {
   //             if (newTotalExpenses) {
-  //               models.updateCurrentAvailable.patch(updateAmount, function(currentAvailable, currentAvailableMessage) {
+  //               models.current_available.patch(updateAmount, function(currentAvailable, currentAvailableMessage) {
   //                 if (currentAvailable) {
   //                   res.status(200).json({
   //                     success: true,
@@ -1119,7 +1307,7 @@ var failedResponse = function (res, message) {
   //         }
   //         models.updateTotalAmount.patch(deletedAmount, function(currentTotalExpenses, currentExpensesMessage) {
   //           if (currentTotalExpenses) {
-  //             models.updateCurrentAvailable.patch(deletedAmount, function(currentAvailable, currentAvailableMessage) {
+  //             models.current_available.patch(deletedAmount, function(currentAvailable, currentAvailableMessage) {
   //               if (currentAvailable) {
   //                 res.status(200).json({
   //                   success: true,
@@ -1521,7 +1709,7 @@ var failedResponse = function (res, message) {
   //                     userId: userId,
   //                     totalToUpdate: details.toUpdate
   //                   }
-  //                   models.updateCurrentAvailable.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
+  //                   models.current_available.patch(currentAvailableValues, function(currentAvailable, currentAvailableMessage) {
   //                     if (currentAvailable) {
   //                       var responseData = {
   //                         transferCreated: transferCreated,
@@ -1770,7 +1958,7 @@ var failedResponse = function (res, message) {
   //         if (transferCreated) {
   //           models.updateTotalAmount.patch(newTotalAdded, function(newTotal, totalAddedMessage) {
   //             if (newTotal) {
-  //               models.updateCurrentAvailable.patch(newTotalAdded, function(currentAvailable, currentAvailableMessage) {
+  //               models.current_available.patch(newTotalAdded, function(currentAvailable, currentAvailableMessage) {
   //                 if (currentAvailable) {
   //                   var responseData = {
   //                     transferCreated: transferCreated,

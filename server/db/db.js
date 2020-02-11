@@ -205,7 +205,7 @@ var Expenses = sequelize.define('expenses', {
     type: Sequelize.TEXT,
     allowNull: false
   },
-  fromAccountId: {
+  accountId: {
     type: Sequelize.INTEGER,
     allowNull: false
   },
