@@ -284,7 +284,23 @@ module.exports = controllers = {
           failedResponse(res, categoriesMessage)
         }
       })
-    }
+    },
+
+    get: function(req, res) {
+      var payload = {
+        userId: req.headers.userId,
+      }
+      models.categories_bulk.get(payload, function(allCategories, categoriesMessage) {
+        if (allCategories) {
+          var data = {
+            expensesCategories: allCategories
+          }
+          successResponse(res, data)
+        } else {
+          failedResponse(res, categoriesMessage)
+        };
+      })
+    },
   },
 
   categories: {
@@ -485,6 +501,47 @@ module.exports = controllers = {
       });
     },
   },
+
+  expenses_totals: {
+    get: function(req, res) {
+      var payload = {
+        userId: req.headers.userId,
+      }
+
+      if (req.query.timeframe && req.query.timeframe === 'year') {
+        payload['startDate'] = finUtils.startOfYear();
+        payload['endDate'] = finUtils.endOfYear();
+        payload.timeframe = req.query.timeframe;
+      } else {
+        payload['startDate'] = finUtils.startOfMonth();
+        payload['endDate'] = finUtils.endOfMonth();
+        payload.timeframe = "month";
+      }
+      models.expenses_totals.get(payload, function(expensesData, message) {
+        if (expensesData) {
+          var addedExpensesTotals = finUtils.addExpensesTotals(expensesData);
+          var finalData = {
+            totals: addedExpensesTotals.totals,
+            timeframe: payload.timeframe,
+            expensesCount: expensesData.length,
+            totalAmount: addedExpensesTotals.totalAmount.toFixed(2),
+          }
+          res.status(200).json({
+            success: true,
+            data: finalData
+          });
+        } else {
+          res.status(200).json({
+            success: false,
+            data: {
+              message: message
+            }
+          });
+        };
+      })
+    }
+  },
+
 }
 
 // HELPER FUNCTIONS

@@ -85,21 +85,24 @@ router.patch('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.patch(req, res)
 })
 
+router.get('/categories_bulk', authUtils.checkUser, function(req, res) {
+  controllers.categories_bulk.get(req, res)
+})
+
 
 // // UTILS
 router.get('/calculate_totals', authUtils.checkUser, function(req, res) {
   controllers.calculate_totals.get(req, res)
 })
 
+router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
+  controllers.expenses_totals.get(req, res)
+})
 
 
 
 module.exports = router;
 
-
-// router.get('/categories', authUtils.checkUser, function(req, res) {
-//   controllers.categories.get(req, res)
-// })
 
 
 // router.delete('/categories', authUtils.checkUser, function(req, res) {

@@ -355,6 +355,20 @@ module.exports = {
           };
         })
     },
+    get: function (payload, callback) {
+      db.ExpensesCategories.findAll({
+        where: {
+          userId: payload.userId,
+        }
+      })
+      .then(function (results) {
+        if(results){
+          callback(results)
+        } else{
+          callback(false, "Expenses not found")
+        };
+      })
+    }
   },
 
   categories: {
@@ -486,7 +500,7 @@ module.exports = {
       db.Expenses.findAll({
           where: searchData,
           include: [{
-            model: db.ExpensesCategory,
+            model: db.ExpensesCategories,
             attributes: ['name'],
           }]
         })
