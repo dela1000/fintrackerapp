@@ -86,31 +86,3 @@ exports.calculate_totals = function(res, userId, callback) {
   })
 }
 
-exports.calculate_expenses_totals = function(res, userId, callback) {
-  var payload = {
-    userId: userId
-  }
-  if (req.query.timeframe && req.query.timeframe === 'year') {
-    payload['startDate'] = finUtils.startOfYear();
-    payload['endDate'] = finUtils.endOfYear();
-    payload.timeframe = req.query.timeframe;
-  } else {
-    payload['startDate'] = finUtils.startOfMonth();
-    payload['endDate'] = finUtils.endOfMonth();
-    payload.timeframe = "month";
-  }
-  models.expenses_totals.get(payload, function(expensesData, message) {
-    if (expensesData) {
-      var addedExpensesTotals = finUtils.addExpensesTotals(expensesData);
-      var data = {
-        totals: addedExpensesTotals.totals,
-        timeframe: payload.timeframe,
-        expensesCount: expensesData.length,
-        totalAmount: addedExpensesTotals.totalAmount.toFixed(2),
-      }
-      callback(data);
-    } else {
-      callback(false, message)
-    };
-  })
-}

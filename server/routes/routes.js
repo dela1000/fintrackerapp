@@ -33,17 +33,17 @@ router.post('/set_initials', authUtils.checkUser, function(req, res) {
 })
 
 // Sources
-// Add sources in bulk
+// // Add sources in bulk
 router.post('/fund_sources', authUtils.checkUser, function(req, res) {
   controllers.fund_sources.post(req, res)
 })
 
-// Add single sources 
+// // Add single sources 
 router.post('/fund_source', authUtils.checkUser, function(req, res) {
   controllers.fund_source.post(req, res)
 })
 
-// Update source name
+// // Update source name
 router.patch('/fund_source', authUtils.checkUser, function(req, res) {
   controllers.fund_source.patch(req, res)
 })
@@ -60,6 +60,7 @@ router.post('/user_account', authUtils.checkUser, function(req, res) {
   controllers.user_account.post(req, res)
 })
 
+// // Update user account
 router.patch('/user_account', authUtils.checkUser, function(req, res) {
   controllers.user_account.patch(req, res)
 })
@@ -80,31 +81,34 @@ router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
   controllers.expenses_bulk.post(req, res)
 })
 
-// Add categories in bulk
+// // Add categories in bulk
 router.post('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.post(req, res)
 })
 
-// Add single category
+// // Add single category
 router.post('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.post(req, res)
 })
 
-// update category name 
+// // update category name 
 router.patch('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.patch(req, res)
 })
 
+// // Get all user categories
 router.get('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.get(req, res)
 })
 
 
-// // UTILS
+// UTILS
+// // calculate and update all account totals and current available
 router.get('/calculate_totals', authUtils.checkUser, function(req, res) {
   controllers.calculate_totals.get(req, res)
 })
 
+// calculate all total expenses (month or year)
 router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
   controllers.expenses_totals.get(req, res)
 })
