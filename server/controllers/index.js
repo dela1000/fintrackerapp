@@ -540,24 +540,65 @@ module.exports = controllers = {
       models.expenses_totals.get(payload, function(expensesData, message) {
         if (expensesData) {
           var addedExpensesTotals = finUtils.addExpensesTotals(expensesData);
-          var finalData = {
+          var data = {
             totals: addedExpensesTotals.totals,
             timeframe: payload.timeframe,
             expensesCount: expensesData.length,
             totalAmount: addedExpensesTotals.totalAmount.toFixed(2),
           }
-          res.status(200).json({
-            success: true,
-            data: finalData
-          });
+          successResponse(res, data);
         } else {
-          res.status(200).json({
-            success: false,
-            data: {
-              message: message
-            }
-          });
+          failedResponse(res, message)
         };
+      })
+    }
+  },
+
+  all_totals: {
+    get: function(req, res) {
+      var payload = {
+        timeframe: "month",
+        userId: req.headers.userId,
+        deleted: false,
+        startDate: finUtils.startOfMonth(),
+        endDate: finUtils.endOfMonth()
+      }
+      
+      if (req.query.timeframe === 'year') {
+        payload['timeframe'] = "year";
+        payload['startDate'] = finUtils.startOfYear();
+        payload['endDate'] = finUtils.endOfYear();
+      }
+      models.all_totals.get(payload, function(results, message) {
+        if (results) {
+          // successResponse(res, results);
+          var expensesTotals = calcUtils.add_expenses_totals(results.expenses);
+          var fundTotals = calcUtils.add_fund_totals(results.funds);
+
+          var data = {
+            timeframe: payload.timeframe,
+            currentAvailable: results.currentavailable.amount,
+            availableByAccount: [],
+          }
+          _.forEach(results.accounttotals, function (total) {
+            data.availableByAccount.push({
+              account: total.useraccount.account,
+              accountId: total.useraccount.id,
+              type: total.type.type,
+              typeId: total.type.id,
+              amount: total.amount
+            })
+          })
+          _.forEach(expensesTotals, function(value, key) {
+            data[key] = value
+          })
+          _.forEach(fundTotals, function(value, key) {
+            data[key] = value
+          })
+          successResponse(res, data);
+        } else {
+          failedResponse(res, message)
+        }
       })
     }
   },

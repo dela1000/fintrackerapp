@@ -289,7 +289,6 @@ UserAccounts.hasMany(AccountTotals, {
   foreignKey: 'accountId'
 });
 
-
 Types.hasMany(AccountTotals, {
   foreignKey: 'typeId'
 });
@@ -322,10 +321,6 @@ Types.hasMany(UserAccounts, {
   foreignKey: 'typeId'
 })
 
-// UserAccounts.hasOne(Types, {
-//   foreignKey: 'id'
-// })
-
 UserAccounts.belongsTo(Users, {
   foreignKey: 'userId'
 });
@@ -335,6 +330,14 @@ UserAccounts.hasMany(Funds, {
 });
 
 Funds.belongsTo(UserAccounts, {
+  foreignKey: 'accountId'
+});
+
+UserAccounts.hasMany(Expenses, {
+  foreignKey: 'accountId'
+});
+
+Expenses.belongsTo(UserAccounts, {
   foreignKey: 'accountId'
 });
 

@@ -113,6 +113,11 @@ router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
   controllers.expenses_totals.get(req, res)
 })
 
+//TOTALS
+router.get('/all_totals', authUtils.checkUser, function(req, res) {
+  controllers.all_totals.get(req, res)
+})
+
 
 
 module.exports = router;
@@ -180,14 +185,7 @@ module.exports = router;
 // })
 
 
-// //TOTALS
-// router.get('/all_totals', authUtils.checkUser, function(req, res) {
-//   controllers.all_totals.get(req, res)
-// })
 
-// router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
-//   controllers.expenses_totals.get(req, res)
-// })
 // // SEARCH 
 // router.get('/search', authUtils.checkUser, function(req, res) {
 //   controllers.search.get(req, res)

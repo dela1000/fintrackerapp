@@ -357,6 +357,7 @@ module.exports = {
         })
     }
   },
+
   recalculated_current_available: {
     patch: function(payload, callback) {
       db.CurrentAvailables.findOne({
@@ -545,6 +546,97 @@ module.exports = {
             callback(false, "No data found")
           }
         })
+    }
+  },
+
+  all_totals: {
+    get: function(payload, callback) {
+      var primaryTotals = {};
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate,
+        },
+        deleted: payload.deleted
+      };
+      db.Users.findOne({
+        where: {
+          id: payload.userId
+        },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        include: [{
+            model: db.AccountTotals,
+            attributes: ['amount'],
+            include: [{
+                model: db.UserAccounts,
+                where: {
+                  deleted: false
+                },
+                attributes: ['account', 'id'],
+                required: false
+              }, {
+                model: db.Types,
+                attributes: ['type', 'id'],
+                required: false
+              }
+            ],
+            required: false
+          }, {
+            model: db.Expenses,
+            where: searchData,
+            include: [{
+              model: db.ExpensesCategories,
+              where: {
+                deleted: false
+              },
+              attributes: ['name', 'id'],
+              required: false
+            },{
+              model: db.UserAccounts,
+              where: {
+                deleted: false
+              },
+              attributes: ['account', 'id'],
+              required: false
+            }],
+            required: false
+          }, {
+            model: db.Funds,
+            where: searchData,
+            include: [{
+                model: db.Types,
+                attributes: ['type', 'id'],
+                required: false
+              }, {
+                model: db.UserAccounts,
+                where: {
+                  deleted: false
+                },
+                attributes: ['account', 'id'],
+                required: false
+              }, {
+                model: db.FundSources,
+                where: {
+                  deleted: false
+                },
+                attributes: ['source', 'id'],
+                required: false
+              },
+              
+            ],
+            required: false
+          }, {
+            model: db.CurrentAvailables,
+          }]
+      })
+      .then(function (results) {
+        if (results) {
+          callback(results)
+        } else {
+          callback(false, "User data not found")
+        }
+      })
     }
   },
 }
@@ -1189,134 +1281,134 @@ module.exports = {
 //     }
 //   },
 
-//   all_totals: {
-//     get: function(payload, callback) {
-//       var primaryTotals = {};
-//       var searchData = {
-//         userId: payload.userId,
-//         date: {
-//           [Op.gte]: payload.startDate,
-//           [Op.lte]: payload.endDate,
-//         },
-//         deleted: payload.deleted
-//       };
-//       db.User.findOne({
-//           where: {
-//             id: payload.userId
-//           },
-//           attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
-//           include: [{
-//             model: db.CurrentTotalExpenses,
-//             attributes: ['amount'],
-//             required: false
-//           }, {
-//             model: db.CurrentTotalIncome,
-//             attributes: ['amount'],
-//             required: false
-//           }, {
-//             model: db.CurrentTotalSavings,
-//             attributes: ['amount'],
-//             required: false
-//           }, {
-//             model: db.CurrentTotalInvest,
-//             attributes: ['amount'],
-//             required: false
-//           }, {
-//             model: db.CurrentAvailable,
-//             attributes: ['amount'],
-//             required: false
-//           }, {
-//             model: db.Income,
-//             where: searchData,
-//             include: [{
-//                 model: db.IncomeAccount,
-//                 where: {
-//                   deleted: false
-//                 },
-//                 attributes: ['name', 'id'],
-//                 required: false
-//               },
-//               {
-//                 model: db.IncomeCategory,
-//                 where: {
-//                   deleted: false
-//                 },
-//                 attributes: ['name', 'id'],
-//                 required: false
-//               }
-//             ],
-//             required: false
-//           }, {
-//             model: db.Savings,
-//             where: searchData,
-//             include: [{
-//               model: db.SavingsAccount,
-//               where: {
-//                 deleted: false
-//               },
-//               attributes: ['name', 'id'],
-//               required: false
-//             }],
-//             required: false
-//           }, {
-//             model: db.Invest,
-//             where: searchData,
-//             include: [{
-//               model: db.InvestAccount,
-//               where: {
-//                 deleted: false
-//               },
-//               attributes: ['name', 'id'],
-//               required: false
-//             }],
-//             required: false
-//           }, {
-//             model: db.Expenses,
-//             where: searchData,
-//             include: [{
-//               model: db.ExpensesCategory,
-//               where: {
-//                 deleted: false
-//               },
-//               attributes: ['name', 'id'],
-//               required: false
-//             }],
-//             required: false
-//           }]
-//         })
-//         .then(function(user) {
-//           if (user) {
-//             primaryTotals['user'] = {
-//               userId: user.id,
-//               username: user.username,
-//               email: user.email,
-//             };
-//             if (user.currenttotalexpense) {
-//               primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount;
-//             }
-//             if (user.currenttotalincome) {
-//               primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount;
-//             }
-//             if (user.currenttotalsaving) {
-//               primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount;
-//             }
-//             if (user.currenttotalinvest) {
-//               primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
-//             }
-//             if (user.currentavailable) {
-//               primaryTotals['currentAvailable'] = user.currentavailable.amount;
-//             }
-//             var results = {
-//               user: user,
-//               primaryTotals: primaryTotals,
-//             }
-//             callback(results)
-//           } else {
-//             callback(false, "User not found")
-//           }
-//         })
-//     }
-//   },
+  // old_all_totals: {
+  //   get: function(payload, callback) {
+  //     var primaryTotals = {};
+  //     var searchData = {
+  //       userId: payload.userId,
+  //       date: {
+  //         [Op.gte]: payload.startDate,
+  //         [Op.lte]: payload.endDate,
+  //       },
+  //       deleted: payload.deleted
+  //     };
+  //     db.User.findOne({
+  //         where: {
+  //           id: payload.userId
+  //         },
+  //         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+  //         include: [{
+  //           model: db.CurrentTotalExpenses,
+  //           attributes: ['amount'],
+  //           required: false
+  //         }, {
+  //           model: db.CurrentTotalIncome,
+  //           attributes: ['amount'],
+  //           required: false
+  //         }, {
+  //           model: db.CurrentTotalSavings,
+  //           attributes: ['amount'],
+  //           required: false
+  //         }, {
+  //           model: db.CurrentTotalInvest,
+  //           attributes: ['amount'],
+  //           required: false
+  //         }, {
+  //           model: db.CurrentAvailable,
+  //           attributes: ['amount'],
+  //           required: false
+  //         }, {
+  //           model: db.Income,
+  //           where: searchData,
+  //           include: [{
+  //               model: db.IncomeAccount,
+  //               where: {
+  //                 deleted: false
+  //               },
+  //               attributes: ['name', 'id'],
+  //               required: false
+  //             },
+  //             {
+  //               model: db.IncomeCategory,
+  //               where: {
+  //                 deleted: false
+  //               },
+  //               attributes: ['name', 'id'],
+  //               required: false
+  //             }
+  //           ],
+  //           required: false
+  //         }, {
+  //           model: db.Savings,
+  //           where: searchData,
+  //           include: [{
+  //             model: db.SavingsAccount,
+  //             where: {
+  //               deleted: false
+  //             },
+  //             attributes: ['name', 'id'],
+  //             required: false
+  //           }],
+  //           required: false
+  //         }, {
+  //           model: db.Invest,
+  //           where: searchData,
+  //           include: [{
+  //             model: db.InvestAccount,
+  //             where: {
+  //               deleted: false
+  //             },
+  //             attributes: ['name', 'id'],
+  //             required: false
+  //           }],
+  //           required: false
+  //         }, {
+  //           model: db.Expenses,
+  //           where: searchData,
+  //           include: [{
+  //             model: db.ExpensesCategory,
+  //             where: {
+  //               deleted: false
+  //             },
+  //             attributes: ['name', 'id'],
+  //             required: false
+  //           }],
+  //           required: false
+  //         }]
+  //       })
+  //       .then(function(user) {
+  //         if (user) {
+  //           primaryTotals['user'] = {
+  //             userId: user.id,
+  //             username: user.username,
+  //             email: user.email,
+  //           };
+  //           if (user.currenttotalexpense) {
+  //             primaryTotals['currentTotalExpenses'] = user.currenttotalexpense.amount;
+  //           }
+  //           if (user.currenttotalincome) {
+  //             primaryTotals['currentTotalIncome'] = user.currenttotalincome.amount;
+  //           }
+  //           if (user.currenttotalsaving) {
+  //             primaryTotals['currentTotalSavings'] = user.currenttotalsaving.amount;
+  //           }
+  //           if (user.currenttotalinvest) {
+  //             primaryTotals['currentTotalInvest'] = user.currenttotalinvest.amount;
+  //           }
+  //           if (user.currentavailable) {
+  //             primaryTotals['currentAvailable'] = user.currentavailable.amount;
+  //           }
+  //           var results = {
+  //             user: user,
+  //             primaryTotals: primaryTotals,
+  //           }
+  //           callback(results)
+  //         } else {
+  //           callback(false, "User not found")
+  //         }
+  //       })
+  //   }
+  // },
 
 //   recalculate_totals: {
 //     get: function(payload, callback) {
