@@ -571,10 +571,8 @@ module.exports = controllers = {
       }
       models.all_totals.get(payload, function(results, message) {
         if (results) {
-          // successResponse(res, results);
           var expensesTotals = calcUtils.add_expenses_totals(results.expenses);
           var fundTotals = calcUtils.add_fund_totals(results.funds);
-
           var data = {
             timeframe: payload.timeframe,
             currentAvailable: results.currentavailable.amount,
@@ -590,10 +588,10 @@ module.exports = controllers = {
             })
           })
           _.forEach(expensesTotals, function(value, key) {
-            data[key] = value
+            data[key] = value;
           })
           _.forEach(fundTotals, function(value, key) {
-            data[key] = value
+            data[key] = value;
           })
           successResponse(res, data);
         } else {

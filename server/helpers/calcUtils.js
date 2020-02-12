@@ -140,7 +140,6 @@ exports.add_fund_totals = function (data) {
   var totalsBySourcesHolder = {};
   _.forEach(data, function(lineItem) {
     var item = lineItem.dataValues;
-    // console.log("+++ 149 calcUtils.js item: ", item)
     if(!totalsByTypesHolder[item.typeId]){
       totalsByTypesHolder[item.typeId] = {
         amount: item.amount,
@@ -176,10 +175,8 @@ exports.add_fund_totals = function (data) {
     } else {
       totalsBySourcesHolder[item.sourceId]['amount'] = totalsBySourcesHolder[item.sourceId]['amount'] + item.amount;
     }
-
   })
   
-
   return {
     fundsByTypes: amountCleanUp(totalsByTypesHolder),
     fundsByAccounts: amountCleanUp(totalsByAccountsHolder),
