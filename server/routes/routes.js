@@ -71,14 +71,18 @@ router.post('/funds_bulk', authUtils.checkUser, function(req, res) {
   controllers.funds_bulk.post(req, res)
 })
 
-// router.patch('/funds', authUtils.checkUser, function(req, res) {
-//   controllers.funds.patch(req, res)
-// })
+router.patch('/funds', authUtils.checkUser, function(req, res) {
+  controllers.funds.patch(req, res)
+})
 
 //Expenses routes
 // // Add Expenses in bulk
 router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
   controllers.expenses_bulk.post(req, res)
+})
+
+router.patch('/expenses', authUtils.checkUser, function(req, res) {
+  controllers.expenses.patch(req, res)
 })
 
 // // Add categories in bulk

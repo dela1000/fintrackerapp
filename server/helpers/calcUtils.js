@@ -67,6 +67,7 @@ exports.calculate_totals = function(res, userId, callback) {
                       currentAvailable: Number(currentAvailable.amount),
                     };
                     callback(data);
+                    console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
                   } else {
                     callback(false, availableMessage)
                   }
@@ -84,7 +85,6 @@ exports.calculate_totals = function(res, userId, callback) {
       callback(false, totalsMessage)
     };
   })
-  console.log("+++ 88 calcUtils.js RECALCULATING COMPLETED")
 }
 
 

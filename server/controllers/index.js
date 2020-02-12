@@ -435,6 +435,36 @@ module.exports = controllers = {
     },
   },
 
+  funds: {
+    patch: function (req, res) {
+      var userId = req.headers.userId;
+      
+      var payload = {
+        userId: userId,
+      };
+      _.forEach(req.body, function(value, key) {
+        if (key === "date") {
+          payload[key] = finUtils.startOfDay(value);
+        } else {
+          payload[key] = value
+        }
+      })
+      models.funds.patch(payload, function(fundUpdated, message) {
+        if (fundUpdated) {
+          calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+            if(data){
+              successResponse(res, data);
+            } else{
+              failedResponse(res, failMessage)
+            };
+          });
+        } else{
+          
+        };
+      })
+    }
+  },
+
   expenses_bulk: {
     post: function (req, res) {
       var userId = req.headers.userId;
@@ -505,6 +535,36 @@ module.exports = controllers = {
         } else {
           failedResponse(res, expensesMessage)
         }
+      })
+    }
+  },
+
+  expenses: {
+    patch: function (req, res) {
+      var userId = req.headers.userId;
+      
+      var payload = {
+        userId: userId,
+      };
+      _.forEach(req.body, function(value, key) {
+        if (key === "date") {
+          payload[key] = finUtils.startOfDay(value);
+        } else {
+          payload[key] = value
+        }
+      })
+      models.expenses.patch(payload, function(expenseUpdated, message) {
+        if (expenseUpdated) {
+          calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+            if(data){
+              successResponse(res, data);
+            } else{
+              failedResponse(res, failMessage)
+            };
+          });
+        } else{
+          
+        };
       })
     }
   },

@@ -522,6 +522,31 @@ module.exports = {
     }
   },
 
+  expenses: {
+    patch: function (payload, callback) {
+      db.Expenses.findOne({
+          where: {
+            userId: payload.userId,
+            id: payload.id,
+            deleted: false,
+          }
+        })
+        .then(function(expense) {
+          if (expense) {
+            _.forEach(payload, function(value, key) {
+              if (key !== "id" && key !== "userId") {
+                expense[key] = value;
+              }
+            })
+            expense.save();
+            callback(expense)
+          } else {
+            callback(false, "Fund not found")
+          };
+        })
+    },
+  },
+
   expenses_totals: {
     get: function(payload, callback) {
       var searchData = {
