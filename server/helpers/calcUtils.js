@@ -2,63 +2,63 @@ var models = require('../models');
 var finUtils = require("./finUtils.js")
 var _ = require('lodash');
 
-
 exports.calculate_totals = function(res, userId, callback) {
+  console.log("+++ calcUtils - RECALCULATING TOTALS")
   var userData = {
     userId: userId
   }
-  var expensesTotal = 0;
-  models.expenses_bulk.get(userData, function(expensesFound) {
-    if (expensesFound) {
-      var total = expensesFound.reduce(function(a, b) {
-        return {
-          amount: a.amount + b.amount
-        }
-      })
-      expensesTotal = total.amount.toFixed(2);
-    }
-    // FIGURE OUT FUNDS DATA
-    models.funds_bulk.get(userData, function(fundsFound, fundsMessage) {
-      if (fundsFound) {
-        var addedTotals = {};
-        _.forEach(fundsFound, function(fund) {
-          if (!addedTotals[fund.accountId]) {
-            addedTotals[fund.accountId] = {
-              id: fund.accountId,
-              amount: fund.amount
-            };
-          } else {
-            addedTotals[fund.accountId].amount = addedTotals[fund.accountId].amount + fund.amount;
-          }
-        })
-        _.forEach(addedTotals, function(item, key) {
-          item.amount = Number(item.amount.toFixed(2));
-        })
-        models.account_totals_bulk.get(userData, function(totalsData, totalsMessage) {
-          if (totalsData) {
-            var newAccountTotals = [];
-            var checkingAccountsTotal = 0;
-            _.forEach(totalsData, function(total) {
-              if (total.accountId === addedTotals[total.accountId].id) {
-                total.amount = addedTotals[total.accountId].amount;
-                total.amount = Number(total.amount.toFixed(2));
-                newAccountTotals.push({
-                  id: total.id,
-                  amount: total.amount,
-                  accountId: total.accountId,
-                  typeId: total.typeId,
-                  account: total.useraccount.account,
-                  type: total.type.type,
-                })
-              }
-              // Aggregate Checking accounts amounts
-              if (total.typeId === 1) {
-                checkingAccountsTotal = checkingAccountsTotal + total.amount;
-              }
-            })
-            models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
-              if (updatedTotals) {
-                // ACCOUNT TOTALS CALCULATED
+  // FIGURE OUT FUNDS DATA
+  models.account_totals_bulk.get(userData, function(totalsData, totalsMessage) {
+    if (totalsData) {
+      models.funds_bulk.get(userData, function(fundsFound, fundsMessage) {
+        if (fundsFound) {
+          var addedTotals = {};
+          _.forEach(fundsFound, function(fund) {
+            if (!addedTotals[fund.accountId]) {
+              addedTotals[fund.accountId] = {
+                id: fund.accountId,
+                amount: fund.amount
+              };
+            } else {
+              addedTotals[fund.accountId].amount = addedTotals[fund.accountId].amount + fund.amount;
+            }
+          })
+          _.forEach(addedTotals, function(item, key) {
+            item.amount = Number(item.amount.toFixed(2));
+          })
+          var newAccountTotals = [];
+          var checkingAccountsTotal = 0;
+          _.forEach(totalsData, function(total) {
+            if (total.accountId === addedTotals[total.accountId].id) {
+              total.amount = addedTotals[total.accountId].amount;
+              total.amount = Number(total.amount.toFixed(2));
+              newAccountTotals.push({
+                id: total.id,
+                amount: total.amount,
+                accountId: total.accountId,
+                typeId: total.typeId,
+                account: total.useraccount.account,
+                type: total.type.type,
+              })
+            }
+            // Aggregate Checking accounts amounts
+            if (total.typeId === 1) {
+              checkingAccountsTotal = checkingAccountsTotal + total.amount;
+            }
+          })
+          models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
+            if (updatedTotals) {
+              // ACCOUNT TOTALS CALCULATED
+              var expensesTotal = 0;
+              models.expenses_bulk.get(userData, function(expensesFound) {
+                if (!_.isEmpty(expensesFound)) {
+                  var total = expensesFound.reduce(function(a, b) {
+                    return {
+                      amount: a.amount + b.amount
+                    }
+                  })
+                  expensesTotal = total.amount.toFixed(2);
+                }
                 userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
                 models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
                   if (currentAvailable) {
@@ -71,20 +71,105 @@ exports.calculate_totals = function(res, userId, callback) {
                     callback(false, availableMessage)
                   }
                 })
-              } else {
-                callback(false, updateMessage)
-              };
-            })
-          } else {
-            callback(false, totalsMessage)
-          };
-        })
-      } else {
-        callback(false, fundsMessage)
-      }
-    })
+              })
+            } else {
+              callback(false, updateMessage)
+            };
+          })
+        } else {
+          callback(false, fundsMessage)
+        }
+      })
+    } else {
+      callback(false, totalsMessage)
+    };
   })
+  console.log("+++ 88 calcUtils.js RECALCULATING COMPLETED")
 }
+
+
+// exports.calculate_totals = function(res, userId, callback) {
+//   var userData = {
+//     userId: userId
+//   }
+//   var expensesTotal = 0;
+//   models.expenses_bulk.get(userData, function(expensesFound) {
+//     if (expensesFound) {
+//       var total = expensesFound.reduce(function(a, b) {
+//         return {
+//           amount: a.amount + b.amount
+//         }
+//       })
+//       expensesTotal = total.amount.toFixed(2);
+//     }
+//     // FIGURE OUT FUNDS DATA
+//     models.funds_bulk.get(userData, function(fundsFound, fundsMessage) {
+//       if (fundsFound) {
+//         var addedTotals = {};
+//         _.forEach(fundsFound, function(fund) {
+//           if (!addedTotals[fund.accountId]) {
+//             addedTotals[fund.accountId] = {
+//               id: fund.accountId,
+//               amount: fund.amount
+//             };
+//           } else {
+//             addedTotals[fund.accountId].amount = addedTotals[fund.accountId].amount + fund.amount;
+//           }
+//         })
+//         _.forEach(addedTotals, function(item, key) {
+//           item.amount = Number(item.amount.toFixed(2));
+//         })
+//         models.account_totals_bulk.get(userData, function(totalsData, totalsMessage) {
+//           if (totalsData) {
+//             var newAccountTotals = [];
+//             var checkingAccountsTotal = 0;
+//             _.forEach(totalsData, function(total) {
+//               if (total.accountId === addedTotals[total.accountId].id) {
+//                 total.amount = addedTotals[total.accountId].amount;
+//                 total.amount = Number(total.amount.toFixed(2));
+//                 newAccountTotals.push({
+//                   id: total.id,
+//                   amount: total.amount,
+//                   accountId: total.accountId,
+//                   typeId: total.typeId,
+//                   account: total.useraccount.account,
+//                   type: total.type.type,
+//                 })
+//               }
+//               // Aggregate Checking accounts amounts
+//               if (total.typeId === 1) {
+//                 checkingAccountsTotal = checkingAccountsTotal + total.amount;
+//               }
+//             })
+//             models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
+//               if (updatedTotals) {
+//                 // ACCOUNT TOTALS CALCULATED
+//                 userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
+//                 models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
+//                   if (currentAvailable) {
+//                     var data = {
+//                       newAccountTotals: newAccountTotals,
+//                       currentAvailable: Number(currentAvailable.amount),
+//                     };
+//                     callback(data);
+//                   } else {
+//                     callback(false, availableMessage)
+//                   }
+//                 })
+//               } else {
+//                 callback(false, updateMessage)
+//               };
+//             })
+//           } else {
+//             callback(false, totalsMessage)
+//           };
+//         })
+//       } else {
+//         callback(false, fundsMessage)
+//       }
+//     })
+//   })
+// }
 
 exports.add_expenses_totals = function(data) {
   var totalExpenses = 0;
