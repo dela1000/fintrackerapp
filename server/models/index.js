@@ -481,6 +481,8 @@ module.exports = {
           if (fund) {
             _.forEach(payload, function(value, key) {
               if (key !== "id" && key !== "userId") {
+                console.log("+++ 484 index.js fund[key]: ", fund[key])
+                console.log("+++ 485 index.js value: ", value)
                 fund[key] = value;
               }
             })

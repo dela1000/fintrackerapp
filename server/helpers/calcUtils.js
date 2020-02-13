@@ -7,9 +7,10 @@ exports.calculate_totals = function(res, userId, callback) {
   var userData = {
     userId: userId
   }
-  // FIGURE OUT FUNDS DATA
+  console.log("+++ 10 calcUtils.js Get all user accounts totals")
   models.account_totals_bulk.get(userData, function(totalsData, totalsMessage) {
     if (totalsData) {
+      console.log("+++ 13 calcUtils.js get all user funds")
       models.funds_bulk.get(userData, function(fundsFound, fundsMessage) {
         if (fundsFound) {
           var addedTotals = {};
@@ -26,6 +27,8 @@ exports.calculate_totals = function(res, userId, callback) {
           _.forEach(addedTotals, function(item, key) {
             item.amount = Number(item.amount.toFixed(2));
           })
+          console.log("+++ 30 calcUtils.js New totals calculated by account Id")
+          console.log("+++ 31 calcUtils.js addedTotals: ", addedTotals)
           var newAccountTotals = [];
           var checkingAccountsTotal = 0;
           _.forEach(totalsData, function(total) {
@@ -46,37 +49,56 @@ exports.calculate_totals = function(res, userId, callback) {
               checkingAccountsTotal = checkingAccountsTotal + total.amount;
             }
           })
-          models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
-            if (updatedTotals) {
-              // ACCOUNT TOTALS CALCULATED
-              var expensesTotal = 0;
-              models.expenses_bulk.get(userData, function(expensesFound) {
-                if (!_.isEmpty(expensesFound)) {
-                  var total = expensesFound.reduce(function(a, b) {
-                    return {
-                      amount: a.amount + b.amount
+          // Get all expenses
+          console.log("+++ 53 calcUtils.js Get all user expenses")
+          models.expenses_bulk.get(userData, function(expensesFound) {
+            var expensesTotal = 0;
+            if (!_.isEmpty(expensesFound)) {
+              var expensesByAccount = {};
+              _.forEach(expensesFound, function (expense) {
+                expensesTotal = expensesTotal + expense.amount
+                if(!expensesByAccount[expense.accountId]){
+                  expensesByAccount[expense.accountId] = { amount: expense.amount }
+                } else {
+                  expensesByAccount[expense.accountId].amount = expensesByAccount[expense.accountId].amount + expense.amount;
+                }
+              })
+              expensesTotal = expensesTotal.toFixed(2);
+              _.forEach(newAccountTotals, function (newAccountTotal) {
+                if(newAccountTotal.accountId in expensesByAccount){
+                  newAccountTotal.amount = newAccountTotal.amount - expensesByAccount[newAccountTotal.accountId].amount;
+                }
+              })
+            }
+            console.log("+++ 73 calcUtils.js New account totals minus expenses by account")
+            console.log("+++ 74 calcUtils.js newAccountTotals: ", newAccountTotals)
+            models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
+              if (updatedTotals) {
+                // ACCOUNT TOTALS CALCULATED
+                  userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
+                  models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
+                    if (currentAvailable) {
+                      var data = {
+                        newAccountTotals: newAccountTotals,
+                        currentAvailable: Number(currentAvailable.amount),
+                      };
+                      callback(data);
+                      console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
+                    } else {
+                      callback(false, availableMessage)
                     }
                   })
-                  expensesTotal = total.amount.toFixed(2);
-                }
-                userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
-                models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
-                  if (currentAvailable) {
-                    var data = {
-                      newAccountTotals: newAccountTotals,
-                      currentAvailable: Number(currentAvailable.amount),
-                    };
-                    callback(data);
-                    console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
-                  } else {
-                    callback(false, availableMessage)
-                  }
-                })
-              })
-            } else {
-              callback(false, updateMessage)
-            };
+              } else {
+                callback(false, updateMessage)
+              };
+            })
           })
+          
+
+
+
+
+
         } else {
           callback(false, fundsMessage)
         }

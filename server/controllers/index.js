@@ -449,7 +449,9 @@ module.exports = controllers = {
           payload[key] = value
         }
       })
+      console.log("+++ 452 index.js payload: ", payload)
       models.funds.patch(payload, function(fundUpdated, message) {
+        console.log("+++ 454 index.js fundUpdated.dataValues: ", fundUpdated.dataValues)
         if (fundUpdated) {
           calcUtils.calculate_totals(res, userId, function (data, failMessage) {
             if(data){
@@ -555,13 +557,21 @@ module.exports = controllers = {
       })
       models.expenses.patch(payload, function(expenseUpdated, message) {
         if (expenseUpdated) {
-          calcUtils.calculate_totals(res, userId, function (data, failMessage) {
-            if(data){
-              successResponse(res, data);
-            } else{
-              failedResponse(res, failMessage)
-            };
-          });
+          if("comment" in payload || "categoryId" in payload || "date" in payload){
+            var data = {
+              expenseUpdated: expenseUpdated
+            }
+            successResponse(res, data);
+          } else {
+            calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+              if(data){
+                data[expenseUpdated] = expenseUpdated;
+                successResponse(res, data);
+              } else{
+                failedResponse(res, failMessage)
+              };
+            });
+          }
         } else{
           
         };

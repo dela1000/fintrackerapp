@@ -157,6 +157,10 @@ var fundSourcesAdded = [];
 var fundsAdded = [];
 var expensesAdded = [];
 
+// Uncomment to not add data
+var addData = null;
+// var addData = true;
+
 exports.testData = function() {
   db.Users.findAll({
     username: "aa"
@@ -168,14 +172,14 @@ exports.testData = function() {
         password: "$2b$08$.URoN6sElGsOPwjPxrVN8exWowHmMxhMp/ecIZELcPbgLalfkMXrW",
         email: "1@1.com"
       })
-        .then(function(user) {
-          
+      .then(function(user) {
+        if(!addData){
           db.CurrentAvailables.create({
             amount: 60,
             userId: 1
           })
           .then(function () {
-
+            
             _.each(expensesCategories, function(category) {
               expensesCategoriesAdded.push(db.ExpensesCategories.create({
                 name: category.name,
@@ -239,14 +243,17 @@ exports.testData = function() {
               expensesAdded,
             ])
             .then(function () {
-              console.log("created start data completed")
+              console.log("+++ Created all test data")
             })
             
           })
+        } else {
+          console.log("+++ Only User Added")
+        }
 
-        })
+      })
     } else{
-      console.log("+++ 20 testData.js Already Created")
+      console.log("+++ testData.js Already Created")
     };
   })
 }
