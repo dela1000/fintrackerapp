@@ -498,7 +498,6 @@ module.exports = {
           where: {
             userId: payload.userId,
             id: payload.id,
-            deleted: false,
           }
         })
         .then(function(fund) {
@@ -527,12 +526,7 @@ module.exports = {
         })
     },
     get: function (payload, callback) {
-      db.Expenses.findAll({
-        where: {
-          userId: payload.userId,
-          deleted: false
-        }
-      })
+      db.Expenses.findAll(payload)
       .then(function (results) {
         if(results){
           callback(results)
@@ -571,7 +565,6 @@ module.exports = {
           where: {
             userId: payload.userId,
             id: payload.id,
-            deleted: false,
           }
         })
         .then(function(expense) {

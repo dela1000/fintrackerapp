@@ -362,6 +362,31 @@ module.exports = controllers = {
         }
       })
     },
+    // delete: function (req, res) {
+    //   var userId = req.headers.userId;
+    //   var categoryId = req.body.id;
+    //   // var payload = {
+    //   //   userId: req.headers.userId,
+    //   //   name: req.body.name,
+    //   //   id: req.body.id,
+    //   // };
+
+    //   var expensesQuery = {
+    //     where: {
+    //       userId: userId,
+    //       categoryId: categoryId,
+    //       deleted: false
+    //     }
+    //   }
+    //   models.expenses_bulk.get(expensesQuery, function (expensesFound, expensesMessage) {
+    //     if (expensesFound) {
+    //       console.log("+++ 383 index.js expensesFound: ", expensesFound)
+          
+    //     } else {
+    //       failedResponse(res, expensesMessage)
+    //     }
+    //   })
+    // }
   },
 
   funds_bulk: {

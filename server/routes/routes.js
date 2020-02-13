@@ -32,6 +32,11 @@ router.post('/set_initials', authUtils.checkUser, function(req, res) {
   controllers.set_initials.post(req, res)
 })
 
+//TOTALS
+router.get('/all_totals', authUtils.checkUser, function(req, res) {
+  controllers.all_totals.get(req, res)
+})
+
 // Sources
 // // Add sources in bulk
 router.post('/fund_sources', authUtils.checkUser, function(req, res) {
@@ -97,22 +102,22 @@ router.delete('/expenses', authUtils.checkUser, function(req, res) {
 router.post('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.post(req, res)
 })
-
 // // Add single category
 router.post('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.post(req, res)
 })
-
 // // update category name 
 router.patch('/categories', authUtils.checkUser, function(req, res) {
   controllers.categories.patch(req, res)
 })
-
+// // Delete a category
+// router.delete('/categories', authUtils.checkUser, function(req, res) {
+//   controllers.categories.delete(req, res)
+// })
 // // Get all user categories
 router.get('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.get(req, res)
 })
-
 
 // UTILS
 // // calculate and update all account totals and current available
@@ -125,72 +130,16 @@ router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
   controllers.expenses_totals.get(req, res)
 })
 
-//TOTALS
-router.get('/all_totals', authUtils.checkUser, function(req, res) {
-  controllers.all_totals.get(req, res)
-})
 
+// SEARCH 
+router.get('/search', authUtils.checkUser, function(req, res) {
+  controllers.search.get(req, res)
+})
 
 
 module.exports = router;
 
 
-
-// router.delete('/categories', authUtils.checkUser, function(req, res) {
-//   controllers.categories.delete(req, res)
-// })
-
-
-// //Income routes
-
-
-// router.delete('/income', authUtils.checkUser, function(req, res) {
-//   controllers.income.delete(req, res)
-// })
-
-// //Expenses routes
-// router.post('/expenses', authUtils.checkUser, function(req, res) {
-//   controllers.expenses.post(req, res)
-// })
-
-// router.patch('/expenses', authUtils.checkUser, function(req, res) {
-//   controllers.expenses.patch(req, res)
-// })
-
-// router.delete('/expenses', authUtils.checkUser, function(req, res) {
-//   controllers.expenses.delete(req, res)
-// })
-
-// //Savings routes
-// router.post('/savings', authUtils.checkUser, function(req, res) {
-//   controllers.savings.post(req, res)
-// })
-
-// router.patch('/savings', authUtils.checkUser, function(req, res) {
-//   controllers.savings.patch(req, res)
-// })
-
-// router.delete('/savings', authUtils.checkUser, function(req, res) {
-//   controllers.savings.delete(req, res)
-// })
-
-
-// //Invest routes
-// router.post('/invest', authUtils.checkUser, function(req, res) {
-//   controllers.invest.post(req, res)
-// })
-
-// router.patch('/invest', authUtils.checkUser, function(req, res) {
-//   controllers.invest.patch(req, res)
-// })
-
-// router.delete('/invest', authUtils.checkUser, function(req, res) {
-//   controllers.invest.delete(req, res)
-// })
-
-// router.post('/transfer', authUtils.checkUser, function(req, res) {
-//   controllers.transfer.post(req, res)
-// })
 
 // router.post('/transfers', authUtils.checkUser, function(req, res) {
 //   controllers.transfers.post(req, res)
@@ -198,10 +147,6 @@ module.exports = router;
 
 
 
-// // SEARCH 
-// router.get('/search', authUtils.checkUser, function(req, res) {
-//   controllers.search.get(req, res)
-// })
 
 // // UTILS
 // router.get('/recalculate_totals', authUtils.checkUser, function(req, res) {
