@@ -49,7 +49,7 @@ var userAccounts = [
 
 var accountTotals = [
   {
-    amount: 25,
+    amount: 10,
     accountId: 1,
     typeId: 1,
   },
