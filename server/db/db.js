@@ -176,6 +176,10 @@ var AccountTotals = sequelize.define('accounttotals', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  deleted: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  },
 }, {
   timestamps: true
 }, {

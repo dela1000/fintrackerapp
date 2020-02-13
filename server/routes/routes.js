@@ -75,6 +75,10 @@ router.patch('/funds', authUtils.checkUser, function(req, res) {
   controllers.funds.patch(req, res)
 })
 
+router.delete('/funds', authUtils.checkUser, function(req, res) {
+  controllers.funds.delete(req, res)
+})
+
 //Expenses routes
 // // Add Expenses in bulk
 router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
@@ -83,6 +87,10 @@ router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
 
 router.patch('/expenses', authUtils.checkUser, function(req, res) {
   controllers.expenses.patch(req, res)
+})
+
+router.delete('/expenses', authUtils.checkUser, function(req, res) {
+  controllers.expenses.delete(req, res)
 })
 
 // // Add categories in bulk

@@ -467,10 +467,32 @@ module.exports = controllers = {
             successResponse(res, data);
           }
         } else{
-          failMessage(res, message)
+          failedResponse(res, message)
         };
       })
-    }
+    },
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var payload = {
+        id: req.body.id,
+        userId: userId,
+      };
+      models.funds.delete(payload, function(fundDeleted, message) {
+        if (fundDeleted) {
+          
+            calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+              if(data){
+                data.fundDeleted = fundDeleted;
+                successResponse(res, data);
+              } else{
+                failedResponse(res, failMessage)
+              };
+            });
+        } else{
+          failedResponse(res, message)
+        };
+      })
+    },
   },
 
   expenses_bulk: {
@@ -582,7 +604,29 @@ module.exports = controllers = {
           
         };
       })
-    }
+    },
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var payload = {
+        id: req.body.id,
+        userId: userId,
+      };
+      models.expenses.delete(payload, function(expenseDeleted, message) {
+        if (expenseDeleted) {
+          
+            calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+              if(data){
+                data.expenseDeleted = expenseDeleted;
+                successResponse(res, data);
+              } else{
+                failedResponse(res, failMessage)
+              };
+            });
+        } else{
+          failedResponse(res, message)
+        };
+      })
+    },
   },
 
   calculate_totals: {

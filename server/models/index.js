@@ -285,6 +285,7 @@ module.exports = {
       db.Funds.findAll({
         where: {
           userId: payload.userId,
+          deleted: false
         }
       })
       .then(function (results) {
@@ -312,6 +313,7 @@ module.exports = {
       db.AccountTotals.findAll({
         where: {
           userId: payload.userId,
+          deleted: false
         },
         include: [{
             model: db.UserAccounts,
@@ -491,6 +493,24 @@ module.exports = {
           };
         })
     },
+    delete: function (payload, callback) {
+      db.Funds.findOne({
+          where: {
+            userId: payload.userId,
+            id: payload.id,
+            deleted: false,
+          }
+        })
+        .then(function(fund) {
+          if (fund) {
+            fund.deleted = true;
+            fund.save();
+            callback(fund)
+          } else {
+            callback(false, "Fund not found")
+          };
+        })
+    },
   },
 
   expenses_bulk: {
@@ -510,6 +530,7 @@ module.exports = {
       db.Expenses.findAll({
         where: {
           userId: payload.userId,
+          deleted: false
         }
       })
       .then(function (results) {
@@ -542,6 +563,24 @@ module.exports = {
             callback(expense)
           } else {
             callback(false, "Fund not found")
+          };
+        })
+    },
+    delete: function (payload, callback) {
+      db.Expenses.findOne({
+          where: {
+            userId: payload.userId,
+            id: payload.id,
+            deleted: false,
+          }
+        })
+        .then(function(expense) {
+          if (expense) {
+            expense.deleted = true;
+            expense.save();
+            callback(expense)
+          } else {
+            callback(false, "Expense not found")
           };
         })
     },
