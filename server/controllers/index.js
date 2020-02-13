@@ -77,6 +77,7 @@ module.exports = controllers = {
   // TEST PING
   ping: {
     get: function(req, res) {
+      console.log("+++ 80 index.js COMPONENT PING")
       models.ping.get(function(data) {
         var finDB = "NOT PRESENT";
         if (data) {

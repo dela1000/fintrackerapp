@@ -144,7 +144,7 @@ module.exports = {
 
   ping: {
     get: function(callback) {
-      console.log("+++ 605 index.js Here")
+      console.log("+++ 147 index.js MODEL PING!")
       db.sequelize.query('show databases')
         .then(function(rows) {
           callback(rows[0])
@@ -481,8 +481,6 @@ module.exports = {
           if (fund) {
             _.forEach(payload, function(value, key) {
               if (key !== "id" && key !== "userId") {
-                console.log("+++ 484 index.js fund[key]: ", fund[key])
-                console.log("+++ 485 index.js value: ", value)
                 fund[key] = value;
               }
             })
