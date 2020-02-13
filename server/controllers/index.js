@@ -449,19 +449,24 @@ module.exports = controllers = {
           payload[key] = value
         }
       })
-      console.log("+++ 452 index.js payload: ", payload)
       models.funds.patch(payload, function(fundUpdated, message) {
-        console.log("+++ 454 index.js fundUpdated.dataValues: ", fundUpdated.dataValues)
         if (fundUpdated) {
-          calcUtils.calculate_totals(res, userId, function (data, failMessage) {
-            if(data){
-              successResponse(res, data);
-            } else{
-              failedResponse(res, failMessage)
-            };
-          });
+          if("amount" in payload || "accountId" in payload){
+            calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+              if(data){
+                successResponse(res, data);
+              } else{
+                failedResponse(res, failMessage)
+              };
+            });
+          } else {
+            var data = {
+              fundUpdated: fundUpdated
+            }
+            successResponse(res, data);
+          }
         } else{
-          
+          failMessage(res, message)
         };
       })
     }
@@ -557,12 +562,7 @@ module.exports = controllers = {
       })
       models.expenses.patch(payload, function(expenseUpdated, message) {
         if (expenseUpdated) {
-          if("comment" in payload || "categoryId" in payload || "date" in payload){
-            var data = {
-              expenseUpdated: expenseUpdated
-            }
-            successResponse(res, data);
-          } else {
+          if("amount" in payload || "accountId" in payload){
             calcUtils.calculate_totals(res, userId, function (data, failMessage) {
               if(data){
                 data[expenseUpdated] = expenseUpdated;
@@ -571,6 +571,11 @@ module.exports = controllers = {
                 failedResponse(res, failMessage)
               };
             });
+          } else {
+            var data = {
+              expenseUpdated: expenseUpdated
+            }
+            successResponse(res, data);
           }
         } else{
           
