@@ -696,6 +696,81 @@ module.exports = {
       })
     }
   },
+
+  search: {
+    get: function(payload, callback) {
+      var searchData = {
+        userId: payload.userId,
+        date: {
+          [Op.gte]: payload.startDate,
+          [Op.lte]: payload.endDate,
+        },
+        deleted: payload.deleted
+      };
+      if (payload.categoryId) {
+        searchData['categoryId'] = payload.categoryId
+      }
+      if (payload.accountId) {
+        searchData['accountId'] = payload.accountId
+      }
+      if (payload.comment) {
+        searchData['comment'] = {
+          [Op.like]: "%" + payload.comment + "%"
+        }
+      }
+      if (payload.minAmount || payload.maxAmount) {
+        if (!payload.minAmount) {
+          payload.minAmount = 0;
+        };
+        if (!payload.maxAmount) {
+          payload.maxAmount = 99999;
+        };
+        searchData['amount'] = {
+          [Op.between]: [Number(payload.minAmount) - .001, Number(payload.maxAmount) + .001],
+          // // THIS BELOW DOES NOT INCLUDE LESS THAN OR EQUALS WHEN DECIMALS ARE INVOLVED
+          // [Op.gte]: Number(payload.minAmount) - .001,
+          // [Op.lte]: Number(payload.maxAmount) + .001
+        }
+      };
+      
+      var tableName = payload.type;
+      var query = {
+        where: searchData
+      }
+
+      if (payload.limit) {
+        query['limit'] = payload.limit
+      }
+      if (payload.include) {
+        query['include'] = payload.include;
+      }
+      if (payload.orderBy) {
+        query['order'] = [];
+        if (payload.type === "Expenses") {
+          query['order'].push(["categoryId", "asc"])
+        }
+        if (payload.type === "Funds") {
+          query['order'].push(["accountId", "asc"])
+        }
+        query['order'].push(["amount", "desc"])
+
+        if (payload.order) {
+          query['order'].push([payload.orderBy, payload.order])
+        } else {
+          query['order'].push([payload.orderBy])
+        }
+      }
+      console.log("models - Search query: ", query)
+      db[tableName].findAll(query)
+        .then(function(foundResults) {
+          if (foundResults.length > 0) {
+            callback(foundResults)
+          } else {
+            callback(false, "No " + payload.type + " data found")
+          };
+        })
+    }
+  },
 }
 
 

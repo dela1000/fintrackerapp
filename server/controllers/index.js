@@ -746,6 +746,160 @@ module.exports = controllers = {
     }
   },
 
+  search: {
+    get: function (req, res) {
+      var userId = req.headers.userId;
+      var type = finUtils.capitalizeFirst(req.query.type);
+      if(type === "Accounts"){
+        type = "UserAccounts";
+      } 
+      else if (type === "Categories") {
+        type = "ExpensesCategories";
+      } else if (type === "Sources") {
+        type = "FundSources";
+      }
+
+      var payload = {
+        userId: userId,
+        type: type,
+        deleted: false,
+        include: [],
+        orderBy: "date",
+        order: "asc"
+      };
+
+      if (type === "Funds") {
+        payload.sourceId = req.query.sourceId;
+        payload.include.push({
+          model: db.FundSources,
+          attributes: ['source', 'id'],
+        })
+      }
+      if (type === "Expenses") {
+        payload.categoryId = req.query.categoryId;
+        payload.include.push({
+          model: db.ExpensesCategories,
+          attributes: ['name', 'id'],
+        })
+      }
+
+      if (type === "Funds" || type === "Expenses") {
+        payload.accountId = req.query.accountId;
+        payload.include.push({
+          model: db.UserAccounts,
+          attributes: ['account', 'id'],
+        })
+      }
+      
+      if (type === "Funds" || type === "UserAccounts") {
+        payload.typeId = req.query.typeId;
+        payload.include.push({
+          model: db.Types,
+          attributes: ['type', 'id'],
+        })
+      }
+
+      if (req.query.comment) {
+        payload.comment = req.query.comment
+      }
+      if (req.query.minAmount) {
+        payload.minAmount = req.query.minAmount
+      }
+      if (req.query.maxAmount) {
+        payload.maxAmount = req.query.maxAmount
+      }
+      if (req.query.deleted) {
+        payload.deleted = true;
+      };
+      if (req.query.limit) {
+        payload.limit = Number(req.query.limit);
+      };
+      if (req.query.orderBy) {
+        payload.orderBy = req.query.orderBy;
+      };
+      if (req.query.order) {
+        payload.order = req.query.order;
+      };
+      if (req.query.startDate) {
+        payload['startDate'] = req.query.startDate
+      } else {
+        payload['startDate'] = finUtils.startOfMonth();
+      };
+      if (req.query.endDate) {
+        payload['endDate'] = req.query.endDate;
+      } else {
+        payload['endDate'] = finUtils.endOfMonth();
+      };
+
+      if (req.query.timeframe && req.query.timeframe === 'year') {
+        payload['startDate'] = finUtils.startOfYear();
+        payload['endDate'] = finUtils.endOfYear();
+      }
+
+      if (req.query.timeframe && req.query.timeframe === 'month') {
+        payload['startDate'] = finUtils.startOfMonth();
+        payload['endDate'] = finUtils.endOfMonth();
+      }
+
+      models.search.get(payload, function(foundResults, message) {
+        if (foundResults) {
+          var finalData = [];
+          _.forEach(foundResults, function(found, index) {
+            item = {};
+            _.forEach(found.dataValues, function(value, key) {
+              item[key] = value;
+            })
+
+            if (type === "Funds") {
+              if (item.fundsource) {
+                item['source'] = item.fundsource.source;
+              }
+              if (item.useraccount) {
+                item['account'] = item.useraccount.account;
+              }
+              if (item.type) {
+                item['type'] = item.type.type;
+              }
+            }
+            if (type === "Expenses") {
+              if (item.expensescategory) {
+                item['name'] = item.expensescategory.name;
+              }
+              if (item.useraccount) {
+                item['account'] = item.useraccount.account;
+              }
+            }
+          
+            if (type === "UserAccounts") {
+              if (item.type) {
+                item['type'] = item.type.type;
+              }
+            }
+            finalData.push(item)
+          })
+          if(type === "Funds" || type === "Expenses"){
+            var totalAmountFound = 0;
+            if (finalData.length > 0) {
+              _.forEach(finalData, function(item) {
+                totalAmountFound = totalAmountFound + item.amount;
+              })
+            }
+          }
+          var data = {
+            results: finalData,
+            totalFound: finalData.length,
+            totalAmountFound: totalAmountFound.toFixed(2),
+            queryLimit: payload.limit
+          }
+          successResponse(res, data)
+
+        } else{
+          failedResponse(res, message)
+        };
+      })
+    }
+  },
+
 }
 
 // HELPER FUNCTIONS
@@ -2243,144 +2397,6 @@ var failedResponse = function (res, message) {
   //       })
   //     }
   //   }
-  // },
-
-  // search: {
-  //   get: function(req, res) {
-  //     var type = finUtils.type(req.query.type);
-  //     var payload = {
-  //       userId: req.headers.userId,
-  //       type: type,
-  //       deleted: false,
-  //       include: [],
-  //       orderBy: "date",
-  //       order: "asc"
-  //     }
-
-  //     if (req.query.categoryId) {
-  //       if (type === "Income" || type === "Expenses") {
-  //         payload.categoryId = req.query.categoryId;
-  //       }
-  //     }
-  //     if (req.query.accountId) {
-  //       if (type === "Income" || type === "Savings" || type === "Invest") {
-  //         payload.accountId = req.query.accountId;
-  //       }
-  //     }
-  //     if (req.query.comment) {
-  //       payload.comment = req.query.comment
-  //     }
-  //     if (req.query.minAmount) {
-  //       payload.minAmount = req.query.minAmount
-  //     }
-  //     if (req.query.maxAmount) {
-  //       payload.maxAmount = req.query.maxAmount
-  //     }
-  //     if (req.query.deleted) {
-  //       payload.deleted = true;
-  //     };
-  //     if (req.query.limit) {
-  //       payload.limit = Number(req.query.limit);
-  //     };
-  //     if (req.query.orderBy) {
-  //       payload.orderBy = req.query.orderBy;
-  //     };
-  //     if (req.query.order) {
-  //       payload.order = req.query.order;
-  //     };
-  //     if (req.query.startDate) {
-  //       payload['startDate'] = req.query.startDate
-  //     } else {
-  //       payload['startDate'] = finUtils.startOfMonth();
-  //     };
-  //     if (req.query.endDate) {
-  //       payload['endDate'] = req.query.endDate;
-  //     } else {
-  //       payload['endDate'] = finUtils.endOfMonth();
-  //     };
-
-  //     if (req.query.timeframe && req.query.timeframe === 'year') {
-  //       payload['startDate'] = finUtils.startOfYear();
-  //       payload['endDate'] = finUtils.endOfYear();
-  //     }
-
-  //     if (req.query.timeframe && req.query.timeframe === 'month') {
-  //       payload['startDate'] = finUtils.startOfMonth();
-  //       payload['endDate'] = finUtils.endOfMonth();
-  //     }
-
-  //     if (type === "Income" || type === "Expenses") {
-  //       var categoryModel = type + "Category"
-  //       payload.include.push({
-  //         model: db[categoryModel],
-  //         attributes: ['name'],
-  //       })
-  //     }
-  //     if (type === "Income" || type === "Savings" || type === "Invest") {
-  //       var accountModel = type + "Account";
-  //       payload.include.push({
-  //         model: db[accountModel],
-  //         attributes: ['name'],
-  //       })
-  //     }
-  //     console.log("+++ 1683 index.js payload: ", payload)
-  //     models.search.get(payload, function(foundResults, message) {
-  //       if (foundResults) {
-  //         var finalData = [];
-  //         _.forEach(foundResults, function(found) {
-  //           var lowerType = finUtils.toLowerCase(payload.type);
-  //           item = {};
-  //           _.forEach(found.dataValues, function(value, key) {
-  //             item[key] = value
-  //           })
-  //           if (type === "Income" || type === "Expenses") {
-  //             var category = lowerType + "category";
-  //             var addCategory = lowerType + "Category";
-  //             if (found[category]) {
-  //               item[addCategory] = found[category].name;
-  //               delete item[category];
-  //             }
-  //           }
-  //           if (type === "Income" || type === "Savings" || type === "Invest") {
-  //             var account = lowerType + "account";
-  //             var addAccount = lowerType + "Account";
-  //             if (found[account]) {
-  //               item[addAccount] = found[account].name;
-  //               delete item[account];
-  //             }
-  //           }
-  //           finalData.push(item)
-  //         })
-  //         var totalAmountFound = 0;
-  //         if (finalData.length > 0) {
-  //           _.forEach(finalData, function(item) {
-  //             totalAmountFound = totalAmountFound + item.amount;
-  //           })
-  //         }
-
-  //         res.status(200).json({
-  //           success: true,
-  //           type: payload.type,
-  //           data: {
-  //             results: finalData,
-  //             totalFound: finalData.length,
-  //             totalAmountFound: totalAmountFound.toFixed(2),
-  //             queryLimit: payload.limit
-  //           },
-  //         });
-  //       } else {
-  //         res.status(200).json({
-  //           success: false,
-  //           data: {
-  //             message: message,
-  //             totalFound: 0,
-  //             queryLimit: payload.limit
-  //           }
-  //         });
-  //       };
-
-  //     })
-  //   },
   // },
 
   // expenses_totals: {

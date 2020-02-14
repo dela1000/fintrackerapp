@@ -24,7 +24,7 @@ exports.types = [{
   },
 ];
 
-exports.type = function(type) {
+exports.capitalizeFirst = function(type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
