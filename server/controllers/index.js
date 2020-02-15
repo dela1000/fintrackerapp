@@ -703,12 +703,14 @@ module.exports = controllers = {
       }
       models.expenses_totals.get(payload, function(expensesData, message) {
         if (expensesData) {
-          var addedExpensesTotals = finUtils.addExpensesTotals(expensesData);
+          var addedExpensesTotals = calcUtils.add_expenses_totals(expensesData);
           var data = {
             totals: addedExpensesTotals.totals,
             timeframe: payload.timeframe,
+            totalExpenses: addedExpensesTotals.totalExpenses.toFixed(2),
             expensesCount: expensesData.length,
-            totalAmount: addedExpensesTotals.totalAmount.toFixed(2),
+            expensesByCategory: addedExpensesTotals.expensesByCategory,
+            expensesByAccount: addedExpensesTotals.expensesByAccount,
           }
           successResponse(res, data);
         } else {

@@ -611,6 +611,9 @@ module.exports = {
           include: [{
             model: db.ExpensesCategories,
             attributes: ['name'],
+          },{
+            model: db.UserAccounts,
+            attributes: ['account'],
           }]
         })
         .then(function(expensesData) {

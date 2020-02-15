@@ -136,19 +136,19 @@ exports.add_expenses_totals = function(data) {
     }
   })
 
-  _.forEach(totalsByCategory, function(totals) {
-    totals.amount = Number(totals.amount.toFixed(2));
-    totalsHolder.push(totals);
+  _.forEach(totalsByCategory, function(total, index) {
+    total.amount = Number(total.amount.toFixed(2));
+    totalsHolder.push(total);
   })
   var expensesByCategory = totalsHolder.sort(function(a, b) {
     return a.categoryId - b.categoryId;
   });
-
   var finalData = {
     totalExpenses: Number(totalExpenses.toFixed(2)),
     expensesByCategory: expensesByCategory,
     expensesByAccount: amountCleanUp(totalsByAccount),
   };
+
   return finalData;
 }
 
