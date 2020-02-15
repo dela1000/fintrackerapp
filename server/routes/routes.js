@@ -119,9 +119,9 @@ router.get('/categories_bulk', authUtils.checkUser, function(req, res) {
   controllers.categories_bulk.get(req, res)
 })
 // // Delete a category
-// router.delete('/categories', authUtils.checkUser, function(req, res) {
-//   controllers.categories.delete(req, res)
-// })
+router.delete('/categories', authUtils.checkUser, function(req, res) {
+  controllers.categories.delete(req, res)
+})
 
 // UTILS
 // // calculate and update all account totals and current available

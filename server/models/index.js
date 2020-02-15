@@ -436,6 +436,23 @@ module.exports = {
           };
         })
     },
+    delete: function (payload, callback) {
+      db.ExpensesCategories.findOne({
+          where: {
+            id: payload.id,
+            userId: payload.userId
+          }
+        })
+        .then(function (found) {
+          if(found){
+            found.deleted = true;
+            found.save();
+            callback(found);
+          } else{
+            callback(false, "Category not found")
+          };
+        })
+    }
   },
 
 
@@ -760,6 +777,12 @@ module.exports = {
           query['order'].push([payload.orderBy])
         }
       }
+      // if(tableName === "ExpensesCategories"){
+      //   delete query.where.date;
+      //   delete query.order;
+      //   query.where.id = query.where.categoryId;
+      //   delete query.where.categoryId;
+      // }
       console.log("models - Search query: ", query)
       db[tableName].findAll(query)
         .then(function(foundResults) {

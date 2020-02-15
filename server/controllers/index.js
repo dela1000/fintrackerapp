@@ -362,31 +362,51 @@ module.exports = controllers = {
         }
       })
     },
-    // delete: function (req, res) {
-    //   var userId = req.headers.userId;
-    //   var categoryId = req.body.id;
-    //   // var payload = {
-    //   //   userId: req.headers.userId,
-    //   //   name: req.body.name,
-    //   //   id: req.body.id,
-    //   // };
+    delete: function (req, res) {
+      var userId = req.headers.userId;
+      var categoryId = req.body.id;
 
-    //   var expensesQuery = {
-    //     where: {
-    //       userId: userId,
-    //       categoryId: categoryId,
-    //       deleted: false
-    //     }
-    //   }
-    //   models.expenses_bulk.get(expensesQuery, function (expensesFound, expensesMessage) {
-    //     if (expensesFound) {
-    //       console.log("+++ 383 index.js expensesFound: ", expensesFound)
+      var search = {
+        type: "Expenses",
+        userId: userId,
+        categoryId: categoryId,
+        deleted: false,
+        startDate: '01-01-2020',
+        endDate: '12-31-2100',
+      }
+      console.log("+++ 377 index.js searching")
+      models.search.get(search, function (expensesFound, expensesMessage) {
+        if (!expensesFound) {
+          var payload = {
+            id: categoryId,
+            userId: userId
+          }
+          models.categories.delete(payload, function (deletedCategory, categoryMessage) {
+            if (deletedCategory) {
+              var data = {
+                id: deletedCategory.dataValues.id,
+                accountDeleted: true,
+                result: deletedCategory.dataValues
+              }
+              successResponse(res, data)
+            } else {
+              failedResponse(res, categoryMessage)
+            }
+          })
+        } else {
+          var lines = " lines ";
+          if(expensesFound.length == 1){
+            lines = " line ";
+          }
+          var data = {
+            message: "This category is being used by " + expensesFound.length +  lines + "in Expenses",
+            found: expensesFound
+          }
+          successResponse(res, data)
+        }
           
-    //     } else {
-    //       failedResponse(res, expensesMessage)
-    //     }
-    //   })
-    // }
+      })
+    }
   },
 
   funds_bulk: {
@@ -799,6 +819,10 @@ module.exports = controllers = {
         })
       }
 
+      // if(type === "ExpensesCategories"){
+      //   payload.categoryId = req.query.categoryId;
+      // }
+
       if (req.query.comment) {
         payload.comment = req.query.comment
       }
@@ -843,6 +867,7 @@ module.exports = controllers = {
 
       models.search.get(payload, function(foundResults, message) {
         if (foundResults) {
+          console.log("+++ 846 index.js foundResults: ", foundResults)
           var finalData = [];
           _.forEach(foundResults, function(found, index) {
             item = {};
@@ -870,27 +895,28 @@ module.exports = controllers = {
               }
             }
           
-            if (type === "UserAccounts") {
-              if (item.type) {
-                item['type'] = item.type.type;
-              }
-            }
+            // if (type === "UserAccounts") {
+            //   if (item.type) {
+            //     item['type'] = item.type.type;
+            //   }
+            // }
             finalData.push(item)
           })
+          var data = {
+            results: finalData,
+            totalFound: finalData.length,
+            queryLimit: payload.limit
+          }
           if(type === "Funds" || type === "Expenses"){
             var totalAmountFound = 0;
             if (finalData.length > 0) {
               _.forEach(finalData, function(item) {
                 totalAmountFound = totalAmountFound + item.amount;
               })
+              data['totalAmountFound'] = totalAmountFound.toFixed(2);
             }
           }
-          var data = {
-            results: finalData,
-            totalFound: finalData.length,
-            totalAmountFound: totalAmountFound.toFixed(2),
-            queryLimit: payload.limit
-          }
+
           successResponse(res, data)
 
         } else{
