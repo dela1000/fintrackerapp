@@ -159,7 +159,7 @@ var expensesAdded = [];
 
 var addData = null;
 // Uncomment to not add data
-// var addData = true;
+var addData = true;
 
 exports.testData = function() {
   db.Users.findAll({

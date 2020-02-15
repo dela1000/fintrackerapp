@@ -78,6 +78,9 @@ exports.calculate_totals = function(res, userId, callback) {
                 userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
                 models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
                   if (currentAvailable) {
+                    _.forEach(newAccountTotals, function (item) {
+                      item.amount = Number(item.amount.toFixed(2));
+                    })
                     var data = {
                       newAccountTotals: newAccountTotals,
                       currentAvailable: Number(currentAvailable.amount),
@@ -158,7 +161,6 @@ exports.add_fund_totals = function(data) {
   var totalsBySourcesHolder = {};
   _.forEach(data, function(lineItem) {
     var item = lineItem.dataValues;
-    console.log("+++ 161 calcUtils.js item.typeId: ", item.typeId)
     if (item.typeId === 4) {
       if(item.amount > 0){
         if (!totalsByTypesHolder[item.typeId]) {
