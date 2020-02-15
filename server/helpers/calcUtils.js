@@ -161,10 +161,10 @@ exports.add_fund_totals = function (data) {
     if(!totalsByTypesHolder[item.typeId]){
       totalsByTypesHolder[item.typeId] = {
         amount: item.amount,
-        typeId: item.typeId,
       };
       if (item.type) {
-        totalsByTypesHolder[item.typeId].type = item.type.dataValues.type;
+        totalsByTypesHolder[item.typeId].typeId = item.typeId;
+        totalsByTypesHolder[item.typeId].type = item.type.type;
       }
     } else{
       totalsByTypesHolder[item.typeId]['amount'] = totalsByTypesHolder[item.typeId]['amount'] + item.amount;
@@ -173,10 +173,14 @@ exports.add_fund_totals = function (data) {
     if (!totalsByAccountsHolder[item.accountId]) {
       totalsByAccountsHolder[item.accountId] = {
         amount: item.amount,
-        accountId: item.accountId,
       };
       if (item.useraccount) {
-        totalsByAccountsHolder[item.accountId].account = item.useraccount.dataValues.account;
+        totalsByAccountsHolder[item.accountId].accountId =  item.accountId;
+        totalsByAccountsHolder[item.accountId].account = item.useraccount.account;
+      }
+      if(item.type){
+        totalsByAccountsHolder[item.accountId].typeId = item.typeId;
+        totalsByAccountsHolder[item.accountId].type = item.type.type;
       }
     } else {
       totalsByAccountsHolder[item.accountId]['amount'] = totalsByAccountsHolder[item.accountId]['amount'] + item.amount;
@@ -185,10 +189,10 @@ exports.add_fund_totals = function (data) {
     if (!totalsBySourcesHolder[item.sourceId]) {
       totalsBySourcesHolder[item.sourceId] = {
         amount: item.amount,
-        sourceId: item.sourceId,
       };
       if (item.fundsource) {
-        totalsBySourcesHolder[item.sourceId].source = item.fundsource.dataValues.source;
+        totalsBySourcesHolder[item.sourceId].sourceId = item.sourceId;
+        totalsBySourcesHolder[item.sourceId].source = item.fundsource.source;
       }
     } else {
       totalsBySourcesHolder[item.sourceId]['amount'] = totalsBySourcesHolder[item.sourceId]['amount'] + item.amount;
