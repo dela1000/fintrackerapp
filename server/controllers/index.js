@@ -371,10 +371,9 @@ module.exports = controllers = {
         userId: userId,
         categoryId: categoryId,
         deleted: false,
-        startDate: '01-01-2020',
-        endDate: '12-31-2100',
+        startDate: finUtils.startOfTime(),
+        endDate: finUtils.endOfTime(),
       }
-      console.log("+++ 377 index.js searching")
       models.search.get(search, function (expensesFound, expensesMessage) {
         if (!expensesFound) {
           var payload = {

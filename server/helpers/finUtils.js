@@ -55,3 +55,11 @@ exports.startOfYear = function() {
 exports.endOfYear = function() {
   return moment().endOf('year').format(dateFormat);
 }
+
+exports.startOfTime = function() {
+  return moment().endOf('year').format('01-01-2020');
+}
+
+exports.endOfTime = function() {
+  return moment().endOf('year').format('12-31-2100');
+}
