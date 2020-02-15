@@ -55,17 +55,17 @@ exports.calculate_totals = function(res, userId, callback) {
             var expensesTotal = 0;
             if (!_.isEmpty(expensesFound)) {
               var expensesByAccount = {};
-              _.forEach(expensesFound, function (expense) {
+              _.forEach(expensesFound, function(expense) {
                 expensesTotal = expensesTotal + expense.amount
-                if(!expensesByAccount[expense.accountId]){
+                if (!expensesByAccount[expense.accountId]) {
                   expensesByAccount[expense.accountId] = { amount: expense.amount }
                 } else {
                   expensesByAccount[expense.accountId].amount = expensesByAccount[expense.accountId].amount + expense.amount;
                 }
               })
               expensesTotal = expensesTotal.toFixed(2);
-              _.forEach(newAccountTotals, function (newAccountTotal) {
-                if(newAccountTotal.accountId in expensesByAccount){
+              _.forEach(newAccountTotals, function(newAccountTotal) {
+                if (newAccountTotal.accountId in expensesByAccount) {
                   newAccountTotal.amount = newAccountTotal.amount - expensesByAccount[newAccountTotal.accountId].amount;
                 }
               })
@@ -75,19 +75,19 @@ exports.calculate_totals = function(res, userId, callback) {
             models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
               if (updatedTotals) {
                 // ACCOUNT TOTALS CALCULATED
-                  userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
-                  models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
-                    if (currentAvailable) {
-                      var data = {
-                        newAccountTotals: newAccountTotals,
-                        currentAvailable: Number(currentAvailable.amount),
-                      };
-                      callback(data);
-                      console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
-                    } else {
-                      callback(false, availableMessage)
-                    }
-                  })
+                userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
+                models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
+                  if (currentAvailable) {
+                    var data = {
+                      newAccountTotals: newAccountTotals,
+                      currentAvailable: Number(currentAvailable.amount),
+                    };
+                    callback(data);
+                    console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
+                  } else {
+                    callback(false, availableMessage)
+                  }
+                })
               } else {
                 callback(false, updateMessage)
               };
@@ -152,53 +152,83 @@ exports.add_expenses_totals = function(data) {
   return finalData;
 }
 
-exports.add_fund_totals = function (data) {
+exports.add_fund_totals = function(data) {
   var totalsByTypesHolder = {};
   var totalsByAccountsHolder = {};
   var totalsBySourcesHolder = {};
   _.forEach(data, function(lineItem) {
     var item = lineItem.dataValues;
-    if(!totalsByTypesHolder[item.typeId]){
-      totalsByTypesHolder[item.typeId] = {
-        amount: item.amount,
-      };
-      if (item.type) {
-        totalsByTypesHolder[item.typeId].typeId = item.typeId;
-        totalsByTypesHolder[item.typeId].type = item.type.type;
-      }
-    } else{
-      totalsByTypesHolder[item.typeId]['amount'] = totalsByTypesHolder[item.typeId]['amount'] + item.amount;
-    };
+    console.log("+++ 161 calcUtils.js item.typeId: ", item.typeId)
+    if (item.typeId === 4) {
+      if(item.amount > 0){
+        if (!totalsByTypesHolder[item.typeId]) {
+          totalsByTypesHolder[item.typeId] = {
+            amount: item.amount,
+          };
+          if (item.type) {
+            totalsByTypesHolder[item.typeId].typeId = item.typeId;
+            totalsByTypesHolder[item.typeId].type = item.type.type;
+          }
+        } else {
+          totalsByTypesHolder[item.typeId]['amount'] = totalsByTypesHolder[item.typeId]['amount'] + item.amount;
+        };
 
-    if (!totalsByAccountsHolder[item.accountId]) {
-      totalsByAccountsHolder[item.accountId] = {
-        amount: item.amount,
-      };
-      if (item.useraccount) {
-        totalsByAccountsHolder[item.accountId].accountId =  item.accountId;
-        totalsByAccountsHolder[item.accountId].account = item.useraccount.account;
-      }
-      if(item.type){
-        totalsByAccountsHolder[item.accountId].typeId = item.typeId;
-        totalsByAccountsHolder[item.accountId].type = item.type.type;
+        if (!totalsBySourcesHolder[item.sourceId]) {
+          totalsBySourcesHolder[item.sourceId] = {
+            amount: item.amount,
+          };
+          if (item.fundsource) {
+            totalsBySourcesHolder[item.sourceId].sourceId = item.sourceId;
+            totalsBySourcesHolder[item.sourceId].source = item.fundsource.source;
+          }
+        } else {
+          totalsBySourcesHolder[item.sourceId]['amount'] = totalsBySourcesHolder[item.sourceId]['amount'] + item.amount;
+        }
       }
     } else {
-      totalsByAccountsHolder[item.accountId]['amount'] = totalsByAccountsHolder[item.accountId]['amount'] + item.amount;
-    };
-
-    if (!totalsBySourcesHolder[item.sourceId]) {
-      totalsBySourcesHolder[item.sourceId] = {
-        amount: item.amount,
+      if (!totalsByTypesHolder[item.typeId]) {
+        totalsByTypesHolder[item.typeId] = {
+          amount: item.amount,
+        };
+        if (item.type) {
+          totalsByTypesHolder[item.typeId].typeId = item.typeId;
+          totalsByTypesHolder[item.typeId].type = item.type.type;
+        }
+      } else {
+        totalsByTypesHolder[item.typeId]['amount'] = totalsByTypesHolder[item.typeId]['amount'] + item.amount;
       };
-      if (item.fundsource) {
-        totalsBySourcesHolder[item.sourceId].sourceId = item.sourceId;
-        totalsBySourcesHolder[item.sourceId].source = item.fundsource.source;
+
+      if (!totalsByAccountsHolder[item.accountId]) {
+        totalsByAccountsHolder[item.accountId] = {
+          amount: item.amount,
+        };
+        if (item.useraccount) {
+          totalsByAccountsHolder[item.accountId].accountId = item.accountId;
+          totalsByAccountsHolder[item.accountId].account = item.useraccount.account;
+        }
+        if (item.type) {
+          totalsByAccountsHolder[item.accountId].typeId = item.typeId;
+          totalsByAccountsHolder[item.accountId].type = item.type.type;
+        }
+      } else {
+        totalsByAccountsHolder[item.accountId]['amount'] = totalsByAccountsHolder[item.accountId]['amount'] + item.amount;
+      };
+
+      if (!totalsBySourcesHolder[item.sourceId]) {
+        totalsBySourcesHolder[item.sourceId] = {
+          amount: item.amount,
+        };
+        if (item.fundsource) {
+          totalsBySourcesHolder[item.sourceId].sourceId = item.sourceId;
+          totalsBySourcesHolder[item.sourceId].source = item.fundsource.source;
+        }
+      } else {
+        totalsBySourcesHolder[item.sourceId]['amount'] = totalsBySourcesHolder[item.sourceId]['amount'] + item.amount;
       }
-    } else {
-      totalsBySourcesHolder[item.sourceId]['amount'] = totalsBySourcesHolder[item.sourceId]['amount'] + item.amount;
+
     }
   })
-  
+
   return {
     fundsByTypes: amountCleanUp(totalsByTypesHolder),
     fundsByAccounts: amountCleanUp(totalsByAccountsHolder),
@@ -206,9 +236,9 @@ exports.add_fund_totals = function (data) {
   }
 }
 
-var amountCleanUp = function (data) {
+var amountCleanUp = function(data) {
   var holder = [];
-  _.forEach(data, function (item) {
+  _.forEach(data, function(item) {
     item.amount = Number(item.amount.toFixed(2));
     holder.push(item)
   })

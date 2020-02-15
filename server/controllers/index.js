@@ -941,7 +941,7 @@ module.exports = controllers = {
         accountsArray: [{id: details.fromAccountId}, {id: details.toAccountId}]
       }
       models.user_accounts_bulk.get(payload, function (userAccounts, accountsMessage) {
-        if (userAccounts) {
+        if (userAccounts.length > 0) {
           var sourceData = {
             userId: userId,
             source: "Internal Transfer"
@@ -953,7 +953,7 @@ module.exports = controllers = {
                 date: details.date,
                 userId: userId,
                 sourceId: source.id,
-                typeId: accountData.typeId,
+                typeId: 4,
               };
               if(accountData.id === details.toAccountId){
                 fund['amount'] = details.amount;

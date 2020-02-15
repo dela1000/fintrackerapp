@@ -177,7 +177,7 @@ module.exports = {
       }
       db.UserAccounts.findAll(query)
       .then(function (results) {
-        if(results){
+        if(results.length > 0){
           callback(results)
         } else{
           callback(false, "User Accounts not found")
