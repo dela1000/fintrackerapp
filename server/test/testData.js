@@ -159,7 +159,7 @@ var expensesAdded = [];
 
 // Uncomment to not add data
 var addData = null;
-// var addData = true;
+var addData = true;
 
 exports.testData = function() {
   db.Users.findAll({
@@ -173,6 +173,7 @@ exports.testData = function() {
         email: "1@1.com"
       })
       .then(function(user) {
+
         if(!addData){
           db.CurrentAvailables.create({
             amount: 60,
@@ -248,7 +249,13 @@ exports.testData = function() {
             
           })
         } else {
-          console.log("+++ Only User Added")
+          db.CurrentAvailables.create({
+            amount: 0,
+            userId: 1
+          })
+          .then(function () {
+            console.log("+++ Only User/CurrentAvailables Added")
+          })
         }
 
       })
