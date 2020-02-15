@@ -134,6 +134,10 @@ router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
   controllers.expenses_totals.get(req, res)
 })
 
+// TRANSFER FUNDS
+router.post('/transfers', authUtils.checkUser, function(req, res) {
+  controllers.transfers.post(req, res)
+})
 
 // SEARCH 
 router.get('/search', authUtils.checkUser, function(req, res) {
@@ -144,10 +148,6 @@ router.get('/search', authUtils.checkUser, function(req, res) {
 module.exports = router;
 
 
-
-// router.post('/transfers', authUtils.checkUser, function(req, res) {
-//   controllers.transfers.post(req, res)
-// })
 
 
 

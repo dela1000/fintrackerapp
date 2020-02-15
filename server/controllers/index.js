@@ -523,7 +523,6 @@ module.exports = controllers = {
       };
       models.funds.delete(payload, function(fundDeleted, message) {
         if (fundDeleted) {
-          
             calcUtils.calculate_totals(res, userId, function (data, failMessage) {
               if(data){
                 data.fundDeleted = fundDeleted;
@@ -926,6 +925,69 @@ module.exports = controllers = {
       })
     }
   },
+
+  transfers: {
+    post: function (req, res) {
+      var userId = req.headers.userId;
+      var details = {
+        amount: req.body.amount,
+        fromAccountId: req.body.fromAccountId,
+        toAccountId: req.body.toAccountId,
+        comment: req.body.comment,
+        date: req.body.date,
+      }
+      var payload = {
+        userId: userId,
+        accountsArray: [{id: details.fromAccountId}, {id: details.toAccountId}]
+      }
+      models.user_accounts_bulk.get(payload, function (userAccounts, accountsMessage) {
+        if (userAccounts) {
+          var sourceData = {
+            userId: userId,
+            source: "Internal Transfer"
+          }
+          models.fund_source.find_or_create(sourceData, function (source) {
+            var transferFundsData = [];
+            _.forEach(userAccounts, function (accountData) {
+              var fund = {
+                date: details.date,
+                userId: userId,
+                sourceId: source.id,
+                typeId: accountData.typeId,
+              };
+              if(accountData.id === details.toAccountId){
+                fund['amount'] = details.amount;
+                fund['transferAccountId'] = details.fromAccountId;
+                fund['accountId'] = details.toAccountId;
+              }
+              if(accountData.id === details.fromAccountId){
+                fund['amount'] = -details.amount;
+                fund['transferAccountId'] = details.toAccountId;
+                fund['accountId'] = details.fromAccountId;
+              }
+              transferFundsData.push(fund)
+            })
+            models.funds_bulk.post(transferFundsData, function (fundsAdded, fundsMessage) {
+              if (fundsAdded) {
+                calcUtils.calculate_totals(res, userId, function (data, failMessage) {
+                  if(data){
+                    data.transferFundsData = transferFundsData;
+                    successResponse(res, data);
+                  } else{
+                    failedResponse(res, failMessage)
+                  };
+                });
+              } else {
+                failedResponse(res, fundsMessage)
+              }
+            })
+          })
+        } else {
+          failedResponse(res, accountsMessage)
+        }
+      })
+    }
+  }
 
 }
 

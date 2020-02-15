@@ -157,8 +157,8 @@ var fundSourcesAdded = [];
 var fundsAdded = [];
 var expensesAdded = [];
 
-// Uncomment to not add data
 var addData = null;
+// Uncomment to not add data
 var addData = true;
 
 exports.testData = function() {
