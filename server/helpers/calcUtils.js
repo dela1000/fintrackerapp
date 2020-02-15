@@ -145,9 +145,9 @@ exports.add_expenses_totals = function(data) {
   });
 
   var finalData = {
+    totalExpenses: Number(totalExpenses.toFixed(2)),
     expensesByCategory: expensesByCategory,
     expensesByAccount: amountCleanUp(totalsByAccount),
-    totalExpenses: Number(totalExpenses.toFixed(2)),
   };
   return finalData;
 }

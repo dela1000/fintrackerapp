@@ -744,11 +744,11 @@ module.exports = controllers = {
           }
           _.forEach(results.accounttotals, function (total) {
             data.availableByAccount.push({
-              account: total.useraccount.account,
+              amount: total.amount,
               accountId: total.useraccount.id,
-              type: total.type.type,
+              account: total.useraccount.account,
               typeId: total.type.id,
-              amount: total.amount
+              type: total.type.type,
             })
           })
           _.forEach(expensesTotals, function(value, key) {
