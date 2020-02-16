@@ -2,6 +2,7 @@ import React from 'react';
 import logo from '../../logo.svg';
 import './App.css';
 import Login from '../login/Login.js';
+import axios from 'axios'
 
 class App extends React.Component {
   static propTypes = {
@@ -38,9 +39,16 @@ class App extends React.Component {
   //   });
   // };
 
-  // authenticate = data => {
-  //   console.log("+++ 46 App.js data: ", data)
-  // };
+  authenticate = data => {
+    
+    axios.post('/login', data)
+      .then(function (response) {
+        console.log("response.data: ", JSON.stringify(response.data, null, "\t"));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   // logout = async () => {
   //   console.log("Logging out!");
@@ -50,7 +58,7 @@ class App extends React.Component {
     const logout = <button onClick={this.logout}>Log Out!</button>;
 
     // 1. Check if they are logged in
-    return <Login />;
+    return <Login authenticate={this.authenticate}/>;
 
   //   // 2. check if they are not the owner of the store
   //   if (this.state.uid !== this.state.owner) {

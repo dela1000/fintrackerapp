@@ -18,8 +18,8 @@ router.post('/signup', function(req, res) {
   controllers.signup.post(req, res)
 })
 
-router.get('/login', function(req, res) {
-  controllers.login.get(req, res)
+router.post('/login', function(req, res) {
+  controllers.login.post(req, res)
 })
 
 router.get('/logout', function(req, res) {

@@ -5,7 +5,7 @@ const Login = props => (
   <nav className="login">
     <h2>Inventory Login</h2>
     <p>Sign in to manage your store's inventory.</p>
-    <button>
+    <button onClick={() => props.authenticate({username: "aa", password: "aa"})}>
       Login
     </button>
     <button>
@@ -14,8 +14,8 @@ const Login = props => (
   </nav>
 );
 
-// Login.propTypes = {
-//   authenticate: PropTypes.func.isRequired
-// };
+Login.propTypes = {
+  authenticate: PropTypes.func.isRequired
+};
 
 export default Login;
