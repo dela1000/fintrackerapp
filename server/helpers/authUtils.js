@@ -60,3 +60,5 @@ exports.checkPasswordHash = function(password, hash, callback) {
       callback(res)
     });
 }
+
+exports.commonPassword = [ '12345678', '01234567', '11111111', '12121212', '23232323', '00000000', 'password', 'password1', 'password123', 'Passw0rd', 'PASSW0RD', 'PASSW0RD123', 'PASSW0RD1', 'PASSW0RD2', 'PASSW0RD3', 'Password123', '1234567890', '0123456789', 'qwerty12', 'qwerty123', 'qwerty1234', 'password111', 'abcd1234', 'ABCD1234', 'freepass', 'aaaaaaaa', 'password', '123456789', 'sunshine','iloveyou', 'princess', 'admin123', 'admin111', 'admin222', 'admin333', 'admin444', 'welcome1', '66666666', 'abc12345', 'football', '123123123', 'monkey12', 'monkey1212', 'monkey1234', '87654321', '!@#$%^&*', 'charlie1', 'aa123456', 'donald1',]

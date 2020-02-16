@@ -6,6 +6,8 @@ var Promise = require('bluebird');
 var db = require('../db/db.js');
 var _ = require('lodash');
 var moment = require('moment');
+var passwordValidator = require('password-validator');
+var emailValidator  = require('email-validator');
 
 var controllers;
 module.exports = controllers = {
@@ -41,6 +43,26 @@ module.exports = controllers = {
         username: req.body.username,
         password: req.body.password,
         email: req.body.email
+      }
+      
+      // Username, password and email validation
+      var userSchema = new passwordValidator().is().min(3).is().max(20).has().not().spaces();
+      var passSchema = new passwordValidator().is().min(8).is().max(20).has().not().spaces().is().not().oneOf(authUtils.commonPassword);
+
+      var nameVal = userSchema.validate(payload.username, { list: true });
+      var passVal = passSchema.validate(payload.password, { list: true });
+      
+      if(!_.isEmpty(nameVal)){
+        failedResponse(res, 'Username must be between 3 and 20 characters long and have no spaces.')
+        return;
+      }
+      if(!_.isEmpty(passVal)){
+          failedResponse(res, 'Password must be at least 8 characters long, have no spaces, and be unique.')
+          return;
+      }
+      if(!emailValidator.validate(payload.email)){
+        failedResponse(res, 'Please use a valid email address.')
+        return;
       }
 
       models.signup.post(payload, function(isUser, message) {
