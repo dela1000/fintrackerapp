@@ -6,10 +6,10 @@ import _ from "lodash";
 import axios from 'axios';
 
 class App extends React.Component {
-  state = {};
 
   static propTypes = {
-    user: PropTypes.object
+    user: PropTypes.object,
+    message: PropTypes.string
   };
 
   constructor(props) {
@@ -21,28 +21,35 @@ class App extends React.Component {
   }
 
   authenticate = async data => {
-    
+
     axios.post('/login', data)
       .then((res) => {
         var data = res.data;
-        if(data.success){
-          this.setState({user: data.data})
+        console.log("data: ", JSON.stringify(data, null, "\t"));
+        if (data.success) {
+          this.setState({ user: data.data }, () => {
+            if(this.state.user && this.state.user.fintrackToken){
+              axios.defaults.headers.common[process.env.REACT_APP_TOKEN] = this.state.user.fintrackToken
+            }
+          })
+        } else {
+          this.setState({ message: data.message })
         }
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
   };
 
   logout = async () => {
     axios.get('/logout')
-    .then((res) => {
-      this.setState({user: null})
-    })
+      .then((res) => {
+        delete axios.defaults.headers.common[process.env.REACT_APP_TOKEN];
+        this.setState({ user: null })
+      })
   }
 
   render() {
-    // 1. Check if they are logged in
     if (_.isEmpty(this.state.user)) {
       return <Login authenticate={this.authenticate}/>;
     } else {
