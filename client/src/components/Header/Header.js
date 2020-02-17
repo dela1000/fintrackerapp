@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import axios from 'axios';
+import Button from '@material-ui/core/Button';
 
 class Header extends React.Component {
   static propTypes = {
@@ -10,9 +11,9 @@ class Header extends React.Component {
   render() {
     return (
       <nav>
-        <button onClick={() => this.props.logout()}>
+        <Button onClick={() => this.props.logout()}>
           Log Out
-        </button>
+        </Button>
       </nav>
     )
 

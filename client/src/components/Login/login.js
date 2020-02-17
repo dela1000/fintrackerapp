@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
+
 
 class Login extends React.Component {
 
@@ -34,16 +38,16 @@ class Login extends React.Component {
   render() {
     return <nav>
       <h2>Login</h2>
-      <input type="text" name="username" onChange={this.handleInput} value={this.props.username} onKeyPress={this.onEnter} autoFocus />
-      <input type="text" name="password" onChange={this.handleInput} value={this.props.password} onKeyPress={this.onEnter} />
+      <TextField type="text" name="username" id="outlined-basic" label="Username" onChange={this.handleInput} value={this.props.username} onKeyPress={this.onEnter} autoFocus />
+      <TextField type="password" name="password" id="outlined-basic" label="Password" variant="outlined" onChange={this.handleInput} value={this.props.password} onKeyPress={this.onEnter} />
 
-      <button onClick={() => this.sendRequest()}>
+      <Button onClick={() => this.sendRequest()}>
         Log In
-      </button>
+      </Button>
       
-      <button onClick={() => this.props.logout()}>
+      <Button onClick={() => this.props.logout()}>
         Log Out
-      </button>
+      </Button>
       
     </nav>
   }
