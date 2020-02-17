@@ -5,6 +5,25 @@ import Header from './Header/Header.js';
 import _ from "lodash";
 import axios from 'axios';
 
+import LocalStorageService from "./LocalStorageService";
+
+
+const localStorageService = LocalStorageService.getService();
+
+axios.interceptors.request.use(
+ config => {
+   const token = localStorageService.getAccessToken();
+   if (token) {
+       config.headers[process.env.REACT_APP_TOKEN] = token;
+   }
+   config.headers['Content-Type'] = 'application/json';
+   return config;
+ },
+ error => {
+     Promise.reject(error)
+ }
+);
+
 class App extends React.Component {
 
   static propTypes = {
@@ -23,17 +42,13 @@ class App extends React.Component {
   authenticate = async loginData => {
 
     axios.post('/login', loginData)
-      .then((res) => {  
+      .then((res) => {
         var data = res.data;
         console.log("data: ", JSON.stringify(data, null, "\t"));
         if (data.success) {
           this.setState({ user: data.data }, () => {
-            if(this.state.user && this.state.user.fintrackToken){
-              axios.defaults.headers.common[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
-              axios.defaults.headers.post[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
-              axios.defaults.headers.get[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
-              axios.defaults.headers.patch[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
-              axios.defaults.headers.delete[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
+            if(data.data && data.data[process.env.REACT_APP_TOKEN]){
+              localStorageService.setToken(this.state.user[process.env.REACT_APP_TOKEN]);
             }
           })
         } else {
