@@ -7,20 +7,15 @@ class Header extends React.Component {
     logout: PropTypes.func.isRequired
   };
 
-  componentDidMount() {
-    axios.get('/all_totals')
-      .then((res) => {
-        var data = res.data;
-        console.log("data: ", JSON.stringify(data, null, "\t"));
-      })
-  }
   render() {
-    return <nav>
-      <h2>LogOut</h2>
-      <button onClick={() => this.props.logout()}>
-        Log Out
-      </button>
-    </nav>
+    return (
+      <nav>
+        <button onClick={() => this.props.logout()}>
+          Log Out
+        </button>
+      </nav>
+    )
+
   }
 };
 

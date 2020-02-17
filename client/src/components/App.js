@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from "prop-types";
 import Login from './Login/Login.js';
 import Header from './Header/Header.js';
+import Main from './Main/Main.js';
 import _ from "lodash";
 import axios from 'axios';
 
-import LocalStorageService from "./LocalStorageService";
+import LocalStorageService from "./Services/LocalStorageService";
 
 const localStorageService = LocalStorageService.getService();
 
@@ -70,7 +71,7 @@ class App extends React.Component {
           })
         }
       })
-      .catch(function(error) {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -91,7 +92,13 @@ class App extends React.Component {
     if (!loggedIn) {
       return <Login authenticate={this.authenticate} logout={this.logout} />;
     } else {
-      return <Header logout={this.logout} />;
+      return (
+        <React.Fragment>
+          <Header logout={this.logout} />
+          <Main />
+        </React.Fragment>
+      )
+
     }
   }
 }
