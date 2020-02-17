@@ -25,11 +25,11 @@ module.exports = {
               if (res) {
                 callback(found)
               } else {
-                callback(false, 'incorect username and password')
+                callback(false, 'Incorrect username and password')
               }
             })
           } else {
-            callback(false, "username not found")
+            callback(false, "Username not found")
           };
         })
     }

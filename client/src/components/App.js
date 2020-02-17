@@ -65,7 +65,7 @@ class App extends React.Component {
           })
           
         } else {
-          this.setState({ message: data.message }, () => {
+          this.setState({ message: data.data.message }, () => {
             console.log("+++ 70 App.js this.state: ", this.state)
           })
         }
@@ -81,7 +81,7 @@ class App extends React.Component {
         localStorageService.clearToken();
         delete axios.defaults.headers.common[process.env.REACT_APP_TOKEN];
         this.setState({ user: null, loggedIn: false }, ()=> {
-          console.log("+++ 87 App.js this.state: ", this.state)
+          console.log("Logged out")
         })
       })
   }
