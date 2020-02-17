@@ -27,9 +27,7 @@ exports.checkUser = function(req, res, next) {
   if (!token) {
     res.status(200).send({
       success: false,
-      data: {
-        message: "No token detected"
-      }
+      data: { message: "No token detected" }
     })
   } else {
     var isloggedIn = isLoggedIn(token)
@@ -40,9 +38,7 @@ exports.checkUser = function(req, res, next) {
     } else {
       res.status(200).json({
         success: false,
-        data: {
-          message: "Unathorized user token"
-        }
+        data: { message: "Unathorized user token" }
       })
     }
   }

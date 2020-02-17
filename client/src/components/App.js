@@ -20,18 +20,20 @@ class App extends React.Component {
     };
   }
 
-  authenticate = async data => {
+  authenticate = async loginData => {
 
-    axios.post('/login', data)
-      .then((res) => {
+    axios.post('/login', loginData)
+      .then((res) => {  
         var data = res.data;
         console.log("data: ", JSON.stringify(data, null, "\t"));
         if (data.success) {
           this.setState({ user: data.data }, () => {
             if(this.state.user && this.state.user.fintrackToken){
-              console.log("+++ 32 App.js process.env.REACT_APP_TOKEN: ", process.env.REACT_APP_TOKEN)
-              axios.defaults.headers.common[process.env.REACT_APP_TOKEN] = data.data.fintrackToken
-              console.log("+++ 34 App.js axios.defaults.headers.common[process.env.REACT_APP_TOKEN]: ", axios.defaults.headers.common[process.env.REACT_APP_TOKEN])
+              axios.defaults.headers.common[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
+              axios.defaults.headers.post[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
+              axios.defaults.headers.get[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
+              axios.defaults.headers.patch[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
+              axios.defaults.headers.delete[process.env.REACT_APP_TOKEN] = data.data.fintrackToken;
             }
           })
         } else {

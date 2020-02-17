@@ -11,7 +11,7 @@ class Header extends React.Component {
     axios.get('/all_totals')
       .then((res) => {
         var data = res.data;
-        console.log("+++ 14 Header.js data: ", data)
+        console.log("data: ", JSON.stringify(data, null, "\t"));
       })
   }
   render() {
