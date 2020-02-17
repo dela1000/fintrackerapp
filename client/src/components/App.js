@@ -29,7 +29,9 @@ class App extends React.Component {
         if (data.success) {
           this.setState({ user: data.data }, () => {
             if(this.state.user && this.state.user.fintrackToken){
-              axios.defaults.headers.common[process.env.REACT_APP_TOKEN] = this.state.user.fintrackToken
+              console.log("+++ 32 App.js process.env.REACT_APP_TOKEN: ", process.env.REACT_APP_TOKEN)
+              axios.defaults.headers.common[process.env.REACT_APP_TOKEN] = data.data.fintrackToken
+              console.log("+++ 34 App.js axios.defaults.headers.common[process.env.REACT_APP_TOKEN]: ", axios.defaults.headers.common[process.env.REACT_APP_TOKEN])
             }
           })
         } else {

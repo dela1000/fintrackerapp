@@ -22,6 +22,7 @@ var isLoggedIn = function(token) {
 
 // Reroute based on Auth status
 exports.checkUser = function(req, res, next) {
+  console.log("+++ 25 authUtils.js req.headers: ", req.headers)
   var token = req.headers[secrets.tokenName];
   if (!token) {
     res.status(200).send({

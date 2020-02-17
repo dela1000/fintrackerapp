@@ -1,17 +1,27 @@
 import React from "react";
 import PropTypes from "prop-types";
+import axios from 'axios';
 
-const Header = props => (
-  <nav>
-    <h2>LogOut</h2>
-    <button onClick={() => props.logout()}>
-      Log Out
-    </button>
-  </nav>
-);
+class Header extends React.Component {
+  static propTypes = {
+    logout: PropTypes.func.isRequired
+  };
 
-Header.propTypes = {
-  logout: PropTypes.func.isRequired
+  componentDidMount() {
+    axios.get('/all_totals')
+      .then((res) => {
+        var data = res.data;
+        console.log("+++ 14 Header.js data: ", data)
+      })
+  }
+  render() {
+    return <nav>
+      <h2>LogOut</h2>
+      <button onClick={() => this.props.logout()}>
+        Log Out
+      </button>
+    </nav>
+  }
 };
 
 export default Header;
