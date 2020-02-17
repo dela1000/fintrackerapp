@@ -12,7 +12,6 @@ const localStorageService = LocalStorageService.getService();
 axios.interceptors.request.use(
  config => {
     const token = localStorageService.getAccessToken();
-    console.log("+++ 15 App.js token: ", token)
     if (token) {
       config.headers[process.env.REACT_APP_TOKEN] = token;
     }
@@ -38,17 +37,14 @@ class App extends React.Component {
       user: null,
       loggedIn: false
     };
-  }
+  };
 
   componentDidMount() {
     let token = localStorageService.getAccessToken();
-    console.log("+++ 43 App.js token: ", token)
+
     if(token && token.length > 0){
-      var userData = localStorageService.getUserData()
-      console.log("+++ 45 App.js userData: ", userData)
-      this.setState({ user: userData, loggedIn: true }, ()=> {
-        console.log("+++ 49 App.js this.state: ", this.state)
-      })
+      var userData = localStorageService.getUserData();
+      this.setState({ user: userData, loggedIn: true });
     }
   };
 
