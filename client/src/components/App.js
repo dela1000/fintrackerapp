@@ -7,21 +7,21 @@ import axios from 'axios';
 
 import LocalStorageService from "./LocalStorageService";
 
-
 const localStorageService = LocalStorageService.getService();
 
 axios.interceptors.request.use(
  config => {
-   const token = localStorageService.getAccessToken();
-   if (token) {
-       config.headers[process.env.REACT_APP_TOKEN] = token;
-   }
-   config.headers['Content-Type'] = 'application/json';
-   return config;
+    const token = localStorageService.getAccessToken();
+    console.log("+++ 15 App.js token: ", token)
+    if (token) {
+      config.headers[process.env.REACT_APP_TOKEN] = token;
+    }
+    config.headers['Content-Type'] = 'application/json';
+    return config;
  },
- error => {
-     Promise.reject(error)
- }
+  error => {
+    Promise.reject(error)
+  }
 );
 
 class App extends React.Component {
@@ -35,24 +35,43 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      user: null
+      user: null,
+      loggedIn: false
     };
   }
 
-  authenticate = async loginData => {
+  componentDidMount() {
+    let token = localStorageService.getAccessToken();
+    console.log("+++ 43 App.js token: ", token)
+    if(token && token.length > 0){
+      var userData = localStorageService.getUserData()
+      console.log("+++ 45 App.js userData: ", userData)
+      this.setState({ user: userData, loggedIn: true }, ()=> {
+        console.log("+++ 49 App.js this.state: ", this.state)
+      })
+    }
+  };
 
+  authenticate = async loginData => {
     axios.post('/login', loginData)
       .then((res) => {
-        var data = res.data;
-        console.log("data: ", JSON.stringify(data, null, "\t"));
-        if (data.success) {
-          this.setState({ user: data.data }, () => {
-            if(data.data && data.data[process.env.REACT_APP_TOKEN]){
-              localStorageService.setToken(this.state.user[process.env.REACT_APP_TOKEN]);
-            }
+        let data = res.data;
+        if (data.success && data.data && data.data[process.env.REACT_APP_TOKEN]){
+          console.log("+++ 60 App.js setting Token")
+          this.setState({ user: data.data, loggedIn: true }, () => {
+            localStorageService.setToken({
+              token: data.data[process.env.REACT_APP_TOKEN],
+              username: data.data.username,
+              userId: data.data.userId,
+              initial_done: data.data.initials_done,
+              userEmail: data.data.userEmail,
+            });
           })
+          
         } else {
-          this.setState({ message: data.message })
+          this.setState({ message: data.message }, () => {
+            console.log("+++ 70 App.js this.state: ", this.state)
+          })
         }
       })
       .catch(function(error) {
@@ -63,16 +82,20 @@ class App extends React.Component {
   logout = async () => {
     axios.get('/logout')
       .then((res) => {
+        localStorageService.clearToken();
         delete axios.defaults.headers.common[process.env.REACT_APP_TOKEN];
-        this.setState({ user: null })
+        this.setState({ user: null, loggedIn: false }, ()=> {
+          console.log("+++ 87 App.js this.state: ", this.state)
+        })
       })
   }
 
   render() {
-    if (_.isEmpty(this.state.user)) {
-      return <Login authenticate={this.authenticate}/>;
+    const loggedIn = this.state.loggedIn;
+    if (!loggedIn) {
+      return <Login authenticate={this.authenticate} logout={this.logout} />;
     } else {
-      return <Header logout={this.logout}/>;
+      return <Header logout={this.logout} />;
     }
   }
 }

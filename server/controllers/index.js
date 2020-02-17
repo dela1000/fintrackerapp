@@ -26,7 +26,7 @@ module.exports = controllers = {
         if (isUser) {
           authUtils.createToken(req, res, isUser, function(token) {
             var data = {
-              fintrackToken: token,
+              fintracktoken: token,
               userId: isUser.dataValues.id,
               username: isUser.dataValues.username,
               userEmail: isUser.dataValues.email,
@@ -75,9 +75,9 @@ module.exports = controllers = {
           authUtils.createToken(req, res, isUser, function(token, name) {
             var data = {
               username: name,
-              fintrackToken: token,
+              fintracktoken: token,
               userId: isUser.dataValues.id,
-              initial: isUser.dataValues.initial,
+              initial_done: isUser.dataValues.initial_done,
               userEmail: isUser.dataValues.email,
             }
             successResponse(res, data)
@@ -94,7 +94,7 @@ module.exports = controllers = {
     get: function(req, res) {
       var data = {
         username: null,
-        fintrackToken: null,
+        fintracktoken: null,
         userId: null
       }
       successResponse(res, data)

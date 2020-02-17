@@ -27,6 +27,7 @@ class Login extends React.Component {
   sendRequest = () => {
     if(this.state.username && this.state.password){
       this.props.authenticate({username: this.state.username, password: this.state.password});
+      this.setState({ password: null })
     }
   }
 
@@ -39,9 +40,11 @@ class Login extends React.Component {
       <button onClick={() => this.sendRequest()}>
         Log In
       </button>
-      <button>
-        Sign Up
+      
+      <button onClick={() => this.props.logout()}>
+        Log Out
       </button>
+      
     </nav>
   }
 };
