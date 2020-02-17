@@ -12,7 +12,7 @@ var emailValidator  = require('email-validator');
 var controllers;
 module.exports = controllers = {
   login: {
-    get: function(req, res) {
+    post: function(req, res) {
       var payload = {
         username: req.body.username,
         password: req.body.password
