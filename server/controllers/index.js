@@ -17,8 +17,10 @@ module.exports = controllers = {
         username: req.body.username,
         password: req.body.password
       };
-      if(!payload.username || payload.password){
+      console.log("+++ 20 index.js payload: ", payload)
+      if(!payload.username || !payload.password){
         failedResponse(res, "Please submit a username and password")
+        return;
       }
       models.login.post(payload, function(isUser, message) {
         if (isUser) {
