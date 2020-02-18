@@ -470,7 +470,6 @@ module.exports = {
     }
   },
 
-
   account_totals: {
     get_by_id: function (payload, callback){
       db.AccountTotals.findAll({

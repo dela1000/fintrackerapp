@@ -94,8 +94,8 @@ router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
 })
 
 // // get expenses
-router.get('/expenses', authUtils.checkUser, function(req, res) {
-  controllers.expenses.get(req, res)
+router.get('/expenses_bulk', authUtils.checkUser, function(req, res) {
+  controllers.expenses_bulk.get(req, res)
 })
 
 // // Patch expenses
