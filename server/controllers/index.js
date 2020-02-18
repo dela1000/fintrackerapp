@@ -768,10 +768,16 @@ module.exports = controllers = {
           var data = {
             timeframe: payload.timeframe,
             currentAvailable: results.currentavailable.amount,
-            availableByAccount: [],
+            availableByAccount: {
+              checking: [],
+              savings: [],
+              investments: [],
+            },
           }
+
+          var availablesHolders = [];
           _.forEach(results.accounttotals, function (total) {
-            data.availableByAccount.push({
+            availablesHolders.push({
               amount: total.amount,
               accountId: total.useraccount.id,
               account: total.useraccount.account,
@@ -779,18 +785,31 @@ module.exports = controllers = {
               type: total.type.type,
             })
           })
+          
+          _.forEach(availablesHolders, function (AccountTotal) {
+            if(AccountTotal.typeId === 1){
+              data.availableByAccount['checking'].push(AccountTotal);
+            };
+            if(AccountTotal.typeId === 2){
+              data.availableByAccount['savings'].push(AccountTotal);
+            };
+            if(AccountTotal.typeId === 3){
+              data.availableByAccount['investments'].push(AccountTotal);
+            };
+          });
+
           _.forEach(expensesTotals, function(value, key) {
             data[key] = value;
-          })
+          });
           _.forEach(fundTotals, function(value, key) {
             data[key] = value;
-          })
+          });
           successResponse(res, data);
         } else {
           failedResponse(res, message)
-        }
-      })
-    }
+        };
+      });
+    },
   },
 
   search: {
