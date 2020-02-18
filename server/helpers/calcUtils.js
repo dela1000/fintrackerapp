@@ -238,6 +238,22 @@ exports.add_fund_totals = function(data) {
   }
 }
 
+exports.format_expenses = function (expenses) {
+  var formattedData = []
+  _.forEach(expenses, function(expense){
+    var item ={}
+    item = expense.dataValues;
+    if (expense.useraccount) {
+      item.account = expense.useraccount.account;
+    }
+    if (expense.expensescategory) {
+      item.category = expense.expensescategory.name;
+    }
+    formattedData.push(item);
+  })
+  return formattedData;
+}
+
 var amountCleanUp = function(data) {
   var holder = [];
   _.forEach(data, function(item) {
@@ -246,3 +262,34 @@ var amountCleanUp = function(data) {
   })
   return holder;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

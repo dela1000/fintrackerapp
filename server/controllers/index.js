@@ -675,6 +675,46 @@ module.exports = controllers = {
         };
       })
     },
+    get: function (req, res){
+      var userId = req.headers.userId;
+      
+      var payload = {
+        userId: userId,
+      };
+
+      var query = {
+        where: {
+          userId: userId,
+          deleted: false
+        },
+        limit: 10,
+        include: [{
+          model: db.ExpensesCategories,
+          attributes: ['name', 'id'],
+        },{
+          model: db.UserAccounts,
+          attributes: ['account', 'id'],
+        }]
+      }
+
+      if(req.query.page > 1){
+        var item = req.query.page.toString();
+        item = item + "0"
+        query.offset = Number(item) - 10;
+      }
+      if(req.query.categoryId){
+        query.where['categoryId'] = Number(req.query.categoryId);
+      }
+
+      models.expenses_bulk.get(query, function(expenses, expensesMessage){
+        if(expenses){
+          var finalData = calcUtils.format_expenses(expenses);
+          successResponse(res, finalData);
+        } else{
+          failedResponse(res, expensesMessage)
+        };
+      })
+    },
     delete: function (req, res) {
       var userId = req.headers.userId;
       var payload = {

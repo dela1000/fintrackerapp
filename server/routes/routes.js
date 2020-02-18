@@ -92,6 +92,12 @@ router.delete('/funds', authUtils.checkUser, function(req, res) {
 router.post('/expenses_bulk', authUtils.checkUser, function(req, res) {
   controllers.expenses_bulk.post(req, res)
 })
+
+// // get expenses
+router.get('/expenses', authUtils.checkUser, function(req, res) {
+  controllers.expenses.get(req, res)
+})
+
 // // Patch expenses
 router.patch('/expenses', authUtils.checkUser, function(req, res) {
   controllers.expenses.patch(req, res)
