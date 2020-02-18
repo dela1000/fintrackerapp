@@ -6,6 +6,7 @@ import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ReceiptIcon from '@material-ui/icons/Receipt';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
@@ -29,8 +30,9 @@ class SidePanel extends React.Component {
       <div>
         <div style={this.props.expensesByCategory.length > 0 ? { display: 'block' } : { display: 'none' }}>
           <Box pl={2} pt={1}>
-            <Typography variant="h6" noWrap>
-              Expenses
+            <ReceiptIcon />
+            <Typography variant="h6">
+              Expenses By Category
             </Typography>
           </Box>
           <List>
