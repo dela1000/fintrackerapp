@@ -13,26 +13,11 @@ class Header extends React.Component {
     logout: PropTypes.func.isRequired
   };
 
-  
-
-  static propTypes = {
-    drawerWidth: PropTypes.number,
-    useStyles: PropTypes.func
-  };
-
   constructor(props) {
     super(props);
 
-    this.state = {
-      drawerWidth: 240,
-      useStyles: makeStyles(theme => ({
-        appBar: {
-          zIndex: theme.zIndex.drawer + 1,
-        },
-      }))
-    };
+    this.state = {};
   };
-
 
   render() {
     return (

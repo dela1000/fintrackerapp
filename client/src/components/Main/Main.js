@@ -28,22 +28,9 @@ class Main extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
-          console.log("+++ 26 Main.js data.data: ", data.data)
-          this.setState({
-            sidePanel: data.data
-          })
+          this.setState({ sidePanel: data.data })
         }
       })
-  }
-  capitalize(str){
-    return str.toLowerCase()
-      .split(' ')
-      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-      .join(' ');
-  };
-
-  decimals(num){
-    return num.toFixed(2)
   }
 
   selectItem(item){
