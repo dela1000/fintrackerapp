@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import _ from "lodash";
 import axios from 'axios';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import SidePanel from './SidePanel.js';
+import ExpensesList from './ExpensesList.js';
+
 
 class Main extends React.Component {
   state = {
@@ -39,17 +40,20 @@ class Main extends React.Component {
 
   render () {
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={1} style={{marginTop: 81}}>
         <Grid item xs={2}>
           <Paper>
             <SidePanel 
               availableByAccount={this.state.sidePanel.availableByAccount}
+              expensesByCategory={this.state.sidePanel.expensesByCategory}
               selectItem={this.selectItem}
             />
           </Paper>
         </Grid>
          <Grid item xs={7}>
-           <Paper>xs</Paper>
+           <Paper>
+             <ExpensesList />
+           </Paper>
          </Grid>
          <Grid item xs={3}>
            <Paper>xs</Paper>

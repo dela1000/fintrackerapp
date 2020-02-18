@@ -1,11 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import axios from 'axios';
 import Button from '@material-ui/core/Button';
-// import AppBar from '@material-ui/core/AppBar';
-// import Toolbar from '@material-ui/core/Toolbar';
-import { makeStyles } from '@material-ui/core/styles';
-
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 
 class Header extends React.Component {
@@ -21,13 +18,15 @@ class Header extends React.Component {
 
   render() {
     return (
-      <nav position="fixed">
-        <div>
-          <Button onClick={() => this.props.logout()}>
-            Log Out
-          </Button>
-        </div>
-      </nav>
+      <AppBar position="fixed">
+        <Toolbar>
+          <div style={{float: "right"}}>
+            <Button onClick={() => this.props.logout()} style={{float: "right"}}>
+              Log Out
+            </Button>
+            </div>
+        </Toolbar>
+      </AppBar>
     )
 
   }

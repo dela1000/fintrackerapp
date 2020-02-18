@@ -3,10 +3,9 @@ import PropTypes from "prop-types";
 import Login from './Login/Login.js';
 import Header from './Header/Header.js';
 import Main from './Main/Main.js';
-import _ from "lodash";
 import axios from 'axios';
-
 import LocalStorageService from "./Services/LocalStorageService";
+
 
 const localStorageService = LocalStorageService.getService();
 

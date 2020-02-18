@@ -3,11 +3,13 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+
 
 class SidePanel extends React.Component {
 
@@ -25,6 +27,23 @@ class SidePanel extends React.Component {
   render() {
     return (
       <div>
+        <div style={this.props.expensesByCategory.length > 0 ? { display: 'block' } : { display: 'none' }}>
+          <Box pl={2} pt={1}>
+            <Typography variant="h6" noWrap>
+              Expenses
+            </Typography>
+          </Box>
+          <List>
+            {this.props.expensesByCategory.map((item, key) => (
+              <div key={key}>
+                <div>
+                  {item.category} {item.amount}
+                </div>
+              </div>
+            ))}
+          </List>
+        </div>
+        <Divider />
         <div style={this.props.availableByAccount.checking.length > 0 ? { display: 'block' } : { display: 'none' }}>
           <Box pl={2} pt={1}>
             <Typography variant="h6" noWrap>
