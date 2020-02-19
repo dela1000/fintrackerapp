@@ -1,5 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Box from '@material-ui/core/Box';
@@ -10,38 +12,43 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import { capitalize, decimals } from "../Services/helpers";
 
 
 class SidePanel extends React.Component {
-
-  capitalize(str){
-    return str.toLowerCase()
-      .split(' ')
-      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-      .join(' ');
-  };
-
-  decimals(num){
-    return num.toFixed(2)
-  }
 
   render() {
     return (
       <div>
         <div style={this.props.expensesByCategory.length > 0 ? { display: 'block' } : { display: 'none' }}>
           <Box pl={2} pt={1}>
-            <ReceiptIcon />
-            <Typography variant="h6">
-              Expenses By Category
-            </Typography>
+            <Grid container spacing={1}>
+              <Grid item>
+                <ReceiptIcon />
+              </Grid>
+              <Grid item xs={10}>
+                <Typography variant="h6">
+                  Expenses By Category
+                </Typography>
+              </Grid>
+            </Grid>
           </Box>
           <List>
             {this.props.expensesByCategory.map((item, key) => (
-              <div key={key}>
-                <div>
-                  {item.category} {item.amount}
-                </div>
-              </div>
+              <Container maxWidth="xl" key={key}>
+                <Grid container spacing={1}>
+                  <Grid item xs={6}>
+                    <Typography noWrap align="left">
+                      {capitalize(item.category)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography noWrap align="right">
+                      {decimals(item.amount)}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Container>
             ))}
           </List>
         </div>
@@ -58,7 +65,7 @@ class SidePanel extends React.Component {
                 <ListItemIcon>
                   <AttachMoneyIcon />
                 </ListItemIcon>
-                <ListItemText key={key} primary={this.capitalize(item.account)} secondary={this.decimals(item.amount)} />
+                <ListItemText key={key} primary={capitalize(item.account)} secondary={decimals(item.amount)} />
               </ListItem>
             ))}
           </List>
@@ -75,7 +82,7 @@ class SidePanel extends React.Component {
                 <ListItemIcon>
                   <AccountBalanceIcon />
                 </ListItemIcon>
-                <ListItemText key={key} primary={this.capitalize(item.account)} secondary={this.decimals(item.amount)} />
+                <ListItemText key={key} primary={capitalize(item.account)} secondary={decimals(item.amount)} />
               </ListItem>
             ))}
           </List>
@@ -92,7 +99,7 @@ class SidePanel extends React.Component {
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText key={key} primary={this.capitalize(item.account)} secondary={this.decimals(item.amount)} />
+                <ListItemText key={key} primary={capitalize(item.account)} secondary={decimals(item.amount)} />
               </ListItem>
             ))}
           </List>

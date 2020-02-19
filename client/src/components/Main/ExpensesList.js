@@ -5,14 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import Box from '@material-ui/core/Box';
 import { capitalize, decimals } from "../Services/helpers";
 
 
@@ -39,38 +33,54 @@ class ExpensesList extends React.Component {
   render() {
     return (
       <Container maxWidth="xl">
-        <Box pl={2} pt={1}>
-          <Typography variant="h3" noWrap>
-            Expenses
-          </Typography>
-        </Box>
-          <Grid container spacing={1}>
-            <Grid item xs={2}>
-              <Typography variant="h6" noWrap align="center">
-                Date
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
+            <Box pl={2} pt={1}>
+              <Typography variant="h3" noWrap>
+                Expenses
               </Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography variant="h6" noWrap align="center">
-                Amount
-              </Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography variant="h6" noWrap align="center">
-                Comment
-              </Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography variant="h6" noWrap align="center">
-                Category
-              </Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography variant="h6" noWrap align="center">
-                Account
-              </Typography>
-            </Grid>
+            </Box>
           </Grid>
+          <Grid item xs={6}>
+            <Box pl={2} pt={1}>
+              <Typography variant="h3" noWrap align="right">
+                {this.props.totalExpenses}
+              </Typography>
+              <Typography noWrap align="right">
+                Total this {this.props.timeframe}
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+        <Divider mb={8} />
+        <Grid container spacing={1} mt={8}>
+          <Grid item xs={2}>
+            <Typography variant="h6" noWrap align="center">
+              Date
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography variant="h6" noWrap align="center">
+              Amount
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography variant="h6" noWrap align="center">
+              Comment
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant="h6" noWrap align="center">
+              Category
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant="h6" noWrap align="center">
+              Account
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider mb={8} />
         <List style={this.state.expenses.length > 0 ? { display: 'block' } : { display: 'none' }}>
           {this.state.expenses.map((item, key) => (
             <Grid container spacing={1} key={key}>
@@ -91,7 +101,7 @@ class ExpensesList extends React.Component {
               </Grid>
               <Grid item xs={2}>
                 <Typography align="right">
-                  {item.category}
+                  {capitalize(item.category)}
                 </Typography>
               </Grid>
               <Grid item xs={2}>

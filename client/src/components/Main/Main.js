@@ -9,7 +9,7 @@ import ExpensesList from './ExpensesList.js';
 
 class Main extends React.Component {
   state = {
-    sidePanel: {
+    allTotals: {
       availableByAccount: {
         checking: [],
         savings: [],
@@ -21,7 +21,7 @@ class Main extends React.Component {
   };
 
   static propTypes = {
-    sidePanel: PropTypes.object,
+    allTotals: PropTypes.object,
   };
 
   componentDidMount() {
@@ -29,10 +29,11 @@ class Main extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
-          this.setState({ sidePanel: data.data })
+          console.log("+++ 32 Main.js data.data: ", data.data)
+          this.setState({ allTotals: data.data })
         }
       })
-  }
+  };
 
   selectItem(item){
     console.log("+++ 67 Main.js item: ", item)
@@ -44,15 +45,18 @@ class Main extends React.Component {
         <Grid item xs={2}>
           <Paper>
             <SidePanel 
-              availableByAccount={this.state.sidePanel.availableByAccount}
-              expensesByCategory={this.state.sidePanel.expensesByCategory}
+              availableByAccount={this.state.allTotals.availableByAccount}
+              expensesByCategory={this.state.allTotals.expensesByCategory}
               selectItem={this.selectItem}
             />
           </Paper>
         </Grid>
          <Grid item xs={7}>
            <Paper>
-             <ExpensesList />
+             <ExpensesList 
+              totalExpenses={this.state.allTotals.totalExpenses}
+              timeframe={this.state.allTotals.timeframe}
+            />
            </Paper>
          </Grid>
          <Grid item xs={3}>
