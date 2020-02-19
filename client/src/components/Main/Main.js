@@ -49,7 +49,7 @@ class Main extends React.Component {
      })
  }
 
-  selectItem(item){
+  selectAccount(item){
     console.log("+++ 67 Main.js item: ", item)
   }
 
@@ -61,10 +61,10 @@ class Main extends React.Component {
             logout={this.props.logout}
             availableByAccount={this.state.allTotals.availableByAccount}
             expensesByCategory={this.state.allTotals.expensesByCategory}
-            selectItem={this.selectItem}
             expensesData={this.state.expensesData}
             totalExpenses={this.state.allTotals.totalExpenses}
             timeframe={this.state.allTotals.timeframe}
+            selectAccount={this.selectAccount}
           />
         </Grid>
        </Grid>

@@ -14,20 +14,10 @@ class ExpensesList extends React.Component {
     return (
       <Container maxWidth="xl">
         <Grid container spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs>
             <Box pl={2} pt={1}>
-              <Typography variant="h3" noWrap>
+              <Typography variant="h4" noWrap>
                 Expenses
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Box pl={2} pt={1}>
-              <Typography variant="h3" noWrap align="right">
-                {this.props.totalExpenses}
-              </Typography>
-              <Typography noWrap align="right">
-                Total this {this.props.timeframe}
               </Typography>
             </Box>
           </Grid>

@@ -154,7 +154,7 @@ export default function Dashboard(props) {
           </IconButton>
         </div>
         <Divider />
-        <Grid container spacing={1}>
+        <Grid container spacing={1} style={{"marginTop": "5px"}}>
           <Grid item>
             <Box pl={2} pt={0.4}>
               <ReceiptIcon />
@@ -192,16 +192,21 @@ export default function Dashboard(props) {
           open={open}
           type={'cheking'}
           icon={'AttachMoneyIcon'}
+          selectAccount={props.selectAccount}
         />
         <SidePanelItem
           data={props.availableByAccount.savings}
           open={open}
           type={'savings'}
+          icon={'AccountBalanceIcon'}
+          selectAccount={props.selectAccount}
         />
         <SidePanelItem
           data={props.availableByAccount.investments}
           open={open}
           type={'investments'}
+          icon={'TrendingUpIcon'}
+          selectAccount={props.selectAccount}
         />
       </Drawer>
       <main className={classes.content}>
@@ -211,7 +216,7 @@ export default function Dashboard(props) {
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
-                CHART
+                CHART GOES HERE
               </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={3}>
