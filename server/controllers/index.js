@@ -1082,15 +1082,16 @@ module.exports = controllers = {
       }
       models.all_user_data_types.get(payload, function (userData, message) {
         if (userData) {
-          console.log("userData: ", JSON.stringify(userData, null, "\t"));
-          successResponse(res, userData)
+          var newData = finUtils.formatAccounts(userData)
+          
+          delete userData.useraccounts;
+          successResponse(res, newData)
         } else {
           failedResponse(res, message)
         }
       })
     }
   }
-
 }
 
 // HELPER FUNCTIONS
@@ -1109,3 +1110,4 @@ var failedResponse = function (res, message) {
     }
   })
 }
+

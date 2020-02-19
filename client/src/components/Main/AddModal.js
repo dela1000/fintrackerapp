@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -37,14 +38,10 @@ const handleAmount = () => {
 
 }
 
-const handleComment = () => {
-
-}
-
 const onEnter = () => {
   
 }
-  
+
 
 export default function AddModal(props) {
   const classes = useStyles();
@@ -59,7 +56,8 @@ export default function AddModal(props) {
   };
 
   const [selectedDate, setSelectedDate] = React.useState(new Date());
-
+  const [amount, setAmount] = React.useState("");
+  const [comment, setComment] = React.useState("");
   const [category, setCategory] = React.useState("");
   const [account, setAccount] = React.useState("");
   const [source, setSource] = React.useState("");
@@ -67,6 +65,14 @@ export default function AddModal(props) {
   const handleDateChange = date => {
     setSelectedDate(date);
   };
+
+  const handleAmount = (event) => {
+    setAmount(event.target.value);
+  }
+
+  const handleComment = (event) => {
+    setComment(event.target.value);
+  }
 
   const categoryChange = event => {
     setCategory(event.target.value);
@@ -80,6 +86,15 @@ export default function AddModal(props) {
     setAccount(event.target.value);
   };
 
+  const submitNew = () => {
+    var date = moment(selectedDate).format('MM-DD-YYYY')
+    console.log("+++ 87 AddModal.js date: ", date)
+    console.log("+++ 92 AddModal.js amount: ", amount)
+    console.log("+++ 87 AddModal.js comment: ", comment)
+    console.log("+++ 87 AddModal.js category: ", category)
+    console.log("+++ 88 AddModal.js account: ", account)
+    console.log("+++ 89 AddModal.js source: ", source)
+  }
 
   return (
     <div>
@@ -131,7 +146,7 @@ export default function AddModal(props) {
               label="Comment" 
               onChange={handleComment} value={props.comment} onKeyPress={onEnter} 
             />
-            <br style={props.type === "expenses" ? { display: 'block' } : { display: 'none' }}/>
+            <br/>
             <TextField
               fullWidth
               id="categories"
@@ -143,7 +158,7 @@ export default function AddModal(props) {
             >
               {props.expensesCategories.map(cat => (
                 <MenuItem key={cat.id} value={cat.id}>
-                  {cat.name}
+                  {capitalize(cat.name)}
                 </MenuItem>
               ))}
             </TextField>
@@ -159,7 +174,7 @@ export default function AddModal(props) {
             >
               {props.fundSources.map(src => (
                 <MenuItem key={src.id} value={src.id}>
-                  {src.source}
+                  {capitalize(src.source)}
                 </MenuItem>
               ))}
             </TextField>
@@ -174,7 +189,7 @@ export default function AddModal(props) {
             >
               {props.userAccounts.map(acc => (
                 <MenuItem key={acc.id} value={acc.id}>
-                  {acc.account}
+                  {capitalize(acc.account)} - {capitalize(acc.type)}
                 </MenuItem>
               ))}
             </TextField>
@@ -184,6 +199,7 @@ export default function AddModal(props) {
                 color="primary"
                 className={classes.button}
                 endIcon={<Icon>send</Icon>}
+                onClick={submitNew}
               >
                 Send
               </Button>

@@ -58,9 +58,9 @@ class Main extends React.Component {
       var data = res.data;
       if(data.success){
         this.setState({ 
-          userAccounts: data.data.useraccounts,
-          fundSources: data.data.fundsources,
-          expensesCategories: data.data.expensescategories,
+          userAccounts: data.data.accounts,
+          fundSources: data.data.fundSources,
+          expensesCategories: data.data.expensesCategories,
         })
       }
     })

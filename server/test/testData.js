@@ -2,6 +2,11 @@ var db = require('../db/db.js');
 var _ = require('lodash');
 var Promise = require('bluebird');
 
+var addData = null;
+// Uncomment to not add data
+var addData = true;
+
+
 var expensesCategories = [
   {name: "groceries"},
   {name: "dining"},
@@ -156,10 +161,6 @@ var fundSourcesAdded = [];
 
 var fundsAdded = [];
 var expensesAdded = [];
-
-var addData = null;
-// Uncomment to not add data
-var addData = true;
 
 exports.testData = function() {
   db.Users.findAll({

@@ -817,7 +817,7 @@ module.exports = {
       db.Users.findOne({
         where: {
           id: payload.userId,
-          deleted: false
+          deleted: false,
         },
         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
         include: [{
@@ -825,7 +825,7 @@ module.exports = {
             where: {
               deleted: false
             },
-            attributes: ['account', 'id'],
+            attributes: ['account', 'id', 'typeId', 'primary'],
             required: false,
             include: [{
                 model: db.Types,
@@ -835,7 +835,11 @@ module.exports = {
           }, {
             model: db.FundSources,
             where: {
-              deleted: false
+              deleted: false,
+              source: {
+                [Op.not]: ['Initial', 'Internal Transfer']
+              }
+          
             },
             attributes: ['source', 'id'],
             required: false
@@ -850,7 +854,6 @@ module.exports = {
         ],
       })
       .then(function (dataFound) {
-        console.log("+++ 846 index.js dataFound: ", dataFound)
         if(dataFound){
           callback(dataFound)
         } else{

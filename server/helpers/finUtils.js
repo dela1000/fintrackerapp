@@ -63,3 +63,29 @@ exports.startOfTime = function() {
 exports.endOfTime = function() {
   return moment().endOf('year').format('12-31-2100');
 }
+
+exports.formatAccounts = function (data) {
+  var temp = {
+    accounts: [],
+    expensesCategories: [],
+    fundSources: [],
+  };
+  _.forEach(data.useraccounts, function (account) {
+    if(account.type){
+      temp.accounts.push({
+        account: account.account,
+        id: account.id,
+        type: account.type.type,
+        typeId: account.typeId,
+      })
+    }
+  })
+  temp.expensesCategories = data.expensescategories;
+  temp.fundSources = data.fundsources;
+  return temp;
+}
+
+
+
+
+
