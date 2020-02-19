@@ -221,7 +221,7 @@ export default function Dashboard(props) {
               FUNDS
             </Typography>
           </Grid>
-          <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
+          <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
             <AddModal 
             type={'funds'}
             expensesCategories={props.expensesCategories}

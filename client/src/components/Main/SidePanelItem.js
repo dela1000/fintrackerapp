@@ -12,8 +12,8 @@ import { capitalize, decimals } from "../Services/helpers";
 export default function SidePanelItem(props) {
   return (
     <div style={{"marginTop": "5px"}}>
-      <Box pt={1} pr={2} pb={1} pl={2} style={props.type === "checking" ? {} : { display: 'none' }}>
-        <Grid container spacing={1} style={props.open ? { display: 'block' } : { display: 'none' }}>
+      <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
+        <Grid container spacing={1}>
           <Grid item xs={6}>
             <Typography variant="subtitle2" align="left">
               Current Available
