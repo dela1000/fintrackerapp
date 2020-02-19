@@ -24,6 +24,7 @@ import ListItem from '@material-ui/core/ListItem';
 import { capitalize, decimals } from "../Services/helpers";
 import ExpensesList from './ExpensesList.js';
 import SidePanelItem from './SidePanelItem.js';
+import AddModal from './AddModal.js';
 
 const drawerWidth = 240;
 
@@ -168,8 +169,8 @@ export default function Dashboard(props) {
               EXPENSES
             </Typography>
           </Grid>
-          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
-            <AddCircleIcon />
+          <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
+            <AddModal />
           </Grid>
         </Grid>
         <Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
@@ -216,7 +217,7 @@ export default function Dashboard(props) {
               FUNDS
             </Typography>
           </Grid>
-          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
+          <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
             <AddCircleIcon />
           </Grid>
         </Grid>
