@@ -24,7 +24,7 @@ export default function SidePanelItem(props) {
           </Box>
         </Grid>
         <Grid item style={props.open ? {} : { display: 'none' }}>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6">
             {capitalize(props.type)}
           </Typography>
         </Grid>
@@ -33,7 +33,18 @@ export default function SidePanelItem(props) {
         <List style={props.open ? {} : { display: 'none' }}>
           {props.data.map((item, key) => (
             <ListItem button key={key} onClick={() => props.selectAccount(item)}>
-              <ListItemText key={key} primary={capitalize(item.account)} secondary={decimals(item.amount)} />
+              <Grid container spacing={1} key={key}>
+                <Grid item xs={6}>
+                  <Typography align="left">
+                    {capitalize(item.account)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography align="right" style={item.amount < 0 ? {color: 'red'} : {} }>
+                    {decimals(item.amount)}
+                  </Typography>
+                </Grid>
+              </Grid>
             </ListItem>
           ))}
         </List>
@@ -41,3 +52,17 @@ export default function SidePanelItem(props) {
     </div>
   )
 }
+              // <Grid container spacing={1}>
+              //   <Grid item>
+              //     <Typography align="left">
+              //       {capitalize(item.account)}
+              //     </Typography>
+              //   </Grid>
+              // </Grid>
+              // <Grid container spacing={1}>
+              //   <Grid item>
+              //     <Typography align="right" style={item.amount < 0 ? {color: 'red'} : {} }>
+              //       {decimals(item.amount)}
+              //     </Typography>
+              //   </Grid>
+              // </Grid>

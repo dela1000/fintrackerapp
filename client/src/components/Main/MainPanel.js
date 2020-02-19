@@ -170,15 +170,13 @@ export default function Dashboard(props) {
           {props.expensesByCategory.map((item, key) => (
             <ListItem button key={key}>
               <Grid container spacing={1}>
-                <Grid item>
-                  <Typography noWrap align="left">
+                <Grid item xs={6}>
+                  <Typography align="left">
                     {capitalize(item.category)}
                   </Typography>
                 </Grid>
-              </Grid>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <Typography noWrap align="right">
+                <Grid item xs={6}>
+                  <Typography align="right" style={item.amount < 0 ? {color: 'red'} : {} }>
                     {decimals(item.amount)}
                   </Typography>
                 </Grid>
@@ -187,10 +185,25 @@ export default function Dashboard(props) {
           ))}
         </List>
         <Divider />
+        <Box pt={1} pr={2} pb={1} pl={2} >
+          <Grid container spacing={1}>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" align="left">
+                Total Expenses
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography align="right">
+                {props.totalExpenses}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+        <Divider />
         <SidePanelItem
           data={props.availableByAccount.checking}
           open={open}
-          type={'cheking'}
+          type={'checking'}
           icon={'AttachMoneyIcon'}
           selectAccount={props.selectAccount}
         />
