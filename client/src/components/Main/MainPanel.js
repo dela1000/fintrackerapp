@@ -17,6 +17,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+
 import ListItem from '@material-ui/core/ListItem';
 import { capitalize, decimals } from "../Services/helpers";
 import ExpensesList from './ExpensesList.js';
@@ -154,21 +157,38 @@ export default function Dashboard(props) {
           </IconButton>
         </div>
         <Divider />
-        <Grid container spacing={1} style={{"marginTop": "5px"}}>
-          <Grid item>
+        <Grid container spacing={1} style={{"marginTop": "5px"}} onClick={() => props.getExpenses()}>
+          <Grid item xs={2}>
             <Box pl={2} pt={0.4}>
               <ReceiptIcon />
             </Box>
           </Grid>
-          <Grid item  style={open ? { display: 'block' } : { display: 'none' }}>
+          <Grid item xs={7} style={open ? { display: 'block' } : { display: 'none' }}>
             <Typography variant="h6">
-              Expenses
+              EXPENSES
             </Typography>
           </Grid>
+          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "3px" } : { display: 'none' }}>
+            <AddCircleIcon />
+          </Grid>
         </Grid>
+        <Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
+          <Grid container spacing={1}>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" align="left">
+                Total Expenses
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography align="right">
+                {props.totalExpenses}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
         <List style={open ? { display: 'block' } : { display: 'none' }}>
           {props.expensesByCategory.map((item, key) => (
-            <ListItem button key={key}>
+            <ListItem button key={key} onClick={() => props.selectCategory(item)}>
               <Grid container spacing={1}>
                 <Grid item xs={6}>
                   <Typography align="left">
@@ -185,40 +205,38 @@ export default function Dashboard(props) {
           ))}
         </List>
         <Divider />
-        <Box pt={1} pr={2} pb={1} pl={2} >
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
-              <Typography variant="subtitle2" align="left">
-                Total Expenses
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography align="right">
-                {props.totalExpenses}
-              </Typography>
-            </Grid>
+        <Grid container spacing={1} style={{"marginTop": "5px"}} onClick={() => props.getFunds()}>
+          <Grid item xs={2}>
+            <Box pl={2} pt={0.4}>
+              <AccountBalanceWalletIcon />
+            </Box>
           </Grid>
-        </Box>
-        <Divider />
+          <Grid item xs={7} style={open ? { display: 'block' } : { display: 'none' }}>
+            <Typography variant="h6">
+              FUNDS
+            </Typography>
+          </Grid>
+          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "3px" } : { display: 'none' }}>
+            <AddCircleIcon />
+          </Grid>
+        </Grid>
         <SidePanelItem
           data={props.availableByAccount.checking}
           open={open}
           type={'checking'}
-          icon={'AttachMoneyIcon'}
           selectAccount={props.selectAccount}
+          currentAvailable={props.currentAvailable}
         />
         <SidePanelItem
           data={props.availableByAccount.savings}
           open={open}
           type={'savings'}
-          icon={'AccountBalanceIcon'}
           selectAccount={props.selectAccount}
         />
         <SidePanelItem
           data={props.availableByAccount.investments}
           open={open}
           type={'investments'}
-          icon={'TrendingUpIcon'}
           selectAccount={props.selectAccount}
         />
       </Drawer>
@@ -249,6 +267,8 @@ export default function Dashboard(props) {
                   expensesByCategory={props.expensesByCategory}
                   totalExpenses={props.totalExpenses}
                   timeframe={props.timeframe}
+                  selectCategory={props.selectCategory}
+                  selectAccount={props.selectAccount}
                 />
               </Paper>
             </Grid>

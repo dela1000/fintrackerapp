@@ -8,9 +8,7 @@ import Box from '@material-ui/core/Box';
 import { capitalize, decimals } from "../Services/helpers";
 
 
-class ExpensesList extends React.Component {
-
-  render() {
+export default function ExpensesList(props) {
     return (
       <Container maxWidth="xl">
         <Grid container spacing={1}>
@@ -51,8 +49,8 @@ class ExpensesList extends React.Component {
           </Grid>
         </Grid>
         <Divider mb={8} />
-        <List style={this.props.expensesData.length > 0 ? { display: 'block' } : { display: 'none' }}>
-          {this.props.expensesData.map((item, key) => (
+        <List style={props.expensesData.length > 0 ? { display: 'block' } : { display: 'none' }}>
+          {props.expensesData.map((item, key) => (
             <Grid container spacing={1} key={key}>
               <Grid item xs={2}>
                 <Typography align="right">
@@ -69,12 +67,12 @@ class ExpensesList extends React.Component {
                   {item.comment}
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={2} onClick={() => props.selectCategory(item)}>
                 <Typography align="right">
                   {capitalize(item.category)}
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={2} onClick={() => props.selectAccount(item)}>
                 <Typography align="right">
                   {capitalize(item.account)}
                 </Typography>
@@ -84,8 +82,6 @@ class ExpensesList extends React.Component {
         </List>
       </Container>
     )
-  }
 
 }
 
-export default ExpensesList;
