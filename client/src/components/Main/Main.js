@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import axios from 'axios';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import SidePanel from './SidePanel.js';
-import ExpensesList from './ExpensesList.js';
+import MainPanel from './MainPanel.js';
+import { get_expenses, get_all_totals } from "../Services/WebServices";
 
 
 class Main extends React.Component {
@@ -18,22 +16,38 @@ class Main extends React.Component {
       expensesByCategory: [],
       fundsByTypes: [],
     },
+    expensesData: [],
   };
 
   static propTypes = {
     allTotals: PropTypes.object,
+    expensesData: PropTypes.array,
   };
 
   componentDidMount() {
-    axios.get('/all_totals')
-      .then((res) => {
-        var data = res.data;
-        if(data.success){
-          console.log("+++ 32 Main.js data.data: ", data.data)
-          this.setState({ allTotals: data.data })
-        }
-      })
+    this.expenses();
+    this.all_totals();
   };
+
+ all_totals (){
+  get_all_totals()
+    .then((res) => {
+      var data = res.data;
+      if(data.success){
+        this.setState({ allTotals: data.data })
+      }
+    })
+ }
+
+ expenses(){
+   get_expenses()
+     .then((res) => {
+       var data = res.data;
+       if(data.success){
+         this.setState({ expensesData: data.data })
+       }
+     })
+ }
 
   selectItem(item){
     console.log("+++ 67 Main.js item: ", item)
@@ -41,27 +55,18 @@ class Main extends React.Component {
 
   render () {
     return (
-      <Grid container spacing={1} style={{marginTop: 81}}>
-        <Grid item xs={2}>
-          <Paper>
-            <SidePanel 
-              availableByAccount={this.state.allTotals.availableByAccount}
-              expensesByCategory={this.state.allTotals.expensesByCategory}
-              selectItem={this.selectItem}
-            />
-          </Paper>
+      <Grid container spacing={1}>
+        <Grid item xs>
+          <MainPanel
+            logout={this.props.logout}
+            availableByAccount={this.state.allTotals.availableByAccount}
+            expensesByCategory={this.state.allTotals.expensesByCategory}
+            selectItem={this.selectItem}
+            expensesData={this.state.expensesData}
+            totalExpenses={this.state.allTotals.totalExpenses}
+            timeframe={this.state.allTotals.timeframe}
+          />
         </Grid>
-         <Grid item xs={7}>
-           <Paper>
-             <ExpensesList 
-              totalExpenses={this.state.allTotals.totalExpenses}
-              timeframe={this.state.allTotals.timeframe}
-            />
-           </Paper>
-         </Grid>
-         <Grid item xs={3}>
-           <Paper>xs</Paper>
-         </Grid>
        </Grid>
     )
   }

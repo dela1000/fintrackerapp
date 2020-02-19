@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import Login from './Login/Login.js';
-import Header from './Header/Header.js';
 import Main from './Main/Main.js';
 import axios from 'axios';
 import LocalStorageService from "./Services/LocalStorageService";
@@ -93,8 +92,7 @@ class App extends React.Component {
     } else {
       return (
         <React.Fragment>
-          <Header logout={this.logout} />
-          <Main />
+          <Main logout={this.logout}/>
         </React.Fragment>
       )
 

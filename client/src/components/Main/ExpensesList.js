@@ -1,6 +1,4 @@
 import React from 'react';
-import axios from 'axios';
-import PropTypes from "prop-types";
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -11,24 +9,6 @@ import { capitalize, decimals } from "../Services/helpers";
 
 
 class ExpensesList extends React.Component {
-
-  static propTypes = {
-    expenses: PropTypes.array,
-  };
-
-  state = {
-    expenses: []
-  }
-
-  componentDidMount() {
-    axios.get('/expenses_bulk?page=1')
-      .then((res) => {
-        var data = res.data;
-        if(data.success){
-          this.setState({ expenses: data.data })
-        }
-      })
-  }
 
   render() {
     return (
@@ -81,8 +61,8 @@ class ExpensesList extends React.Component {
           </Grid>
         </Grid>
         <Divider mb={8} />
-        <List style={this.state.expenses.length > 0 ? { display: 'block' } : { display: 'none' }}>
-          {this.state.expenses.map((item, key) => (
+        <List style={this.props.expensesData.length > 0 ? { display: 'block' } : { display: 'none' }}>
+          {this.props.expensesData.map((item, key) => (
             <Grid container spacing={1} key={key}>
               <Grid item xs={2}>
                 <Typography align="right">
