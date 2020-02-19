@@ -35,7 +35,7 @@ class Login extends React.Component {
   }
 
   render() {
-    return <nav>
+    return <nav style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
       <h2>Login</h2>
       <TextField type="text" name="username" id="outlined-basic" label="Username" onChange={this.handleInput} value={this.props.username} onKeyPress={this.onEnter} autoFocus />
       <TextField type="password" name="password" id="outlined-basic" label="Password" variant="outlined" onChange={this.handleInput} value={this.props.password} onKeyPress={this.onEnter} />

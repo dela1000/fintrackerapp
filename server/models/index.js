@@ -812,7 +812,46 @@ module.exports = {
     }
   },
 
-  transfer: {
-
+  all_user_data_types: {
+    get: function (payload, callback) {
+      db.Users.findOne({
+        where: {
+          id: payload.userId,
+          deleted: false
+        },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        include: [{
+            model: db.UserAccounts,
+            where: {
+              deleted: false
+            },
+            attributes: ['account', 'id'],
+            required: false
+          }, {
+            model: db.FundSources,
+            where: {
+              deleted: false
+            },
+            attributes: ['source', 'id'],
+            required: false
+          }, {
+            model: db.ExpensesCategories,
+            where: {
+              deleted: false
+            },
+            attributes: ['name', 'id'],
+            required: false
+          }
+        ],
+      })
+      .then(function (dataFound) {
+        console.log("+++ 846 index.js dataFound: ", dataFound)
+        if(dataFound){
+          callback(dataFound)
+        } else{
+          callback(false, "Data not found")
+        };
+      })
+    }
   }
 }

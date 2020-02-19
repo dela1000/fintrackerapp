@@ -158,19 +158,19 @@ export default function Dashboard(props) {
           </IconButton>
         </div>
         <Divider />
-        <Grid container spacing={1} style={{"marginTop": "5px"}} onClick={() => props.getExpenses()}>
-          <Grid item xs={2}>
+        <Grid container spacing={1} style={{"marginTop": "5px"}}>
+          <Grid item xs={2} onClick={() => props.getExpenses()}>
             <Box pl={1} pt={0.5}>
               <ReceiptIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }}>
+          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }} onClick={() => props.getExpenses()}>
             <Typography variant="h6">
               EXPENSES
             </Typography>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <AddModal />
+            <AddModal type={'expenses'}/>
           </Grid>
         </Grid>
         <Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
@@ -206,19 +206,19 @@ export default function Dashboard(props) {
           ))}
         </List>
         <Divider />
-        <Grid container spacing={1} style={{"marginTop": "5px"}} onClick={() => props.getFunds()}>
-          <Grid item xs={2}>
+        <Grid container spacing={1} style={{"marginTop": "5px"}}>
+          <Grid item xs={2} onClick={() => props.getFunds()}>
             <Box pl={1} pt={0.5}>
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }}>
+          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }} onClick={() => props.getFunds()}>
             <Typography variant="h6">
               FUNDS
             </Typography>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
-            <AddCircleIcon />
+            <AddModal type={'funds'}/>
           </Grid>
         </Grid>
         <SidePanelItem

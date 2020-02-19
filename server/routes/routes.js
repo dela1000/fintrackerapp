@@ -37,6 +37,10 @@ router.get('/all_totals', authUtils.checkUser, function(req, res) {
   controllers.all_totals.get(req, res)
 })
 
+router.get('/all_user_data_types', authUtils.checkUser, function(req, res) {
+  controllers.all_user_data_types.get(req, res)
+})
+
 
 // Sources Routes
 // // Add sources in bulk

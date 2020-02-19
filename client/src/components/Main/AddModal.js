@@ -3,6 +3,7 @@ import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
+import TextField from '@material-ui/core/TextField';
 import Fade from '@material-ui/core/Fade';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import 'date-fns';
@@ -14,6 +15,8 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
+import axios from 'axios';
+
 const useStyles = makeStyles(theme => ({
   modal: {
     display: 'flex',
@@ -23,21 +26,32 @@ const useStyles = makeStyles(theme => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
-    padding: theme.spacing(2, 4, 3),
+    padding: theme.spacing(1, 1, 1),
   },
 }));
 
-export default function AddModal() {
+const handleInput = () => {
+
+}
+
+const onEnter = () => {
+  
+}
+
+
+export default function AddModal(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
     setOpen(true);
+
   };
 
   const handleClose = () => {
     setOpen(false);
   };
+
 
   const [selectedDate, setSelectedDate] = React.useState(new Date());
 
@@ -63,26 +77,22 @@ export default function AddModal() {
         <Fade in={open}>
           <div className={classes.paper}>
             <h2>Add Expenses</h2>
-            <div>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container justify="space-around">
-                  <KeyboardDatePicker
-                    margin="normal"
-                    id="date-picker-dialog"
-                    label="Select Date of Transaction"
-                    format="MM-dd-yyyy"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                    KeyboardButtonProps={{
-                      'aria-label': 'change date',
-                    }}
-                  />
-                </Grid>
-              </MuiPickersUtilsProvider>
-            </div>
-            <p>
-              Amount
-            </p>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid container justify="space-around">
+                <KeyboardDatePicker
+                  margin="normal"
+                  id="date-picker-dialog"
+                  label="Select Date of Transaction"
+                  format="MM-dd-yyyy"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                />
+              </Grid>
+            </MuiPickersUtilsProvider>
+            <TextField type="text" name="amount" id="outlined-basic" label="Amount" onChange={handleInput} value={props.amount} onKeyPress={onEnter} />
           </div>
         </Fade>
       </Modal>
