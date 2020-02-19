@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 import Grid from '@material-ui/core/Grid';
 import MainPanel from './MainPanel.js';
-import { get_all_totals, get_expenses, get_funds } from "../Services/WebServices";
+import { get_all_totals, all_user_data_types, get_expenses, get_funds } from "../Services/WebServices";
 
 
 class Main extends React.Component {
@@ -19,6 +19,9 @@ class Main extends React.Component {
         fundsByTypes: [],
       },
       expensesData: [],
+      expensesCategories: [],
+      fundSources: [],
+      userAccounts: [],
       viewSelected: "expenses"
     };
     this.getExpenses = this.getExpenses.bind(this);
@@ -34,8 +37,9 @@ class Main extends React.Component {
   };
 
   componentDidMount() {
-    this.getExpenses();
     this.getAllTotals();
+    this.getUserDataTypes();
+    this.getExpenses();
   };
 
  getAllTotals (){
@@ -44,6 +48,20 @@ class Main extends React.Component {
       var data = res.data;
       if(data.success){
         this.setState({ allTotals: data.data })
+      }
+    })
+ }
+
+ getUserDataTypes(){
+  all_user_data_types()
+    .then((res) => {
+      var data = res.data;
+      if(data.success){
+        this.setState({ 
+          userAccounts: data.data.useraccounts,
+          fundSources: data.data.fundsources,
+          expensesCategories: data.data.expensescategories,
+        })
       }
     })
  }
@@ -92,6 +110,9 @@ class Main extends React.Component {
             viewSelected={this.viewSelected}
             availableByAccount={this.state.allTotals.availableByAccount}
             expensesByCategory={this.state.allTotals.expensesByCategory}
+            userAccounts={this.state.userAccounts}
+            fundSources={this.state.fundSources}
+            expensesCategories={this.state.expensesCategories}
             expensesData={this.state.expensesData}
             totalExpenses={this.state.allTotals.totalExpenses}
             currentAvailable={this.state.allTotals.currentAvailable}

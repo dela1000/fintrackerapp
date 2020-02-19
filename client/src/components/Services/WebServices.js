@@ -21,3 +21,8 @@ export function get_funds(page){
 export function get_all_totals(page){
   return axios.get('/all_totals');
 }
+
+
+export function all_user_data_types(){
+  return axios.get('/all_user_data_types')
+}

@@ -954,7 +954,6 @@ module.exports = controllers = {
 
       models.search.get(payload, function(foundResults, message) {
         if (foundResults) {
-          console.log("+++ 846 index.js foundResults: ", foundResults)
           var finalData = [];
           _.forEach(foundResults, function(found, index) {
             item = {};
@@ -1083,6 +1082,7 @@ module.exports = controllers = {
       }
       models.all_user_data_types.get(payload, function (userData, message) {
         if (userData) {
+          console.log("userData: ", JSON.stringify(userData, null, "\t"));
           successResponse(res, userData)
         } else {
           failedResponse(res, message)

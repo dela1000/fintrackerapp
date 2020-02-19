@@ -19,7 +19,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-
 import ListItem from '@material-ui/core/ListItem';
 import { capitalize, decimals } from "../Services/helpers";
 import ExpensesList from './ExpensesList.js';
@@ -170,7 +169,12 @@ export default function Dashboard(props) {
             </Typography>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <AddModal type={'expenses'}/>
+            <AddModal 
+            type={'expenses'}
+            expensesCategories={props.expensesCategories}
+            fundSources={props.fundSources}
+            userAccounts={props.userAccounts}
+            />
           </Grid>
         </Grid>
         <Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
@@ -218,7 +222,12 @@ export default function Dashboard(props) {
             </Typography>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
-            <AddModal type={'funds'}/>
+            <AddModal 
+            type={'funds'}
+            expensesCategories={props.expensesCategories}
+            fundSources={props.fundSources}
+            userAccounts={props.userAccounts}
+            />
           </Grid>
         </Grid>
         <SidePanelItem

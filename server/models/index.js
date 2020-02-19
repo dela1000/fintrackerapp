@@ -826,7 +826,12 @@ module.exports = {
               deleted: false
             },
             attributes: ['account', 'id'],
-            required: false
+            required: false,
+            include: [{
+                model: db.Types,
+                attributes: ['type', 'id'],
+                required: false
+              }]
           }, {
             model: db.FundSources,
             where: {

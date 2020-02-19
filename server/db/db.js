@@ -390,9 +390,17 @@ Types.hasMany(Funds, {
 });
 
 
+
 Users.sync().then(function() {
   Types.sync().then(function() {
     UserAccounts.sync().then(function() {
+      Types.hasMany(UserAccounts, {
+        foreignKey: 'typeId'
+      });
+
+      UserAccounts.hasOne(Types, {
+        foreignKey: 'id'
+      });
       FundSources.sync().then(function() {
         Funds.sync().then(function() {
           AccountTotals.sync().then(function() {
