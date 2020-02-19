@@ -26,7 +26,7 @@ export default function SidePanelItem(props) {
           </Grid>
         </Grid>
       </Box>
-      <Grid container spacing={1} onClick={() => props.selectAccount(props.type)} >
+      <Grid container spacing={1} onClick={() => props.selectAccount(props.type)}>
         <Grid item>
           <Box pl={2} pt={0.4} >
             <AttachMoneyIcon style={props.type === "checking" ? {} : { display: 'none' }}/>

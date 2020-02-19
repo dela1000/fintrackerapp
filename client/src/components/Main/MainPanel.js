@@ -137,7 +137,7 @@ export default function Dashboard(props) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            FinTracker
           </Typography>
           <IconButton color="inherit" onClick={() => props.logout()}>
             <ExitToAppIcon />
@@ -159,16 +159,16 @@ export default function Dashboard(props) {
         <Divider />
         <Grid container spacing={1} style={{"marginTop": "5px"}} onClick={() => props.getExpenses()}>
           <Grid item xs={2}>
-            <Box pl={2} pt={0.4}>
+            <Box pl={1} pt={0.5}>
               <ReceiptIcon />
             </Box>
           </Grid>
-          <Grid item xs={7} style={open ? { display: 'block' } : { display: 'none' }}>
+          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }}>
             <Typography variant="h6">
               EXPENSES
             </Typography>
           </Grid>
-          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "3px" } : { display: 'none' }}>
+          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
             <AddCircleIcon />
           </Grid>
         </Grid>
@@ -207,16 +207,16 @@ export default function Dashboard(props) {
         <Divider />
         <Grid container spacing={1} style={{"marginTop": "5px"}} onClick={() => props.getFunds()}>
           <Grid item xs={2}>
-            <Box pl={2} pt={0.4}>
+            <Box pl={1} pt={0.5}>
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
-          <Grid item xs={7} style={open ? { display: 'block' } : { display: 'none' }}>
+          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }}>
             <Typography variant="h6">
               FUNDS
             </Typography>
           </Grid>
-          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "3px" } : { display: 'none' }}>
+          <Grid item xs={2}  style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }}>
             <AddCircleIcon />
           </Grid>
         </Grid>
