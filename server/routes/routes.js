@@ -81,6 +81,12 @@ router.patch('/user_account', authUtils.checkUser, function(req, res) {
 router.post('/funds_bulk', authUtils.checkUser, function(req, res) {
   controllers.funds_bulk.post(req, res)
 })
+
+// // get expenses
+router.get('/funds_bulk', authUtils.checkUser, function(req, res) {
+  controllers.funds_bulk.get(req, res)
+})
+
 // // Patch funds
 router.patch('/funds', authUtils.checkUser, function(req, res) {
   controllers.funds.patch(req, res)

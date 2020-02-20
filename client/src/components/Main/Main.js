@@ -69,8 +69,8 @@ class Main extends React.Component {
  getExpenses(){
    get_expenses()
      .then((res) => {
-      
        var data = res.data;
+       console.log("+++ 73 Main.js data: ", data)
        if(data.success){ this.setState({ expensesData: data.data, viewSelected: "expenses"}) }
      })
      .catch((err) => {

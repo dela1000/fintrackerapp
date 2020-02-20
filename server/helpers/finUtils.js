@@ -77,6 +77,7 @@ exports.formatAccounts = function (data) {
         id: account.id,
         type: account.type.type,
         typeId: account.typeId,
+        primary: account.primary,
       })
     }
   })

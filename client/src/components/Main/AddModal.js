@@ -20,6 +20,7 @@ import {
 } from '@material-ui/pickers';
 
 import axios from 'axios';
+import { post_expenses_bulk, post_funds_bulk } from "../Services/WebServices";
 
 const useStyles = makeStyles(theme => ({
   modal: {
@@ -58,9 +59,9 @@ export default function AddModal(props) {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [amount, setAmount] = React.useState("");
   const [comment, setComment] = React.useState("");
-  const [category, setCategory] = React.useState("");
+  const [categoryId, setCategory] = React.useState("");
   const [account, setAccount] = React.useState("");
-  const [source, setSource] = React.useState("");
+  const [sourceId, setSource] = React.useState("");
 
   const handleDateChange = date => {
     setSelectedDate(date);
@@ -86,14 +87,60 @@ export default function AddModal(props) {
     setAccount(event.target.value);
   };
 
-  const submitNew = () => {
-    var date = moment(selectedDate).format('MM-DD-YYYY')
-    console.log("+++ 87 AddModal.js date: ", date)
-    console.log("+++ 92 AddModal.js amount: ", amount)
-    console.log("+++ 87 AddModal.js comment: ", comment)
-    console.log("+++ 87 AddModal.js category: ", category)
-    console.log("+++ 88 AddModal.js account: ", account)
-    console.log("+++ 89 AddModal.js source: ", source)
+  const submitNew = (event) => {
+    event.preventDefault();
+    if(!selectedDate || !amount || !account){
+      return;
+    } 
+    
+    var accountSelected = props.userAccounts.find(x => x.account === account);
+    console.log("+++ 123 AddModal.js accountSelected: ", accountSelected)
+
+    if (props.type === "expenses") {
+      if(!categoryId){
+        return;
+      } else {
+        var payload = [{
+          date: moment(selectedDate).format('MM-DD-YYYY'),
+          amount: Number(amount),
+          comment: comment || null, 
+          accountId: accountSelected.id,
+          categoryId: categoryId
+        }];
+        post_expenses_bulk(payload)
+          .then((res) => {
+            var data = res.data;
+            if(data.success){
+              props.getExpenses();
+              handleClose();
+              return;
+            }
+          })
+      }
+    }
+    if (props.type === "funds") {
+      if(!sourceId){
+        return;
+      } else {
+        var payload = [{
+          date: moment(selectedDate).format('MM-DD-YYYY'),
+          amount: Number(amount),
+          comment: comment || null,
+          accountId: accountSelected.id,
+          typeId: accountSelected.typeId,
+          sourceId: sourceId
+        }];
+        console.log("+++ 133 AddModal.js payload: ", payload)
+        post_funds_bulk(payload)
+          .then((res) => {
+            var data = res.data;
+            if(data.success){
+              // props.getExpenses();
+              handleClose();
+            }
+          })
+      }
+    }
   }
 
   return (
@@ -135,6 +182,7 @@ export default function AddModal(props) {
               name="amount" 
               id="outlined-basic" 
               label="Amount" 
+              autoComplete="off"
               onChange={handleAmount} value={props.amount} onKeyPress={onEnter} 
             />
             <br/>
@@ -144,6 +192,7 @@ export default function AddModal(props) {
               name="comment" 
               id="outlined-basic" 
               label="Comment" 
+              autoComplete="off"
               onChange={handleComment} value={props.comment} onKeyPress={onEnter} 
             />
             <br/>
@@ -152,7 +201,7 @@ export default function AddModal(props) {
               id="categories"
               select
               label="Select category"
-              value={category}
+              value={categoryId}
               onChange={categoryChange}
               style={props.type === "expenses" ? { display: 'block' } : { display: 'none' }}
             >
@@ -168,7 +217,7 @@ export default function AddModal(props) {
               id="sources"
               select
               label="Select Source"
-              value={source}
+              value={sourceId}
               onChange={sourceChange}
               style={props.type === "funds" ? { display: 'block' } : { display: 'none' }}
             >
@@ -188,7 +237,7 @@ export default function AddModal(props) {
               onChange={accountChange}
             >
               {props.userAccounts.map(acc => (
-                <MenuItem key={acc.id} value={acc.id}>
+                <MenuItem key={acc.id} value={acc.account}>
                   {capitalize(acc.account)} - {capitalize(acc.type)}
                 </MenuItem>
               ))}

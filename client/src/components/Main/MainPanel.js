@@ -174,6 +174,7 @@ export default function Dashboard(props) {
             expensesCategories={props.expensesCategories}
             fundSources={props.fundSources}
             userAccounts={props.userAccounts}
+            getExpenses={props.getExpenses}
             />
           </Grid>
         </Grid>

@@ -26,3 +26,11 @@ export function get_all_totals(page){
 export function all_user_data_types(){
   return axios.get('/all_user_data_types')
 }
+
+export function post_expenses_bulk(payload){
+  return axios.post('/expenses_bulk', payload)
+}
+
+export function post_funds_bulk(payload){
+  return axios.post('/funds_bulk', payload)
+}
