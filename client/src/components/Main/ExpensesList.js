@@ -35,7 +35,7 @@ export default function Orders(props) {
         </TableHead>
         <TableBody>
           {props.expensesData.map(item => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} hover>
               <TableCell>{item.date}</TableCell>
               <TableCell>{item.comment}</TableCell>
               <TableCell onClick={() => props.selectAccount(item)}>{capitalize(item.account)}</TableCell>

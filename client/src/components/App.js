@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 import Login from './Login/Login.js';
 import Main from './Main/Main.js';
+import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import LocalStorageService from "./Services/LocalStorageService";
 
@@ -88,7 +89,20 @@ class App extends React.Component {
   render() {
     const loggedIn = this.state.loggedIn;
     if (!loggedIn) {
-      return <Login authenticate={this.authenticate} logout={this.logout} />;
+      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          style={{ minHeight: '100vh' }}
+        >
+          <Grid item xs={3}>
+            <Login authenticate={this.authenticate} logout={this.logout} />
+          </Grid> 
+        </Grid> 
+      )
     } else {
       return (
         <React.Fragment>
