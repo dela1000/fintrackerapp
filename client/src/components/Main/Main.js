@@ -24,6 +24,7 @@ class Main extends React.Component {
       userAccounts: [],
       viewSelected: "expenses"
     };
+    this.getAllTotals = this.getAllTotals.bind(this);
     this.getExpenses = this.getExpenses.bind(this);
     this.getFunds = this.getFunds.bind(this);
     this.selectAccount = this.selectAccount.bind(this);
@@ -70,7 +71,6 @@ class Main extends React.Component {
    get_expenses()
      .then((res) => {
        var data = res.data;
-       console.log("+++ 73 Main.js data: ", data)
        if(data.success){ this.setState({ expensesData: data.data, viewSelected: "expenses"}) }
      })
      .catch((err) => {
@@ -120,6 +120,7 @@ class Main extends React.Component {
             selectAccount={this.selectAccount}
             selectCategory={this.selectCategory}
             selectType={this.selectType}
+            getAllTotals={this.getAllTotals}
             getExpenses={this.getExpenses}
             getFunds={this.getFunds}
           />

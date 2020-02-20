@@ -35,15 +35,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const handleAmount = () => {
-
-}
-
-const onEnter = () => {
-  
-}
-
-
 export default function AddModal(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -56,12 +47,12 @@ export default function AddModal(props) {
     setOpen(false);
   };
 
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [amount, setAmount] = React.useState("");
-  const [comment, setComment] = React.useState("");
-  const [categoryId, setCategory] = React.useState("");
-  const [account, setAccount] = React.useState("");
-  const [sourceId, setSource] = React.useState("");
+  let [selectedDate, setSelectedDate] = React.useState(new Date());
+  let [amount, setAmount] = React.useState("");
+  let [comment, setComment] = React.useState("");
+  let [categoryId, setCategory] = React.useState("");
+  let [account, setAccount] = React.useState("");
+  let [sourceId, setSource] = React.useState("");
 
   const handleDateChange = date => {
     setSelectedDate(date);
@@ -91,10 +82,9 @@ export default function AddModal(props) {
     event.preventDefault();
     if(!selectedDate || !amount || !account){
       return;
-    } 
-    
+    }
+
     var accountSelected = props.userAccounts.find(x => x.account === account);
-    console.log("+++ 123 AddModal.js accountSelected: ", accountSelected)
 
     if (props.type === "expenses") {
       if(!categoryId){
@@ -112,6 +102,8 @@ export default function AddModal(props) {
             var data = res.data;
             if(data.success){
               props.getExpenses();
+              props.getAllTotals()
+              clearAfterSubmit();
               handleClose();
               return;
             }
@@ -130,17 +122,27 @@ export default function AddModal(props) {
           typeId: accountSelected.typeId,
           sourceId: sourceId
         }];
-        console.log("+++ 133 AddModal.js payload: ", payload)
         post_funds_bulk(payload)
           .then((res) => {
             var data = res.data;
             if(data.success){
-              // props.getExpenses();
+              // props.getFunds();
+              props.getAllTotals();
+              clearAfterSubmit();
               handleClose();
             }
           })
       }
     }
+  }
+
+  const clearAfterSubmit = () => {
+    setSelectedDate(new Date());
+    setAmount("");
+    setComment("");
+    setCategory("");
+    setSource("");
+    setAccount("");
   }
 
   return (
@@ -183,7 +185,7 @@ export default function AddModal(props) {
               id="outlined-basic" 
               label="Amount" 
               autoComplete="off"
-              onChange={handleAmount} value={props.amount} onKeyPress={onEnter} 
+              onChange={handleAmount} value={props.amount} 
             />
             <br/>
             <TextField 
@@ -193,7 +195,7 @@ export default function AddModal(props) {
               id="outlined-basic" 
               label="Comment" 
               autoComplete="off"
-              onChange={handleComment} value={props.comment} onKeyPress={onEnter} 
+              onChange={handleComment} value={props.comment} 
             />
             <br/>
             <TextField
