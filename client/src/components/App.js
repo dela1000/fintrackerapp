@@ -7,7 +7,6 @@ import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import LocalStorageService from "./Services/LocalStorageService";
 
-
 const localStorageService = LocalStorageService.getService();
 
 axios.interceptors.request.use(
@@ -124,7 +123,7 @@ class App extends React.Component {
             justify="center"
             style={{ minHeight: '100vh' }}
           >
-            <Grid item xs={3}>
+            <Grid item xs={8}>
               <Initials />
             </Grid>
           </Grid>
