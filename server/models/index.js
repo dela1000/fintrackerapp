@@ -861,5 +861,21 @@ module.exports = {
         };
       })
     }
+  },
+  types: {
+    get: function (callback) {
+      db.Types.findAll({
+        attributes: ['type', 'id']
+      })
+        .then(function (types) {
+          if (types) {
+            callback(types)
+          } else {
+            callback(false, "Types not found")
+          }
+        })
+    }
   }
+  
+
 }

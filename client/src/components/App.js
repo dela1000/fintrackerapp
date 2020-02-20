@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import Login from './Login/Login.js';
+import Initials from './Initials/Initials.js';
 import Main from './Main/Main.js';
 import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
@@ -27,7 +28,9 @@ class App extends React.Component {
 
   static propTypes = {
     user: PropTypes.object,
-    message: PropTypes.string
+    message: PropTypes.string,
+    loggedIn: PropTypes.bool,
+    initials_done: PropTypes.bool,
   };
 
   constructor(props) {
@@ -35,7 +38,8 @@ class App extends React.Component {
 
     this.state = {
       user: null,
-      loggedIn: false
+      loggedIn: false,
+      initials_done: false,
     };
   };
 
@@ -53,8 +57,7 @@ class App extends React.Component {
       .then((res) => {
         let data = res.data;
         if (data.success && data.data && data.data[process.env.REACT_APP_TOKEN]){
-          console.log("+++ 60 App.js setting Token")
-          this.setState({ user: data.data, loggedIn: true }, () => {
+          this.setState({ user: data.data, loggedIn: true, initials_done: data.data.initials_done }, () => {
             localStorageService.setToken({
               token: data.data[process.env.REACT_APP_TOKEN],
               username: data.data.username,
@@ -88,6 +91,7 @@ class App extends React.Component {
 
   render() {
     const loggedIn = this.state.loggedIn;
+    const initials_done = this.state.initials_done;
     if (!loggedIn) {
       return (
         <Grid
@@ -104,11 +108,28 @@ class App extends React.Component {
         </Grid> 
       )
     } else {
-      return (
-        <React.Fragment>
-          <Main logout={this.logout}/>
-        </React.Fragment>
-      )
+      if(initials_done){
+        return (
+          <React.Fragment>
+            <Main logout={this.logout}/>
+          </React.Fragment>
+        )
+      } else {
+        return (
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}
+          >
+            <Grid item xs={3}>
+              <Initials />
+            </Grid>
+          </Grid>
+        )
+      }
 
     }
   }

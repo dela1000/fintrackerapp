@@ -1091,6 +1091,18 @@ module.exports = controllers = {
         }
       })
     }
+  },
+
+  types: {
+    get: function (req, res) {
+      models.types.get(function (types, message) {
+        if (types) {
+          successResponse(res, types)
+        } else {
+          failedResponse(res, message)
+        }
+      })
+    }
   }
 }
 

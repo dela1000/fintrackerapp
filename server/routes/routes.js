@@ -150,6 +150,11 @@ router.get('/expenses_totals', authUtils.checkUser, function(req, res) {
   controllers.expenses_totals.get(req, res)
 })
 
+// // 
+router.get('/types', authUtils.checkUser, function(req, res) {
+  controllers.types.get(req, res)
+})
+
 // TRANSFER FUNDS
 router.post('/transfers', authUtils.checkUser, function(req, res) {
   controllers.transfers.post(req, res)

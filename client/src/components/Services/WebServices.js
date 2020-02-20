@@ -1,6 +1,10 @@
 import axios from 'axios';
 
 
+export function get_types(){
+  return axios.get('/types');
+}
+
 export function get_expenses(page){
   var pg = 1
   if(page){

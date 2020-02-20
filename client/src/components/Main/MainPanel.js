@@ -18,7 +18,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ListItem from '@material-ui/core/ListItem';
 import { capitalize, decimals } from "../Services/helpers";
 import ExpensesList from './ExpensesList.js';
