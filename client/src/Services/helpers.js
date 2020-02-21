@@ -3,5 +3,9 @@ export function capitalize(str){
 };
 
 export function decimals(num){
-  return num.toFixed(2)
+  if(isNaN(num)){
+    var number = parseInt(num, 10);
+    return number.toFixed(2);
+  }
+  return num.toFixed(2);
 }

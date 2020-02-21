@@ -59,7 +59,7 @@ class Initials extends React.Component {
             <Button
               variant="contained"
               color="primary"
-              endIcon={<Icon>send</Icon>}
+              endIcon={<Icon></Icon>}
               onClick={() => this.changeView(2)}
             >
               Next

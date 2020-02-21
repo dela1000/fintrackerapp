@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: `calc(100% - 263px)`,
+    width: `calc(100% - 240px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -250,41 +250,46 @@ export default function Dashboard(props) {
           selectAccount={props.selectAccount}
         />
       </Drawer>
-      <main className={classes.content}>
+      <div className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="xl" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                CHART GOES HERE
-              </Paper>
+            <Grid container xs={8} spacing={2}>
+              {/* Chart */}
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper className={fixedHeightPaper}>
+                  CHART GOES HERE
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={4} lg={3}>
+                <Paper className={fixedHeightPaper}>
+                  <Typography variant="h6">
+                    Total This Month
+                  </Typography>
+                  <Typography component="p" variant="h4">
+                    {props.totalExpenses}
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                  <ExpensesList 
+                    expensesData={props.expensesData}
+                    expensesByCategory={props.expensesByCategory}
+                    totalExpenses={props.totalExpenses}
+                    timeframe={props.timeframe}
+                    selectCategory={props.selectCategory}
+                    selectAccount={props.selectAccount}
+                  />
+                </Paper>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <Typography variant="h6">
-                  Total This Month
-                </Typography>
-                <Typography component="p" variant="h4">
-                  {props.totalExpenses}
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <ExpensesList 
-                  expensesData={props.expensesData}
-                  expensesByCategory={props.expensesByCategory}
-                  totalExpenses={props.totalExpenses}
-                  timeframe={props.timeframe}
-                  selectCategory={props.selectCategory}
-                  selectAccount={props.selectAccount}
-                />
-              </Paper>
+            <Grid item xs={4} spacing={2}>
+              Details PANEL
             </Grid>
           </Grid>
         </Container>
-      </main>
+      </div>
     </div>
   );
 }

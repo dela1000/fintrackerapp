@@ -13,7 +13,7 @@ export default function SidePanelItem(props) {
   return (
     <div style={{"marginTop": "5px"}}>
       <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} style={props.type === "checking" ? {} : { display: 'none' }}>
           <Grid item xs={6}>
             <Typography variant="subtitle2" align="left">
               Current Available
@@ -21,7 +21,7 @@ export default function SidePanelItem(props) {
           </Grid>
           <Grid item xs={6}>
             <Typography align="right">
-              {props.currentAvailable}
+              {decimals(props.currentAvailable)}
             </Typography>
           </Grid>
         </Grid>
