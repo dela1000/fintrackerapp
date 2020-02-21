@@ -73,7 +73,7 @@ class Main extends React.Component {
      .then((res) => {
        var data = res.data;
        if(data.success){ 
-        this.setState({ tableData: data.data, viewSelected: "expenses"}) 
+        this.setState({ tableData: data.data, viewSelected: "expenses"})
       }
      })
      .catch((err) => {
@@ -113,19 +113,19 @@ class Main extends React.Component {
           <MainPanel
             logout={this.props.logout}
             viewSelected={this.state.viewSelected}
+            getAllTotals={this.getAllTotals}
             availableByAccount={this.state.allTotals.availableByAccount}
             expensesByCategory={this.state.allTotals.expensesByCategory}
+            totalExpenses={this.state.allTotals.totalExpenses}
+            currentAvailable={this.state.allTotals.currentAvailable}
+            timeframe={this.state.allTotals.timeframe}
             userAccounts={this.state.userAccounts}
             fundSources={this.state.fundSources}
             expensesCategories={this.state.expensesCategories}
             tableData={this.state.tableData}
-            totalExpenses={this.state.allTotals.totalExpenses}
-            currentAvailable={this.state.allTotals.currentAvailable}
-            timeframe={this.state.allTotals.timeframe}
             selectAccount={this.selectAccount}
             selectCategory={this.selectCategory}
             selectType={this.selectType}
-            getAllTotals={this.getAllTotals}
             getExpenses={this.getExpenses}
             getFunds={this.getFunds}
           />

@@ -119,6 +119,7 @@ export default function Dashboard(props) {
   const [open, setOpen] = React.useState(true);
   let today = moment();
   let avgThisMonth = props.currentAvailable/today.format('D');
+  let averageExpensesEstimate = avgThisMonth*moment().daysInMonth();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -269,19 +270,26 @@ export default function Dashboard(props) {
                           <Grid container spacing={1}>
                             <Grid item xs={6}>
                               <Typography color="textSecondary">
-                                Expenses This Month
+                                Expenses This {props.timeframe}
                               </Typography>
-                              <Typography component="p" variant="h6">
+                              <Typography component="p" variant="h4">
                                 {props.totalExpenses}
                               </Typography>
                             </Grid>
                             <Grid item xs={6}>
                               <Typography color="textSecondary">
-                                Average Daily Expenses:
+                                Average Daily Expenses
                               </Typography>
-                              <Typography component="p" style={ isNaN(avgThisMonth) ? {display: "none"} : {display: "block"}}>
+                              <Typography component="p" variant="h6" style={ isNaN(avgThisMonth) ? {display: "none"} : {display: "block"}}>
                                 {decimals(avgThisMonth)}
                               </Typography>
+                              <Typography color="textSecondary">
+                                Monthly Expenses Estimate
+                              </Typography>
+                              <Typography component="p" variant="h6" style={ isNaN(averageExpensesEstimate) ? {display: "none"} : {display: "block"}}>
+                                {decimals(averageExpensesEstimate)}
+                              </Typography>
+                              
                             </Grid>
                           </Grid>
                         </Paper>
@@ -293,7 +301,7 @@ export default function Dashboard(props) {
                               <Typography color="textSecondary">
                                 Current Available
                               </Typography>
-                              <Typography component="p" variant="h6">
+                              <Typography component="p" variant="h4">
                                 {props.currentAvailable}
                               </Typography>
                             </Grid>
@@ -321,9 +329,10 @@ export default function Dashboard(props) {
                 </Grid>
                 <Grid item xs={4}>
                   <Paper className={classes.paper}>
-                    <DetailsPanel 
-                      graphData={props.expensesByCategory}
+                    <DetailsPanel
                       viewSelected={props.viewSelected}
+                      expensesByCategory={props.expensesByCategory}
+                      availableByAccount={props.availableByAccount}
                     />
                   </Paper>
                 </Grid>

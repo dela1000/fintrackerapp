@@ -11,7 +11,7 @@ import { capitalize, decimals } from "../Services/helpers";
 // import Title from './Title';
 
 function loadMore(type) {
-  console.log("+++ 14 ListingData.js type: ", type)
+  
 }
 
 const useStyles = makeStyles(theme => ({

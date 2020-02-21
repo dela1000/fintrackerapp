@@ -9,12 +9,22 @@ class DetailsPanel extends React.Component {
   }
 
   render() {
-    return (
-      <PieGraph
-        graphData = {this.props.graphData}
-        viewSelected = {this.props.viewSelected}
-      />
-    );
+    if(this.props.viewSelected === "expenses"){
+      return (
+        <PieGraph
+          graphData={this.props.expensesByCategory}
+          viewSelected = {this.props.viewSelected}
+        />
+      );
+    }
+    if(this.props.viewSelected === "funds"){
+      return (
+        <PieGraph
+          graphData={this.props.availableByAccount}
+          viewSelected = {this.props.viewSelected}
+        />
+      );
+    }
   }
 
 }

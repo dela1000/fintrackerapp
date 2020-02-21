@@ -9,15 +9,40 @@ import PieChart, {
   SmallValuesGrouping,
 } from 'devextreme-react/pie-chart';
 import { capitalize, decimals } from "../Services/helpers";
+import _ from 'lodash'
 
 
-const formatLabel = (arg) => {
-  return `${capitalize(arg.argumentText)}: ${decimals(arg.valueText)}`;
-}
+export default function Dashboard({viewSelected, graphData, availableByAccount}) {
 
-export default function Dashboard({viewSelected, graphData}) {
+  console.log("+++ 16 PieGraph.js viewSelected: ", viewSelected)
 
+  let data = []
+  
   let title = " this month";
+  let argumentField = "";
+  let valueField = "";
+
+  if(viewSelected === "expenses"){
+    data = graphData;
+    argumentField = "category"
+    valueField = "amount"
+  }
+
+  if(viewSelected === "funds"){
+    //TO FINISH
+    _.forEach(availableByAccount, account => {
+      console.log("+++ 27 PieGraph.js account: ", account)
+    })
+    data = availableByAccount;
+    argumentField = "account"
+    valueField = "amount"
+  }
+
+
+  const formatLabel = (arg) => {
+    return `${capitalize(arg.argumentText)}: ${decimals(arg.valueText)}`;
+  }
+
   if(viewSelected){
     title = capitalize(viewSelected) + title;
   }
@@ -25,13 +50,13 @@ export default function Dashboard({viewSelected, graphData}) {
   return (
     <PieChart
       id="pie"
-      dataSource={graphData}
+      dataSource={data}
       palette="Bright"
       title={title}
     >
       <Series
-        argumentField="category"
-        valueField="amount"
+        argumentField={argumentField}
+        valueField={valueField}
       >
         <Label visible={true} customizeText={formatLabel}>
           <Connector visible={true} width={0.5} />
