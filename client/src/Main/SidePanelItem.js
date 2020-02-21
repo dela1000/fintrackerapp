@@ -51,7 +51,7 @@ export default function SidePanelItem(props) {
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography align="right" style={item.amount < 0 ? {color: 'red'} : {} }>
+                  <Typography align="right" style={item.amount < 0 ? {color: '#FF504C'} : {} }>
                     {decimals(item.amount)}
                   </Typography>
                 </Grid>

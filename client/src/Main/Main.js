@@ -18,7 +18,7 @@ class Main extends React.Component {
         expensesByCategory: [],
         fundsByTypes: [],
       },
-      expensesData: [],
+      tableData: [],
       expensesCategories: [],
       fundSources: [],
       userAccounts: [],
@@ -34,7 +34,8 @@ class Main extends React.Component {
 
   static propTypes = {
     allTotals: PropTypes.object,
-    expensesData: PropTypes.array,
+    tableData: PropTypes.array,
+    viewSelected: PropTypes.string,
   };
 
   componentDidMount() {
@@ -71,7 +72,9 @@ class Main extends React.Component {
    get_expenses()
      .then((res) => {
        var data = res.data;
-       if(data.success){ this.setState({ expensesData: data.data, viewSelected: "expenses"}) }
+       if(data.success){ 
+        this.setState({ tableData: data.data, viewSelected: "expenses"}) 
+      }
      })
      .catch((err) => {
       console.log("+++ 50 Main.js err: ", err)
@@ -82,7 +85,9 @@ class Main extends React.Component {
    get_funds()
      .then((res) => {
        var data = res.data;
-       if(data.success){ this.setState({ expensesData: data.data, viewSelected: "funds"}) }
+       if(data.success){ 
+        this.setState({ tableData: data.data, viewSelected: "funds"}) 
+      }
      })
      .catch((err) => {
       console.log("+++ 61 Main.js err: ", err)
@@ -107,13 +112,13 @@ class Main extends React.Component {
         <Grid item xs>
           <MainPanel
             logout={this.props.logout}
-            viewSelected={this.viewSelected}
+            viewSelected={this.state.viewSelected}
             availableByAccount={this.state.allTotals.availableByAccount}
             expensesByCategory={this.state.allTotals.expensesByCategory}
             userAccounts={this.state.userAccounts}
             fundSources={this.state.fundSources}
             expensesCategories={this.state.expensesCategories}
-            expensesData={this.state.expensesData}
+            tableData={this.state.tableData}
             totalExpenses={this.state.allTotals.totalExpenses}
             currentAvailable={this.state.allTotals.currentAvailable}
             timeframe={this.state.allTotals.timeframe}

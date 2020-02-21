@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -116,6 +117,8 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  let today = moment();
+  let avgThisMonth = props.currentAvailable/today.format('D');
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -261,25 +264,44 @@ export default function Dashboard(props) {
               <Grid container spacing={3}>
                 <Grid item xs={8}>
                   <Grid container spacing={3}>
-                      <Grid item xs={4}>
-                        <Paper className={fixedHeightPaper}>
-                          <Typography variant="h6">
-                            Expenses This Month
-                          </Typography>
-                          <Typography component="p" variant="h5" color="textSecondary">
-                            {props.totalExpenses}
-                          </Typography>
-                          <Typography variant="h6">
-                            Current Available
-                          </Typography>
-                          <Typography component="p" variant="h5" color="textSecondary">
-                            {props.currentAvailable}
-                          </Typography>
+                      <Grid item xs={6}>
+                        <Paper className={fixedHeightPaper} style={{backgroundColor: "#FF504C"}}>
+                          <Grid container spacing={1}>
+                            <Grid item xs={6}>
+                              <Typography color="textSecondary">
+                                Expenses This Month
+                              </Typography>
+                              <Typography component="p" variant="h6">
+                                {props.totalExpenses}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Typography color="textSecondary">
+                                Average Daily Expenses:
+                              </Typography>
+                              <Typography component="p" style={ isNaN(avgThisMonth) ? {display: "none"} : {display: "block"}}>
+                                {decimals(avgThisMonth)}
+                              </Typography>
+                            </Grid>
+                          </Grid>
                         </Paper>
                       </Grid>
-                      <Grid item xs={8}>
-                        <Paper className={fixedHeightPaper}>
-                        MORE DATA GOES HERE
+                      <Grid item xs={6}>
+                        <Paper className={fixedHeightPaper} style={{backgroundColor: "#C6E0B4"}}>
+                          <Grid container spacing={1}>
+                            <Grid item xs={6}>
+                              <Typography color="textSecondary">
+                                Current Available
+                              </Typography>
+                              <Typography component="p" variant="h6">
+                                {props.currentAvailable}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                              stuff
+                              {props.viewSelected} - here
+                            </Grid>
+                          </Grid>
                         </Paper>
                       </Grid>
                   </Grid>
@@ -287,9 +309,8 @@ export default function Dashboard(props) {
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
                         <ExpensesList 
-                          expensesData={props.expensesData}
-                          expensesByCategory={props.expensesByCategory}
-                          totalExpenses={props.totalExpenses}
+                          viewSelected={props.viewSelected}
+                          expensesData={props.tableData}
                           timeframe={props.timeframe}
                           selectCategory={props.selectCategory}
                           selectAccount={props.selectAccount}
@@ -299,9 +320,12 @@ export default function Dashboard(props) {
                   </Grid>
                 </Grid>
                 <Grid item xs={4}>
-                  <DetailsPanel 
-                    expensesData={props.expensesByCategory}
-                  />
+                  <Paper className={classes.paper}>
+                    <DetailsPanel 
+                      graphData={props.expensesByCategory}
+                      viewSelected={props.viewSelected}
+                    />
+                  </Paper>
                 </Grid>
               </Grid>
             </GridListTile>
