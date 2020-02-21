@@ -241,7 +241,7 @@ exports.add_fund_totals = function(data) {
 exports.format_expenses = function (expenses) {
   var formattedData = []
   _.forEach(expenses, function(expense){
-    var item ={}
+    var item = {};
     item = expense.dataValues;
     if (expense.useraccount) {
       item.account = expense.useraccount.account;
@@ -251,6 +251,29 @@ exports.format_expenses = function (expenses) {
     }
     formattedData.push(item);
   })
+  return formattedData;
+}
+
+exports.format_funds = function (funds) {
+  console.log("+++ 258 calcUtils.js funds: ", funds)
+  var formattedData = [];
+  
+  _.forEach(funds, function(fund){
+    var item = {};
+    item = fund.dataValues;
+    if (fund.useraccount) {
+      item.account = fund.useraccount.account;
+    }
+    if (fund.type) {
+      item.type = fund.type.type;
+    }
+    if (fund.fundsource) {
+      item.source = fund.fundsource.source;
+    }
+
+    formattedData.push(item);
+  })
+
   return formattedData;
 }
 

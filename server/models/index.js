@@ -297,12 +297,7 @@ module.exports = {
         })
     },
     get: function (payload, callback) {
-      db.Funds.findAll({
-        where: {
-          userId: payload.userId,
-          deleted: false
-        }
-      })
+      db.Funds.findAll(payload)
       .then(function (results) {
         if(results){
           callback(results)

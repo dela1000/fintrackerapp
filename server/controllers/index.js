@@ -505,6 +505,57 @@ module.exports = controllers = {
         }
       })
     },
+    get: function (req, res){
+      var userId = req.headers.userId;
+      
+      var payload = {
+        userId: userId,
+      };
+
+      var query = {
+        where: {
+          userId: userId,
+          deleted: false
+        },
+        limit: 100,
+        order: [['date', 'DESC']],
+        include: [{
+          model: db.FundSources,
+          attributes: ['source', 'id'],
+        },{
+          model: db.UserAccounts,
+          attributes: ['account', 'id'],
+        },{
+          model: db.Types,
+          attributes: ['type', 'id'],
+        }]
+      }
+
+      if(req.query.page > 1){
+        var item = req.query.page.toString();
+        item = item + "00"
+        query.offset = Number(item) - 100;
+      }
+      if(req.query.sourceId){
+        query.where['sourceId'] = Number(req.query.sourceId);
+      }
+      if(req.query.accountId){
+        query.where['accountId'] = Number(req.query.accountId);
+      }
+      if(req.query.typeId){
+        query.where['typeId'] = Number(req.query.typeId);
+      }
+
+      models.funds_bulk.get(query, function(funds, fundsMessage){
+        
+        if(funds){
+          var finalData = calcUtils.format_funds(funds);
+          successResponse(res, finalData);
+        } else{
+          failedResponse(res, expensesMessage)
+        };
+      })
+    },
   },
 
   funds: {
