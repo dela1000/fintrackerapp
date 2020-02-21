@@ -10,8 +10,6 @@ import PieChart, {
 } from 'devextreme-react/pie-chart';
 import { capitalize, decimals } from "../Services/helpers";
 
-import { areas } from './Data.js';
-
 class DetailsPanel extends React.Component {
   constructor(props) {
     super(props);
