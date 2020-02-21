@@ -24,6 +24,7 @@ import { capitalize, decimals } from "../Services/helpers";
 import ExpensesList from './ExpensesList.js';
 import SidePanelItem from './SidePanelItem.js';
 import AddModal from './AddModal.js';
+import DetailsPanel from './DetailsPanel.js';
 import Logout from '../Auth/Logout.js';
 
 const drawerWidth = 240;
@@ -104,7 +105,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 140,
+    height: 160,
   },
   depositContext: {
       flex: 1,
@@ -178,7 +179,7 @@ export default function Dashboard(props) {
             />
           </Grid>
         </Grid>
-        <Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
+        {/*<Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
           <Grid container spacing={1}>
             <Grid item xs={6}>
               <Typography variant="subtitle2" align="left">
@@ -191,7 +192,7 @@ export default function Dashboard(props) {
               </Typography>
             </Grid>
           </Grid>
-        </Box>
+        </Box>*/}
         <List style={open ? { display: 'block' } : { display: 'none' }}>
           {props.expensesByCategory.map((item, key) => (
             <ListItem button key={key} onClick={() => props.selectCategory(item)}>
@@ -260,19 +261,25 @@ export default function Dashboard(props) {
               <Grid container spacing={3}>
                 <Grid item xs={8}>
                   <Grid container spacing={3}>
-                      <Grid item xs={8}>
-                        <Paper className={fixedHeightPaper}>
-                        CHART GOES HERE
-                        </Paper>
-                      </Grid>
                       <Grid item xs={4}>
                         <Paper className={fixedHeightPaper}>
                           <Typography variant="h6">
-                            Total This Month
+                            Expenses This Month
                           </Typography>
-                          <Typography component="p" variant="h4">
+                          <Typography component="p" variant="h5" color="textSecondary">
                             {props.totalExpenses}
                           </Typography>
+                          <Typography variant="h6">
+                            Current Available
+                          </Typography>
+                          <Typography component="p" variant="h5" color="textSecondary">
+                            {props.currentAvailable}
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={8}>
+                        <Paper className={fixedHeightPaper}>
+                        MORE DATA GOES HERE
                         </Paper>
                       </Grid>
                   </Grid>
@@ -292,7 +299,9 @@ export default function Dashboard(props) {
                   </Grid>
                 </Grid>
                 <Grid item xs={4}>
-                  DETAILS GO HERE
+                  <DetailsPanel 
+                    expensesData={props.expensesByCategory}
+                  />
                 </Grid>
               </Grid>
             </GridListTile>
