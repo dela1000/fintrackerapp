@@ -12,6 +12,8 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
 import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -253,41 +255,48 @@ export default function Dashboard(props) {
       <div className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="xl" className={classes.container}>
-          <Grid container spacing={3}>
-            <Grid container xs={8} spacing={2}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper className={fixedHeightPaper}>
-                  CHART GOES HERE
-                </Paper>
+          <GridList cols={1} >
+            <GridListTile style={{height: '100%'}}>
+              <Grid container spacing={3}>
+                <Grid item xs={8}>
+                  <Grid container spacing={3}>
+                      <Grid item xs={8}>
+                        <Paper className={fixedHeightPaper}>
+                        CHART GOES HERE
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Paper className={fixedHeightPaper}>
+                          <Typography variant="h6">
+                            Total This Month
+                          </Typography>
+                          <Typography component="p" variant="h4">
+                            {props.totalExpenses}
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                  </Grid>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Paper className={classes.paper}>
+                        <ExpensesList 
+                          expensesData={props.expensesData}
+                          expensesByCategory={props.expensesByCategory}
+                          totalExpenses={props.totalExpenses}
+                          timeframe={props.timeframe}
+                          selectCategory={props.selectCategory}
+                          selectAccount={props.selectAccount}
+                        />
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={4}>
+                  DETAILS GO HERE
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper className={fixedHeightPaper}>
-                  <Typography variant="h6">
-                    Total This Month
-                  </Typography>
-                  <Typography component="p" variant="h4">
-                    {props.totalExpenses}
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                  <ExpensesList 
-                    expensesData={props.expensesData}
-                    expensesByCategory={props.expensesByCategory}
-                    totalExpenses={props.totalExpenses}
-                    timeframe={props.timeframe}
-                    selectCategory={props.selectCategory}
-                    selectAccount={props.selectAccount}
-                  />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Grid item xs={4} spacing={2}>
-              Details PANEL
-            </Grid>
-          </Grid>
+            </GridListTile>
+          </GridList>
         </Container>
       </div>
     </div>

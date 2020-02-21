@@ -47,7 +47,7 @@ export default function Orders(props) {
       </Table>
       <div className={classes.seeMore}>
         <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
+          Load More
         </Link>
       </div>
     </React.Fragment>
