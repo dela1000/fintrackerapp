@@ -22,7 +22,7 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ListItem from '@material-ui/core/ListItem';
 import { capitalize, decimals } from "../Services/helpers";
-import ExpensesList from './ExpensesList.js';
+import ListingData from './ListingData.js';
 import SidePanelItem from './SidePanelItem.js';
 import AddModal from './AddModal.js';
 import DetailsPanel from './DetailsPanel.js';
@@ -308,9 +308,9 @@ export default function Dashboard(props) {
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
-                        <ExpensesList 
+                        <ListingData 
                           viewSelected={props.viewSelected}
-                          expensesData={props.tableData}
+                          listingData={props.tableData}
                           timeframe={props.timeframe}
                           selectCategory={props.selectCategory}
                           selectAccount={props.selectAccount}

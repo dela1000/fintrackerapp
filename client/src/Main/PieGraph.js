@@ -16,8 +16,7 @@ const formatLabel = (arg) => {
 }
 
 export default function Dashboard({viewSelected, graphData}) {
-  
-  console.log("+++ 20 PieGraph.js viewSelected: ", viewSelected)
+
   let title = " this month";
   if(viewSelected){
     title = capitalize(viewSelected) + title;

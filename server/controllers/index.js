@@ -517,7 +517,7 @@ module.exports = controllers = {
           userId: userId,
           deleted: false
         },
-        limit: 100,
+        limit: 10,
         order: [['date', 'DESC']],
         include: [{
           model: db.FundSources,
@@ -533,8 +533,8 @@ module.exports = controllers = {
 
       if(req.query.page > 1){
         var item = req.query.page.toString();
-        item = item + "00"
-        query.offset = Number(item) - 100;
+        item = item + "0"
+        query.offset = Number(item) - 10;
       }
       if(req.query.sourceId){
         query.where['sourceId'] = Number(req.query.sourceId);
@@ -700,7 +700,7 @@ module.exports = controllers = {
           userId: userId,
           deleted: false
         },
-        limit: 100,
+        limit: 10,
         order: [['date', 'DESC']],
         include: [{
           model: db.ExpensesCategories,
@@ -713,8 +713,8 @@ module.exports = controllers = {
 
       if(req.query.page > 1){
         var item = req.query.page.toString();
-        item = item + "00"
-        query.offset = Number(item) - 100;
+        item = item + "0"
+        query.offset = Number(item) - 10;
       }
       if(req.query.categoryId){
         query.where['categoryId'] = Number(req.query.categoryId);
