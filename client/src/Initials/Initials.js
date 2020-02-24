@@ -104,8 +104,6 @@ class Initials extends React.Component {
           this.setState({ errorFound: true, failMessage: "All accounts need a Type" })
         }
       }
-      
-      console.log("+++ 108 Initials.js row.primary: ", row.primary)
       if(row.primary && !primarySet){
         primarySet = true;
       }
