@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import InitialItem from './InitialItem';
 import AlertModal from './AlertModal';
 import { get_types } from '../Services/WebServices';
-import { capitalize, decimals } from '../Services/helpers';
 
 class Initials extends React.Component {
   constructor() {
@@ -18,7 +15,8 @@ class Initials extends React.Component {
     this.state = {
       types: [],
       view: 2,
-      typeIdMissing: false,
+      primarySet: false,
+      errorFound: false,
       failMessage: '',
       rows: [
         { 
@@ -78,7 +76,6 @@ class Initials extends React.Component {
     
   }
 
-
   handleAddRow = () => {
     this.setState({
       rows: this.state.rows.concat([{ 
@@ -103,13 +100,25 @@ class Initials extends React.Component {
     
     _.forEach(this.state.rows, (row) => {
       if(!row.typeId){
-        this.setState({ typeIdMissing: true, failMessage: "All accounts need a Type" })
+        if(!this.state.errorFound){
+          this.setState({ errorFound: true, failMessage: "All accounts need a Type" })
+        }
+      }
+      if(row.typeId === 1){
+        if(row.primary){
+          this.setState({ primarySet: true })
+        } else {
+          if(!this.state.primarySet){
+            this.setState({ errorFound: true, failMessage: "A Checking Account needs to be set as primary" })
+          }
+        }
       }
     })
+    console.log("+++ 117 Initials.js this.state.rows: ", this.state.rows)
   }
 
   closeWarning = () => {
-    this.setState({ typeIdMissing: false })
+    this.setState({ errorFound: false, primarySet: false, failMessage: '' })
   }
 
   render() {
@@ -148,7 +157,7 @@ class Initials extends React.Component {
       return (
         <React.Fragment>
           <AlertModal 
-            typeIdMissing={this.state.typeIdMissing} 
+            errorFound={this.state.errorFound} 
             closeWarning={this.closeWarning} 
             failMessage={this.state.failMessage}
           />

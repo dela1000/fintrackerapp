@@ -1,8 +1,6 @@
 import React from 'react';
 import Initials from './Initials/Initials.js';  
 import Main from './Main/Main.js';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 
 import LocalStorageService from "./Services/LocalStorageService";
 import axios from 'axios';

@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Box from '@material-ui/core/Box';
-import { capitalize, decimals } from "../Services/helpers";
+import { capitalize } from "../Services/helpers";
 
 export default function InitialItem(props) {
   const rowsLength = props.rowsLength;
