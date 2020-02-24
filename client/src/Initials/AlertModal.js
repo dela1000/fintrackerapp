@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import Typography from '@material-ui/core/Typography';
+
 
 const useStyles = makeStyles(theme => ({
   modal: {
@@ -13,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
-    padding: theme.spacing(1, 1, 1),
+    padding: theme.spacing(10, 10, 10),
   },
 }));
 
@@ -43,12 +45,19 @@ export default function AddModal(props) {
       closeAfterTransition
       BackdropComponent={Backdrop}
       BackdropProps={{
-      timeout: 500,
+      timeout: 750,
       }}
     >
       <Fade in={open}>
         <div className={classes.paper}>
-          <h2>{props.failMessage}</h2>
+          <Typography 
+            component="h1" 
+            variant="h6" 
+            color="inherit" 
+            align="center"
+          >
+            {props.failMessage} 
+          </Typography>
         </div>
       </Fade>
     </Modal>

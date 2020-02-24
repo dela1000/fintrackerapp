@@ -15,7 +15,6 @@ class Initials extends React.Component {
     this.state = {
       types: [],
       view: 2,
-      primarySet: false,
       errorFound: false,
       failMessage: '',
       rows: [
@@ -98,6 +97,7 @@ class Initials extends React.Component {
   handleSubmit = evt => {
     evt.preventDefault();
     
+    var primarySet = false;
     _.forEach(this.state.rows, (row) => {
       if(!row.typeId){
         if(!this.state.errorFound){
@@ -105,20 +105,20 @@ class Initials extends React.Component {
         }
       }
       if(row.typeId === 1){
-        if(row.primary){
-          this.setState({ primarySet: true })
-        } else {
-          if(!this.state.primarySet){
-            this.setState({ errorFound: true, failMessage: "A Checking Account needs to be set as primary" })
-          }
+        console.log("+++ 108 Initials.js row.primary: ", row.primary)
+        if(row.primary && !primarySet){
+          primarySet = true;
         }
       }
     })
-    console.log("+++ 117 Initials.js this.state.rows: ", this.state.rows)
+    if(!primarySet){
+      this.setState({ errorFound: true, failMessage: "A Checking Account needs to be set as Primary" })
+    }
+    console.log("this.state.rows: ", JSON.stringify(this.state.rows, null, "\t"));
   }
 
   closeWarning = () => {
-    this.setState({ errorFound: false, primarySet: false, failMessage: '' })
+    this.setState({ errorFound: false, failMessage: '' })
   }
 
   render() {
