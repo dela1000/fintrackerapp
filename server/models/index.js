@@ -104,6 +104,25 @@ module.exports = {
         })
     }
   },
+  types: {
+    get: function (callback) {
+      db.Types.findAll({
+        where: {
+          Type: {
+            [Op.not]: ['transfers']
+          }
+        },
+        attributes: ['type', 'id'],
+      })
+        .then(function (types) {
+          if (types) {
+            callback(types)
+          } else {
+            callback(false, "Types not found")
+          }
+        })
+    }
+  },
 
   get_type: {
     get: function(payload, callback) {
@@ -834,7 +853,6 @@ module.exports = {
               source: {
                 [Op.not]: ['Initial', 'Internal Transfer']
               }
-          
             },
             attributes: ['source', 'id'],
             required: false
@@ -857,20 +875,5 @@ module.exports = {
       })
     }
   },
-  types: {
-    get: function (callback) {
-      db.Types.findAll({
-        attributes: ['type', 'id']
-      })
-        .then(function (types) {
-          if (types) {
-            callback(types)
-          } else {
-            callback(false, "Types not found")
-          }
-        })
-    }
-  }
-  
 
 }

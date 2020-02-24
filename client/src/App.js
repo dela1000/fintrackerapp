@@ -1,6 +1,9 @@
 import React from 'react';
-import Initials from './Initials/Initials.js';
+import Initials from './Initials/Initials.js';  
 import Main from './Main/Main.js';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+
 import LocalStorageService from "./Services/LocalStorageService";
 import axios from 'axios';
 
@@ -21,13 +24,17 @@ axios.interceptors.request.use(
 );
 
 export default function App(props) {
-    if(!props.initials_done){
-      return (
-        <React.Fragment>
-          <Main />
-        </React.Fragment>
-      )
-    } else {
-      return <Initials />
-    }
+  if(props.initials_done){
+    return (
+      <React.Fragment>
+        <Main />
+      </React.Fragment>
+    )
+  } else {
+    return (
+      <React.Fragment>
+        <Initials />
+      </React.Fragment>
+    )
+  }
 }

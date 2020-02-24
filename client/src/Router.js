@@ -101,7 +101,6 @@ class Auth extends React.Component {
 export default Auth;
 
 
-
 function PrivateRoute(props) {
   return (
     <Route
@@ -111,10 +110,7 @@ function PrivateRoute(props) {
           props.children
         ) : (
           <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
+            to={{ pathname: "/login", state: { from: location } }}
           />
         )
       }
@@ -123,8 +119,6 @@ function PrivateRoute(props) {
 }
 
 function NoMatch() {
-
-
   return (
     <div>
       <h3>
