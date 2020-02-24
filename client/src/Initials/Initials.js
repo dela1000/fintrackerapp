@@ -1,5 +1,6 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -7,8 +8,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import InitialItem from './InitialItem';
-import { get_types } from "../Services/WebServices";
-import { capitalize, decimals } from "../Services/helpers";
+import AlertModal from './AlertModal';
+import { get_types } from '../Services/WebServices';
+import { capitalize, decimals } from '../Services/helpers';
 
 class Initials extends React.Component {
   constructor() {
@@ -16,11 +18,14 @@ class Initials extends React.Component {
     this.state = {
       types: [],
       view: 2,
+      typeIdMissing: false,
+      failMessage: '',
       rows: [
         { 
           amount: '',
           name: '',
-          type: ''
+          typeId: '',
+          primary: false
         },
       ]
     };
@@ -30,7 +35,7 @@ class Initials extends React.Component {
     types: PropTypes.array,
     rows: PropTypes.array,
     view: PropTypes.number
-  };
+  }
 
   componentDidMount() {
     this.getTypes();
@@ -52,13 +57,26 @@ class Initials extends React.Component {
 
 
   handleChange = idx => evt => {
-    const newShareholders = this.state.rows.map((row, sidx) => {
+    const item = this.state.rows.map((row, sidx) => {
       if (idx !== sidx) return row;
       return { ...row, [evt.target.name]: evt.target.value };
     });
 
-    this.setState({ rows: newShareholders });
+    this.setState({ rows: item });
   };
+
+  handlePrimary = idx => evt => {
+    const item = this.state.rows.map((row, sidx) => {
+      if (idx !== sidx) return { ...row, primary: false };
+      if(row.primary){
+        return { ...row, primary: false };
+      } else {
+        return { ...row, primary: true };
+      }
+    })
+    this.setState({ rows: item });
+    
+  }
 
 
   handleAddRow = () => {
@@ -66,7 +84,8 @@ class Initials extends React.Component {
       rows: this.state.rows.concat([{ 
           amount: '',
           name: "",
-          type: ''
+          typeId: '',
+          primary: false
         }])
     });
   };
@@ -81,8 +100,17 @@ class Initials extends React.Component {
 
   handleSubmit = evt => {
     evt.preventDefault();
-    console.log("this.state.rows: ", JSON.stringify(this.state.rows, null, "\t"));
-  };
+    
+    _.forEach(this.state.rows, (row) => {
+      if(!row.typeId){
+        this.setState({ typeIdMissing: true, failMessage: "All accounts need a Type" })
+      }
+    })
+  }
+
+  closeWarning = () => {
+    this.setState({ typeIdMissing: false })
+  }
 
   render() {
     if(this.state.view === 1){
@@ -116,71 +144,83 @@ class Initials extends React.Component {
       )
     }
     if(this.state.view === 2){
+    
       return (
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-          style={{ minHeight: '100vh' }}
-        >
-          <form onSubmit={this.handleSubmit}>
-            <Grid item xs={10}>
-              <Box pt={5} pb={5}>
-                <Grid item xs>
-                  <Typography component="h1" variant="h6" color="inherit" align="center">
-                    Add the Amount, Account Name and select the Account type below. Also, assign one Checking account as your primary account.
-                  </Typography>
-                </Grid>
-              </Box>
-              <Grid
-                container
-                spacing={0}
-                direction="column"
-                alignItems="center"
-              >
-                {this.state.rows.map((item, index) => (
-                  <InitialItem 
-                    key={index} 
-                    item={item} 
-                    index={index} 
-                    handleChange={this.handleChange} 
-                    handleRemoveRow={this.handleRemoveRow} 
-                    types={this.state.types}
-                    rowsLength={this.state.rows.length}
-                  />
-                ))}
-              </Grid>
-              <Box pt={10}>
+        <React.Fragment>
+          <AlertModal 
+            typeIdMissing={this.state.typeIdMissing} 
+            closeWarning={this.closeWarning} 
+            failMessage={this.state.failMessage}
+          />
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}
+          >
+            <form onSubmit={this.handleSubmit}>
+              <Grid item xs={10}>
+                <Box pt={5} pb={5}>
+                  <Grid item xs>
+                    <Typography component="h1" variant="h6" color="inherit" align="center">
+                      Add the Amount, Account Name and select the Account type below. Also, assign one Checking account as your primary account. 
+                    </Typography>
+                    <Typography component="h1" variant="h6" color="inherit" align="center">
+                      You will need at least one Checking account set to Primary.
+                    </Typography>
+                  </Grid>
+                </Box>
                 <Grid
                   container
                   spacing={0}
+                  direction="column"
+                  alignItems="center"
                 >
-                  <Grid item xs>
-                    <Button 
-                      variant="contained"
-                      color="primary"
-                      onClick={this.handleAddRow}
-                    >
-                      Add More
-                    </Button>
-                  </Grid>
-                  <Grid item xs>
-                    <Button 
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      style={{float:"right"}}
-                    >
-                      Next
-                    </Button>
-                  </Grid>
+                  {this.state.rows.map((item, index) => (
+                    <InitialItem 
+                      key={index} 
+                      item={item} 
+                      index={index} 
+                      handleChange={this.handleChange} 
+                      handlePrimary={this.handlePrimary} 
+                      handleRemoveRow={this.handleRemoveRow} 
+                      types={this.state.types}
+                      rowsLength={this.state.rows.length}
+                    />
+                  ))}
                 </Grid>
-              </Box>
-            </Grid>
-          </form>
-        </Grid>
+                <Box pt={10}>
+                  <Grid
+                    container
+                    spacing={0}
+                  >
+                    <Grid item xs>
+                      <Button 
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleAddRow}
+                      >
+                        Add More
+                      </Button>
+                    </Grid>
+                    <Grid item xs>
+                      <Button 
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        style={{float:"right"}}
+                      >
+                        Next
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+            </form>
+          </Grid>
+        </React.Fragment>
       );
     }
   }
