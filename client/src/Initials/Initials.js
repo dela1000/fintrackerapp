@@ -15,11 +15,11 @@ class Initials extends React.Component {
     super();
     this.state = {
       types: [],
-      view: 1,
+      view: 2,
       rows: [
         { 
-          amount: 0,
-          name: "",
+          amount: '',
+          name: '',
           type: ''
         },
       ]
@@ -52,7 +52,6 @@ class Initials extends React.Component {
 
 
   handleChange = idx => evt => {
-    console.log("+++ 54 Initials.js evt.target.name: ", evt.target.name)
     const newShareholders = this.state.rows.map((row, sidx) => {
       if (idx !== sidx) return row;
       return { ...row, [evt.target.name]: evt.target.value };
@@ -65,7 +64,7 @@ class Initials extends React.Component {
   handleAddRow = () => {
     this.setState({
       rows: this.state.rows.concat([{ 
-          amount: 0,
+          amount: '',
           name: "",
           type: ''
         }])
@@ -73,9 +72,11 @@ class Initials extends React.Component {
   };
 
   handleRemoveRow = idx => () => {
-    this.setState({
-      rows: this.state.rows.filter((s, sidx) => idx !== sidx)
-    });
+    if(this.state.rows.length > 1){
+      this.setState({
+        rows: this.state.rows.filter((s, sidx) => idx !== sidx)
+      });
+    }
   };
 
   handleSubmit = evt => {
@@ -124,43 +125,61 @@ class Initials extends React.Component {
           justify="center"
           style={{ minHeight: '100vh' }}
         >
-          <Grid item xs={10}>
-            <form onSubmit={this.handleSubmit}>
-              <React.Fragment>
-                <Box pt={5} pb={5}>
-                  <Grid item xs={10}>
-                    <Typography component="h1" variant="h6" color="inherit" align="center">
-                      Add the Amount, Account Name and select the Account type below. Also, assign one Checking account as your primary account.
-                    </Typography>
+          <form onSubmit={this.handleSubmit}>
+            <Grid item xs={10}>
+              <Box pt={5} pb={5}>
+                <Grid item xs>
+                  <Typography component="h1" variant="h6" color="inherit" align="center">
+                    Add the Amount, Account Name and select the Account type below. Also, assign one Checking account as your primary account.
+                  </Typography>
+                </Grid>
+              </Box>
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+              >
+                {this.state.rows.map((item, index) => (
+                  <InitialItem 
+                    key={index} 
+                    item={item} 
+                    index={index} 
+                    handleChange={this.handleChange} 
+                    handleRemoveRow={this.handleRemoveRow} 
+                    types={this.state.types}
+                    rowsLength={this.state.rows.length}
+                  />
+                ))}
+              </Grid>
+              <Box pt={10}>
+                <Grid
+                  container
+                  spacing={0}
+                >
+                  <Grid item xs>
+                    <Button 
+                      variant="contained"
+                      color="primary"
+                      onClick={this.handleAddRow}
+                    >
+                      Add More
+                    </Button>
                   </Grid>
-                </Box>
-                  <Grid
-                    container
-                    spacing={0}
-                    direction="column"
-                    alignItems="center"
-                  >
-                    {this.state.rows.map((item, index) => (
-                      <InitialItem 
-                        key={index} 
-                        item={item} 
-                        index={index} 
-                        handleChange={this.handleChange} 
-                        handleRemoveRow={this.handleRemoveRow} 
-                        types={this.state.types}
-                      />
-                    ))}
+                  <Grid item xs>
+                    <Button 
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      style={{float:"right"}}
+                    >
+                      Next
+                    </Button>
                   </Grid>
-                  <button
-                    type="button"
-                    onClick={this.handleAddRow}
-                  >
-                    Add Row
-                  </button>
-                  <button>Next</button>
-              </React.Fragment>
-            </form>
-          </Grid>
+                </Grid>
+              </Box>
+            </Grid>
+          </form>
         </Grid>
       );
     }

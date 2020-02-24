@@ -1,10 +1,12 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
+import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { capitalize, decimals } from "../Services/helpers";
 
 export default function InitialItem(props) {
+  const rowsLength = props.rowsLength;
   return (
     <React.Fragment>
       <Grid
@@ -14,14 +16,14 @@ export default function InitialItem(props) {
         justify="center"
       >
         <Grid item xs>
-          <TextField
+          <CurrencyTextField
             fullWidth
-            type="number"
-            name="amount" 
-            id="outlined-basic"
             label="Amount"
+            name="amount" 
+            value={props.item.amount || ''}
+            currencySymbol="$"
+            outputFormat="string"
             autoComplete="off"
-            value={props.item.amount}
             onChange={props.handleChange(props.index)}
           />
         </Grid>
@@ -45,7 +47,7 @@ export default function InitialItem(props) {
             select
             label="Account Type"
             onChange={props.handleChange(props.index)}
-            value={props.item.type || null}
+            value={props.item.type || ''}
           >
             {props.types.map(src => (
               <MenuItem key={src.id} value={src.id}>
@@ -54,9 +56,13 @@ export default function InitialItem(props) {
             ))}
           </TextField>
         </Grid>
-        <Grid item xs={2}>
+        <Grid 
+          item xs={1}
+          style={rowsLength <= 1 ? {display: 'none'} : {}}
+        >
           <button
             type="button"
+            style={{float:"right"}}
             onClick={props.handleRemoveRow(props.index)}
           >
             -
