@@ -6,3 +6,5 @@ export function decimals(num){
   var number = parseFloat(num, 10);
   return number.toFixed(2);
 }
+
+export const dateFormat = 'MM-DD-YYYY';

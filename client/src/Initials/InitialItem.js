@@ -35,11 +35,11 @@ export default function InitialItem(props) {
             required
             fullWidth
             type="text"
-            name="name" 
+            name="account" 
             id="outlined-basic"
             label="Account Name"
             autoComplete="off"
-            value={props.item.name  || ''}
+            value={props.item.account  || ''}
             onChange={props.handleChange(props.index)}
           />
         </Grid>

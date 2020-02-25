@@ -36,3 +36,7 @@ export function post_expenses_bulk(payload){
 export function post_funds_bulk(payload){
   return axios.post('/funds_bulk', payload)
 }
+
+export function set_initials(payload){
+  return axios.post('/set_initials', payload)
+}

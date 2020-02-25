@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import moment from 'moment';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import InitialItem from './InitialItem';
 import AlertModal from './AlertModal';
-import { get_types } from '../Services/WebServices';
+import { get_types, set_initials } from '../Services/WebServices';
+import { dateFormat } from "../Services/helpers";
 
 class Initials extends React.Component {
   constructor() {
@@ -20,7 +22,7 @@ class Initials extends React.Component {
       rows: [
         { 
           amount: '',
-          name: '',
+          account: '',
           typeId: '',
           primary: false
         },
@@ -79,7 +81,7 @@ class Initials extends React.Component {
     this.setState({
       rows: this.state.rows.concat([{ 
           amount: '',
-          name: "",
+          account: "",
           typeId: '',
           primary: false
         }])
@@ -112,6 +114,26 @@ class Initials extends React.Component {
       this.setState({ errorFound: true, failMessage: "A Checking Account needs to be set as Primary" })
     }
     console.log("this.state.rows: ", JSON.stringify(this.state.rows, null, "\t"));
+    var payload = [];
+    _.forEach(this.state.rows, (row)=> {
+      payload.push({
+        amount: Number(row.amount),
+        account: row.account,
+        typeId: row.typeId,
+        primary: row.primary,
+        date: moment().format(dateFormat),
+      })
+    })
+    set_initials(payload)
+      .then((res) => {
+        var data = res.data;
+        if(data.success){
+          console.log("+++ 131 Initials.js data: ", data)
+          this.changeView(3)
+        } else {
+          this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
+        }
+      })
   }
 
   closeWarning = () => {
@@ -229,6 +251,20 @@ class Initials extends React.Component {
         </React.Fragment>
       );
     }
+
+    if(this.state.view === 3){}
+      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          style={{ minHeight: '100vh' }}
+        >
+          PAGE 3
+        </Grid>
+      )
   }
 }
 
