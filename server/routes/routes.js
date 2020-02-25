@@ -26,6 +26,10 @@ router.get('/logout', function(req, res) {
   controllers.logout.get(req, res)
 })
 
+router.get('/whoami', authUtils.checkUser, function(req, res) {
+  controllers.whoami.get(req, res)
+})
+
 
 // Set initial funds for accounts
 router.post('/set_initials', authUtils.checkUser, function(req, res) {

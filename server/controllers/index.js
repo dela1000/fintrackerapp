@@ -77,7 +77,7 @@ module.exports = controllers = {
               username: name,
               fintracktoken: token,
               userId: isUser.dataValues.id,
-              initial_done: isUser.dataValues.initial_done,
+              initial_done: isUser.dataValues.initials_done,
               userEmail: isUser.dataValues.email,
             }
             successResponse(res, data)
@@ -98,6 +98,27 @@ module.exports = controllers = {
         userId: null
       }
       successResponse(res, data)
+    }
+  },
+
+  whoami: {
+    get: function (req, res) {
+      var userData = {
+        userId: req.headers.userId
+      }
+      models.get_user.get(userData, function(user, getUserMessage) {
+        if(user){
+          var data = {
+            userId: user.id,
+            username: user.username,
+            initial_done: user.initials_done,
+            userEmail: user.email,
+          }
+          successResponse(res, data)
+        } else{
+          failedResponse(res, getUserMessage)
+        };
+      })
     }
   },
 

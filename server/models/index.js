@@ -379,7 +379,9 @@ module.exports = {
         .then(function(currentAvailable) {
           if(currentAvailable){
             currentAvailable.amount = currentAvailable.amount + payload.totalToUpdate;
-            currentAvailable.amount = currentAvailable.amount.toFixed(2);
+            if(currentAvailable.amount !== 0){
+              currentAvailable.amount = currentAvailable.amount.toFixed(2);
+            }
             currentAvailable.save();
             callback(currentAvailable)
           } else {

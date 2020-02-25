@@ -6,27 +6,34 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
+import InitialFunds from './InitialFunds';
 import InitialItem from './InitialItem';
 import AlertModal from './AlertModal';
-import { get_types, set_initials } from '../Services/WebServices';
+import { get_types, set_initials, fund_sources, categories_bulk } from '../Services/WebServices';
 import { dateFormat } from "../Services/helpers";
+
+import Logout from '../Auth/Logout.js';
 
 class Initials extends React.Component {
   constructor() {
     super();
     this.state = {
       types: [],
-      view: 2,
+      view: 3,
       errorFound: false,
       failMessage: '',
-      rows: [
-        { 
+      rows: [{ 
           amount: '',
           account: '',
-          typeId: '',
+          typeId: 1,
           primary: false
-        },
-      ]
+        }],
+      categories: [{
+        name: ''
+      }],
+      sources: [{
+        name: ''
+      }]
     };
   }
 
@@ -96,7 +103,7 @@ class Initials extends React.Component {
     }
   };
 
-  handleSubmit = evt => {
+  handleSubmitFunds = evt => {
     evt.preventDefault();
     
     var primarySet = false;
@@ -140,37 +147,131 @@ class Initials extends React.Component {
     this.setState({ errorFound: false, failMessage: '' })
   }
 
+
+  handleCategory = idx => evt => {
+    const item = this.state.categories.map((category, sidx) => {
+      if (idx !== sidx) return category;
+      return { ...category, name: evt.target.value };
+    });
+
+    this.setState({ categories: item });
+  };
+
+  handleAddCategory = () => {
+    this.setState({
+      categories: this.state.categories.concat([{ 
+          name: ''
+        }])
+    });
+  };
+
+  handleSources = idx => evt => {
+    const item = this.state.sources.map((source, sidx) => {
+      if (idx !== sidx) return source;
+      return { ...source, name: evt.target.value };
+    });
+
+    this.setState({ sources: item });
+  };
+
+  handleAddSource = () => {
+    this.setState({
+      sources: this.state.sources.concat([{ 
+          name: ''
+        }])
+    });
+  };
+
+
+
+
+
+  submitCatsSours = evt => {
+    let srcHolder = [];
+    let catHolder = [];
+    _.forEach(this.state.sources, (src) => {
+      src.name = src.name.trim();
+      if(src.name.length > 0){
+        srcHolder.push({
+          source: src.name 
+        })
+      }
+    })
+
+    _.forEach(this.state.categories, (cat) => {
+      cat.name = cat.name.trim();
+      if(cat.name.length > 0){
+        catHolder.push({
+          name: cat.name
+        })
+      }
+    })
+
+    console.log("srcHolder: ", JSON.stringify(srcHolder, null, "\t"));
+    console.log("catHolder: ", JSON.stringify(catHolder, null, "\t"));
+
+    categories_bulk(catHolder)
+      .then((catRes) => {
+        var catData = catRes.data;
+        if(catData.success){
+          fund_sources(srcHolder)
+            .then((srcRes) => {
+              var srcData = srcRes.data;
+              if(srcData.success){
+                
+              }
+            })
+        } else {
+          this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
+        }
+      })
+  }
+
+
   render() {
     if(this.state.view === 1){
       return (
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-          style={{ minHeight: '100vh' }}
-        >
-          <Grid item xs={10}>
-            <Typography component="h1" variant="h4" color="inherit">
-              Welcome to FinTracker!
-            </Typography>
-            <Typography component="h2" variant="h6" color="inherit">
-              Here, we will add all the initial amounts for our current Checking, Savings, and Investment accounts.
-            </Typography>
-            <br/>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{float:"right"}}
-              onClick={() => this.changeView(2)}
-            >
-              Next
-            </Button>
+        <React.Fragment>
+          <Grid
+            container
+            spacing={0}
+            justify="center"
+            style={{ minHeight: '10vh' }}
+          >
+            <Grid item xs>
+              <Logout style={{"float": "right"}}/>
+            </Grid>
           </Grid>
-        </Grid>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '90vh' }}
+          >
+            <Grid item xs={10}>
+              <Typography component="h1" variant="h4" color="inherit">
+                Welcome to FinTracker!
+              </Typography>
+              <Typography component="h2" variant="h6" color="inherit">
+                Here, we will add all the initial amounts for our current Checking, Savings, and Investment accounts.
+              </Typography>
+              <br/>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{float:"right"}}
+                onClick={() => this.changeView(2)}
+              >
+                Next
+              </Button>
+            </Grid>
+          </Grid>
+        </React.Fragment>
       )
     }
+
     if(this.state.view === 2){
     
       return (
@@ -183,12 +284,22 @@ class Initials extends React.Component {
           <Grid
             container
             spacing={0}
+            justify="center"
+            style={{ minHeight: '10vh' }}
+          >
+            <Grid item xs>
+              <Logout style={{"float": "right"}}/>
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            spacing={0}
             direction="column"
             alignItems="center"
             justify="center"
             style={{ minHeight: '100vh' }}
           >
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmitFunds}>
               <Grid item xs={10}>
                 <Box pt={5} pb={5}>
                   <Grid item xs>
@@ -207,7 +318,7 @@ class Initials extends React.Component {
                   alignItems="center"
                 >
                   {this.state.rows.map((item, index) => (
-                    <InitialItem 
+                    <InitialFunds 
                       key={index} 
                       item={item} 
                       index={index} 
@@ -252,19 +363,144 @@ class Initials extends React.Component {
       );
     }
 
-    if(this.state.view === 3){}
-      return (
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-          style={{ minHeight: '100vh' }}
-        >
-          PAGE 3
-        </Grid>
-      )
+    if(this.state.view === 3){
+        return (
+          <React.Fragment>
+            <Grid
+              container
+              spacing={0}
+              justify="center"
+              style={{ minHeight: '10vh' }}
+            >
+              <Grid item xs>
+                <Logout style={{"float": "right"}}/>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              alignItems="center"
+              justify="center"
+              style={{ minHeight: '80vh' }}
+            >
+              <Grid item xs={5}>
+               <form onSubmit={this.handleSubmitCategories}>
+                  <Box pt={5} pb={5}>
+                    <Grid item xs>
+                      <Typography component="h1" variant="h4" color="inherit" align="center">
+                        Now, lets add Expenses categories,
+                      </Typography>
+                      <Typography component="h1" variant="h6" color="inherit" align="center">
+                        Examples are Groceries, Dining out, Housing, Bills, Etc. Add as many as you like.
+                      </Typography>
+                    </Grid>
+                  </Box>
+                  <Grid
+                    container
+                    spacing={0}
+                    direction="column"
+                    alignItems="center"
+                  >
+                    {this.state.categories.map((item, index) => (
+                      <InitialItem 
+                        key={index} 
+                        item={item}
+                        index={index}
+                        name='name'
+                        label='category'
+                        handleFunction={this.handleCategory}
+                      />
+                    ))}
+                  </Grid>
+                  <Box pt={10}>
+                    <Grid
+                      container
+                      spacing={0}
+                    >
+                      <Grid item xs>
+                        <Button 
+                          variant="contained"
+                          color="primary"
+                          style={{float:"right"}}
+                          onClick={this.handleAddCategory}
+                        >
+                          Add More
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </form>
+              </Grid>
+              <Grid item xs={5}>
+                <form onSubmit={this.handleSubmitSources}>
+                  <Box pt={5} pb={5}>
+                    <Grid item xs>
+                      <Typography component="h1" variant="h4" color="inherit" align="center">
+                        and Fund sources
+                      </Typography>
+                      <Typography component="h1" variant="h6" color="inherit" align="center">
+                        The name of your employer, your business, any Freelance gigs, or even taxes. 
+                      </Typography>
+                    </Grid>
+                  </Box>
+                  <Grid
+                    container
+                    spacing={0}
+                    direction="column"
+                    alignItems="center"
+                  >
+                    {this.state.sources.map((item, index) => (
+                      <InitialItem 
+                        key={index} 
+                        item={item}
+                        index={index}
+                        name='source'
+                        label='source'
+                        handleFunction={this.handleSources}
+                      />
+                    ))}
+                  </Grid>
+                  <Box pt={10}>
+                    <Grid
+                      container
+                      spacing={0}
+                    >
+                      <Grid item xs>
+                        <Button 
+                          variant="contained"
+                          color="primary"
+                          style={{float:"right"}}
+                          onClick={this.handleAddSource}
+                        >
+                          Add More
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </form>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              alignItems="center"
+              justify="center"
+            >
+              <Box>
+                <Button 
+                  variant="contained"
+                  color="primary"
+                  style={{float:"right"}}
+                  size="large"
+                  onClick={this.submitCatsSours}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Grid>
+          </React.Fragment>
+        )
+    }
   }
 }
 

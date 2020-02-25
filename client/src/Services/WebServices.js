@@ -40,3 +40,11 @@ export function post_funds_bulk(payload){
 export function set_initials(payload){
   return axios.post('/set_initials', payload)
 }
+
+export function fund_sources(payload){
+  return axios.post('/fund_sources', payload)
+}
+
+export function categories_bulk(payload){
+  return axios.post('/categories_bulk', payload)
+}

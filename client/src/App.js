@@ -7,6 +7,13 @@ import axios from 'axios';
 
 const localStorageService = LocalStorageService.getService();
 
+const getUser = () => {
+  const token = localStorageService.getAccessToken();
+  if (token) {
+    
+  }
+}
+
 axios.interceptors.request.use(
  config => {
     const token = localStorageService.getAccessToken();
@@ -14,12 +21,17 @@ axios.interceptors.request.use(
       config.headers[process.env.REACT_APP_TOKEN] = token;
     }
     config.headers['Content-Type'] = 'application/json';
+    getUser();
     return config;
  },
   error => {
     Promise.reject(error)
   }
+  
 );
+
+
+
 
 export default function App(props) {
   if(props.initials_done){
