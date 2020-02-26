@@ -7,12 +7,17 @@ import TextField from '@material-ui/core/TextField';
 
 
 export default function LoginPage(props) {
+  console.log("+++ 10 Login.js props: ", props)
   let history = useHistory();
   let location = useLocation();
   
-  if(props.isLoggedIn()){
-    history.replace('/dashboard');
-  }
+  // if(props.isLoggedIn()){
+  //   console.log("+++ 15 Login.js Here")
+  //   props.history.push("/dashboard");
+  // } else {
+  //   console.log("+++ 18 Login.js Here?")
+  //   history.replace('/Login');
+  // }
 
   let { from } = location.state || { from: { pathname: "/" } };
   let login = () => {
@@ -55,8 +60,6 @@ export default function LoginPage(props) {
     >
       <Grid item xs={12}>
         <h2>Login</h2>
-
-        <p>You must log in to view the page at {from.pathname}</p>
       </Grid>
       <Grid item xs={12}>
         <TextField 
@@ -85,7 +88,12 @@ export default function LoginPage(props) {
       </Grid>
       <Grid item xs>
         <br/>
-        <Button onClick={login}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{float:"right"}}
+          onClick={login}
+        >
           Log In
         </Button>
         <p style={ props.message ? {display: "block"} : {display: "none"}}>You must log in to view the page at {from.pathname}</p>

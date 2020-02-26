@@ -16,7 +16,7 @@ const Logout =(props) => {
   }
 
   return (
-    <IconButton onClick={() => handleLogout()}>
+    <IconButton onClick={() => handleLogout()} style={{"float": "right"}}>
       <ExitToAppIcon />
     </IconButton>
     

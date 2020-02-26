@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+export function whoami(payload){
+  return axios.get('/whoami')
+}
+
 
 export function get_types(){
   return axios.get('/types');

@@ -17,6 +17,17 @@ export default function InitialItem(props) {
         alignItems="center"
         justify="center"
       >
+        <Grid item xs={1}>
+          <Box pt={3} style={rowsLength <= 1 ? {display: 'none'} : {}}>
+            <button
+              type="button"
+              style={{float:"right"}}
+              onClick={props.handleRemoveRow(props.index)}
+            >
+              -
+            </button>
+          </Box>
+        </Grid>
         <Grid item xs>
           <TextField
             required
@@ -43,7 +54,7 @@ export default function InitialItem(props) {
             onChange={props.handleChange(props.index)}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs>
           <TextField
             required
             fullWidth
@@ -63,9 +74,8 @@ export default function InitialItem(props) {
         </Grid>
         <Grid 
           item xs={1}
-          style={props.item.typeId === 1 ? {display: 'block'} : {display: 'none'}}
         >
-          <Box pt={3}>
+          <Box pt={3} style={props.item.typeId === 1 ? {display: 'block'} : {display: 'none'}}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -78,19 +88,6 @@ export default function InitialItem(props) {
               }
               label="Primary"
             />
-          </Box>
-        </Grid>
-        <Grid item xs={1}
-          style={rowsLength <= 1 ? {display: 'none'} : {}}
-        >
-          <Box pt={3}>
-            <button
-              type="button"
-              style={{float:"right"}}
-              onClick={props.handleRemoveRow(props.index)}
-            >
-              -
-            </button>
           </Box>
         </Grid>
       </Grid>

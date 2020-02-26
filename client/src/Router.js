@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 import axios from 'axios';
-import App from "./App";
 import Landing from "./Landing/Landing";
 import LoginPage from "./Auth/Login";
+import App from "./App";
+import Initials from './Initials/Initials.js';
 import localStorageService from "./Services/LocalStorageService.js";
 import { login } from "./Services/AuthServices.js";
 
@@ -83,12 +84,27 @@ class Auth extends React.Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Landing} />
-          <Route path="/login">
-            <LoginPage login={this.login} message={this.message} isLoggedIn={this.isLoggedIn}/>
-          </Route>
-          <PrivateRoute path="/dashboard" auth={this.state.isAuthenticated}>
-            <App auth={this.state.isAuthenticated} userData={this.state.user} initials_done={this.state.initials_done} />
-          </PrivateRoute>
+          <Route
+            path="/login" 
+            render={(props) => <LoginPage {...props} login={this.login} message={this.message} isLoggedIn={this.isLoggedIn} />}
+          />
+
+          <PrivateRoute 
+            path="/dashboard" 
+            component={App} 
+            auth={this.state.isAuthenticated} 
+            auth={this.state.isAuthenticated} 
+            userData={this.state.user} 
+            initials_done={this.state.initials_done} 
+          />
+          <PrivateRoute 
+            path="/initials" 
+            auth={this.state.isAuthenticated} 
+            component={Initials} 
+            auth={this.state.isAuthenticated} 
+            userData={this.state.user} 
+            initials_done={this.state.initials_done} 
+          />
           <Route path="*">
             <NoMatch />
           </Route>
@@ -101,22 +117,23 @@ class Auth extends React.Component {
 export default Auth;
 
 
-function PrivateRoute(props) {
-  return (
-    <Route
-      {...props.rest}
-      render={({ location }) =>
-        props.auth ? (
-          props.children
-        ) : (
-          <Redirect
-            to={{ pathname: "/login", state: { from: location } }}
-          />
-        )
-      }
-    />
-  );
-}
+export const PrivateRoute = ({component: Component, ...rest}) => (
+  <Route
+    {...rest}
+    render={props =>
+      localStorageService.getAccessToken() ? (
+          <Component {...props} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: "/login",
+            state: {from: props.location}
+          }}
+        />
+      )
+    }
+  />
+)
 
 function NoMatch() {
   return (
