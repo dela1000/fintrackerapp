@@ -54,7 +54,6 @@ axios.interceptors.request.use(
 
 
 export default function App (props) {
-  console.log("+++ 57 App.js props: ", props)
   if(props.initials_done){
     return (
       <React.Fragment>

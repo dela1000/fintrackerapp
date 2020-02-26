@@ -40,6 +40,7 @@ class Auth extends React.Component {
 
     this.login = this.login.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.update_initials = this.update_initials.bind(this);
   }
 
 
@@ -79,6 +80,11 @@ class Auth extends React.Component {
       });
   }
 
+  update_initials(){
+    console.log("+++ 84 Router.js UPDATING Initials AT ROUTER")
+    this.setState({ loggedIn: true, initials_done: true }) 
+  }
+
   render() {
     return (
       <Router>
@@ -88,22 +94,22 @@ class Auth extends React.Component {
             path="/login" 
             render={(props) => <LoginPage {...props} login={this.login} message={this.message} isLoggedIn={this.isLoggedIn} />}
           />
+          <PrivateRoute 
+            path="/initials" 
+            component={Initials} 
+            auth={this.state.isAuthenticated} 
+            userData={this.state.user} 
+            initials_done={this.state.initials_done} 
+            update_initials={this.update_initials}
+          />
 
           <PrivateRoute 
             path="/dashboard" 
             component={App} 
             auth={this.state.isAuthenticated} 
-            auth={this.state.isAuthenticated} 
             userData={this.state.user} 
-            initials_done={this.state.initials_done} 
-          />
-          <PrivateRoute 
-            path="/initials" 
-            auth={this.state.isAuthenticated} 
-            component={Initials} 
-            auth={this.state.isAuthenticated} 
-            userData={this.state.user} 
-            initials_done={this.state.initials_done} 
+            initials_done={this.state.initials_done}
+            update_initials={this.update_initials} 
           />
           <Route path="*">
             <NoMatch />
@@ -117,22 +123,34 @@ class Auth extends React.Component {
 export default Auth;
 
 
-export const PrivateRoute = ({component: Component, ...rest}) => (
-  <Route
-    {...rest}
-    render={props =>
-      localStorageService.getAccessToken() ? (
-          <Component {...props} />
-      ) : (
-        <Redirect
-          to={{
-            pathname: "/login",
-            state: {from: props.location}
-          }}
-        />
-      )
-    }
-  />
+export const PrivateRoute = ( {
+      component: Component, 
+      auth: auth, 
+      userData: userData, 
+      initials_done: initials_done, 
+      update_initials: update_initials 
+    } ) => (
+      <Route
+
+        render={props =>
+          localStorageService.getAccessToken() ? (
+              <Component 
+                {...props} 
+                auth={auth} 
+                userData={userData} 
+                initials_done={initials_done}
+                update_initials={update_initials}
+              />
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: {from: props.location}
+              }}
+            />
+          )
+        }
+      />
 )
 
 function NoMatch() {

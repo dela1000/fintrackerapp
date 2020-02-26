@@ -7,17 +7,12 @@ import TextField from '@material-ui/core/TextField';
 
 
 export default function LoginPage(props) {
-  console.log("+++ 10 Login.js props: ", props)
   let history = useHistory();
   let location = useLocation();
   
-  // if(props.isLoggedIn()){
-  //   console.log("+++ 15 Login.js Here")
-  //   props.history.push("/dashboard");
-  // } else {
-  //   console.log("+++ 18 Login.js Here?")
-  //   history.replace('/Login');
-  // }
+  if(props.isLoggedIn()){
+    props.history.push("/dashboard");
+  }
 
   let { from } = location.state || { from: { pathname: "/" } };
   let login = () => {

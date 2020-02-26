@@ -112,8 +112,9 @@ class Initials extends React.Component {
   };
 
   handleSubmitFunds = evt => {
-    evt.preventDefault();
     console.log("+++ 116 Initials.js this.props: ", this.props)
+    evt.preventDefault();
+    console.log("+++ 117 Initials.js CONTINUE")
     var primarySet = false;
     _.forEach(this.state.rows, (row) => {
       if(!row.typeId){
@@ -141,11 +142,14 @@ class Initials extends React.Component {
     set_initials(payload)
       .then((res) => {
         var data = res.data;
+        console.log("+++ 144 Initials.js data: ", data)
         if(data.success){
+          console.log("+++ 146 Initials.js this.props: ", this.props)
+          console.log("+++ 147 Initials.js UPDATING INITIALS FROM INITIALS")
+          this.props.update_initials();
           localStorageService.setToken({
             initial_done: true,
           });
-          console.log("+++ 149 Initials.js PUSHING TO DASHBOARD")
           this.props.history.push("/dashboard");
         } else {
           this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
