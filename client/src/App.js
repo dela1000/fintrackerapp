@@ -15,13 +15,11 @@ const who_am_i = (config) => {
   const token = localStorageService.getAccessToken();
   if (token) {
     if(config.url !== "/whoami"){
-      if(config.url !== "/set_initials"){
-        console.log("+++ 18 App.js /whoami")
+      console.log("+++ 18 App.js /whoami")
         whoami()
           .then((res) => {
-            let data = res.data;
+          let data = res.data;
             if (data.success){
-              
               localStorageService.setToken({
                 [process.env.REACT_APP_USERNAME]: data.data.username,
                 [process.env.REACT_APP_ID]: data.data.userId,
@@ -30,9 +28,7 @@ const who_am_i = (config) => {
               });
             }
           })
-      }
     }
-
   }
 }
 
@@ -53,9 +49,7 @@ axios.interceptors.request.use(
 
 
 export default function App (props) {
-  let initials = localStorageService.getInitial();
-  console.log("+++ 58 App.js initials: ", initials)
-  if(initials){
+  if(localStorageService.getInitial()){
     return (
       <React.Fragment>
         <Main />

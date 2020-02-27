@@ -48,6 +48,9 @@ class Initials extends React.Component {
   }
 
   componentDidMount() {
+    if(localStorageService.getInitial()){
+      this.props.history.push("/dashboard");
+    }
     this.getTypes();
   };
 
@@ -147,7 +150,7 @@ class Initials extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
-          let updated = this.props.update_initials();
+          this.props.update_initials();
           this.props.history.push("/dashboard");
         } else {
           this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
@@ -346,15 +349,6 @@ class Initials extends React.Component {
                         style={{float:"right"}}
                       >
                         Done
-                      </Button>
-
-                      <Button 
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        onClick={this.toSubmit}
-                      >
-                        TO DASHBOARD
                       </Button>
                     </Grid>
                   </Grid>

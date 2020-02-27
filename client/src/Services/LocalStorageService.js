@@ -10,8 +10,6 @@ const LocalStorageService = (function() {
   }
 
   function setToken(data) {
-    console.log("data: ", JSON.stringify(data, null, "\t"));
-    console.log("+++ 14 LocalStorageService.js localStorage: ", localStorage)
     localStorage.setItem(process.env.REACT_APP_TOKEN, data.token);
     localStorage.setItem(process.env.REACT_APP_USERNAME, data.username);
     localStorage.setItem(process.env.REACT_APP_ID, data.userId);
@@ -25,7 +23,6 @@ const LocalStorageService = (function() {
   }
 
   function getInitial() {
-    console.log("+++ 27 LocalStorageService.js process.env.REACT_APP_INITIALS: ", process.env.REACT_APP_INITIALS)
     var data = localStorage.getItem(process.env.REACT_APP_INITIALS);
     
     if((data == "true")){
