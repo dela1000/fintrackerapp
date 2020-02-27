@@ -3,7 +3,7 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 
 var addData = null;
-// Uncomment to not add data
+// Uncomment to only add user
 var addData = true;
 
 

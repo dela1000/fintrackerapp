@@ -227,27 +227,26 @@ export default function Dashboard(props) {
             />
           </Grid>
         </Grid>
-        <Grid container spacing={1} style={{"marginTop": "5px"}}>
-          <SidePanelItem
-            data={props.availableByAccount.checking}
-            open={open}
-            type={'checking'}
-            selectAccount={props.selectAccount}
-            currentAvailable={props.currentAvailable}
-          />
-          <SidePanelItem
-            data={props.availableByAccount.savings}
-            open={open}
-            type={'savings'}
-            selectAccount={props.selectAccount}
-          />
-          <SidePanelItem
-            data={props.availableByAccount.investments}
-            open={open}
-            type={'investments'}
-            selectAccount={props.selectAccount}
-          />
-        </Grid>
+
+        <SidePanelItem
+          data={props.availableByAccount.checking}
+          open={open}
+          type={'checking'}
+          selectAccount={props.selectAccount}
+          currentAvailable={props.currentAvailable}
+        />
+        <SidePanelItem
+          data={props.availableByAccount.savings}
+          open={open}
+          type={'savings'}
+          selectAccount={props.selectAccount}
+        />
+        <SidePanelItem
+          data={props.availableByAccount.investments}
+          open={open}
+          type={'investments'}
+          selectAccount={props.selectAccount}
+        />
       </Drawer>
       <div className={classes.content}>
         <div className={classes.appBarSpacer} />

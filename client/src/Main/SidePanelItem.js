@@ -12,23 +12,25 @@ import { capitalize, decimals } from "../Services/helpers";
 export default function SidePanelItem(props) {
   return (
     <div style={{"marginTop": "5px"}}>
-      <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
+      <Box pr={2} pb={1} pl={3.5} style={props.open ? { display: 'block' } : { display: 'none' }}>
         <Grid container spacing={1} style={props.type === "checking" ? {} : { display: 'none' }}>
           <Grid item xs={6}>
-            <Typography variant="subtitle2" align="left">
+            <Typography color="textSecondary">
               Current Available
             </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography align="right">
+            <Typography component="p" variant="h6">
               {decimals(props.currentAvailable)}
             </Typography>
           </Grid>
         </Grid>
       </Box>
-      <Grid container spacing={1} onClick={() => props.selectAccount(props.type)}>
+      <Grid 
+        container 
+        spacing={1} 
+        onClick={() => props.selectAccount(props.type)}
+      >
         <Grid item>
-          <Box pl={3.5} pt={0.4} >
+          <Box pl={3} pt={0.4} >
             <AttachMoneyIcon style={props.type === "checking" ? {} : { display: 'none' }}/>
             <AccountBalanceIcon style={props.type === "savings" ? {} : { display: 'none' }}/>
             <TrendingUpIcon style={props.type === "investments" ? {} : { display: 'none' }}/>
@@ -40,26 +42,25 @@ export default function SidePanelItem(props) {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container style={props.data.length > 0 ? {} : { display: 'none' }}>
-        <List style={props.open ? {} : { display: 'none' }}>
-          {props.data.map((item, key) => (
-            <ListItem button key={key} onClick={() => props.selectAccount(item)}>
-              <Grid container spacing={1} key={key}>
-                <Grid item xs={6}>
-                  <Typography align="left">
-                    {capitalize(item.account)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography align="right" style={item.amount < 0 ? {color: '#FF504C'} : {} }>
-                    {decimals(item.amount)}
-                  </Typography>
-                </Grid>
+      <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
+        {props.data.map((item, key) => (
+          <ListItem button key={key} onClick={() => props.selectAccount(item)}>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item>
+                {capitalize(item.account)}
               </Grid>
-            </ListItem>
-          ))}
-        </List>
-      </Grid>
+              <Grid item>
+                {decimals(item.amount)}
+              </Grid>
+            </Grid>
+          </ListItem>
+        ))}
+      </Box>
     </div>
   )
 }
