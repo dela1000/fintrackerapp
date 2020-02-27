@@ -27,6 +27,7 @@ import SidePanel from './SidePanel/SidePanel.js';
 import ListingData from './ListingData.js';
 import DetailsPanel from './DetailsPanel.js';
 import Logout from '../Auth/Logout.js';
+import PersonOutlineTwoToneIcon from '@material-ui/icons/PersonOutlineTwoTone';
 
 const drawerWidth = 240;
 
@@ -127,7 +128,7 @@ export default function Dashboard(props) {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  let noExpensesCategories = _.isEmpty(props.expensesCategories);
+  
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -145,6 +146,7 @@ export default function Dashboard(props) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             FinTracker
           </Typography>
+          <PersonOutlineTwoToneIcon />
           <Logout />
         </Toolbar>
       </AppBar>
@@ -163,13 +165,14 @@ export default function Dashboard(props) {
         <Divider />
         <SidePanel 
           open={open}
-          noExpensesCategories={noExpensesCategories} 
           expensesCategories={props.expensesCategories}
           fundSources={props.fundSources}
           userAccounts={props.userAccounts}
           getAllTotals={props.getAllTotals}
           getExpenses={props.getExpenses}
           availableByAccount={props.availableByAccount}
+          getFunds={props.getFunds}
+          getExpenses={props.getExpenses}
         />
       </Drawer>
       <div className={classes.content}>

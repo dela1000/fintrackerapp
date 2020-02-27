@@ -125,15 +125,8 @@ class Auth extends React.Component {
 export default Auth;
 
 
-export const PrivateRoute = ( {
-      component: Component, 
-      auth: auth, 
-      userData: userData, 
-      initials_done: initials_done, 
-      update_initials: update_initials 
-    } ) => (
+export const PrivateRoute = ( { component: Component,  auth,  userData,  initials_done,  update_initials  } ) => (
       <Route
-
         render={props =>
           localStorageService.getAccessToken() ? (
               <Component 

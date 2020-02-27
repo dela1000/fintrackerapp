@@ -42,7 +42,6 @@ export default function SidePanel(props) {
         </Grid>
       </Grid>
       <SidePanelExpenses expensesCategories={props.expensesCategories} expensesCategories={props.expensesCategories} open={props.open}/>
-
       <Divider />
       <Grid container spacing={1} style={{"marginTop": "5px"}}>
         <Grid item xs={2} onClick={() => props.getFunds()}>
