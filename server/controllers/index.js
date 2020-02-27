@@ -876,48 +876,58 @@ module.exports = controllers = {
       }
       models.all_totals.get(payload, function(results, message) {
         if (results) {
-          var expensesTotals = calcUtils.add_expenses_totals(results.expenses);
-          var fundTotals = calcUtils.add_fund_totals(results.funds);
-          var data = {
-            timeframe: payload.timeframe,
-            currentAvailable: results.currentavailable.amount,
-            availableByAccount: {
-              checking: [],
-              savings: [],
-              investments: [],
-            },
-          }
+          models.all_user_data_types.get(payload, function (userData, message) {
+            if (userData) {
+              var dataTypes = finUtils.formatAccounts(userData)
+              var expensesTotals = calcUtils.add_expenses_totals(results.expenses);
+              var fundTotals = calcUtils.add_fund_totals(results.funds);
+              var data = {
+                timeframe: payload.timeframe,
+                currentAvailable: results.currentavailable.amount,
+                availableByAccount: {
+                  checking: [],
+                  savings: [],
+                  investments: [],
+                },
+              }
+              var availablesHolders = [];
+              _.forEach(results.accounttotals, function (total) {
+                availablesHolders.push({
+                  amount: total.amount,
+                  accountId: total.useraccount.id,
+                  account: total.useraccount.account,
+                  typeId: total.type.id,
+                  type: total.type.type,
+                })
+              })
+              
+              _.forEach(availablesHolders, function (AccountTotal) {
+                if(AccountTotal.typeId === 1){
+                  data.availableByAccount['checking'].push(AccountTotal);
+                };
+                if(AccountTotal.typeId === 2){
+                  data.availableByAccount['savings'].push(AccountTotal);
+                };
+                if(AccountTotal.typeId === 3){
+                  data.availableByAccount['investments'].push(AccountTotal);
+                };
+              });
 
-          var availablesHolders = [];
-          _.forEach(results.accounttotals, function (total) {
-            availablesHolders.push({
-              amount: total.amount,
-              accountId: total.useraccount.id,
-              account: total.useraccount.account,
-              typeId: total.type.id,
-              type: total.type.type,
-            })
+              _.forEach(expensesTotals, function(value, key) {
+                data[key] = value;
+              });
+              _.forEach(fundTotals, function(value, key) {
+                data[key] = value;
+              });
+              // Add user's dataTypes (accounts, expensesCategories, and fundSources) to response
+              data['accounts'] = dataTypes.accounts;
+              data['expensesCategories'] = dataTypes.expensesCategories;
+              data['fundSources'] = dataTypes.fundSources;
+              successResponse(res, data);
+            } else {
+              failedResponse(res, message)
+            }
           })
-          
-          _.forEach(availablesHolders, function (AccountTotal) {
-            if(AccountTotal.typeId === 1){
-              data.availableByAccount['checking'].push(AccountTotal);
-            };
-            if(AccountTotal.typeId === 2){
-              data.availableByAccount['savings'].push(AccountTotal);
-            };
-            if(AccountTotal.typeId === 3){
-              data.availableByAccount['investments'].push(AccountTotal);
-            };
-          });
-
-          _.forEach(expensesTotals, function(value, key) {
-            data[key] = value;
-          });
-          _.forEach(fundTotals, function(value, key) {
-            data[key] = value;
-          });
-          successResponse(res, data);
         } else {
           failedResponse(res, message)
         };

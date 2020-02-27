@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 
 var addData = null;
 // Uncomment to only add user
-// var addData = true;
+var addData = true;
 
 
 var expensesCategories = [

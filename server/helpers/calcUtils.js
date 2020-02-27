@@ -159,8 +159,10 @@ exports.add_fund_totals = function(data) {
   var totalsByTypesHolder = {};
   var totalsByAccountsHolder = {};
   var totalsBySourcesHolder = {};
+  var accounts = {};
   _.forEach(data, function(lineItem) {
     var item = lineItem.dataValues;
+    console.log("+++ 165 calcUtils.js item: ", item)
     if (item.typeId === 4) {
       if(item.amount > 0){
         if (!totalsByTypesHolder[item.typeId]) {
@@ -255,7 +257,6 @@ exports.format_expenses = function (expenses) {
 }
 
 exports.format_funds = function (funds) {
-  console.log("+++ 258 calcUtils.js funds: ", funds)
   var formattedData = [];
   
   _.forEach(funds, function(fund){
