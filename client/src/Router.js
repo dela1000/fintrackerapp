@@ -48,10 +48,8 @@ class Auth extends React.Component {
     let token = localStorageService.getAccessToken();
     if(token && token.length > 0){
       var userData = localStorageService.getUserData();
-      this.setState({ user: userData, loggedIn: true, isAuthenticated: true, initials_done: true }, () => {
-        console.log("+++ 52 Router.js this.state: ", this.state)
-        return true;
-      });
+      this.setState({ user: userData, loggedIn: true, isAuthenticated: true, initials_done: true });
+      return true;
     }
     return false;
   } 

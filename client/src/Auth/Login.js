@@ -10,6 +10,7 @@ export default function LoginPage(props) {
   let history = useHistory();
   let location = useLocation();
   
+  console.log("+++ 13 Login.js props.isLoggedIn(): ", props.isLoggedIn())
   if(props.isLoggedIn()){
     props.history.push("/dashboard");
   }
