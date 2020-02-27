@@ -32,20 +32,20 @@ const who_am_i = (config) => {
   }
 }
 
-axios.interceptors.request.use(
- config => {
-    const token = localStorageService.getAccessToken();
-    if (token) {
-      config.headers[process.env.REACT_APP_TOKEN] = token;
-    }
-    config.headers['Content-Type'] = 'application/json';
-    return config;
- },
-  error => {
-    Promise.reject(error)
-  }
+// axios.interceptors.request.use(
+//  config => {
+//     const token = localStorageService.getAccessToken();
+//     if (token) {
+//       config.headers[process.env.REACT_APP_TOKEN] = token;
+//     }
+//     config.headers['Content-Type'] = 'application/json';
+//     return config;
+//  },
+//   error => {
+//     Promise.reject(error)
+//   }
   
-);
+// );
 
 
 export default function App (props) {
