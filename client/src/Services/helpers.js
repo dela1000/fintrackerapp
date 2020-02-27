@@ -3,8 +3,7 @@ export function capitalize(str){
 };
 
 export function decimals(num){
-  var number = parseFloat(num, 10);
-  return number.toFixed(2);
+  return Number(parseFloat(num).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 });
 }
 
 export const dateFormat = 'MM-DD-YYYY';

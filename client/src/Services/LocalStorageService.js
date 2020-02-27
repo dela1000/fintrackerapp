@@ -25,7 +25,7 @@ const LocalStorageService = (function() {
   function getInitial() {
     var data = localStorage.getItem(process.env.REACT_APP_INITIALS);
     
-    if((data == "true")){
+    if((data === "true")){
       return true;
     } else 
      return false

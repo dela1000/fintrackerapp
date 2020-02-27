@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
-    padding: theme.spacing(1, 1, 1),
+    padding: theme.spacing(8, 8, 8),
   },
 }));
 

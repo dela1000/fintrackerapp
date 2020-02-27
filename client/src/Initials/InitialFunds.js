@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Box from '@material-ui/core/Box';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import { capitalize } from "../Services/helpers";
 
 export default function InitialItem(props) {
@@ -19,13 +20,10 @@ export default function InitialItem(props) {
       >
         <Grid item xs={1}>
           <Box pt={3} style={rowsLength <= 1 ? {display: 'none'} : {}}>
-            <button
-              type="button"
+            <IndeterminateCheckBoxIcon 
               style={{float:"right"}}
               onClick={props.handleRemoveRow(props.index)}
-            >
-              -
-            </button>
+            />
           </Box>
         </Grid>
         <Grid item xs>

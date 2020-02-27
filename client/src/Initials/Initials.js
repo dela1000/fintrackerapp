@@ -119,9 +119,7 @@ class Initials extends React.Component {
   };
 
   handleSubmitFunds = evt => {
-    console.log("+++ 116 Initials.js this.props: ", this.props)
     evt.preventDefault();
-    console.log("+++ 117 Initials.js CONTINUE")
     var primarySet = false;
     _.forEach(this.state.rows, (row) => {
       if(!row.typeId){
@@ -151,7 +149,7 @@ class Initials extends React.Component {
         var data = res.data;
         if(data.success){
           this.props.update_initials();
-          this.props.history.push("/dashboard");
+          this.changeView(3)
         } else {
           this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
         }
@@ -163,84 +161,83 @@ class Initials extends React.Component {
   }
 
 
-  // handleCategory = idx => evt => {
-  //   const item = this.state.categories.map((category, sidx) => {
-  //     if (idx !== sidx) return category;
-  //     return { ...category, name: evt.target.value };
-  //   });
+  handleCategory = idx => evt => {
+    const item = this.state.categories.map((category, sidx) => {
+      if (idx !== sidx) return category;
+      return { ...category, name: evt.target.value };
+    });
 
-  //   this.setState({ categories: item });
-  // };
+    this.setState({ categories: item });
+  };
 
-  // handleAddCategory = () => {
-  //   this.setState({
-  //     categories: this.state.categories.concat([{ 
-  //         name: ''
-  //       }])
-  //   });
-  // };
+  handleAddCategory = () => {
+    this.setState({
+      categories: this.state.categories.concat([{ 
+          name: ''
+        }])
+    });
+  };
 
-  // handleSources = idx => evt => {
-  //   const item = this.state.sources.map((source, sidx) => {
-  //     if (idx !== sidx) return source;
-  //     return { ...source, name: evt.target.value };
-  //   });
+  handleSources = idx => evt => {
+    const item = this.state.sources.map((source, sidx) => {
+      if (idx !== sidx) return source;
+      return { ...source, name: evt.target.value };
+    });
 
-  //   this.setState({ sources: item });
-  // };
+    this.setState({ sources: item });
+  };
 
-  // handleAddSource = () => {
-  //   this.setState({
-  //     sources: this.state.sources.concat([{ 
-  //         name: ''
-  //       }])
-  //   });
-  // };
-
-
+  handleAddSource = () => {
+    this.setState({
+      sources: this.state.sources.concat([{ 
+          name: ''
+        }])
+    });
+  };
 
 
+  submitCatsSours = evt => {
+    let srcHolder = [];
+    let catHolder = [];
+    _.forEach(this.state.sources, (src) => {
+      src.name = src.name.trim();
+      if(src.name.length > 0){
+        srcHolder.push({
+          source: src.name 
+        })
+      }
+    })
 
-  // submitCatsSours = evt => {
-  //   let srcHolder = [];
-  //   let catHolder = [];
-  //   _.forEach(this.state.sources, (src) => {
-  //     src.name = src.name.trim();
-  //     if(src.name.length > 0){
-  //       srcHolder.push({
-  //         source: src.name 
-  //       })
-  //     }
-  //   })
+    _.forEach(this.state.categories, (cat) => {
+      cat.name = cat.name.trim();
+      if(cat.name.length > 0){
+        catHolder.push({
+          name: cat.name
+        })
+      }
+    })
+  
+    if(srcHolder.length > 0 && catHolder.length > 0){
+      categories_bulk(catHolder)
+        .then((catRes) => {
+          var catData = catRes.data;
+          if(catData.success){
+            fund_sources(srcHolder)
+              .then((srcRes) => {
+                var srcData = srcRes.data;
+                if(srcData.success){
+                  this.props.history.push("/dashboard");
+                }
+              })
+          } else {
+            this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
+          }
+        })
+    } else {
+      console.log("+++ 240 Initials.js ADD SOURCES AND CATEGORIES")
+    }
 
-  //   _.forEach(this.state.categories, (cat) => {
-  //     cat.name = cat.name.trim();
-  //     if(cat.name.length > 0){
-  //       catHolder.push({
-  //         name: cat.name
-  //       })
-  //     }
-  //   })
-
-  //   console.log("srcHolder: ", JSON.stringify(srcHolder, null, "\t"));
-  //   console.log("catHolder: ", JSON.stringify(catHolder, null, "\t"));
-
-  //   categories_bulk(catHolder)
-  //     .then((catRes) => {
-  //       var catData = catRes.data;
-  //       if(catData.success){
-  //         fund_sources(srcHolder)
-  //           .then((srcRes) => {
-  //             var srcData = srcRes.data;
-  //             if(srcData.success){
-                
-  //             }
-  //           })
-  //       } else {
-  //         this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
-  //       }
-  //     })
-  // }
+  }
 
 
   render() {
@@ -348,7 +345,7 @@ class Initials extends React.Component {
                         color="primary"
                         style={{float:"right"}}
                       >
-                        Done
+                        Next
                       </Button>
                     </Grid>
                   </Grid>
@@ -360,135 +357,135 @@ class Initials extends React.Component {
       );
     }
 
-    // if(this.state.view === 3){
-    //     return (
-    //       <React.Fragment>
-    //         <Logout />
-    //         <Grid
-    //           container
-    //           spacing={5}
-    //           alignItems="center"
-    //           justify="center"
-    //           style={{ minHeight: '80vh' }}
-    //         >
-    //           <Grid item xs={5}>
-    //            <form onSubmit={this.handleSubmitCategories}>
-    //               <Box pt={5} pb={5}>
-    //                 <Grid item xs>
-    //                   <Typography component="h1" variant="h4" color="inherit" align="center">
-    //                     Now, lets add Expenses categories,
-    //                   </Typography>
-    //                   <Typography component="h1" variant="h6" color="inherit" align="center">
-    //                     Examples are Groceries, Dining out, Housing, Bills, Etc. Add as many as you like.
-    //                   </Typography>
-    //                 </Grid>
-    //               </Box>
-    //               <Grid
-    //                 container
-    //                 spacing={0}
-    //                 direction="column"
-    //                 alignItems="center"
-    //               >
-    //                 {this.state.categories.map((item, index) => (
-    //                   <InitialItem 
-    //                     key={index} 
-    //                     item={item}
-    //                     index={index}
-    //                     name='name'
-    //                     label='category'
-    //                     handleFunction={this.handleCategory}
-    //                   />
-    //                 ))}
-    //               </Grid>
-    //               <Box pt={10}>
-    //                 <Grid
-    //                   container
-    //                   spacing={0}
-    //                 >
-    //                   <Grid item xs>
-    //                     <Button 
-    //                       variant="contained"
-    //                       color="primary"
-    //                       style={{float:"right"}}
-    //                       onClick={this.handleAddCategory}
-    //                     >
-    //                       Add More
-    //                     </Button>
-    //                   </Grid>
-    //                 </Grid>
-    //               </Box>
-    //             </form>
-    //           </Grid>
-    //           <Grid item xs={5}>
-    //             <form onSubmit={this.handleSubmitSources}>
-    //               <Box pt={5} pb={5}>
-    //                 <Grid item xs>
-    //                   <Typography component="h1" variant="h4" color="inherit" align="center">
-    //                     and Fund sources
-    //                   </Typography>
-    //                   <Typography component="h1" variant="h6" color="inherit" align="center">
-    //                     The name of your employer, your business, any Freelance gigs, or even taxes. 
-    //                   </Typography>
-    //                 </Grid>
-    //               </Box>
-    //               <Grid
-    //                 container
-    //                 spacing={0}
-    //                 direction="column"
-    //                 alignItems="center"
-    //               >
-    //                 {this.state.sources.map((item, index) => (
-    //                   <InitialItem 
-    //                     key={index} 
-    //                     item={item}
-    //                     index={index}
-    //                     name='source'
-    //                     label='source'
-    //                     handleFunction={this.handleSources}
-    //                   />
-    //                 ))}
-    //               </Grid>
-    //               <Box pt={10}>
-    //                 <Grid
-    //                   container
-    //                   spacing={0}
-    //                 >
-    //                   <Grid item xs>
-    //                     <Button 
-    //                       variant="contained"
-    //                       color="primary"
-    //                       style={{float:"right"}}
-    //                       onClick={this.handleAddSource}
-    //                     >
-    //                       Add More
-    //                     </Button>
-    //                   </Grid>
-    //                 </Grid>
-    //               </Box>
-    //             </form>
-    //           </Grid>
-    //         </Grid>
-    //         <Grid
-    //           container
-    //           spacing={5}
-    //           alignItems="center"
-    //           justify="center"
-    //         >
-    //           <Box>
-    //             <Button 
-    //               variant="contained"
-    //               color="primary"
-    //               style={{float:"right"}}
-    //               size="large"
-    //               onClick={this.submitCatsSours}
-    //             >
-    //               Submit
-    //             </Button>
-    //           </Box>
-    //         </Grid>
-    //       </React.Fragment>
-    //     )
-    // }
+    if(this.state.view === 3){
+        return (
+          <React.Fragment>
+            <Logout />
+            <Grid
+              container
+              spacing={5}
+              alignItems="center"
+              justify="center"
+              style={{ minHeight: '80vh' }}
+            >
+              <Grid item xs={5}>
+               <form onSubmit={this.handleSubmitCategories}>
+                  <Box pt={5} pb={5}>
+                    <Grid item xs>
+                      <Typography component="h1" variant="h4" color="inherit" align="center">
+                        Now, lets add Expenses categories,
+                      </Typography>
+                      <Typography component="h1" variant="h6" color="inherit" align="center">
+                        Examples are Groceries, Dining out, Housing, Bills, Etc. Add as many as you like.
+                      </Typography>
+                    </Grid>
+                  </Box>
+                  <Grid
+                    container
+                    spacing={0}
+                    direction="column"
+                    alignItems="center"
+                  >
+                    {this.state.categories.map((item, index) => (
+                      <InitialItem 
+                        key={index} 
+                        item={item}
+                        index={index}
+                        name='name'
+                        label='category'
+                        handleFunction={this.handleCategory}
+                      />
+                    ))}
+                  </Grid>
+                  <Box pt={10}>
+                    <Grid
+                      container
+                      spacing={0}
+                    >
+                      <Grid item xs>
+                        <Button 
+                          variant="contained"
+                          color="primary"
+                          style={{float:"right"}}
+                          onClick={this.handleAddCategory}
+                        >
+                          Add More
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </form>
+              </Grid>
+              <Grid item xs={5}>
+                <form onSubmit={this.handleSubmitSources}>
+                  <Box pt={5} pb={5}>
+                    <Grid item xs>
+                      <Typography component="h1" variant="h4" color="inherit" align="center">
+                        and Fund sources
+                      </Typography>
+                      <Typography component="h1" variant="h6" color="inherit" align="center">
+                        The name of your employer, your business, any Freelance gigs, or even taxes. 
+                      </Typography>
+                    </Grid>
+                  </Box>
+                  <Grid
+                    container
+                    spacing={0}
+                    direction="column"
+                    alignItems="center"
+                  >
+                    {this.state.sources.map((item, index) => (
+                      <InitialItem 
+                        key={index} 
+                        item={item}
+                        index={index}
+                        name='source'
+                        label='source'
+                        handleFunction={this.handleSources}
+                      />
+                    ))}
+                  </Grid>
+                  <Box pt={10}>
+                    <Grid
+                      container
+                      spacing={0}
+                    >
+                      <Grid item xs>
+                        <Button 
+                          variant="contained"
+                          color="primary"
+                          style={{float:"right"}}
+                          onClick={this.handleAddSource}
+                        >
+                          Add More
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </form>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              alignItems="center"
+              justify="center"
+            >
+              <Box>
+                <Button 
+                  variant="contained"
+                  color="primary"
+                  style={{float:"right"}}
+                  size="large"
+                  onClick={this.submitCatsSours}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Grid>
+          </React.Fragment>
+        )
+    }
   }
 }
 export default withRouter(Initials);

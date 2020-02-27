@@ -44,15 +44,15 @@ class Main extends React.Component {
     this.getExpenses();
   };
 
- getAllTotals (){
-  get_all_totals()
-    .then((res) => {
-      var data = res.data;
-      if(data.success){
-        this.setState({ allTotals: data.data })
-      }
-    })
- }
+  getAllTotals (){
+    get_all_totals()
+      .then((res) => {
+        var data = res.data;
+        if(data.success){
+          this.setState({ allTotals: data.data })
+        }
+      })
+  }
 
  getUserDataTypes(){
   all_user_data_types()

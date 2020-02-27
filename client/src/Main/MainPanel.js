@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import moment from 'moment';
+import _ from 'lodash'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -26,6 +27,7 @@ import ListingData from './ListingData.js';
 import SidePanelItem from './SidePanelItem.js';
 import AddModal from './AddModal.js';
 import DetailsPanel from './DetailsPanel.js';
+import SidePanelExpenses from './SidePanelExpenses.js';
 import Logout from '../Auth/Logout.js';
 
 const drawerWidth = 240;
@@ -109,8 +111,8 @@ const useStyles = makeStyles(theme => ({
     height: 160,
   },
   depositContext: {
-      flex: 1,
-    },
+    flex: 1,
+  },
 }));
 
 
@@ -127,7 +129,7 @@ export default function Dashboard(props) {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+  let NoExpensesCategories = _.isEmpty(props.expensesCategories);
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -175,34 +177,20 @@ export default function Dashboard(props) {
             </Box>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <AddModal 
-            type={'expenses'}
-            expensesCategories={props.expensesCategories}
-            fundSources={props.fundSources}
-            userAccounts={props.userAccounts}
-            getAllTotals={props.getAllTotals}
-            getExpenses={props.getExpenses}
-            />
+            <Box style={ NoExpensesCategories ? { display: 'none' } : { display: 'block' }}>
+              <AddModal 
+              type={'expenses'}
+              expensesCategories={props.expensesCategories}
+              fundSources={props.fundSources}
+              userAccounts={props.userAccounts}
+              getAllTotals={props.getAllTotals}
+              getExpenses={props.getExpenses}
+              />
+            </Box>
           </Grid>
         </Grid>
-        <List style={open ? { display: 'block' } : { display: 'none' }}>
-          {props.expensesByCategory.map((item, key) => (
-            <ListItem button key={key} onClick={() => props.selectCategory(item)}>
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <Typography align="left">
-                    {capitalize(item.category)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography align="right" style={item.amount < 0 ? {color: 'red'} : {} }>
-                    {decimals(item.amount)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </ListItem>
-          ))}
-        </List>
+        <SidePanelExpenses expensesCategories={props.expensesCategories} expensesCategories={props.expensesCategories} open={open}/>
+
         <Divider />
         <Grid container spacing={1} style={{"marginTop": "5px"}}>
           <Grid item xs={2} onClick={() => props.getFunds()}>
@@ -227,7 +215,6 @@ export default function Dashboard(props) {
             />
           </Grid>
         </Grid>
-
         <SidePanelItem
           data={props.availableByAccount.checking}
           open={open}
