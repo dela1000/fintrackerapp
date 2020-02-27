@@ -168,13 +168,16 @@ exports.testData = function() {
   })
   .then(function(found) {
     if (found.length < 1) {
-      db.Users.create({
+      var user = {
         username: "aa",
         password: "$2b$08$.URoN6sElGsOPwjPxrVN8exWowHmMxhMp/ecIZELcPbgLalfkMXrW",
-        email: "1@1.com"
-      })
+        email: "1@1.com",
+      }
+      if(!addData){
+        user['initials_done'] = true;
+      }
+      db.Users.create(user)
       .then(function(user) {
-
         if(!addData){
           db.CurrentAvailables.create({
             amount: 60,

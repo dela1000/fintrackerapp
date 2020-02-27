@@ -10,14 +10,13 @@ export default function LoginPage(props) {
   let history = useHistory();
   let location = useLocation();
   
-  console.log("+++ 13 Login.js props.isLoggedIn(): ", props.isLoggedIn())
   if(props.isLoggedIn()){
     props.history.push("/dashboard");
   }
 
   let { from } = location.state || { from: { pathname: "/" } };
   let login = () => {
-    // if(username && password){
+    if(username && password){
       var payload = {
         username: username, 
         password: password
@@ -25,7 +24,7 @@ export default function LoginPage(props) {
       props.login(payload, () => {
         history.replace('/dashboard');
       });
-    // }
+    }
 
   };
 
