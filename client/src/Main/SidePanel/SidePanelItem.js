@@ -6,7 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import { capitalize, decimals } from "../Services/helpers";
+import { capitalize, decimals } from "../../Services/helpers";
 
 export default function SidePanelItem(props) {
   return (

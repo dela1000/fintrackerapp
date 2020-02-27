@@ -6,7 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-import { capitalize, decimals } from "../Services/helpers";
+import { capitalize, decimals } from "../../Services/helpers";
 
 export default function SidePanelExpenses(props) {
   let expensesByCategory = props.expensesByCategory || [];

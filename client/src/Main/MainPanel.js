@@ -23,11 +23,9 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ListItem from '@material-ui/core/ListItem';
 import { capitalize, decimals } from "../Services/helpers";
+import SidePanel from './SidePanel/SidePanel.js';
 import ListingData from './ListingData.js';
-import SidePanelItem from './SidePanelItem.js';
-import AddModal from './AddModal.js';
 import DetailsPanel from './DetailsPanel.js';
-import SidePanelExpenses from './SidePanelExpenses.js';
 import Logout from '../Auth/Logout.js';
 
 const drawerWidth = 240;
@@ -129,7 +127,7 @@ export default function Dashboard(props) {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  let NoExpensesCategories = _.isEmpty(props.expensesCategories);
+  let noExpensesCategories = _.isEmpty(props.expensesCategories);
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -163,76 +161,15 @@ export default function Dashboard(props) {
           </IconButton>
         </div>
         <Divider />
-        <Grid container spacing={1} style={{"marginTop": "5px"}}>
-          <Grid item xs={2} onClick={() => props.getExpenses()}>
-            <Box pl={3} pt={0.5}>
-              <ReceiptIcon />
-            </Box>
-          </Grid>
-          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }} onClick={() => props.getExpenses()}>
-            <Box pl={1} pt={0.2}>
-              <Typography variant="h6">
-                EXPENSES
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <Box style={ NoExpensesCategories ? { display: 'none' } : { display: 'block' }}>
-              <AddModal 
-              type={'expenses'}
-              expensesCategories={props.expensesCategories}
-              fundSources={props.fundSources}
-              userAccounts={props.userAccounts}
-              getAllTotals={props.getAllTotals}
-              getExpenses={props.getExpenses}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-        <SidePanelExpenses expensesCategories={props.expensesCategories} expensesCategories={props.expensesCategories} open={open}/>
-
-        <Divider />
-        <Grid container spacing={1} style={{"marginTop": "5px"}}>
-          <Grid item xs={2} onClick={() => props.getFunds()}>
-            <Box pl={3} pt={0.5}>
-              <AccountBalanceWalletIcon />
-            </Box>
-          </Grid>
-          <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }} onClick={() => props.getFunds()}>
-            <Box pl={1} pt={0.2}>
-              <Typography variant="h6">
-                FUNDS
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <AddModal 
-            type={'funds'}
-            expensesCategories={props.expensesCategories}
-            fundSources={props.fundSources}
-            userAccounts={props.userAccounts}
-            getAllTotals={props.getAllTotals}
-            />
-          </Grid>
-        </Grid>
-        <SidePanelItem
-          data={props.availableByAccount.checking}
+        <SidePanel 
           open={open}
-          type={'checking'}
-          selectAccount={props.selectAccount}
-          currentAvailable={props.currentAvailable}
-        />
-        <SidePanelItem
-          data={props.availableByAccount.savings}
-          open={open}
-          type={'savings'}
-          selectAccount={props.selectAccount}
-        />
-        <SidePanelItem
-          data={props.availableByAccount.investments}
-          open={open}
-          type={'investments'}
-          selectAccount={props.selectAccount}
+          noExpensesCategories={noExpensesCategories} 
+          expensesCategories={props.expensesCategories}
+          fundSources={props.fundSources}
+          userAccounts={props.userAccounts}
+          getAllTotals={props.getAllTotals}
+          getExpenses={props.getExpenses}
+          availableByAccount={props.availableByAccount}
         />
       </Drawer>
       <div className={classes.content}>

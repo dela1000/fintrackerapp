@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Fade from '@material-ui/core/Fade';
 import MenuItem from '@material-ui/core/MenuItem';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { capitalize, decimals } from "../Services/helpers";
+import { capitalize, decimals } from "../../Services/helpers";
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -19,7 +19,7 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-import { post_expenses_bulk, post_funds_bulk } from "../Services/WebServices";
+import { post_expenses_bulk, post_funds_bulk } from "../../Services/WebServices";
 
 const useStyles = makeStyles(theme => ({
   modal: {
