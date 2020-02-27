@@ -17,11 +17,11 @@ class Main extends React.Component {
         },
         expensesByCategory: [],
         fundsByTypes: [],
+        userAccounts: [],
+        expensesCategories: [],
+        fundSources: [],
       },
       tableData: [],
-      expensesCategories: [],
-      fundSources: [],
-      userAccounts: [],
       viewSelected: "expenses"
     };
     this.getAllTotals = this.getAllTotals.bind(this);
@@ -40,7 +40,7 @@ class Main extends React.Component {
 
   componentDidMount() {
     this.getAllTotals();
-    this.getUserDataTypes();
+    // this.getUserDataTypes();
     this.getExpenses();
   };
 
@@ -54,19 +54,19 @@ class Main extends React.Component {
       })
   }
 
- getUserDataTypes(){
-  all_user_data_types()
-    .then((res) => {
-      var data = res.data;
-      if(data.success){
-        this.setState({ 
-          userAccounts: data.data.accounts,
-          fundSources: data.data.fundSources,
-          expensesCategories: data.data.expensesCategories,
-        })
-      }
-    })
- }
+ // getUserDataTypes(){
+ //  all_user_data_types()
+ //    .then((res) => {
+ //      var data = res.data;
+ //      if(data.success){
+ //        this.setState({ 
+ //          expensesCategories: data.data.expensesCategories,
+ //          userAccounts: data.data.accounts,
+ //          fundSources: data.data.fundSources,
+ //        })
+ //      }
+ //    })
+ // }
 
  getExpenses(){
    get_expenses()
@@ -113,19 +113,22 @@ class Main extends React.Component {
           <MainPanel
             logout={this.props.logout}
             viewSelected={this.state.viewSelected}
+            
             getAllTotals={this.getAllTotals}
+            timeframe={this.state.allTotals.timeframe}
             availableByAccount={this.state.allTotals.availableByAccount}
             expensesByCategory={this.state.allTotals.expensesByCategory}
             totalExpenses={this.state.allTotals.totalExpenses}
             currentAvailable={this.state.allTotals.currentAvailable}
-            timeframe={this.state.allTotals.timeframe}
-            userAccounts={this.state.userAccounts}
-            fundSources={this.state.fundSources}
-            expensesCategories={this.state.expensesCategories}
+            expensesCategories={this.state.allTotals.expensesCategories}
+            userAccounts={this.state.allTotals.userAccounts}
+            fundSources={this.state.allTotals.fundSources}
             tableData={this.state.tableData}
+            
             selectAccount={this.selectAccount}
             selectCategory={this.selectCategory}
             selectType={this.selectType}
+            
             getExpenses={this.getExpenses}
             getFunds={this.getFunds}
           />

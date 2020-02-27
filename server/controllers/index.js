@@ -920,7 +920,7 @@ module.exports = controllers = {
                 data[key] = value;
               });
               // Add user's dataTypes (accounts, expensesCategories, and fundSources) to response
-              data['accounts'] = dataTypes.accounts;
+              data['userAccounts'] = dataTypes.accounts;
               data['expensesCategories'] = dataTypes.expensesCategories;
               data['fundSources'] = dataTypes.fundSources;
               successResponse(res, data);
