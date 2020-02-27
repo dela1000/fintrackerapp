@@ -28,7 +28,7 @@ export default function SidePanelItem(props) {
       </Box>
       <Grid container spacing={1} onClick={() => props.selectAccount(props.type)}>
         <Grid item>
-          <Box pl={2} pt={0.4} >
+          <Box pl={3.5} pt={0.4} >
             <AttachMoneyIcon style={props.type === "checking" ? {} : { display: 'none' }}/>
             <AccountBalanceIcon style={props.type === "savings" ? {} : { display: 'none' }}/>
             <TrendingUpIcon style={props.type === "investments" ? {} : { display: 'none' }}/>
@@ -40,7 +40,7 @@ export default function SidePanelItem(props) {
           </Typography>
         </Grid>
       </Grid>
-      <div style={props.data.length > 0 ? {} : { display: 'none' }}>
+      <Grid container style={props.data.length > 0 ? {} : { display: 'none' }}>
         <List style={props.open ? {} : { display: 'none' }}>
           {props.data.map((item, key) => (
             <ListItem button key={key} onClick={() => props.selectAccount(item)}>
@@ -59,7 +59,7 @@ export default function SidePanelItem(props) {
             </ListItem>
           ))}
         </List>
-      </div>
+      </Grid>
     </div>
   )
 }

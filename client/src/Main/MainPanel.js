@@ -163,14 +163,16 @@ export default function Dashboard(props) {
         <Divider />
         <Grid container spacing={1} style={{"marginTop": "5px"}}>
           <Grid item xs={2} onClick={() => props.getExpenses()}>
-            <Box pl={1} pt={0.5}>
+            <Box pl={3} pt={0.5}>
               <ReceiptIcon />
             </Box>
           </Grid>
           <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }} onClick={() => props.getExpenses()}>
-            <Typography variant="h6">
-              EXPENSES
-            </Typography>
+            <Box pl={1} pt={0.2}>
+              <Typography variant="h6">
+                EXPENSES
+              </Typography>
+            </Box>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
             <AddModal 
@@ -183,20 +185,6 @@ export default function Dashboard(props) {
             />
           </Grid>
         </Grid>
-        {/*<Box pt={1} pr={2} pb={1} pl={2} style={open ? { display: 'block' } : { display: 'none' }}>
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
-              <Typography variant="subtitle2" align="left">
-                Total Expenses
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography align="right">
-                {props.totalExpenses}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>*/}
         <List style={open ? { display: 'block' } : { display: 'none' }}>
           {props.expensesByCategory.map((item, key) => (
             <ListItem button key={key} onClick={() => props.selectCategory(item)}>
@@ -218,14 +206,16 @@ export default function Dashboard(props) {
         <Divider />
         <Grid container spacing={1} style={{"marginTop": "5px"}}>
           <Grid item xs={2} onClick={() => props.getFunds()}>
-            <Box pl={1} pt={0.5}>
+            <Box pl={3} pt={0.5}>
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
           <Grid item xs={8} style={open ? { display: 'block' } : { display: 'none' }} onClick={() => props.getFunds()}>
-            <Typography variant="h6">
-              FUNDS
-            </Typography>
+            <Box pl={1} pt={0.2}>
+              <Typography variant="h6">
+                FUNDS
+              </Typography>
+            </Box>
           </Grid>
           <Grid item xs={2} style={open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
             <AddModal 
@@ -237,25 +227,27 @@ export default function Dashboard(props) {
             />
           </Grid>
         </Grid>
-        <SidePanelItem
-          data={props.availableByAccount.checking}
-          open={open}
-          type={'checking'}
-          selectAccount={props.selectAccount}
-          currentAvailable={props.currentAvailable}
-        />
-        <SidePanelItem
-          data={props.availableByAccount.savings}
-          open={open}
-          type={'savings'}
-          selectAccount={props.selectAccount}
-        />
-        <SidePanelItem
-          data={props.availableByAccount.investments}
-          open={open}
-          type={'investments'}
-          selectAccount={props.selectAccount}
-        />
+        <Grid container spacing={1} style={{"marginTop": "5px"}}>
+          <SidePanelItem
+            data={props.availableByAccount.checking}
+            open={open}
+            type={'checking'}
+            selectAccount={props.selectAccount}
+            currentAvailable={props.currentAvailable}
+          />
+          <SidePanelItem
+            data={props.availableByAccount.savings}
+            open={open}
+            type={'savings'}
+            selectAccount={props.selectAccount}
+          />
+          <SidePanelItem
+            data={props.availableByAccount.investments}
+            open={open}
+            type={'investments'}
+            selectAccount={props.selectAccount}
+          />
+        </Grid>
       </Drawer>
       <div className={classes.content}>
         <div className={classes.appBarSpacer} />
@@ -263,7 +255,7 @@ export default function Dashboard(props) {
           <GridList cols={1} >
             <GridListTile style={{height: '100%'}}>
               <Grid container spacing={3}>
-                <Grid item xs={8}>
+                {/*<Grid item xs={8}>
                   <Grid container spacing={3}>
                       <Grid item xs={6}>
                         <Paper className={fixedHeightPaper} style={{backgroundColor: "#FF504C"}}>
@@ -329,13 +321,9 @@ export default function Dashboard(props) {
                 </Grid>
                 <Grid item xs={4}>
                   <Paper className={classes.paper}>
-                    <DetailsPanel
-                      viewSelected={props.viewSelected}
-                      expensesByCategory={props.expensesByCategory}
-                      availableByAccount={props.availableByAccount}
-                    />
+                    <DetailsPanel viewSelected={props.viewSelected} expensesByCategory={props.expensesByCategory} availableByAccount={props.availableByAccount} />
                   </Paper>
-                </Grid>
+                </Grid>*/}
               </Grid>
             </GridListTile>
           </GridList>
