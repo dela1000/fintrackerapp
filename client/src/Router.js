@@ -4,11 +4,35 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 
 import axios from 'axios';
 import Landing from "./Landing/Landing";
-import LoginPage from "./Auth/Login";
+import Login from "./Auth/Login";
+import Signup from "./Auth/Signup";
 import App from "./App";
 import Initials from './Initials/Initials.js';
+
 import localStorageService from "./Services/LocalStorageService.js";
-import { login } from "./Services/AuthServices.js";
+import { login, signup } from "./Services/AuthServices.js";
+import { whoami } from './Services/WebServices';
+
+const who_am_i = (config) => {
+  const token = localStorageService.getAccessToken();
+  if (token) {
+    if(config.url !== "/whoami"){
+      console.log("+++ 18 App.js /whoami")
+      whoami()
+        .then((res) => {
+        let data = res.data;
+          if (data.success){
+            localStorageService.setToken({
+              [process.env.REACT_APP_USERNAME]: data.data.username,
+              [process.env.REACT_APP_ID]: data.data.userId,
+              [process.env.REACT_APP_INITIALS]: data.data.initials_done,
+              [process.env.REACT_APP_EMAIL]: data.data.userEmail,
+            });
+          }
+        })
+    }
+  }
+}
 
 axios.interceptors.request.use(
  config => {
@@ -39,7 +63,9 @@ class Auth extends React.Component {
     }
 
     this.login = this.login.bind(this);
+    this.signup = this.signup.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.update_message = this.update_message.bind(this);
     this.update_initials = this.update_initials.bind(this);
   }
 
@@ -71,13 +97,53 @@ class Auth extends React.Component {
           cb();
         } else {
           this.setState({ message: data.data.message }, () => {
-            console.log("+++ 70 App.js this.state: ", this.state)
+            setTimeout(() => {
+              this.setState({ message: "" })
+            }, 2500);
           })
         }
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  signup(payload, cb) {
+    signup(payload)
+      .then((res) => {
+        let data = res.data;
+        if (data.success && data.data && data.data[process.env.REACT_APP_TOKEN]){
+          this.setState({ user: data.data, loggedIn: true, initials_done: data.data.initials_done, isAuthenticated: true }, () => {
+            localStorageService.setToken({
+              token: data.data[process.env.REACT_APP_TOKEN],
+              username: data.data.username,
+              userId: data.data.userId,
+              initial_done: data.data.initials_done,
+              userEmail: data.data.userEmail,
+            });
+          })
+          cb();
+        } else {
+          this.setState({ message: data.data.message }, () => {
+            setTimeout(() => {
+              this.setState({ message: "" })
+            }, 2500);
+          })
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  
+  update_message(message) {
+    this.setState({ message: message }, () => {
+      setTimeout(() => {
+        this.setState({ message: "" })
+      }, 2500);
+    })
+
   }
 
   update_initials(){
@@ -93,7 +159,26 @@ class Auth extends React.Component {
           <Route exact path="/" component={Landing} />
           <Route
             path="/login" 
-            render={(props) => <LoginPage {...props} login={this.login} message={this.message} isLoggedIn={this.isLoggedIn} />}
+            render={(props) => 
+              <Login 
+                {...props} 
+                login={this.login} 
+                isLoggedIn={this.isLoggedIn} 
+                message={this.state.message} 
+                update_message={this.update_message}
+              />}
+          />
+
+          <Route
+            path="/signup" 
+            render={(props) => 
+              <Signup 
+                {...props} 
+                signup={this.signup} 
+                isLoggedIn={this.isLoggedIn} 
+                message={this.state.message} 
+                update_message={this.update_message}
+              />}
           />
           <PrivateRoute 
             path="/initials" 

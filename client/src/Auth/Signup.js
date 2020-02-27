@@ -24,15 +24,20 @@ export default function Login(props) {
   }
 
   let { from } = location.state || { from: { pathname: "/" } };
-  let login = () => {
-    if(username && password){
-      var payload = {
-        username: username, 
-        password: password
+  let signup = () => {
+    if(username && email && password){
+      if(password === passwordMatch){
+        var payload = {
+          username: username, 
+          email: email,
+          password: password
+        }
+        props.signup(payload, () => {
+          history.replace('/dashboard');
+        });
+      } else {
+        props.update_message("Password must match exactly.")
       }
-      props.login(payload, () => {
-        history.replace('/dashboard');
-      });
     } else {
       props.update_message("Please include a username and password")
     }
@@ -44,22 +49,32 @@ export default function Login(props) {
     setUsername(event.target.value);
   }
 
-  let [password, setPassowrd] = React.useState("");
-  const handlePassword = (event) => {
-    setPassowrd(event.target.value);
+  let [email, setEmail] = React.useState("");
+  const handleEmail = (event) => {
+    setEmail(event.target.value);
   }
+
+  let [password, setPassword] = React.useState("");
+  const handlePassword = (event) => {
+    setPassword(event.target.value);
+  }
+
+  let [passwordMatch, setPasswordMatch] = React.useState("");
+  const handlePasswordMatch = (event) => {
+    setPasswordMatch(event.target.value);
+  }
+
 
   const onEnter = (e) => {
     if (e.key === 'Enter') {
-      if(username && password){
-        login()
+      if(username && email && password){
+        signup()
       }
     };
   }
 
-  const toSignup = () =>{
-    console.log("+++ 61 Login.js Here")
-    props.history.push("/signup");
+  const toLogin = () =>{
+    props.history.push("/login");
   }
 
   return (
@@ -74,7 +89,7 @@ export default function Login(props) {
         style={{ minHeight: '90vh' }}
       >
         <Grid item xs={12}>
-          <h2>Login</h2>
+          <h2>Sign Up</h2>
         </Grid>
         <Grid item xs={12}>
           <TextField 
@@ -91,6 +106,17 @@ export default function Login(props) {
           <br/>
           <TextField 
             fullWidth
+            type="email"
+            name="email"
+            id="outlined-basic" 
+            label="Email" 
+            autoComplete="off"
+            onChange={handleEmail} 
+            value={email}
+          />
+          <br/>
+          <TextField 
+            fullWidth
             type="password" 
             name="pasword" 
             id="outlined-basic" 
@@ -98,6 +124,16 @@ export default function Login(props) {
             autoComplete="off"
             onChange={handlePassword} 
             value={password}
+          />
+          <TextField 
+            fullWidth
+            type="password" 
+            name="pasword" 
+            id="outlined-basic" 
+            label="Password Match" 
+            autoComplete="off"
+            onChange={handlePasswordMatch} 
+            value={passwordMatch}
             onKeyPress={onEnter}
           />
         </Grid>
@@ -109,16 +145,16 @@ export default function Login(props) {
           <div className={classes.root}>
             <Button 
               variant="contained"
-              onClick={toSignup}
+              onClick={toLogin}
             >
-            Sign Up
+            Log In
             </Button>
             <Button
               variant="contained"
               color="primary"
-              onClick={login}
+              onClick={signup}
             >
-              Log In
+              Sign Up
             </Button>
           </div>
         </Grid>
