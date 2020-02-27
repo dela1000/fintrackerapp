@@ -21,11 +21,12 @@ const who_am_i = (config) => {
           .then((res) => {
             let data = res.data;
             if (data.success){
+              
               localStorageService.setToken({
-                username: data.data.username,
-                userId: data.data.userId,
-                initial_done: data.data.initials_done,
-                userEmail: data.data.userEmail,
+                [process.env.REACT_APP_USERNAME]: data.data.username,
+                [process.env.REACT_APP_ID]: data.data.userId,
+                [process.env.REACT_APP_INITIALS]: data.data.initials_done,
+                [process.env.REACT_APP_EMAIL]: data.data.userEmail,
               });
             }
           })
@@ -51,10 +52,10 @@ axios.interceptors.request.use(
 );
 
 
-
-
 export default function App (props) {
-  if(props.initials_done){
+  let initials = localStorageService.getInitial();
+  console.log("+++ 58 App.js initials: ", initials)
+  if(initials){
     return (
       <React.Fragment>
         <Main />

@@ -103,6 +103,10 @@ class Initials extends React.Component {
     });
   };
 
+  toSubmit = () => {
+    this.props.history.push("/dashboard");
+  }
+
   handleRemoveRow = idx => () => {
     if(this.state.rows.length > 1){
       this.setState({
@@ -142,14 +146,8 @@ class Initials extends React.Component {
     set_initials(payload)
       .then((res) => {
         var data = res.data;
-        console.log("+++ 144 Initials.js data: ", data)
         if(data.success){
-          console.log("+++ 146 Initials.js this.props: ", this.props)
-          console.log("+++ 147 Initials.js UPDATING INITIALS FROM INITIALS")
-          this.props.update_initials();
-          localStorageService.setToken({
-            initial_done: true,
-          });
+          let updated = this.props.update_initials();
           this.props.history.push("/dashboard");
         } else {
           this.setState({ errorFound: true, failMessage: 'Something went really wrong' })
@@ -348,6 +346,15 @@ class Initials extends React.Component {
                         style={{float:"right"}}
                       >
                         Done
+                      </Button>
+
+                      <Button 
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        onClick={this.toSubmit}
+                      >
+                        TO DASHBOARD
                       </Button>
                     </Grid>
                   </Grid>

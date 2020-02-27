@@ -48,10 +48,12 @@ class Auth extends React.Component {
     let token = localStorageService.getAccessToken();
     if(token && token.length > 0){
       var userData = localStorageService.getUserData();
-      this.setState({ user: userData, loggedIn: true, isAuthenticated: true });
-      return true;
+      this.setState({ user: userData, loggedIn: true, isAuthenticated: true, initials_done: true }, () => {
+        console.log("+++ 52 Router.js this.state: ", this.state)
+        return true;
+      });
     }
-    return false
+    return false;
   } 
 
   login(payload, cb) {
@@ -81,8 +83,9 @@ class Auth extends React.Component {
   }
 
   update_initials(){
-    console.log("+++ 84 Router.js UPDATING Initials AT ROUTER")
-    this.setState({ loggedIn: true, initials_done: true }) 
+    this.setState({ loggedIn: true, initials_done: true }, () => {
+      localStorageService.updateInitial();
+    })
   }
 
   render() {
@@ -109,7 +112,8 @@ class Auth extends React.Component {
             auth={this.state.isAuthenticated} 
             userData={this.state.user} 
             initials_done={this.state.initials_done}
-            update_initials={this.update_initials} 
+            update_initials={this.update_initials}
+            isLoggedIn={this.isLoggedIn}
           />
           <Route path="*">
             <NoMatch />
