@@ -10,6 +10,7 @@ class Main extends React.Component {
     super(props);
     this.state = {
       allTotals: {
+        currentAvailable: "",
         availableByAccount: {
           checking: [],
           savings: [],
@@ -24,7 +25,6 @@ class Main extends React.Component {
       tableData: [],
       viewSelected: "expenses"
     };
-    this.getAllTotals = this.getAllTotals.bind(this);
     this.getExpenses = this.getExpenses.bind(this);
     this.getFunds = this.getFunds.bind(this);
     this.selectAccount = this.selectAccount.bind(this);
@@ -39,6 +39,7 @@ class Main extends React.Component {
   };
 
   componentDidMount() {
+    this.getAllTotals = this.getAllTotals.bind(this);
     this.getAllTotals();
     // this.getUserDataTypes();
     this.getExpenses();
@@ -111,15 +112,13 @@ class Main extends React.Component {
       <Grid container spacing={1}>
         <Grid item xs>
           <MainPanel
-            logout={this.props.logout}
             viewSelected={this.state.viewSelected}
             
-            getAllTotals={this.getAllTotals}
+            currentAvailable={this.state.allTotals.currentAvailable}
             timeframe={this.state.allTotals.timeframe}
             availableByAccount={this.state.allTotals.availableByAccount}
             expensesByCategory={this.state.allTotals.expensesByCategory}
             totalExpenses={this.state.allTotals.totalExpenses}
-            currentAvailable={this.state.allTotals.currentAvailable}
             expensesCategories={this.state.allTotals.expensesCategories}
             userAccounts={this.state.allTotals.userAccounts}
             fundSources={this.state.allTotals.fundSources}
@@ -129,6 +128,7 @@ class Main extends React.Component {
             selectCategory={this.selectCategory}
             selectType={this.selectType}
             
+            getAllTotals={this.getAllTotals}
             getExpenses={this.getExpenses}
             getFunds={this.getFunds}
           />

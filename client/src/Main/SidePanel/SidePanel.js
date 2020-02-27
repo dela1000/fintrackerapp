@@ -41,7 +41,19 @@ export default function SidePanel(props) {
           </Box>
         </Grid>
       </Grid>
-      <SidePanelExpenses expensesCategories={props.expensesCategories} expensesCategories={props.expensesCategories} open={props.open}/>
+      <Grid container style={props.open ? { display: 'block' } : { display: 'none' }}>
+        <Grid item xs>
+          <Box pl={3}>
+            <p>
+              Add new Categories
+            </p>
+          </Box>
+        </Grid>
+      </Grid>
+      <SidePanelExpenses 
+        expensesCategories={props.expensesCategories}
+        expensesByCategory={props.expensesByCategory} 
+        open={props.open}/>
       <Divider />
       <Grid container spacing={1} style={{"marginTop": "5px"}}>
         <Grid item xs={2} onClick={() => props.getFunds()}>
@@ -66,6 +78,18 @@ export default function SidePanel(props) {
           />
         </Grid>
       </Grid>
+      <Box pr={2} pb={1} pl={3.5} style={props.open ? { display: 'block' } : { display: 'none' }}>
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
+            <Typography color="textSecondary">
+              Current Available
+            </Typography>
+            <Typography component="p" variant="h6">
+              {props.currentAvailable}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
       <SidePanelItem
         data={props.availableByAccount.checking}
         open={props.open}

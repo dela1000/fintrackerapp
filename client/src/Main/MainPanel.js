@@ -165,6 +165,7 @@ export default function Dashboard(props) {
         <Divider />
         <SidePanel 
           open={open}
+          currentAvailable={props.currentAvailable}
           expensesCategories={props.expensesCategories}
           fundSources={props.fundSources}
           userAccounts={props.userAccounts}
@@ -173,6 +174,7 @@ export default function Dashboard(props) {
           availableByAccount={props.availableByAccount}
           getFunds={props.getFunds}
           getExpenses={props.getExpenses}
+          expensesByCategory={props.expensesByCategory}
         />
       </Drawer>
       <div className={classes.content}>

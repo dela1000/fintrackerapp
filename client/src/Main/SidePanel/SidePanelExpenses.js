@@ -18,24 +18,26 @@ export default function SidePanelExpenses(props) {
     )
   } else {
     return (
-      <List style={props.open ? { display: 'block' } : { display: 'none' }}>
+      <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
         {expensesByCategory.map((item, key) => (
           <ListItem button key={key} onClick={() => props.selectCategory(item)}>
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
-                <Typography align="left">
-                  {capitalize(item.category)}
-                </Typography>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item>
+                {capitalize(item.category)}
               </Grid>
-              <Grid item xs={6}>
-                <Typography align="right" style={item.amount < 0 ? {color: 'red'} : {} }>
-                  {decimals(item.amount)}
-                </Typography>
+              <Grid item>
+                {decimals(item.amount)}
               </Grid>
             </Grid>
           </ListItem>
         ))}
-      </List>
+      </Box>
+      
     )
   }
 }
