@@ -493,7 +493,7 @@ module.exports = controllers = {
             _.forEach(totalsResults, function (total) {
               newTotals.push({
                 id: total.id,
-                amount: total.amount + totalsByAccountId[total.id].amount,
+                amount: total.amount + totalsByAccountId[total.accountId].amount,
                 accountId: total.accountId,
                 typeId: total.typeId,
               })

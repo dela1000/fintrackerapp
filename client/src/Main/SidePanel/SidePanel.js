@@ -9,6 +9,7 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import SidePanelItem from './SidePanelItem.js';
 import AddModal from './AddModal.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 
 
 export default function SidePanel(props) {
@@ -41,15 +42,21 @@ export default function SidePanel(props) {
           </Box>
         </Grid>
       </Grid>
-      <Grid container style={props.open ? { display: 'block' } : { display: 'none' }}>
-        <Grid item xs>
-          <Box pl={3}>
-            <p>
-              Add new Categories
-            </p>
+      <Grid container style={{cursor: 'pointer', "marginTop": "5px"}} style={props.open ? {} : { display: 'none' }}>
+        <Grid item xs={2}>
+          <Box pl={3} pt={0.3}>
+            <LibraryAddIcon style={{fontSize: 'medium'}}  />
+          </Box>
+        </Grid>
+        <Grid item xs={8} style={props.open ? { display: 'block' } : { display: 'none' }}>
+          <Box pl={1}>
+            <div>
+              Add new categories
+            </div>
           </Box>
         </Grid>
       </Grid>
+
       <SidePanelExpenses 
         expensesCategories={props.expensesCategories}
         expensesByCategory={props.expensesByCategory} 
@@ -78,18 +85,34 @@ export default function SidePanel(props) {
           />
         </Grid>
       </Grid>
-      <Box pr={2} pb={1} pl={3.5} style={props.open ? { display: 'block' } : { display: 'none' }}>
-        <Grid container spacing={1}>
-          <Grid item xs={6}>
-            <Typography color="textSecondary">
-              Current Available
-            </Typography>
-            <Typography component="p" variant="h6">
-              {props.currentAvailable}
-            </Typography>
-          </Grid>
+      <Grid container style={{cursor: 'pointer', "marginTop": "5px"}} style={props.open ? {} : { display: 'none' }}>
+        <Grid item xs={2}>
+          <Box pl={3} pt={0.3}>
+            <LibraryAddIcon style={{fontSize: 'medium'}}  />
+          </Box>
         </Grid>
-      </Box>
+        <Grid item xs={8} style={props.open ? { display: 'block' } : { display: 'none' }}>
+          <Box pl={1}>
+            <div>
+              Add new accounts
+            </div>
+          </Box>
+        </Grid>
+      </Grid>
+      <Grid container style={{cursor: 'pointer', "marginTop": "5px"}} style={props.open ? {} : { display: 'none' }}>
+        <Grid item xs={2}>
+          <Box pl={3} pt={0.3}>
+            <LibraryAddIcon style={{fontSize: 'medium'}}  />
+          </Box>
+        </Grid>
+        <Grid item xs={8} style={props.open ? { display: 'block' } : { display: 'none' }}>
+          <Box pl={1}>
+            <div>
+              Add new sources
+            </div>
+          </Box>
+        </Grid>
+      </Grid>
       <SidePanelItem
         data={props.availableByAccount.checking}
         open={props.open}
