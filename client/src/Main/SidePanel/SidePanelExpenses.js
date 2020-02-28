@@ -1,10 +1,8 @@
 import React from 'react';
 import _ from 'lodash'
 import Box from '@material-ui/core/Box';
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 
 import { capitalize, decimals } from "../../Services/helpers";
 

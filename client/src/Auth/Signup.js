@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -17,13 +17,11 @@ const useStyles = makeStyles(theme => ({
 export default function Login(props) {
   const classes = useStyles();
   let history = useHistory();
-  let location = useLocation();
   
   if(props.isLoggedIn()){
     props.history.push("/dashboard");
   }
 
-  let { from } = location.state || { from: { pathname: "/" } };
   let signup = () => {
     if(username && email && password){
       if(password === passwordMatch){

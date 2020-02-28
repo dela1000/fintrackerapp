@@ -15,7 +15,7 @@ export default function SidePanel(props) {
   let noExpensesCategories = _.isEmpty(props.expensesCategories);
   return(
     <React.Fragment>
-      <Grid container spacing={1} style={{"marginTop": "5px"}}>
+      <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
         <Grid item xs={2} onClick={() => props.getExpenses()}>
           <Box pl={3} pt={0.5}>
             <ReceiptIcon />
@@ -55,7 +55,7 @@ export default function SidePanel(props) {
         expensesByCategory={props.expensesByCategory} 
         open={props.open}/>
       <Divider />
-      <Grid container spacing={1} style={{"marginTop": "5px"}}>
+      <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
         <Grid item xs={2} onClick={() => props.getFunds()}>
           <Box pl={3} pt={0.5}>
             <AccountBalanceWalletIcon />

@@ -4,7 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import { capitalize } from "../Services/helpers";
 
 export default function InitialItem(props) {
-  const rowsLength = props.rowsLength;
   let label = props.label + " Name";
   return (
     <React.Fragment>
@@ -14,7 +13,6 @@ export default function InitialItem(props) {
         alignItems="center"
         justify="center"
       >
-
         <Grid item xs>
           <TextField
             required

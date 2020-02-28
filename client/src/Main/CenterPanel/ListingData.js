@@ -7,7 +7,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { capitalize, decimals } from "../Services/helpers";
+import { capitalize, decimals } from "../../Services/helpers.js";
 // import Title from './Title';
 
 function loadMore(type) {

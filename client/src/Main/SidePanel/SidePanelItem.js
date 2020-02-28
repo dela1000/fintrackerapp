@@ -15,6 +15,7 @@ export default function SidePanelItem(props) {
         container 
         spacing={1} 
         onClick={() => props.selectAccount(props.type)}
+        style={{cursor: 'pointer'}}
       >
         <Grid item>
           <Box pl={3} pt={0.4} >

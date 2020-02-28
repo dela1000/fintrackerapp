@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 import Grid from '@material-ui/core/Grid';
 import MainPanel from './MainPanel.js';
-import { get_all_totals, all_user_data_types, get_expenses, get_funds } from "../Services/WebServices";
+import { get_all_totals, get_expenses, get_funds } from "../Services/WebServices";
 
 
 class Main extends React.Component {
@@ -54,20 +54,6 @@ class Main extends React.Component {
         }
       })
   }
-
- // getUserDataTypes(){
- //  all_user_data_types()
- //    .then((res) => {
- //      var data = res.data;
- //      if(data.success){
- //        this.setState({ 
- //          expensesCategories: data.data.expensesCategories,
- //          userAccounts: data.data.accounts,
- //          fundSources: data.data.fundSources,
- //        })
- //      }
- //    })
- // }
 
  getExpenses(){
    get_expenses()

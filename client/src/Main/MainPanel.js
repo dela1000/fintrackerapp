@@ -1,14 +1,11 @@
 import React from 'react';
 import clsx from 'clsx';
-import moment from 'moment';
-import _ from 'lodash'
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,12 +16,9 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ReceiptIcon from '@material-ui/icons/Receipt';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import ListItem from '@material-ui/core/ListItem';
-import { capitalize, decimals } from "../Services/helpers";
 import SidePanel from './SidePanel/SidePanel.js';
-import ListingData from './ListingData.js';
+
+import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel.js';
 import Logout from '../Auth/Logout.js';
 import PersonOutlineTwoToneIcon from '@material-ui/icons/PersonOutlineTwoTone';
@@ -118,16 +112,13 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  let today = moment();
-  let avgThisMonth = props.currentAvailable/today.format('D');
-  let averageExpensesEstimate = avgThisMonth*moment().daysInMonth();
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   
   return (
     <div className={classes.root}>
@@ -173,7 +164,6 @@ export default function Dashboard(props) {
           getExpenses={props.getExpenses}
           availableByAccount={props.availableByAccount}
           getFunds={props.getFunds}
-          getExpenses={props.getExpenses}
           expensesByCategory={props.expensesByCategory}
         />
       </Drawer>
@@ -183,75 +173,22 @@ export default function Dashboard(props) {
           <GridList cols={1} >
             <GridListTile style={{height: '100%'}}>
               <Grid container spacing={3}>
-                {/*<Grid item xs={8}>
-                  <Grid container spacing={3}>
-                      <Grid item xs={6}>
-                        <Paper className={fixedHeightPaper} style={{backgroundColor: "#FF504C"}}>
-                          <Grid container spacing={1}>
-                            <Grid item xs={6}>
-                              <Typography color="textSecondary">
-                                Expenses This {props.timeframe}
-                              </Typography>
-                              <Typography component="p" variant="h4">
-                                {props.totalExpenses}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <Typography color="textSecondary">
-                                Average Daily Expenses
-                              </Typography>
-                              <Typography component="p" variant="h6" style={ isNaN(avgThisMonth) ? {display: "none"} : {display: "block"}}>
-                                {decimals(avgThisMonth)}
-                              </Typography>
-                              <Typography color="textSecondary">
-                                Monthly Expenses Estimate
-                              </Typography>
-                              <Typography component="p" variant="h6" style={ isNaN(averageExpensesEstimate) ? {display: "none"} : {display: "block"}}>
-                                {decimals(averageExpensesEstimate)}
-                              </Typography>
-                              
-                            </Grid>
-                          </Grid>
-                        </Paper>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Paper className={fixedHeightPaper} style={{backgroundColor: "#C6E0B4"}}>
-                          <Grid container spacing={1}>
-                            <Grid item xs={6}>
-                              <Typography color="textSecondary">
-                                Current Available
-                              </Typography>
-                              <Typography component="p" variant="h4">
-                                {props.currentAvailable}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                              stuff
-                              {props.viewSelected} - here
-                            </Grid>
-                          </Grid>
-                        </Paper>
-                      </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                      <Paper className={classes.paper}>
-                        <ListingData 
-                          viewSelected={props.viewSelected}
-                          listingData={props.tableData}
-                          timeframe={props.timeframe}
-                          selectCategory={props.selectCategory}
-                          selectAccount={props.selectAccount}
-                        />
-                      </Paper>
-                    </Grid>
-                  </Grid>
+                <Grid item xs={8}>
+                  <CenterPanel 
+                    timeframe={props.timeframe}
+                    totalExpenses={props.totalExpenses}
+                    currentAvailable={props.currentAvailable}
+                    viewSelected={props.viewSelected}
+                    tableData={props.tableData}
+                    selectCategory={props.selectCategory}
+                    selectAccount={props.selectAccount}
+                  />
                 </Grid>
                 <Grid item xs={4}>
                   <Paper className={classes.paper}>
                     <DetailsPanel viewSelected={props.viewSelected} expensesByCategory={props.expensesByCategory} availableByAccount={props.availableByAccount} />
                   </Paper>
-                </Grid>*/}
+                </Grid>
               </Grid>
             </GridListTile>
           </GridList>
