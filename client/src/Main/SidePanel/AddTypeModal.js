@@ -45,8 +45,9 @@ const styles = theme => ({
     width: '80vh',
     height: '70vh',
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
+    border: '1px solid #000',
     padding: theme.spacing(8, 8, 8),
+    borderRadius: '10px'
   },
   gridItem: {
     paddingLeft: theme.spacing(1),
@@ -231,6 +232,7 @@ class AddTypeModal extends React.Component {
                     <Grid container justify="center" spacing={2}>
                       <Grid item xs>
                         <TextField 
+                          autoFocus
                           fullWidth
                           type="text" 
                           name={this.props.type}
