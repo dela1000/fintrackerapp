@@ -20,7 +20,7 @@ import Icon from '@material-ui/core/Icon';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import DateFnsUtils from '@date-io/date-fns';
 
-import { categories_bulk } from "../../Services/WebServices";
+import { categories_bulk, user_accounts, fund_sources } from "../../Services/WebServices";
 
 import {
   MuiPickersUtilsProvider,
@@ -72,6 +72,9 @@ class AddTypeModal extends React.Component {
 
   handleOpen(value) {
     this.setState({ open: value });
+    if(value === false){
+      this.setState({itemsAdded: [], [this.props.type]: ""})
+    }
   };
 
   handleChange (e) {
@@ -126,9 +129,21 @@ class AddTypeModal extends React.Component {
             this.handleOpen(false)
           })
       } else if(this.props.type === 'account'){
-        
+        payload = this.state.itemsAdded;
+        user_accounts(payload)
+          .then((res) => {
+            console.log("res: ", JSON.stringify(res, null, "\t"));
+            this.props.getAllTotals();
+            this.handleOpen(false)
+          })
       } else if(this.props.type === 'source'){
-        
+        payload = this.state.itemsAdded;
+        fund_sources(payload)
+          .then((res) => {
+            console.log("res: ", JSON.stringify(res, null, "\t"));
+            this.props.getAllTotals();
+            this.handleOpen(false)
+          })
       }
     } else {
       var newMessage = "Add at least one new " + this.props.type;
@@ -140,7 +155,6 @@ class AddTypeModal extends React.Component {
 
   render(){
     const { classes } = this.props;
-    console.log("+++ 143 AddTypeModal.js this.props: ", this.props)
     return (
       <div>
         <Box onClick={() => this.handleOpen(true)}>

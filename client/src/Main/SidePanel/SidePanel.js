@@ -116,12 +116,14 @@ class SidePanel extends React.Component {
           type={'account'}
           itemName={'account'}
           currentItems={this.state.allTotals.userAccounts}
+          getAllTotals={this.getAllTotals}
         />
         <AddTypeModal 
           open={this.props.open}
           type={'source'}
           itemName={'source'}
           currentItems={this.state.allTotals.fundSources}
+          getAllTotals={this.getAllTotals}
         />
         <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
           <SidePanelItem
