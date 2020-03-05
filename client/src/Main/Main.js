@@ -161,7 +161,9 @@ class Main extends React.Component {
             </IconButton>
           </div>
           <Divider />
-
+          <SidePanel 
+            open={this.state.open}
+          />
         </Drawer>
         <div className={classes.content}>
           <div className={classes.appBarSpacer} />
@@ -188,6 +190,8 @@ class Main extends React.Component {
 }
 
 export default withStyles(styles)(Main);
+
+
  //  constructor(props) {
  //    super(props);
  //    this.state = {
