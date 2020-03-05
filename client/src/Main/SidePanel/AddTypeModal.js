@@ -7,6 +7,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Fade from '@material-ui/core/Fade';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -316,6 +317,7 @@ class AddTypeModal extends React.Component {
                 <Grid item xs={4} className={classes.gridItem}>
                   <Box style={{height: '54vh'}}>
                     <h2>Current {pluralize(this.props.type)}</h2>
+                    <List style={{overflow: 'auto', maxHeight: '50vh'}}>
                     {this.props.currentItems.map((item, key) => (
                       <ListItem key={key}>
                         <Grid
@@ -330,6 +332,7 @@ class AddTypeModal extends React.Component {
                         </Grid>
                       </ListItem>
                     ))}
+                  </List>
                   </Box>
                   <h3>Current {pluralize(this.props.type)}: {this.props.currentItems.length} </h3>
                 </Grid>
