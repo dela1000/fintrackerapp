@@ -16,6 +16,7 @@ export default function SidePanelExpenses(props) {
         type={'category'}
         itemName={'name'}
         currentItems={props.expensesCategories}
+        getAllTotals={props.getAllTotals}
       />
       <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
         {props.expensesByCategory.map((item, key) => (

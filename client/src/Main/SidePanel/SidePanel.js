@@ -32,7 +32,8 @@ class SidePanel extends React.Component {
         expensesCategories: [],
         fundSources: [],
       },
-    }
+    };
+    this.getAllTotals = this.getAllTotals.bind(this);
   }
 
   componentDidMount() {
@@ -75,7 +76,7 @@ class SidePanel extends React.Component {
               expensesCategories={this.state.allTotals.expensesCategories}
               fundSources={this.state.allTotals.fundSources}
               userAccounts={this.state.allTotals.userAccounts}
-              getAllTotals={this.state.allTotals.getAllTotals}
+              getAllTotals={this.getAllTotals}
               />
             </Box>
           </Grid>
@@ -83,7 +84,9 @@ class SidePanel extends React.Component {
         <SidePanelExpenses 
           expensesByCategory={this.state.allTotals.expensesByCategory} 
           expensesCategories={this.state.allTotals.expensesCategories}
-          open={this.props.open}/>
+          open={this.props.open}
+          getAllTotals={this.getAllTotals}
+        />
         <Divider />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
           <Grid item xs={2}>

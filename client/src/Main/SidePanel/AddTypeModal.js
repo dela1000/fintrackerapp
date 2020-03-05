@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import _ from 'lodash'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -18,6 +19,8 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import DateFnsUtils from '@date-io/date-fns';
+
+import { categories_bulk } from "../../Services/WebServices";
 
 import {
   MuiPickersUtilsProvider,
@@ -38,7 +41,7 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   paper: {
-    width: '100vh',
+    width: '80vh',
     height: '70vh',
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
@@ -62,10 +65,10 @@ class AddTypeModal extends React.Component {
       open: false,
       label: "New " + this.props.type,
       [this.props.type]: "",
-      itemsAdded: []
+      itemsAdded: [],
+      message: ""
     }
   }
-
 
   handleOpen(value) {
     this.setState({ open: value });
@@ -74,40 +77,83 @@ class AddTypeModal extends React.Component {
   handleChange (e) {
     this.setState({[e.target.name]: e.target.value})
   }
+
+  onEnter (e) {
+    if (e.key === 'Enter') {
+      if(this.state[this.props.type]){
+        this.addItem()
+      }
+    };
+  }
+
+  removeFromItems (i) {
+    var array = [...this.state.itemsAdded];
+    if (i !== -1) {
+        array.splice(i, 1);
+        this.setState({itemsAdded: array});
+      }
+  }
   
-  addMore () {
+  addItem () {
     if(this.state[this.props.type]){
       var newItem = {
         [this.props.type]: this.state[this.props.type],
       }
       this.setState(prevState => ({
         itemsAdded: [...prevState.itemsAdded, newItem]
-      }), () => {
-        console.log("+++ 86 AddTypeModal.js this.state.itemsAdded: ", this.state.itemsAdded)
-      })
-      this.clearAfterSubmit();
+      }))
+      this.clearAfterAdd();
     }
   }
 
-  clearAfterSubmit () {
+  clearAfterAdd () {
     this.setState({ [this.props.type]: "" })
+  }
+
+  submitNew () {
+    if(this.state.itemsAdded.length > 0){
+      var payload = []
+      if(this.props.type === 'category'){
+        _.forEach(this.state.itemsAdded, (item) => {
+          payload.push({
+            name: item.category
+          })
+        })
+        categories_bulk(payload)
+          .then((res) => {
+            console.log("res: ", JSON.stringify(res, null, "\t"));
+            this.props.getAllTotals();
+            this.handleOpen(false)
+          })
+      } else if(this.props.type === 'account'){
+        
+      } else if(this.props.type === 'source'){
+        
+      }
+    } else {
+      var newMessage = "Add at least one new " + this.props.type;
+      this.setState({message: newMessage}, ()=> {
+        console.log("+++ 129 AddTypeModal.js this.state.message: ", this.state.message)
+      })
+    }
   }
 
   render(){
     const { classes } = this.props;
+    console.log("+++ 143 AddTypeModal.js this.props: ", this.props)
     return (
       <div>
-        <Box  onClick={() => this.handleOpen(true)}>
+        <Box onClick={() => this.handleOpen(true)}>
           <Grid container style={this.props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px", "marginBottom": "2px"} : { display: 'none' }}>
             <Grid item xs={2}>
               <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
-                <LibraryAddIcon style={{fontSize: 'medium'}}  />
+                <LibraryAddIcon style={{fontSize: 'medium'}} />
               </Box>
             </Grid>
             <Grid item xs={8} style={this.props.open ? { display: 'block' } : { display: 'none' }}>
               <Box pl={1} style={{cursor: 'pointer'}}>
                 <div>
-                  New {pluralize(this.props.type)}
+                  add new {pluralize(this.props.type)}
                 </div>
               </Box>
             </Grid>
@@ -140,10 +186,11 @@ class AddTypeModal extends React.Component {
                       autoComplete="off"
                       value={this.state[this.props.type]} 
                       onChange={(e) => this.handleChange(e)} 
+                      onKeyPress={(e) => this.onEnter(e)}
                     />
                     <h3 style={this.state.itemsAdded.length > 0 ? {display: 'block', marginTop: '30px'} : {display: 'none'}}>New {this.props.type} (Click to remove)</h3>
-                    {this.state.itemsAdded.map((item, key) => (
-                      <ListItem button key={key}>
+                    {this.state.itemsAdded.map((item, i) => (
+                      <ListItem button key={i} onClick={() => this.removeFromItems(i)}>
                         <Grid
                           container
                           direction="row"
@@ -163,7 +210,7 @@ class AddTypeModal extends React.Component {
                         variant="contained"
                         color="primary"
                         className={classes.button}
-                        onClick={() => this.addMore()}
+                        onClick={() => this.addItem()}
                       >
                         Add More
                       </Button>
@@ -171,14 +218,14 @@ class AddTypeModal extends React.Component {
                         variant="contained"
                         color="primary"
                         className={classes.button}
-                        // onClick={submitNew}
+                        onClick={() => this.submitNew()}
                       >
                         Send
                       </Button>
                     </div>
                   </Box> 
                 </Grid>
-                <Grid item xs className={classes.gridItem}>
+                <Grid item xs={4} className={classes.gridItem}>
                   <Box style={{height: '54vh'}}>
                     <h2>Current {pluralize(this.props.type)}</h2>
                     {this.props.currentItems.map((item, key) => (
