@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import SidePanelItem from './SidePanelItem.js';
+import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
@@ -107,34 +108,18 @@ class SidePanel extends React.Component {
             />
           </Grid>
         </Grid>
-        <Grid container style={this.props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px"} : { display: 'none' }}>
-          <Grid item xs={2}>
-            <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
-              <LibraryAddIcon style={{fontSize: 'medium'}}  />
-            </Box>
-          </Grid>
-          <Grid item xs={8}>
-            <Box pl={1} style={{cursor: 'pointer'}}>
-              <div>
-                New accounts
-              </div>
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid container style={this.props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px"} : { display: 'none' }}>
-          <Grid item xs={2}>
-            <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
-              <LibraryAddIcon style={{fontSize: 'medium'}}  />
-            </Box>
-          </Grid>
-          <Grid item xs={8}>
-            <Box pl={1} style={{cursor: 'pointer'}}>
-              <div>
-                New sources
-              </div>
-            </Box>
-          </Grid>
-        </Grid>
+        <AddTypeModal 
+          open={this.props.open}
+          type={'account'}
+          itemName={'account'}
+          currentItems={this.state.allTotals.userAccounts}
+        />
+        <AddTypeModal 
+          open={this.props.open}
+          type={'source'}
+          itemName={'source'}
+          currentItems={this.state.allTotals.fundSources}
+        />
         <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
           <SidePanelItem
             data={this.state.allTotals.availableByAccount.checking}

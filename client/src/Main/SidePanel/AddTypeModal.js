@@ -72,9 +72,7 @@ class AddTypeModal extends React.Component {
   };
 
   handleChange (e) {
-    this.setState({[e.target.name]: e.target.value}, () => {
-      console.log("this.state: ", JSON.stringify(this.state, null, "\t"));
-    })
+    this.setState({[e.target.name]: e.target.value})
   }
   
   addMore () {
@@ -143,7 +141,7 @@ class AddTypeModal extends React.Component {
                       value={this.state[this.props.type]} 
                       onChange={(e) => this.handleChange(e)} 
                     />
-                    <h2 style={this.state.itemsAdded.length > 0 ? {display: 'block'} : {display: 'none'}}>New {this.props.type}</h2>
+                    <h3 style={this.state.itemsAdded.length > 0 ? {display: 'block', marginTop: '30px'} : {display: 'none'}}>New {this.props.type} (Click to remove)</h3>
                     {this.state.itemsAdded.map((item, key) => (
                       <ListItem button key={key}>
                         <Grid
@@ -184,7 +182,7 @@ class AddTypeModal extends React.Component {
                   <Box style={{height: '54vh'}}>
                     <h2>Current {pluralize(this.props.type)}</h2>
                     {this.props.currentItems.map((item, key) => (
-                      <div button key={key}>
+                      <ListItem key={key}>
                         <Grid
                           container
                           direction="row"
@@ -192,10 +190,10 @@ class AddTypeModal extends React.Component {
                           alignItems="center"
                         >
                           <Grid item>
-                            {capitalize(item[this.props.name])}
+                            {capitalize(item[this.props.itemName])}
                           </Grid>
                         </Grid>
-                      </div>
+                      </ListItem>
                     ))}
                   </Box>
                   <h3>Current {pluralize(this.props.type)}: {this.props.currentItems.length} </h3>

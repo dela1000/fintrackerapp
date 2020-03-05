@@ -14,7 +14,7 @@ export default function SidePanelExpenses(props) {
       <AddTypeModal 
         open={props.open}
         type={'category'}
-        name={'name'}
+        itemName={'name'}
         currentItems={props.expensesCategories}
       />
       <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
