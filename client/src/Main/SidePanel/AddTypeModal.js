@@ -49,10 +49,10 @@ const styles = theme => ({
     padding: theme.spacing(8, 8, 8),
   },
   gridItem: {
-    paddingLeft: theme.spacing(2),
-    marginLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    marginRight: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    marginRight: theme.spacing(1),
   }
 });
 
@@ -228,20 +228,7 @@ class AddTypeModal extends React.Component {
                 <Grid item xs className={classes.gridItem}>
                   <h2>Add {this.props.type}</h2>
                   <Box style={{height: '50vh'}}>
-                    <Grid container justify="space-around" style={this.props.type !== 'account' ? {display: 'block'} : {display: 'none'}}>
-                      <TextField 
-                        fullWidth
-                        type="text" 
-                        name={this.props.type}
-                        id="outlined-basic" 
-                        label={this.state.label}
-                        autoComplete="off"
-                        value={this.state[this.props.type]} 
-                        onChange={(e) => this.handleChange(e)} 
-                        onKeyPress={(e) => this.onEnter(e)}
-                      />
-                    </Grid>
-                    <Grid container justify="space-around" style={this.props.type === 'account' ? {display: 'block'} : {display: 'none'}}>
+                    <Grid container justify="center" spacing={2}>
                       <Grid item xs>
                         <TextField 
                           fullWidth
@@ -255,7 +242,7 @@ class AddTypeModal extends React.Component {
                           onKeyPress={(e) => this.onEnter(e)}
                         />
                       </Grid>
-                      <Grid item xs>
+                      <Grid  item xs style={this.props.type === 'account' ? {display: 'block'} : {display: 'none'}}>
                         <TextField
                           required
                           fullWidth
@@ -274,24 +261,31 @@ class AddTypeModal extends React.Component {
                         </TextField>
                       </Grid>
                     </Grid>
-                    <h3 style={this.state.itemsAdded.length > 0 ? {display: 'block', marginTop: '30px'} : {display: 'none'}}>New {this.props.type} (Click to remove)</h3>
-                    {this.state.itemsAdded.map((item, i) => (
-                      <ListItem button key={i} onClick={() => this.removeFromItems(i)}>
-                        <Grid
-                          container
-                          direction="row"
-                          justify="space-between"
-                          alignItems="center"
-                        >
-                          <Grid item xs={3}>
-                            {item[this.props.type]}
+                    <h3 style={this.state.itemsAdded.length > 0 ? {display: 'block', marginTop: '30px'} : {display: 'none'}}> 
+                      New {this.props.type} (Click to remove)
+                    </h3>
+                    <Grid container justify="center" spacing={2} style={this.state.itemsAdded.length > 0 ? {} : {display: 'none'}}>
+                      <Grid item xs>
+                        Name
+                      </Grid>
+                      <Grid item xs style={ this.props.type === 'account' ? {display: 'block'} : {display: 'none'}}> 
+                        Type
+                      </Grid>
+                    </Grid>
+                    <List style={{overflow: 'auto', maxHeight: '38vh'}}>
+                      {this.state.itemsAdded.map((item, i) => (
+                        <ListItem button key={i} onClick={() => this.removeFromItems(i)}>
+                          <Grid container justify="center" spacing={2}>
+                            <Grid item xs>
+                              {item[this.props.type]}
+                            </Grid>
+                            <Grid item xs style={ this.props.type === 'account' ? {} : {display: 'none'}}> 
+                              {capitalize(item.type.type)}
+                            </Grid>
                           </Grid>
-                          <Grid item xs={6} style={ this.props.type === 'account' ? {display: 'block'} : {display: 'none'}}> 
-                            {capitalize(item.type.type)}
-                          </Grid>
-                        </Grid>
-                      </ListItem>
-                    ))}
+                        </ListItem>
+                      ))}
+                    </List>
                   </Box>
                   <Box pl={1} pb={1}>
                     <div className={classes.root}>
@@ -318,21 +312,21 @@ class AddTypeModal extends React.Component {
                   <Box style={{height: '54vh'}}>
                     <h2>Current {pluralize(this.props.type)}</h2>
                     <List style={{overflow: 'auto', maxHeight: '50vh'}}>
-                    {this.props.currentItems.map((item, key) => (
-                      <ListItem key={key}>
-                        <Grid
-                          container
-                          direction="row"
-                          justify="space-between"
-                          alignItems="center"
-                        >
-                          <Grid item>
-                            {capitalize(item[this.props.itemName])}
+                      {this.props.currentItems.map((item, key) => (
+                        <ListItem key={key}>
+                          <Grid
+                            container
+                            direction="row"
+                            justify="space-between"
+                            alignItems="center"
+                          >
+                            <Grid item>
+                              {capitalize(item[this.props.itemName])}
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      </ListItem>
-                    ))}
-                  </List>
+                        </ListItem>
+                      ))}
+                    </List>
                   </Box>
                   <h3>Current {pluralize(this.props.type)}: {this.props.currentItems.length} </h3>
                 </Grid>
