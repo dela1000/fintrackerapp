@@ -42,21 +42,20 @@ export default function SidePanel(props) {
           </Box>
         </Grid>
       </Grid>
-      <Grid container style={{cursor: 'pointer', "marginTop": "5px"}} style={props.open ? {} : { display: 'none' }}>
+      <Grid container style={props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px", "marginBottom": "2px"} : { display: 'none' }}>
         <Grid item xs={2}>
-          <Box pl={3} pt={0.3}>
+          <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
             <LibraryAddIcon style={{fontSize: 'medium'}}  />
           </Box>
         </Grid>
         <Grid item xs={8} style={props.open ? { display: 'block' } : { display: 'none' }}>
-          <Box pl={1}>
+          <Box pl={1} style={{cursor: 'pointer'}}>
             <div>
-              Add new categories
+              New categories
             </div>
           </Box>
         </Grid>
       </Grid>
-
       <SidePanelExpenses 
         expensesCategories={props.expensesCategories}
         expensesByCategory={props.expensesByCategory} 
@@ -85,30 +84,30 @@ export default function SidePanel(props) {
           />
         </Grid>
       </Grid>
-      <Grid container style={{cursor: 'pointer', "marginTop": "5px"}} style={props.open ? {} : { display: 'none' }}>
+      <Grid container style={props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px"} : { display: 'none' }}>
         <Grid item xs={2}>
-          <Box pl={3} pt={0.3}>
+          <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
             <LibraryAddIcon style={{fontSize: 'medium'}}  />
           </Box>
         </Grid>
         <Grid item xs={8} style={props.open ? { display: 'block' } : { display: 'none' }}>
-          <Box pl={1}>
+          <Box pl={1} style={{cursor: 'pointer'}}>
             <div>
-              Add new accounts
+              New accounts
             </div>
           </Box>
         </Grid>
       </Grid>
-      <Grid container style={{cursor: 'pointer', "marginTop": "5px"}} style={props.open ? {} : { display: 'none' }}>
+      <Grid container style={props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px"} : { display: 'none' }}>
         <Grid item xs={2}>
-          <Box pl={3} pt={0.3}>
+          <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
             <LibraryAddIcon style={{fontSize: 'medium'}}  />
           </Box>
         </Grid>
         <Grid item xs={8} style={props.open ? { display: 'block' } : { display: 'none' }}>
-          <Box pl={1}>
+          <Box pl={1} style={{cursor: 'pointer'}}>
             <div>
-              Add new sources
+              New sources
             </div>
           </Box>
         </Grid>
@@ -118,6 +117,7 @@ export default function SidePanel(props) {
         open={props.open}
         type={'checking'}
         selectAccount={props.selectAccount}
+        style={ props.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }
         currentAvailable={props.currentAvailable}
       />
       <SidePanelItem
@@ -125,12 +125,14 @@ export default function SidePanel(props) {
         open={props.open}
         type={'savings'}
         selectAccount={props.selectAccount}
+        style={ props.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }
       />
       <SidePanelItem
         data={props.availableByAccount.investments}
         open={props.open}
         type={'investments'}
         selectAccount={props.selectAccount}
+        style={ props.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }
       />
     </React.Fragment>
   )

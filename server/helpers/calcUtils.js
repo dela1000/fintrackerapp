@@ -162,7 +162,6 @@ exports.add_fund_totals = function(data) {
   var accounts = {};
   _.forEach(data, function(lineItem) {
     var item = lineItem.dataValues;
-    console.log("+++ 165 calcUtils.js item: ", item)
     if (item.typeId === 4) {
       if(item.amount > 0){
         if (!totalsByTypesHolder[item.typeId]) {
