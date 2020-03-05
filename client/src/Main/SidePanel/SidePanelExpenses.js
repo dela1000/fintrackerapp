@@ -3,21 +3,22 @@ import _ from 'lodash'
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 import Grid from '@material-ui/core/Grid';
+import AddTypeModal from './AddTypeModal.js';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 
 import { capitalize, decimals } from "../../Services/helpers";
 
 export default function SidePanelExpenses(props) {
-  let expensesByCategory = props.expensesByCategory || [];
-  if(_.isEmpty(props.expensesCategories)){
-    return (
-      <Box p={3}>
-        Add Expense categories
-      </Box>
-    )
-  } else {
-    return (
+  return (
+    <React.Fragment>
+      <AddTypeModal 
+        open={props.open}
+        type={'category'}
+        name={'name'}
+        currentItems={props.expensesCategories}
+      />
       <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
-        {expensesByCategory.map((item, key) => (
+        {props.expensesByCategory.map((item, key) => (
           <ListItem button key={key} onClick={() => props.selectCategory(item)}>
             <Grid
               container
@@ -35,8 +36,7 @@ export default function SidePanelExpenses(props) {
           </ListItem>
         ))}
       </Box>
-      
-    )
-  }
+    </React.Fragment>
+  )
 }
 

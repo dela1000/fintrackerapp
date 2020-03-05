@@ -36,7 +36,6 @@ class SidePanel extends React.Component {
 
   componentDidMount() {
     this.getAllTotals();
-    // this.getExpenses();
   };
 
   getAllTotals (){
@@ -50,8 +49,6 @@ class SidePanel extends React.Component {
         }
       })
   }
-
-
 
   render () {
     let noExpensesCategories = _.isEmpty(this.state.allTotals.expensesCategories);
@@ -72,21 +69,13 @@ class SidePanel extends React.Component {
           </Grid>
           <Grid item xs={2} style={this.props.open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
             <Box style={ noExpensesCategories ? { display: 'none' } : { display: 'block' }}>
-              ADD MODAL GOES HERE
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid container style={this.props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px", "marginBottom": "2px"} : { display: 'none' }}>
-          <Grid item xs={2}>
-            <Box pl={3} pt={0.3} style={{cursor: 'pointer'}}>
-              <LibraryAddIcon style={{fontSize: 'medium'}}  />
-            </Box>
-          </Grid>
-          <Grid item xs={8} style={this.props.open ? { display: 'block' } : { display: 'none' }}>
-            <Box pl={1} style={{cursor: 'pointer'}}>
-              <div>
-                New categories
-              </div>
+              <AddModal 
+              type={'expenses'}
+              expensesCategories={this.state.allTotals.expensesCategories}
+              fundSources={this.state.allTotals.fundSources}
+              userAccounts={this.state.allTotals.userAccounts}
+              getAllTotals={this.state.allTotals.getAllTotals}
+              />
             </Box>
           </Grid>
         </Grid>
@@ -109,7 +98,13 @@ class SidePanel extends React.Component {
             </Box>
           </Grid>
           <Grid item xs={2} style={this.props.open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            ADD
+            <AddModal 
+            type={'funds'}
+            expensesCategories={this.state.allTotals.expensesCategories}
+            fundSources={this.state.allTotals.fundSources}
+            userAccounts={this.state.allTotals.userAccounts}
+            getAllTotals={this.state.allTotals.getAllTotals}
+            />
           </Grid>
         </Grid>
         <Grid container style={this.props.open ? {cursor: 'pointer', "marginTop": "5px", "marginLeft": "2px"} : { display: 'none' }}>
@@ -140,27 +135,32 @@ class SidePanel extends React.Component {
             </Box>
           </Grid>
         </Grid>
-        <SidePanelItem
-          data={this.state.allTotals.availableByAccount.checking}
-          open={this.props.open}
-          type={'checking'}
-          style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }
-          currentAvailable={this.state.allTotals.currentAvailable}
-        />
-        <SidePanelItem
-          data={this.state.allTotals.availableByAccount.savings}
-          open={this.props.open}
-          type={'savings'}
-          style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }
-          currentAvailable={this.state.allTotals.currentAvailable}
-        />
-        <SidePanelItem
-          data={this.state.allTotals.availableByAccount.investments}
-          open={this.props.open}
-          type={'investments'}
-          style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }
-          currentAvailable={this.state.allTotals.currentAvailable}
-        />
+        <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
+          <SidePanelItem
+            data={this.state.allTotals.availableByAccount.checking}
+            open={this.props.open}
+            type={'checking'}
+            currentAvailable={this.state.allTotals.currentAvailable}
+          />
+        </Box>
+        <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
+          <SidePanelItem
+            style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }
+            data={this.state.allTotals.availableByAccount.savings}
+            open={this.props.open}
+            type={'savings'}
+            currentAvailable={this.state.allTotals.currentAvailable}
+          />
+        </Box>
+        <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
+          <SidePanelItem
+            style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }
+            data={this.state.allTotals.availableByAccount.investments}
+            open={this.props.open}
+            type={'investments'}
+            currentAvailable={this.state.allTotals.currentAvailable}
+          />
+        </Box>
       </React.Fragment>
     )
   }

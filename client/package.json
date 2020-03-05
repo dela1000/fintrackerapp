@@ -17,6 +17,7 @@
     "devextreme-react": "^19.2.6",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "pluralize": "^8.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
