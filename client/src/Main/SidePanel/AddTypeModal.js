@@ -20,7 +20,7 @@ import Icon from '@material-ui/core/Icon';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import DateFnsUtils from '@date-io/date-fns';
 
-import { categories_bulk, user_accounts, fund_sources } from "../../Services/WebServices";
+import { get_types, categories_bulk, user_accounts, fund_sources } from "../../Services/WebServices";
 
 import {
   MuiPickersUtilsProvider,
@@ -66,14 +66,28 @@ class AddTypeModal extends React.Component {
       label: "New " + this.props.type,
       [this.props.type]: "",
       itemsAdded: [],
-      message: ""
+      message: "",
+      types: [],
+      type: ""
+    }
+  }
+
+  componentDidMount () {
+    if(this.props.type === 'account'){
+      get_types()
+        .then((res) => {
+          var data = res.data;
+          if(data.success){
+            this.setState({ types: data.data })
+          }
+        })
     }
   }
 
   handleOpen(value) {
     this.setState({ open: value });
     if(value === false){
-      this.setState({itemsAdded: [], [this.props.type]: ""})
+      this.setState({itemsAdded: [], [this.props.type]: "", type: ""})
     }
   };
 
@@ -99,18 +113,33 @@ class AddTypeModal extends React.Component {
   
   addItem () {
     if(this.state[this.props.type]){
-      var newItem = {
-        [this.props.type]: this.state[this.props.type],
+      if(this.props.type === 'account' && this.state.type){
+        var newItem = {
+          [this.props.type]: this.state[this.props.type],
+          type: this.state.type
+        }
+        this.setState(prevState => ({
+          itemsAdded: [...prevState.itemsAdded, newItem]
+        }), () => {
+          console.log("this.state.itemsAdded: ", JSON.stringify(this.state.itemsAdded, null, "\t"));
+        })
+        this.clearAfterAdd();
       }
-      this.setState(prevState => ({
-        itemsAdded: [...prevState.itemsAdded, newItem]
-      }))
-      this.clearAfterAdd();
+      if(this.props.type !== 'account'){
+        var newItem = {
+          [this.props.type]: this.state[this.props.type],
+          type: {type: "null"}
+        }
+        this.setState(prevState => ({
+          itemsAdded: [...prevState.itemsAdded, newItem]
+        }))
+        this.clearAfterAdd();
+      }
     }
   }
 
   clearAfterAdd () {
-    this.setState({ [this.props.type]: "" })
+    this.setState({ [this.props.type]: "", type: "" })
   }
 
   submitNew () {
@@ -124,32 +153,39 @@ class AddTypeModal extends React.Component {
         })
         categories_bulk(payload)
           .then((res) => {
-            console.log("res: ", JSON.stringify(res, null, "\t"));
-            this.props.getAllTotals();
-            this.handleOpen(false)
+            this.actionResponse(res)
           })
       } else if(this.props.type === 'account'){
-        payload = this.state.itemsAdded;
+        _.forEach(this.state.itemsAdded, (item) => {
+          payload.push({
+            account: item.account,
+            typeId: item.type.id
+          })
+        })
         user_accounts(payload)
           .then((res) => {
-            console.log("res: ", JSON.stringify(res, null, "\t"));
-            this.props.getAllTotals();
-            this.handleOpen(false)
+            this.actionResponse(res)
           })
       } else if(this.props.type === 'source'){
-        payload = this.state.itemsAdded;
         fund_sources(payload)
           .then((res) => {
-            console.log("res: ", JSON.stringify(res, null, "\t"));
-            this.props.getAllTotals();
-            this.handleOpen(false)
+            this.actionResponse(res)
           })
       }
     } else {
-      var newMessage = "Add at least one new " + this.props.type;
-      this.setState({message: newMessage}, ()=> {
+      this.setState({message: "Add at least one new " + this.props.type}, ()=> {
         console.log("+++ 129 AddTypeModal.js this.state.message: ", this.state.message)
       })
+    }
+  }
+
+  actionResponse (res) {
+    var data = res.data;
+    if(data.success){
+      this.props.getAllTotals();
+      this.handleOpen(false)
+    } else {
+      this.setState({message: data.message})
     }
   }
 
@@ -191,17 +227,52 @@ class AddTypeModal extends React.Component {
                 <Grid item xs className={classes.gridItem}>
                   <h2>Add {this.props.type}</h2>
                   <Box style={{height: '50vh'}}>
-                    <TextField 
-                      fullWidth
-                      type="text" 
-                      name={this.props.type}
-                      id="outlined-basic" 
-                      label={this.state.label}
-                      autoComplete="off"
-                      value={this.state[this.props.type]} 
-                      onChange={(e) => this.handleChange(e)} 
-                      onKeyPress={(e) => this.onEnter(e)}
-                    />
+                    <Grid container justify="space-around" style={this.props.type !== 'account' ? {display: 'block'} : {display: 'none'}}>
+                      <TextField 
+                        fullWidth
+                        type="text" 
+                        name={this.props.type}
+                        id="outlined-basic" 
+                        label={this.state.label}
+                        autoComplete="off"
+                        value={this.state[this.props.type]} 
+                        onChange={(e) => this.handleChange(e)} 
+                        onKeyPress={(e) => this.onEnter(e)}
+                      />
+                    </Grid>
+                    <Grid container justify="space-around" style={this.props.type === 'account' ? {display: 'block'} : {display: 'none'}}>
+                      <Grid item xs>
+                        <TextField 
+                          fullWidth
+                          type="text" 
+                          name={this.props.type}
+                          id="outlined-basic" 
+                          label={this.state.label}
+                          autoComplete="off"
+                          value={this.state[this.props.type]} 
+                          onChange={(e) => this.handleChange(e)} 
+                          onKeyPress={(e) => this.onEnter(e)}
+                        />
+                      </Grid>
+                      <Grid item xs>
+                        <TextField
+                          required
+                          fullWidth
+                          id="type"
+                          name="type" 
+                          select
+                          label="Account Type"
+                          onChange={(e) => this.handleChange(e)}
+                          value={this.state.type || ''}
+                        >
+                          {this.state.types.map(src => (
+                            <MenuItem key={src.id} value={src}>
+                              {capitalize(src.type)}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Grid>
+                    </Grid>
                     <h3 style={this.state.itemsAdded.length > 0 ? {display: 'block', marginTop: '30px'} : {display: 'none'}}>New {this.props.type} (Click to remove)</h3>
                     {this.state.itemsAdded.map((item, i) => (
                       <ListItem button key={i} onClick={() => this.removeFromItems(i)}>
@@ -211,8 +282,11 @@ class AddTypeModal extends React.Component {
                           justify="space-between"
                           alignItems="center"
                         >
-                          <Grid item>
+                          <Grid item xs={3}>
                             {item[this.props.type]}
+                          </Grid>
+                          <Grid item xs={6} style={ this.props.type === 'account' ? {display: 'block'} : {display: 'none'}}> 
+                            {capitalize(item.type.type)}
                           </Grid>
                         </Grid>
                       </ListItem>
