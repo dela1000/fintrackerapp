@@ -4,7 +4,8 @@ desktop_client/bower_components
 mobile_client/www/lib
 secrets/
 *.log
-server/test/allExpenses.js
-server/test/januaryExpenses.js
-server/test/januaryFunds.js
-server/test/januaryTransfers.js
+
+# Test files
+server/test/expenses.js
+server/test/funds.js
+server/test/transfers.js

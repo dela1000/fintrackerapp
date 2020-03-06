@@ -869,11 +869,11 @@ module.exports = controllers = {
         endDate: finUtils.endOfMonth()
       }
       
-      // if (req.query.timeframe === 'year') {
+      if (req.query.timeframe === 'year') {
         payload['timeframe'] = "year";
         payload['startDate'] = finUtils.startOfYear();
         payload['endDate'] = finUtils.endOfYear();
-      // }
+      }
       console.log("+++ 877 index.js payload: ", payload)
       models.all_totals.get(payload, function(results, message) {
         if (results) {
