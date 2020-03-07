@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function capitalize(str) {
   if(!str){
     return "";
@@ -27,5 +29,8 @@ export function to2Fixed(n) {
   return value;
 }
 
-
 export const dateFormat = 'MM-DD-YYYY';
+
+export const formatDate = function (date) {
+  return moment(date).format(dateFormat)
+}

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import _ from 'lodash'
+
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -10,7 +12,6 @@ import ListItem from '@material-ui/core/ListItem';
 import Fade from '@material-ui/core/Fade';
 import MenuItem from '@material-ui/core/MenuItem';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,19 +19,19 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
-import { capitalize, decimals, to2Fixed } from "../../Services/helpers";
-import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+
+import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
+import { capitalize, decimals, to2Fixed, formatDate } from "../../Services/helpers";
 import { post_expenses_bulk, post_funds_bulk } from "../../Services/WebServices";
 
 const styles = theme => ({
@@ -82,6 +83,12 @@ class AddModal extends React.Component {
 
 
   handleOpen(value) {
+    if(value === true){
+      this.definePrimaryAccount();
+    } else {
+      this.clearAfterSubmit();
+      this.removeAll();
+    }
     this.setState({ open: value });
   };
 
@@ -116,7 +123,7 @@ class AddModal extends React.Component {
     if(this.props.type === "expenses"){
       if(this.state.selectedDate && this.state.amount && this.state.account && this.state.categoryId){
         newItem['category'] = this.state.categoryId;
-        this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '60vw' })
+        this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '90vw' })
       }
     } 
     if (this.props.type === "funds") {
@@ -124,19 +131,64 @@ class AddModal extends React.Component {
         newItem['category']['name'] = null;
         newItem['type'] = accountSelected.type;
         newItem['source'] = this.state.source;
-        this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '60vw' })
+        this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '90vw' })
       }
     }
     this.clearAfterSubmit();
   }
 
   submitNew () {
-    console.log("+++ 103 AddModal.js this.state.itemsAdded: ", JSON.stringify(this.state.itemsAdded, null, "\t"));
-    if(this.props.type === "expenses"){
-      console.log("+++ 137 AddModal.js expenses")
-    }
-    if (this.props.type === "funds") {
-      console.log("+++ 140 AddModal.js funds")
+    if(this.state.itemsAdded.length > 0) {
+      if(this.props.type === "expenses"){
+        var payload = [];
+        _.forEach(this.state.itemsAdded, (item) => {
+          payload.push({
+            "date": item.date,
+            "amount": Number(to2Fixed(item.amount)),
+            "comment": item.comment,
+            "categoryId": item.category.id,
+            "accountId": item.account.id,
+          })
+        })
+        console.log("+++ 150 AddModal.js payload: ", JSON.stringify(payload, null, "\t"));
+        post_expenses_bulk(payload)
+          .then((res) => {
+            var data = res.data;
+            console.log("+++ 154 AddModal.js res.data: ", JSON.stringify(res.data, null, "\t"));
+            if(data.success){
+              this.props.getAllTotals();
+              this.clearAfterSubmit();
+              this.handleOpen(false);
+            } else {
+              console.log("+++ 156 AddModal.js data: ", data)
+            }
+          })
+      }
+      if (this.props.type === "funds") {
+        var payload = [];
+        _.forEach(this.state.itemsAdded, (item) => {
+          payload.push({
+            "date": item.date,
+            "amount": Number(to2Fixed(item.amount)),
+            "comment": item.comment,
+            "sourceId": item.source.id,
+            "accountId": item.account.id,
+            "typeId": item.account.typeId,
+          })
+        })
+        console.log("+++ 161 AddModal.js payload: ", JSON.stringify(payload, null, "\t"));
+        post_funds_bulk(payload)
+          .then((res) => {
+            var data = res.data;
+            if(data.success){
+              this.props.getAllTotals();
+              this.clearAfterSubmit();
+              this.handleOpen(false);
+            } else {
+              console.log("+++ 177 AddModal.js data: ", data)
+            }
+          })
+      }
 
     }
   }
@@ -148,9 +200,7 @@ class AddModal extends React.Component {
       comment: "",
       categoryId: "",
       source: "",
-      account: {
-        account: ""
-      }
+      account: this.state.primaryAccount,
     })
   }
 
@@ -159,7 +209,6 @@ class AddModal extends React.Component {
     if (i !== -1) {
       array.splice(i, 1);
       this.setState({itemsAdded: array}, () => {
-        console.log("+++ 150 AddModal.js this.state.itemsAdded.length: ", this.state.itemsAdded.length)
         if(this.state.itemsAdded.length === 0){
           this.setState({width: '32vw'})
         }
@@ -167,8 +216,21 @@ class AddModal extends React.Component {
     }
   }
 
+  removeAll () {
+    this.setState({ itemsAdded: [] }, () => {
+      if(this.state.itemsAdded.length === 0){
+        this.setState({width: '32vw'})
+      }
+    });
+  }
+
+  definePrimaryAccount () {
+    var primaryAccount = this.props.userAccounts.find(x => x.primary === true);
+    this.setState({account: primaryAccount, primaryAccount: primaryAccount})
+  }
+
   render(){
-    const { classes, userAccounts } = this.props;
+    const { classes, type, userAccounts, expensesCategories, fundSources } = this.props;
     return (
       <div>
         <AddCircleIcon onClick={() => this.handleOpen(true)} />
@@ -188,7 +250,7 @@ class AddModal extends React.Component {
             <div className={classes.paper} style={{width: this.state.width}}>
               <Grid container justify="space-around">
                 <Grid item xs className={classes.gridItem}>
-                  <h2>Add {this.props.type}</h2>
+                  <h2>Add {type}</h2>
                   <Box style={{height: '260px'}}>
                     <Grid container justify="center" spacing={2}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -235,15 +297,15 @@ class AddModal extends React.Component {
                        name="categoryId"
                        value={this.state.categoryId}
                        onChange={(e) => this.handleChange(e)}
-                       style={this.props.type === "expenses" ? { display: 'block' } : { display: 'none' }}
+                       style={type === "expenses" ? { display: 'block' } : { display: 'none' }}
                      >
-                       {this.props.expensesCategories.map(cat => (
+                       {expensesCategories.map(cat => (
                          <MenuItem key={cat.id} value={cat}>
                            {capitalize(cat.name)}
                          </MenuItem>
                        ))}
                      </TextField>
-                     <br style={this.props.type === "funds" ? { display: 'block' } : { display: 'none' }}/>
+                     <br style={type === "funds" ? { display: 'block' } : { display: 'none' }}/>
                      <TextField
                        fullWidth
                        id="source"
@@ -252,9 +314,9 @@ class AddModal extends React.Component {
                        name="source"
                        value={this.state.source}
                        onChange={(e) => this.handleChange(e)}
-                       style={this.props.type === "funds" ? { display: 'block' } : { display: 'none' }}
+                       style={type === "funds" ? { display: 'block' } : { display: 'none' }}
                      >
-                       {this.props.fundSources.map(src => (
+                       {fundSources.map(src => (
                          <MenuItem key={src.id} value={src}>
                            {capitalize(src.source)}
                          </MenuItem>
@@ -280,9 +342,9 @@ class AddModal extends React.Component {
                     </Grid>
                   </Box>
                 </Grid>
-                <Grid item xs={7} className={classes.gridItem} style={this.state.itemsAdded.length > 0 ? {overflow: 'auto'} : {display: 'none'}}>
+                <Grid item xs={8} className={classes.gridItem} style={this.state.itemsAdded.length > 0 ? {overflow: 'auto'} : {display: 'none'}}>
                   <Box>
-                    <h2>{capitalize(this.props.type)} to add </h2>
+                    <h2>{capitalize(type)} to add</h2>
                     <TableContainer style={{overflow: 'auto'}}>
                       <Table aria-label="simple table">
                         <TableHead>
@@ -296,14 +358,17 @@ class AddModal extends React.Component {
                             <TableCell  align="right">
                               Comment
                             </TableCell>
-                            <TableCell  align="right" style={this.props.type === "expenses" ? {} : { display: 'none' }}>
+                            <TableCell  align="right" style={type === "expenses" ? {} : { display: 'none' }}>
                               Category
                             </TableCell>
-                            <TableCell  align="right" style={this.props.type === "funds" ? {} : { display: 'none' }}>
+                            <TableCell  align="right" style={type === "funds" ? {} : { display: 'none' }}>
                               Source
                             </TableCell>
                             <TableCell  align="right">
                               Account
+                            </TableCell>
+                            <TableCell  align="right">
+                              Type
                             </TableCell>
                           </TableRow>
                         </TableHead>
@@ -319,14 +384,17 @@ class AddModal extends React.Component {
                               <TableCell align="right">
                                 {row.comment}
                               </TableCell>
-                              <TableCell align="right" style={this.props.type === "expenses" ? {} : { display: 'none' }}>
+                              <TableCell align="right" style={type === "expenses" ? {} : { display: 'none' }}>
                                 {capitalize(row.category.name)}
                               </TableCell>
-                              <TableCell align="right" style={this.props.type === "funds" ? {} : { display: 'none' }}>
+                              <TableCell align="right" style={type === "funds" ? {} : { display: 'none' }}>
                                 {capitalize(row.source.source)}
                               </TableCell>
                               <TableCell align="right">
                                 {capitalize(row.account.account)}
+                              </TableCell>
+                              <TableCell align="right">
+                                {capitalize(row.account.type)}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -355,17 +423,37 @@ class AddModal extends React.Component {
                     </Button>
                   </Box> 
                 </Grid>
-                <Grid className={classes.root}>
-                  <Box mt={2} pt={2} pl={1} pb={1} style={{'float': 'right'}} style={this.state.itemsAdded.length > 0 ? {} : {display: 'none'}}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.button}
-                      onClick={() => this.submitNew()}
-                    >
-                      Send
-                    </Button>
-                  </Box> 
+                <Grid className={classes.root} style={this.state.itemsAdded.length > 0 ? {} : {display: 'none'}}>
+                  <Grid 
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                  >
+                    <Grid className={classes.root}>
+                      <Box mt={2} pt={2} pl={1} pb={1}>
+                        <Button
+                          variant="contained"
+                          className={classes.button}
+                          onClick={() => this.removeAll()}
+                        >
+                          Remove All
+                        </Button>
+                      </Box> 
+                    </Grid>
+                    <Grid className={classes.root}>
+                      <Box mt={2} pt={2} pl={1} pb={1} style={{'float': 'right'}}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={classes.button}
+                          onClick={() => this.submitNew()}
+                        >
+                          Submit
+                        </Button>
+                      </Box> 
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </div>
