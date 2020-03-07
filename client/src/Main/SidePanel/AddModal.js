@@ -49,6 +49,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     padding: theme.spacing(8, 8, 8),
+    borderRadius: '10px'
 
   },
   gridItem: {
@@ -150,11 +151,9 @@ class AddModal extends React.Component {
             "accountId": item.account.id,
           })
         })
-        console.log("+++ 150 AddModal.js payload: ", JSON.stringify(payload, null, "\t"));
         post_expenses_bulk(payload)
           .then((res) => {
             var data = res.data;
-            console.log("+++ 154 AddModal.js res.data: ", JSON.stringify(res.data, null, "\t"));
             if(data.success){
               this.props.getAllTotals();
               this.clearAfterSubmit();
@@ -254,20 +253,21 @@ class AddModal extends React.Component {
                   <Box style={{height: '260px'}}>
                     <Grid container justify="center" spacing={2}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                         <KeyboardDatePicker
-                           fullWidth
-                           autoOk
-                           allowKeyboardControl
-                           autoComplete="off"
-                           margin="normal"
-                           id="date-picker-dialog"
-                           label="Select Date of Transaction"
-                           format="MM-dd-yyyy"
-                           value={this.state.selectedDate}
-                           KeyboardButtonProps={{ 'aria-label': 'change date', }}
-                           onChange={(date) => this.handleDateChange(date)}
-                         />
-                     </MuiPickersUtilsProvider>
+                        <KeyboardDatePicker
+                          autoFocus
+                          fullWidth
+                          autoOk
+                          allowKeyboardControl
+                          autoComplete="off"
+                          margin="normal"
+                          id="date-picker-dialog"
+                          label="Select Date of Transaction"
+                          format="MM-dd-yyyy"
+                          value={this.state.selectedDate}
+                          KeyboardButtonProps={{ 'aria-label': 'change date' }}
+                          onChange={(date) => this.handleDateChange(date)}
+                      />
+                    </MuiPickersUtilsProvider>
                      <TextField 
                        fullWidth
                        type="number" 
