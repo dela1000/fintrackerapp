@@ -45,9 +45,7 @@ class SidePanel extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
-          this.setState({ allTotals: data.data }, () => {
-            console.log("this.state: ", JSON.stringify(this.state, null, "\t"));
-          })
+          this.setState({ allTotals: data.data })
         }
       })
   }

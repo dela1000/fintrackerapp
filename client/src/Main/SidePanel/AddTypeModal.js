@@ -205,7 +205,7 @@ class AddTypeModal extends React.Component {
             <Grid item xs={8} style={this.props.open ? { display: 'block' } : { display: 'none' }}>
               <Box pl={1} style={{cursor: 'pointer'}}>
                 <div>
-                  add new {pluralize(this.props.type)}
+                  Add new {pluralize(this.props.type)}
                 </div>
               </Box>
             </Grid>
