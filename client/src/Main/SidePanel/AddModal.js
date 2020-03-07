@@ -416,7 +416,6 @@ class AddModal extends React.Component {
                     <Button
                       variant="contained"
                       color="primary"
-                      className={classes.button}
                       onClick={() => this.addMore()}
                     >
                       Add
@@ -434,7 +433,6 @@ class AddModal extends React.Component {
                       <Box mt={2} pt={2} pl={1} pb={1}>
                         <Button
                           variant="contained"
-                          className={classes.button}
                           onClick={() => this.removeAll()}
                         >
                           Remove All
@@ -446,7 +444,6 @@ class AddModal extends React.Component {
                         <Button
                           variant="contained"
                           color="primary"
-                          className={classes.button}
                           onClick={() => this.submitNew()}
                         >
                           Submit

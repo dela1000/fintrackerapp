@@ -11,8 +11,10 @@ import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import Button from '@material-ui/core/Button';
 
-import { get_all_totals, get_expenses, get_funds } from "../../Services/WebServices";
+import { capitalize } from "../../Services/helpers";
+import { get_all_totals, expenses_totals } from "../../Services/WebServices";
 
 
 class SidePanel extends React.Component {
@@ -32,6 +34,7 @@ class SidePanel extends React.Component {
         expensesCategories: [],
         fundSources: [],
       },
+      currentTimeframe: 'month'
     };
     this.getAllTotals = this.getAllTotals.bind(this);
   }
@@ -40,8 +43,12 @@ class SidePanel extends React.Component {
     this.getAllTotals();
   };
 
-  getAllTotals (){
-    get_all_totals()
+  getAllTotals (timeframe){
+    var params = {
+      timeframe: timeframe,
+      page: this.state.page
+    }
+    get_all_totals(params)
       .then((res) => {
         var data = res.data;
         if(data.success){
@@ -50,25 +57,63 @@ class SidePanel extends React.Component {
       })
   }
 
+  getExpensesTotals (timeframe){
+    var params = { timeframe: timeframe, }
+    expenses_totals(params)
+      .then((res) => {
+        var data = res.data;
+        if(data.success){
+          var allTotals = {...this.state.allTotals}
+          allTotals.expensesByCategory = data.data.expensesByCategory;
+          this.setState({allTotals})
+        }
+      })
+  }
+
+  updateTimeframe (timeframe) {
+    if(timeframe === 'month'){
+      this.getExpensesTotals('month');
+      this.props.updateTimeframe('month');
+      this.setState({currentTimeframe: 'month'})
+    }
+    if(timeframe === 'year'){
+      this.getExpensesTotals('year');
+      this.props.updateTimeframe('year');
+      this.setState({currentTimeframe: 'year'})
+    }
+  }
+
   render () {
     let noExpensesCategories = _.isEmpty(this.state.allTotals.expensesCategories);
     return (
       <React.Fragment>
+        <Grid container spacing={1} style={this.props.open ? {cursor: 'pointer', "marginTop": "5px"} : { display: 'none' }}>
+          <Grid item xs>
+            <Box pl={3} pt={0.5}>
+              <Button
+                color="primary"
+                onClick={() => this.updateTimeframe(this.props.timeframe)}
+              >
+                View: {this.props.timeframe}
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
           <Grid item xs={2}>
             <Box pl={3} pt={0.5}>
               <ReceiptIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={this.props.open ? { display: 'block' } : { display: 'none' }}>
+          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
-                EXPENSES
+                {this.state.currentTimeframe.toUpperCase()} EXPENSES
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2} style={this.props.open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <Box style={ noExpensesCategories ? { display: 'none' } : { display: 'block' }}>
+          <Grid item xs={2} style={this.props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
+            <Box style={ noExpensesCategories ? { display: 'none' } : {}}>
               <AddModal 
               type={'expenses'}
               expensesCategories={this.state.allTotals.expensesCategories}
@@ -92,14 +137,14 @@ class SidePanel extends React.Component {
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={this.props.open ? { display: 'block' } : { display: 'none' }} >
+          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }} >
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
-                FUNDS
+                CURRENT FUNDS
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2} style={this.props.open ? { display: 'block', "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
+          <Grid item xs={2} style={this.props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
             <AddModal 
             type={'funds'}
             expensesCategories={this.state.allTotals.expensesCategories}

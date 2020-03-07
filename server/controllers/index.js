@@ -861,6 +861,7 @@ module.exports = controllers = {
 
   all_totals: {
     get: function(req, res) {
+      console.log("+++ 864 index.js req.query: ", JSON.stringify(req.query, null, "\t"));
       var payload = {
         timeframe: "month",
         userId: req.headers.userId,

@@ -25,8 +25,21 @@ export function get_funds(page){
   return axios.get('/funds_bulk?page=' + pg)
 }
 
-export function get_all_totals(page){
-  return axios.get('/all_totals');
+export function get_all_totals(params){
+  var link = '/all_totals?'
+  if(params.timeframe){
+    link = link + "timeframe=" + params.timeframe
+  }
+  console.log("+++ 33 WebServices.js link: ", link)
+  return axios.get(link);
+}
+
+export function expenses_totals(params) {
+  var link = '/expenses_totals?'
+  if(params.timeframe){
+    link = link + "timeframe=" + params.timeframe;
+  }
+  return axios.get(link);
 }
 
 export function all_user_data_types(){

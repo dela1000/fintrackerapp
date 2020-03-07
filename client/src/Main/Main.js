@@ -27,7 +27,7 @@ import DetailsPanel from './DetailsPanel.js';
 
 // import { get_all_totals, get_expenses, get_funds } from "../Services/WebServices";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const styles = theme => ({
   root: {
@@ -52,7 +52,7 @@ const styles = theme => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: `calc(100% - 240px)`,
+    width: `calc(100% - 300px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -117,13 +117,29 @@ class Main extends React.Component {
     super(props);
     
     this.state = {
-      open: true
-    }
+      open: true,
+      timeframe: 'year'
+    };
+    this.updateTimeframe = this.updateTimeframe.bind(this);
+
   }
 
   handleDrawer(value) {
     this.setState({ open: value });
   };
+
+  updateTimeframe(timeframe) {
+    if(timeframe === 'month'){
+      this.setState({timeframe: "year"}, () => {
+        return this.state.timeframe;
+      })
+    }
+    if(timeframe === 'year'){
+      this.setState({timeframe: "month"}, () => {
+        return this.state.timeframe;
+      })
+    }
+  }
 
   render () {
     const { classes } = this.props;
@@ -163,6 +179,9 @@ class Main extends React.Component {
           <Divider />
           <SidePanel 
             open={this.state.open}
+            timeframe={this.state.timeframe}
+            updateTimeframe={this.updateTimeframe}
+
           />
         </Drawer>
         <div className={classes.content}>
