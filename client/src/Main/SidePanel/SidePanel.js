@@ -173,6 +173,7 @@ class SidePanel extends React.Component {
         <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
             type={'checking'}
+            typeId={1}
             data={this.state.allTotals.availableByAccount.checking}
             open={this.props.open}
             currentAvailable={this.state.allTotals.currentAvailable}
@@ -184,6 +185,7 @@ class SidePanel extends React.Component {
         <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
             type={'savings'}
+            typeId={2}
             data={this.state.allTotals.availableByAccount.savings}
             open={this.props.open}
             currentAvailable={this.state.allTotals.currentAvailable}
@@ -195,6 +197,7 @@ class SidePanel extends React.Component {
         <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
             type={'investments'}
+            typeId={3}
             data={this.state.allTotals.availableByAccount.investments}
             open={this.props.open}
             currentAvailable={this.state.allTotals.currentAvailable}

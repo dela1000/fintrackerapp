@@ -29,7 +29,7 @@ export default function SidePanelAccount(props) {
   })
   return (
     <div style={{"marginTop": "5px"}}>
-      <Grid container spacing={1} style={{cursor: 'pointer'}} onClick={() => props.updateListingData({type: 'type', name: props.type})}>
+      <Grid container spacing={1} style={{cursor: 'pointer'}} onClick={() => props.updateListingData({type: 'type', name: props.type, id: props.typeId})}>
         <Grid item xs={2}>
           <Box pl={3} pt={0.5}>
             <AttachMoneyIcon style={props.type === "checking" ? {} : { display: 'none' }}/>
