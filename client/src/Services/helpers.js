@@ -14,7 +14,7 @@ export function decimals(num) {
 export function to2Fixed(n) {
   var s;
   if(isNaN(n)){
-    s = "" + (+Number(n));
+    s = "" + (Number(n));
    }else{
     s = "" + (+n);
    }
@@ -23,10 +23,11 @@ export function to2Fixed(n) {
   var count = Math.max( 0, (match[1] === '0' ? 0 : (match[1] || '').length) - (match[2] || 0) );
   var value = s;
   if(count > 1){
-    value = Number(n);
+    value = parseInt(n, 10);
+    value = Number(value);
     value = value.toFixed(2);
   };
-  return value;
+  return Number(value);
 }
 
 export const dateFormat = 'MM-DD-YYYY';

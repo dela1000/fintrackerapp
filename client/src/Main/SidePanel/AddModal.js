@@ -171,7 +171,6 @@ class AddModal extends React.Component {
             "typeId": item.account.typeId,
           })
         })
-        console.log("+++ 161 AddModal.js payload: ", JSON.stringify(payload, null, "\t"));
         post_funds_bulk(payload)
           .then((res) => {
             var data = res.data;
@@ -264,77 +263,75 @@ class AddModal extends React.Component {
                           onChange={(date) => this.handleDateChange(date)}
                       />
                     </MuiPickersUtilsProvider>
-                     <TextField 
-                       fullWidth
-                       type="number" 
-                       name="amount" 
-                       id="outlined-basic" 
-                       label="Amount" 
-                       autoComplete="off"
-                       value={this.state.amount} 
-                       onChange={(e) => this.handleChange(e)} 
-                     />
-                     <TextField 
-                       fullWidth
-                       type="text" 
-                       name="comment" 
-                       id="outlined-basic" 
-                       label="Comment" 
-                       autoComplete="off"
-                       value={this.state.comment} 
-                       onChange={(e) => this.handleChange(e)} 
-                     />
-                     <br/>
-                     <TextField
-                       fullWidth
-                       id="categories"
-                       select
-                       label="Select category"
-                       name="categoryId"
-                       value={this.state.categoryId}
-                       onChange={(e) => this.handleChange(e)}
-                       style={type === "expenses" ? { display: 'block' } : { display: 'none' }}
-                     >
-                       {expensesCategories.map(cat => (
-                         <MenuItem key={cat.id} value={cat}>
-                           {capitalize(cat.name)}
-                         </MenuItem>
-                       ))}
-                     </TextField>
-                     <br style={type === "funds" ? { display: 'block' } : { display: 'none' }}/>
-                     <TextField
-                       fullWidth
-                       id="source"
-                       select
-                       label="Select Source"
-                       name="source"
-                       value={this.state.source}
-                       onChange={(e) => this.handleChange(e)}
-                       style={type === "funds" ? { display: 'block' } : { display: 'none' }}
-                     >
-                       {fundSources.map(src => (
-                         <MenuItem key={src.id} value={src}>
-                           {capitalize(src.source)}
-                         </MenuItem>
-                       ))}
-                     </TextField>
-                     <br/>
-                     <TextField
-                       fullWidth
-                       id="account"
-                       select
-                       label="Select Account"
-                       name="account"
-                       value={this.state.account || ''}
-                       onChange={(e) => this.handleChange(e)}
-                     >
-                       {userAccounts.map(acc => (
-                         <MenuItem key={acc.id} value={acc}>
-                           {capitalize(acc.account)} - {capitalize(acc.type)}
-                         </MenuItem>
-                       ))}
-                     </TextField>
-                        
+                      <TextField 
+                        fullWidth
+                        type="number" 
+                        name="amount" 
+                        id="outlined-basic" 
+                        label="Amount" 
+                        autoComplete="off"
+                        value={this.state.amount} 
+                        onChange={(e) => this.handleChange(e)} 
+                      />
+                      <TextField 
+                        fullWidth
+                        type="text" 
+                        name="comment" 
+                        id="outlined-basic" 
+                        label="Comment" 
+                        autoComplete="off"
+                        value={this.state.comment} 
+                        onChange={(e) => this.handleChange(e)} 
+                      />
+                      <br/>
+                      <TextField
+                        fullWidth
+                        id="categories"
+                        select
+                        label="Select category"
+                        name="categoryId"
+                        value={this.state.categoryId}
+                        onChange={(e) => this.handleChange(e)}
+                        style={type === "expenses" ? { display: 'block' } : { display: 'none' }}
+                      >
+                        {expensesCategories.map(cat => (
+                          <MenuItem key={cat.id} value={cat}>
+                            {capitalize(cat.name)}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <TextField
+                        fullWidth
+                        id="source"
+                        select
+                        label="Select Source"
+                        name="source"
+                        value={this.state.source}
+                        onChange={(e) => this.handleChange(e)}
+                        style={type === "funds" ? { display: 'block' } : { display: 'none' }}
+                      >
+                        {fundSources.map(src => (
+                          <MenuItem key={src.id} value={src}>
+                            {capitalize(src.source)}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <br/>
+                      <TextField
+                        fullWidth
+                        id="account"
+                        select
+                        label="Select Account"
+                        name="account"
+                        value={this.state.account || ''}
+                        onChange={(e) => this.handleChange(e)}
+                      >
+                        {userAccounts.map(acc => (
+                          <MenuItem key={acc.id} value={acc}>
+                            {capitalize(acc.account)} - {capitalize(acc.type)}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                     </Grid>
                   </Box>
                 </Grid>

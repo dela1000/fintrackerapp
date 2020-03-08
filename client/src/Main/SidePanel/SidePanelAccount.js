@@ -31,7 +31,11 @@ export default function SidePanelAccount(props) {
         </Grid>
         <Grid item xs={2} style={props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
           <Box>
-            <TransferModal />
+            <TransferModal 
+              from={props.type}
+              userAccounts={props.userAccounts}
+              getAllTotals={props.getAllTotals}
+            />
           </Box>
         </Grid>
       </Grid>

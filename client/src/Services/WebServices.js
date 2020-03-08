@@ -30,7 +30,6 @@ export function get_all_totals(params){
   if(params.timeframe){
     link = link + "timeframe=" + params.timeframe
   }
-  console.log("+++ 33 WebServices.js link: ", link)
   return axios.get(link);
 }
 
@@ -70,3 +69,6 @@ export function fund_sources(payload){
   return axios.post('/fund_sources', payload)
 }
 
+export function transfers(payload){
+  return axios.post('/transfers', payload)
+}

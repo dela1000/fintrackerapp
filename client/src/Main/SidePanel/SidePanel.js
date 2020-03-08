@@ -174,6 +174,8 @@ class SidePanel extends React.Component {
             open={this.props.open}
             type={'checking'}
             currentAvailable={this.state.allTotals.currentAvailable}
+            userAccounts={this.state.allTotals.userAccounts}
+            getAllTotals={this.getAllTotals}
           />
         </Box>
         <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
@@ -183,6 +185,8 @@ class SidePanel extends React.Component {
             open={this.props.open}
             type={'savings'}
             currentAvailable={this.state.allTotals.currentAvailable}
+            userAccounts={this.state.allTotals.userAccounts}
+            getAllTotals={this.getAllTotals}
           />
         </Box>
         <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
@@ -192,6 +196,8 @@ class SidePanel extends React.Component {
             open={this.props.open}
             type={'investments'}
             currentAvailable={this.state.allTotals.currentAvailable}
+            userAccounts={this.state.allTotals.userAccounts}
+            getAllTotals={this.getAllTotals}
           />
         </Box>
       </React.Fragment>
