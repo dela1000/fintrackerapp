@@ -3,15 +3,21 @@ var finUtils = require("./finUtils.js")
 var _ = require('lodash');
 
 exports.calculate_totals = function(res, userId, callback) {
-  console.log("+++ calcUtils - RECALCULATING TOTALS")
+  // console.log("+++ calcUtils - RECALCULATING TOTALS")
   var userData = {
     userId: userId
-  }
-  console.log("+++ 10 calcUtils.js Get all user accounts totals")
+  };
+  var query = {
+    where: {
+      userId: userId,
+      deleted: false
+    }
+  };
+  // console.log("+++ 10 calcUtils.js Get all user accounts totals")
   models.account_totals_bulk.get(userData, function(totalsData, totalsMessage) {
     if (totalsData) {
-      console.log("+++ 13 calcUtils.js get all user funds")
-      models.funds_bulk.get(userData, function(fundsFound, fundsMessage) {
+      // console.log("+++ 13 calcUtils.js get all user funds")
+      models.funds_bulk.get(query, function(fundsFound, fundsMessage) {
         if (fundsFound) {
           var addedTotals = {};
           _.forEach(fundsFound, function(fund) {
@@ -27,8 +33,8 @@ exports.calculate_totals = function(res, userId, callback) {
           _.forEach(addedTotals, function(item, key) {
             item.amount = Number(item.amount.toFixed(2));
           })
-          console.log("+++ 30 calcUtils.js New totals calculated by account Id")
-          console.log("+++ 31 calcUtils.js addedTotals: ", addedTotals)
+          // console.log("+++ 30 calcUtils.js New totals calculated by account Id")
+          // console.log("+++ 31 calcUtils.js addedTotals: ", addedTotals)
           var newAccountTotals = [];
           var checkingAccountsTotal = 0;
           _.forEach(totalsData, function(total) {
@@ -50,12 +56,13 @@ exports.calculate_totals = function(res, userId, callback) {
             }
           })
           // Get all expenses
-          console.log("+++ 53 calcUtils.js Get all user expenses")
-          models.expenses_bulk.get(userData, function(expensesFound) {
+          // console.log("+++ 53 calcUtils.js Get all user expenses")
+          models.expenses_bulk.get(query, function(expensesFound) {
             var expensesTotal = 0;
             if (!_.isEmpty(expensesFound)) {
               var expensesByAccount = {};
               _.forEach(expensesFound, function(expense) {
+                // console.log("+++ 59 calcUtils.js expense: ", expense)
                 expensesTotal = expensesTotal + expense.amount
                 if (!expensesByAccount[expense.accountId]) {
                   expensesByAccount[expense.accountId] = { amount: expense.amount }
@@ -70,14 +77,17 @@ exports.calculate_totals = function(res, userId, callback) {
                 }
               })
             }
-            console.log("+++ 73 calcUtils.js New account totals minus expenses by account")
-            console.log("+++ 74 calcUtils.js newAccountTotals: ", newAccountTotals)
+            // console.log("+++ 73 calcUtils.js New account totals minus expenses by account")
+            // console.log("+++ 74 calcUtils.js newAccountTotals: ", newAccountTotals)
             models.account_totals.upsert(newAccountTotals, function(updatedTotals, updateMessage) {
               if (updatedTotals) {
                 // ACCOUNT TOTALS CALCULATED
+                // console.log("+++ 78 calcUtils.js checkingAccountsTotal: ", checkingAccountsTotal)
+                // console.log("+++ 79 calcUtils.js expensesTotal: ", expensesTotal)
                 userData.newCurrentAvailable = checkingAccountsTotal - expensesTotal;
                 models.recalculated_current_available.patch(userData, function(currentAvailable, availableMessage) {
                   if (currentAvailable) {
+                    // console.log("+++ 84 calcUtils.js currentAvailable: ", currentAvailable)
                     _.forEach(newAccountTotals, function (item) {
                       item.amount = Number(item.amount.toFixed(2));
                     })
@@ -86,7 +96,7 @@ exports.calculate_totals = function(res, userId, callback) {
                       currentAvailable: Number(currentAvailable.amount),
                     };
                     callback(data);
-                    console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
+                    // console.log("+++ 70 calcUtils.js RECALCULATING COMPLETED")
                   } else {
                     callback(false, availableMessage)
                   }
