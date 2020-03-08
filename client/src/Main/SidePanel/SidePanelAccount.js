@@ -8,6 +8,8 @@ import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 
+import TransferModal from './TransferModal.js';
+
 import { capitalize, decimals } from "../../Services/helpers";
 
 export default function SidePanelAccount(props) {
@@ -30,7 +32,7 @@ export default function SidePanelAccount(props) {
         </Grid>
         <Grid item xs={2} style={props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
           <Box>
-            <ImportExportIcon />
+            <TransferModal />
           </Box>
         </Grid>
       </Grid>
