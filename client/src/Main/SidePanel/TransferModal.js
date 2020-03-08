@@ -98,22 +98,18 @@ class TransferModal extends React.Component {
   submitTransfer = evt => {
     evt.preventDefault();
     var amount = Number(this.state.amount);
-    console.log("+++ 100 TransferModal.js amount: ", amount)
     if(amount < 1){
       this.failMessage("Amount needs to be positive and more than zero")
       return;
     }
-    console.log("+++ 105 TransferModal.js this.state.fromAccount.id: ", this.state.fromAccount.id)
     if(!this.state.fromAccount.id){
       this.failMessage("Select a From account");
       return;
     }
-    console.log("+++ 110 TransferModal.js this.state.toAccount.id: ", this.state.toAccount.id)
     if(!this.state.toAccount.id){
       this.failMessage("Select a To account");
       return;
     }
-    console.log("+++ 115 TransferModal.js this.state.selectedDate: ", this.state.selectedDate)
     if(!this.state.selectedDate){
       this.failMessage("Select Date");
       return;

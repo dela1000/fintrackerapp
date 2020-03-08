@@ -150,7 +150,7 @@ class SidePanel extends React.Component {
             expensesCategories={this.state.allTotals.expensesCategories}
             fundSources={this.state.allTotals.fundSources}
             userAccounts={this.state.allTotals.userAccounts}
-            getAllTotals={this.state.allTotals.getAllTotals}
+            getAllTotals={this.getAllTotals}
             />
           </Grid>
         </Grid>

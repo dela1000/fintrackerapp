@@ -153,6 +153,7 @@ class Initials extends React.Component {
 
 
   handleCategory = idx => evt => {
+    evt.preventDefault();
     const item = this.state.categories.map((category, sidx) => {
       if (idx !== sidx) return category;
       return { ...category, name: evt.target.value };
@@ -168,6 +169,7 @@ class Initials extends React.Component {
   };
 
   handleSources = idx => evt => {
+    evt.preventDefault();
     const item = this.state.sources.map((source, sidx) => {
       if (idx !== sidx) return source;
       return { ...source, name: evt.target.value };
@@ -228,6 +230,18 @@ class Initials extends React.Component {
         }, 2500);
       })
     }
+  }
+
+  onEnter = (e) => {
+    console.log("+++ 236 Initials.js e.target.name: ", e.target.name)
+    if (e.key === 'Enter') {
+      if(e.target.name === 'name'){
+        this.handleAddCategory();
+      }
+      if(e.target.name === 'source'){
+        this.handleAddSource();
+      }
+    };
   }
 
   componentDidMount() {
@@ -317,6 +331,7 @@ class Initials extends React.Component {
                         name='name'
                         label='category'
                         handleFunction={this.handleCategory}
+                        onEnter={this.onEnter}
                       />
                     ))}
                   </Grid>
@@ -365,6 +380,7 @@ class Initials extends React.Component {
                         name='source'
                         label='source'
                         handleFunction={this.handleSources}
+                        onEnter={this.onEnter}
                       />
                     ))}
                   </Grid>

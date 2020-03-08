@@ -24,6 +24,7 @@ export default function InitialItem(props) {
             autoComplete="off"
             value={props.item.name  || ''}
             onChange={props.handleFunction(props.index)}
+            onKeyPress={(e) => props.onEnter(e)}
           />
         </Grid>
       </Grid>
