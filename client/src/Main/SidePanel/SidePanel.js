@@ -22,19 +22,19 @@ class SidePanel extends React.Component {
     super(props);
     this.state = {
       allTotals: {
-        currentAvailable: "",
+        currentAvailable: 0,
         availableByAccount: {
           checking: [],
           savings: [],
           investments: [],
         },
+        totalExpenses: 0,
         expensesByCategory: [],
         fundsByTypes: [],
         userAccounts: [],
         expensesCategories: [],
         fundSources: [],
       },
-      currentTimeframe: 'month'
     };
     this.getAllTotals = this.getAllTotals.bind(this);
   }
@@ -53,6 +53,8 @@ class SidePanel extends React.Component {
         var data = res.data;
         if(data.success){
           this.setState({ allTotals: data.data })
+          this.props.updateTotalExpenses(data.data.totalExpenses);
+          this.props.updateCurrentAvailable(data.data.currentAvailable);
         }
       })
   }
@@ -64,8 +66,10 @@ class SidePanel extends React.Component {
         var data = res.data;
         if(data.success){
           var allTotals = {...this.state.allTotals}
+          allTotals.totalExpenses = Number(data.data.totalExpenses);
           allTotals.expensesByCategory = data.data.expensesByCategory;
           this.setState({allTotals})
+          this.props.updateTotalExpenses(data.data.totalExpenses);
         }
       })
   }
@@ -74,12 +78,10 @@ class SidePanel extends React.Component {
     if(timeframe === 'month'){
       this.getExpensesTotals('month');
       this.props.updateTimeframe('month');
-      this.setState({currentTimeframe: 'month'})
     }
     if(timeframe === 'year'){
       this.getExpensesTotals('year');
       this.props.updateTimeframe('year');
-      this.setState({currentTimeframe: 'year'})
     }
   }
 
@@ -108,7 +110,7 @@ class SidePanel extends React.Component {
           <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
-                {this.state.currentTimeframe.toUpperCase()} EXPENSES
+                {this.props.currentTimeframe.toUpperCase()} EXPENSES
               </Typography>
             </Box>
           </Grid>

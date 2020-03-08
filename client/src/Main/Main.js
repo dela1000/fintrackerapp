@@ -25,8 +25,6 @@ import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel.js';
 
-// import { get_all_totals, get_expenses, get_funds } from "../Services/WebServices";
-
 const drawerWidth = 300;
 
 const styles = theme => ({
@@ -118,10 +116,15 @@ class Main extends React.Component {
     
     this.state = {
       open: true,
-      timeframe: 'year'
+      timeframe: 'year',
+      currentTimeframe: 'month',
+      totalExpenses: 0,
+      currentAvailable: 0,
+
     };
     this.updateTimeframe = this.updateTimeframe.bind(this);
-
+    this.updateCurrentAvailable = this.updateCurrentAvailable.bind(this);
+    this.updateTotalExpenses = this.updateTotalExpenses.bind(this);
   }
 
   handleDrawer(value) {
@@ -130,15 +133,19 @@ class Main extends React.Component {
 
   updateTimeframe(timeframe) {
     if(timeframe === 'month'){
-      this.setState({timeframe: "year"}, () => {
-        return this.state.timeframe;
-      })
+      this.setState({timeframe: "year", currentTimeframe: 'month'})
     }
     if(timeframe === 'year'){
-      this.setState({timeframe: "month"}, () => {
-        return this.state.timeframe;
-      })
+      this.setState({timeframe: "month", currentTimeframe: 'year'})
     }
+  }
+
+  updateCurrentAvailable (currentAvailable) {
+    this.setState({currentAvailable})
+  }
+
+  updateTotalExpenses (totalExpenses) {
+    this.setState({totalExpenses})
   }
 
   render () {
@@ -180,7 +187,10 @@ class Main extends React.Component {
           <SidePanel 
             open={this.state.open}
             timeframe={this.state.timeframe}
+            currentTimeframe={this.state.currentTimeframe}
             updateTimeframe={this.updateTimeframe}
+            updateCurrentAvailable={this.updateCurrentAvailable}
+            updateTotalExpenses={this.updateTotalExpenses}
 
           />
         </Drawer>
@@ -191,7 +201,12 @@ class Main extends React.Component {
               <GridListTile style={{height: '100%'}}>
                 <Grid container spacing={3}>
                   <Grid item xs={8}>
-                    Center
+                    <CenterPanel 
+                    timeframe={this.state.timeframe}
+                    currentTimeframe={this.state.currentTimeframe}
+                    currentAvailable={this.state.currentAvailable}
+                    totalExpenses={this.state.totalExpenses}
+                    />
                   </Grid>
                   <Grid item xs={4}>
                     <Paper className={classes.paper}>
