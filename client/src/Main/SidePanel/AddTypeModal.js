@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import pluralize from 'pluralize';
 import _ from 'lodash'
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
@@ -11,24 +10,14 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Fade from '@material-ui/core/Fade';
 import MenuItem from '@material-ui/core/MenuItem';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { capitalize, decimals } from "../../Services/helpers";
+import { capitalize } from "../../Services/helpers";
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
-import DateFnsUtils from '@date-io/date-fns';
 
 import { get_types, categories_bulk, user_accounts, fund_sources } from "../../Services/WebServices";
-
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-
-import { post_expenses_bulk, post_funds_bulk } from "../../Services/WebServices";
 
 const styles = theme => ({
   root: {
@@ -115,8 +104,9 @@ class AddTypeModal extends React.Component {
   
   addItem () {
     if(this.state[this.props.type]){
+      var newItem;
       if(this.props.type === 'account' && this.state.type){
-        var newItem = {
+        newItem = {
           [this.props.type]: this.state[this.props.type],
           type: this.state.type
         }
@@ -128,7 +118,7 @@ class AddTypeModal extends React.Component {
         this.clearAfterAdd();
       }
       if(this.props.type !== 'account'){
-        var newItem = {
+        newItem = {
           [this.props.type]: this.state[this.props.type],
           type: {type: "null"}
         }

@@ -15,15 +15,14 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import PersonOutlineTwoToneIcon from '@material-ui/icons/PersonOutlineTwoTone';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import Logout from '../Auth/Logout.js';
 import Settings from '../Settings/SettingsButton.js';
 
 import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
-import DetailsPanel from './DetailsPanel.js';
+// import DetailsPanel from './DetailsPanel.js';
 
 const drawerWidth = 300;
 

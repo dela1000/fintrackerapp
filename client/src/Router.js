@@ -11,28 +11,28 @@ import Initials from './Initials/Initials.js';
 
 import localStorageService from "./Services/LocalStorageService.js";
 import { login, signup } from "./Services/AuthServices.js";
-import { whoami } from './Services/WebServices';
+// import { whoami } from './Services/WebServices';
 
-const who_am_i = (config) => {
-  const token = localStorageService.getAccessToken();
-  if (token) {
-    if(config.url !== "/whoami"){
-      console.log("+++ 18 App.js /whoami")
-      whoami()
-        .then((res) => {
-        let data = res.data;
-          if (data.success){
-            localStorageService.setToken({
-              [process.env.REACT_APP_USERNAME]: data.data.username,
-              [process.env.REACT_APP_ID]: data.data.userId,
-              [process.env.REACT_APP_INITIALS]: data.data.initials_done,
-              [process.env.REACT_APP_EMAIL]: data.data.userEmail,
-            });
-          }
-        })
-    }
-  }
-}
+// const who_am_i = (config) => {
+//   const token = localStorageService.getAccessToken();
+//   if (token) {
+//     if(config.url !== "/whoami"){
+//       console.log("+++ 18 App.js /whoami")
+//       whoami()
+//         .then((res) => {
+//         let data = res.data;
+//           if (data.success){
+//             localStorageService.setToken({
+//               [process.env.REACT_APP_USERNAME]: data.data.username,
+//               [process.env.REACT_APP_ID]: data.data.userId,
+//               [process.env.REACT_APP_INITIALS]: data.data.initials_done,
+//               [process.env.REACT_APP_EMAIL]: data.data.userEmail,
+//             });
+//           }
+//         })
+//     }
+//   }
+// }
 
 axios.interceptors.request.use(
  config => {

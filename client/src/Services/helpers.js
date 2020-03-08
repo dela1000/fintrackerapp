@@ -18,9 +18,9 @@ export function to2Fixed(n) {
    }else{
     s = "" + (+n);
    }
-  var match = /(?:\.(\d+))?(?:[eE]([+\-]?\d+))?$/.exec(s);
+  var match = /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s);
   if (!match) { return 0; }
-  var count = Math.max( 0, (match[1] == '0' ? 0 : (match[1] || '').length) - (match[2] || 0) );
+  var count = Math.max( 0, (match[1] === '0' ? 0 : (match[1] || '').length) - (match[2] || 0) );
   var value = s;
   if(count > 1){
     value = Number(n);

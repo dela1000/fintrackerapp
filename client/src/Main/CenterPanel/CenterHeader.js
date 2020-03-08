@@ -6,12 +6,10 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import { decimals } from "../../Services/helpers";
 
-
-const drawerWidth = 300;
 
 const styles = theme => ({
   paper: {

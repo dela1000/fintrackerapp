@@ -6,7 +6,6 @@ import ListItem from '@material-ui/core/ListItem';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import ImportExportIcon from '@material-ui/icons/ImportExport';
 
 import TransferModal from './TransferModal.js';
 

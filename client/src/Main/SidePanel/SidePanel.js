@@ -10,10 +10,8 @@ import SidePanelAccount from './SidePanelAccount.js';
 import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import Button from '@material-ui/core/Button';
 
-import { capitalize } from "../../Services/helpers";
 import { get_all_totals, expenses_totals } from "../../Services/WebServices";
 
 

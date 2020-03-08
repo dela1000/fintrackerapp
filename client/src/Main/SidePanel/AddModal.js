@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import _ from 'lodash'
 
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+
 import Fade from '@material-ui/core/Fade';
 import MenuItem from '@material-ui/core/MenuItem';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -18,11 +17,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -31,7 +28,7 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-import { capitalize, decimals, to2Fixed, formatDate } from "../../Services/helpers";
+import { capitalize, decimals, to2Fixed } from "../../Services/helpers";
 import { post_expenses_bulk, post_funds_bulk } from "../../Services/WebServices";
 
 const styles = theme => ({
@@ -140,8 +137,8 @@ class AddModal extends React.Component {
 
   submitNew () {
     if(this.state.itemsAdded.length > 0) {
+      var payload = [];
       if(this.props.type === "expenses"){
-        var payload = [];
         _.forEach(this.state.itemsAdded, (item) => {
           payload.push({
             "date": item.date,
@@ -164,7 +161,6 @@ class AddModal extends React.Component {
           })
       }
       if (this.props.type === "funds") {
-        var payload = [];
         _.forEach(this.state.itemsAdded, (item) => {
           payload.push({
             "date": item.date,

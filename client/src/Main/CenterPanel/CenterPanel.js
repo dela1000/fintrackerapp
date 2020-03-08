@@ -1,40 +1,15 @@
 import React from 'react';
-import clsx from 'clsx';
-import moment from 'moment';
 
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+// import Grid from '@material-ui/core/Grid';
+// import Paper from '@material-ui/core/Paper';
+// import Typography from '@material-ui/core/Typography';
 
-import { decimals } from "../../Services/helpers";
+// import { decimals } from "../../Services/helpers";
 
 import CenterHeader from './CenterHeader.js';
-import ListingData from './ListingData.js';
-
-const drawerWidth = 240;
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 160,
-  },
-  depositContext: {
-    flex: 1,
-  },
-}));
+// import ListingData from './ListingData.js';
 
 export default function CenterPanel(props) {
-  const classes = useStyles();
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  let today = moment();
-  let avgThisMonth = props.currentAvailable/today.format('D');
-  let averageExpensesEstimate = avgThisMonth*moment().daysInMonth();
   return (
     <React.Fragment>
       <CenterHeader 
