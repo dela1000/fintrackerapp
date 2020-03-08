@@ -29,7 +29,7 @@ export default function SidePanelAccount(props) {
   })
   return (
     <div style={{"marginTop": "5px"}}>
-      <Grid container spacing={1} style={{cursor: 'pointer'}}>
+      <Grid container spacing={1} style={{cursor: 'pointer'}} onClick={() => props.updateListingData({type: 'type', name: props.type})}>
         <Grid item xs={2}>
           <Box pl={3} pt={0.5}>
             <AttachMoneyIcon style={props.type === "checking" ? {} : { display: 'none' }}/>
@@ -57,9 +57,9 @@ export default function SidePanelAccount(props) {
           </Box>
         </Grid>
       </Grid>
-      <Box pt={1} pb={1} style={props.open ? { display: 'block' } : { display: 'none' }}>
+      <Box pt={1} pb={1} style={props.open ? {} : { display: 'none' }}>
         {props.data.map((item, key) => (
-          <ListItem button key={key} onClick={() => props.selectAccount(item)}>
+          <ListItem button key={key} onClick={() => props.updateListingData({type: 'funds', name: item.account, id: item.accountId})}>
             <Grid
               container
               direction="row"

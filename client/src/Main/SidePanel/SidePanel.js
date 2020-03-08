@@ -50,6 +50,7 @@ class SidePanel extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
+          console.log("+++ 53 SidePanel.js data.data: ", JSON.stringify(data.data, null, "\t"));
           this.setState({ allTotals: data.data })
           this.props.updateTotalExpenses(data.data.totalExpenses);
           this.props.updateCurrentAvailable(data.data.currentAvailable);
@@ -99,7 +100,7 @@ class SidePanel extends React.Component {
             </Box>
           </Grid>
         </Grid>
-        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
+        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} onClick={() => this.props.updateListingData({type: 'allExpenses'})}>
           <Grid item xs={2}>
             <Box pl={3} pt={0.5}>
               <ReceiptIcon />
@@ -129,15 +130,16 @@ class SidePanel extends React.Component {
           expensesCategories={this.state.allTotals.expensesCategories}
           open={this.props.open}
           getAllTotals={this.getAllTotals}
+          updateListingData={this.props.updateListingData}
         />
         <Divider />
-        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
+        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} onClick={() => this.props.updateListingData({type: 'allFunds'})}>
           <Grid item xs={2}>
             <Box pl={3} pt={0.5}>
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }} >
+          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
                 CURRENT FUNDS
@@ -155,49 +157,50 @@ class SidePanel extends React.Component {
           </Grid>
         </Grid>
         <AddTypeModal 
-          open={this.props.open}
           type={'account'}
           itemName={'account'}
+          open={this.props.open}
           currentItems={this.state.allTotals.userAccounts}
           getAllTotals={this.getAllTotals}
         />
         <AddTypeModal 
-          open={this.props.open}
           type={'source'}
           itemName={'source'}
+          open={this.props.open}
           currentItems={this.state.allTotals.fundSources}
           getAllTotals={this.getAllTotals}
         />
-        <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
+        <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
+            type={'checking'}
             data={this.state.allTotals.availableByAccount.checking}
             open={this.props.open}
-            type={'checking'}
             currentAvailable={this.state.allTotals.currentAvailable}
             userAccounts={this.state.allTotals.userAccounts}
             getAllTotals={this.getAllTotals}
+            updateListingData={this.props.updateListingData}
           />
         </Box>
-        <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
+        <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
-            style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }
+            type={'savings'}
             data={this.state.allTotals.availableByAccount.savings}
             open={this.props.open}
-            type={'savings'}
             currentAvailable={this.state.allTotals.currentAvailable}
             userAccounts={this.state.allTotals.userAccounts}
             getAllTotals={this.getAllTotals}
+            updateListingData={this.props.updateListingData}
           />
         </Box>
-        <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
+        <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
-            style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }
+            type={'investments'}
             data={this.state.allTotals.availableByAccount.investments}
             open={this.props.open}
-            type={'investments'}
             currentAvailable={this.state.allTotals.currentAvailable}
             userAccounts={this.state.allTotals.userAccounts}
             getAllTotals={this.getAllTotals}
+            updateListingData={this.props.updateListingData}
           />
         </Box>
       </React.Fragment>

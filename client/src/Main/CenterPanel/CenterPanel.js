@@ -1,13 +1,8 @@
 import React from 'react';
 
-// import Grid from '@material-ui/core/Grid';
-// import Paper from '@material-ui/core/Paper';
-// import Typography from '@material-ui/core/Typography';
-
-// import { decimals } from "../../Services/helpers";
 
 import CenterHeader from './CenterHeader.js';
-// import ListingData from './ListingData.js';
+import ListingPanel from './ListingPanel.js';
 
 export default function CenterPanel(props) {
   return (
@@ -16,6 +11,11 @@ export default function CenterPanel(props) {
         currentTimeframe={props.currentTimeframe}
         totalExpenses={props.totalExpenses}
         currentAvailable={props.currentAvailable}
+      />
+      <ListingPanel 
+        viewSelected={props.viewSelected}
+        currentTimeframe={props.currentTimeframe}
+        listingDataSelected={props.listingDataSelected}
       />
     </React.Fragment>
   )

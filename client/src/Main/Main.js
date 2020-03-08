@@ -119,11 +119,15 @@ class Main extends React.Component {
       currentTimeframe: 'month',
       totalExpenses: 0,
       currentAvailable: 0,
+      listingDataSelected: {
+        "type": "allExpenses"
+      },
 
     };
     this.updateTimeframe = this.updateTimeframe.bind(this);
     this.updateCurrentAvailable = this.updateCurrentAvailable.bind(this);
     this.updateTotalExpenses = this.updateTotalExpenses.bind(this);
+    this.updateListingData = this.updateListingData.bind(this);
   }
 
   handleDrawer(value) {
@@ -145,6 +149,11 @@ class Main extends React.Component {
 
   updateTotalExpenses (totalExpenses) {
     this.setState({totalExpenses})
+  }
+
+  updateListingData (listingDataSelected) {
+    console.log("+++ 154 Main.js listingDataSelected: ", listingDataSelected)
+    this.setState({listingDataSelected})
   }
 
   render () {
@@ -190,6 +199,7 @@ class Main extends React.Component {
             updateTimeframe={this.updateTimeframe}
             updateCurrentAvailable={this.updateCurrentAvailable}
             updateTotalExpenses={this.updateTotalExpenses}
+            updateListingData={this.updateListingData}
 
           />
         </Drawer>
@@ -201,10 +211,10 @@ class Main extends React.Component {
                 <Grid container spacing={3}>
                   <Grid item xs={8}>
                     <CenterPanel 
-                    timeframe={this.state.timeframe}
                     currentTimeframe={this.state.currentTimeframe}
                     currentAvailable={this.state.currentAvailable}
                     totalExpenses={this.state.totalExpenses}
+                    listingDataSelected={this.state.listingDataSelected}
                     />
                   </Grid>
                   <Grid item xs={4}>
