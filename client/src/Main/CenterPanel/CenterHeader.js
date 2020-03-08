@@ -33,10 +33,22 @@ class CenterHeader extends React.Component {
   render () {
     const { classes, currentTimeframe, totalExpenses, currentAvailable } = this.props;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    let today = 0;
+    let average = 0;
+    let averageExpensesEstimate = 0;
+  
+    if(currentTimeframe === 'month'){
+      today = moment();
+      average = totalExpenses/today.format('D');
+      averageExpensesEstimate = average*moment().daysInMonth();
+    }
 
-    let today = moment();
-    let avgThisMonth = currentAvailable/today.format('D');
-    let averageExpensesEstimate = avgThisMonth*moment().daysInMonth();
+    if(currentTimeframe === 'year'){
+      today = moment().dayOfYear();
+      console.log("+++ 48 CenterHeader.js today: ", today)
+      average = totalExpenses/today;
+      averageExpensesEstimate = average*moment().daysInMonth();
+    }
 
     return (
       <React.Fragment>
@@ -57,7 +69,7 @@ class CenterHeader extends React.Component {
                     Average Daily Expenses
                   </Typography>
                   <Typography component="p" variant="h6">
-                    {decimals(avgThisMonth)}
+                    {decimals(average)}
                   </Typography>
                   <Typography color="textSecondary">
                     Monthly Expenses Estimate
