@@ -6,7 +6,7 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import SidePanelItem from './SidePanelItem.js';
+import SidePanelAccount from './SidePanelAccount.js';
 import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
@@ -171,7 +171,7 @@ class SidePanel extends React.Component {
           getAllTotals={this.getAllTotals}
         />
         <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
-          <SidePanelItem
+          <SidePanelAccount
             data={this.state.allTotals.availableByAccount.checking}
             open={this.props.open}
             type={'checking'}
@@ -179,7 +179,7 @@ class SidePanel extends React.Component {
           />
         </Box>
         <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
-          <SidePanelItem
+          <SidePanelAccount
             style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {'display': 'block'} : {'display': 'none'} }
             data={this.state.allTotals.availableByAccount.savings}
             open={this.props.open}
@@ -188,7 +188,7 @@ class SidePanel extends React.Component {
           />
         </Box>
         <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }>
-          <SidePanelItem
+          <SidePanelAccount
             style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {'display': 'block'} : {'display': 'none'} }
             data={this.state.allTotals.availableByAccount.investments}
             open={this.props.open}

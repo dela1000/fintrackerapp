@@ -6,28 +6,32 @@ import ListItem from '@material-ui/core/ListItem';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import ImportExportIcon from '@material-ui/icons/ImportExport';
+
 import { capitalize, decimals } from "../../Services/helpers";
 
-export default function SidePanelItem(props) {
+export default function SidePanelAccount(props) {
   return (
     <div style={{"marginTop": "5px"}}>
-      <Grid 
-        container 
-        spacing={1} 
-        onClick={() => props.selectAccount(props.type)}
-        style={{cursor: 'pointer'}}
-      >
-        <Grid item>
-          <Box pl={3} pt={0.4} >
+      <Grid container spacing={1} style={{cursor: 'pointer'}}>
+        <Grid item xs={2}>
+          <Box pl={3} pt={0.5}>
             <AttachMoneyIcon style={props.type === "checking" ? {} : { display: 'none' }}/>
             <AccountBalanceIcon style={props.type === "savings" ? {} : { display: 'none' }}/>
             <TrendingUpIcon style={props.type === "investments" ? {} : { display: 'none' }}/>
           </Box>
         </Grid>
-        <Grid item style={props.open ? {} : { display: 'none' }}>
-          <Typography variant="h6">
-            {capitalize(props.type)}
-          </Typography>
+        <Grid item xs={8} style={props.open ? {} : { display: 'none' }}>
+          <Box pl={1} pt={0.2}>
+            <Typography variant="h6">
+              {capitalize(props.type)}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={2} style={props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
+          <Box>
+            <ImportExportIcon />
+          </Box>
         </Grid>
       </Grid>
       <Box pt={1} pb={1} style={props.open ? { display: 'block' } : { display: 'none' }}>
@@ -52,3 +56,5 @@ export default function SidePanelItem(props) {
     </div>
   )
 }
+
+
