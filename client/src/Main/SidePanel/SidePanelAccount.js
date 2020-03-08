@@ -1,4 +1,6 @@
 import React from 'react';
+import _ from 'lodash'
+
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
@@ -7,11 +9,24 @@ import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 
+import { makeStyles } from '@material-ui/core/styles';
+
 import TransferModal from './TransferModal.js';
 
 import { capitalize, decimals } from "../../Services/helpers";
 
+const useStyles = makeStyles({
+  depositContext: {
+    flex: 1,
+  },
+});
+
 export default function SidePanelAccount(props) {
+  const classes = useStyles();
+  let accountsTotal = 0;
+  _.forEach(props.data, (item) => {
+    accountsTotal = accountsTotal + item.amount;
+  })
   return (
     <div style={{"marginTop": "5px"}}>
       <Grid container spacing={1} style={{cursor: 'pointer'}}>
@@ -26,6 +41,9 @@ export default function SidePanelAccount(props) {
           <Box pl={1} pt={0.2}>
             <Typography variant="h6">
               {capitalize(props.type)}
+            </Typography>
+            <Typography variant="caption" color="textSecondary" className={classes.depositContext}>
+              Total: {decimals(accountsTotal)}
             </Typography>
           </Box>
         </Grid>
