@@ -225,6 +225,12 @@ class AddModal extends React.Component {
 
   render(){
     const { classes, type, userAccounts, expensesCategories, fundSources } = this.props;
+    let accounts = [];
+    if(type === "expenses"){
+      accounts = _.filter(userAccounts, { 'typeId': 1 });
+    } else {
+      accounts = userAccounts;
+    }
     return (
       <div>
         <AddCircleIcon onClick={() => this.handleOpen(true)} />
@@ -326,7 +332,7 @@ class AddModal extends React.Component {
                         value={this.state.account || ''}
                         onChange={(e) => this.handleChange(e)}
                       >
-                        {userAccounts.map(acc => (
+                        {accounts.map(acc => (
                           <MenuItem key={acc.id} value={acc}>
                             {capitalize(acc.account)} - {capitalize(acc.type)}
                           </MenuItem>
