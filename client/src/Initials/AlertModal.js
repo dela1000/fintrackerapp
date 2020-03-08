@@ -25,7 +25,10 @@ export default function AddModal(props) {
 
   if(props.errorFound) {
     if(!open){
-      setOpen(true);
+      setOpen(props.errorFound);
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
     }
   }
 
