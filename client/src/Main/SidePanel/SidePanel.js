@@ -53,6 +53,7 @@ class SidePanel extends React.Component {
           this.setState({ allTotals: data.data })
           this.props.updateTotalExpenses(data.data.totalExpenses);
           this.props.updateCurrentAvailable(data.data.currentAvailable);
+          this.props.updateListingData(null);
         }
       })
   }

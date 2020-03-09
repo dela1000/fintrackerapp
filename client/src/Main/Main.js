@@ -22,7 +22,7 @@ import Settings from '../Settings/SettingsButton.js';
 
 import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
-// import DetailsPanel from './DetailsPanel.js';
+// import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 
 import { search } from "../Services/WebServices";
 
@@ -124,7 +124,7 @@ class Main extends React.Component {
       listingData: [],
       page: 1,
       listingDataSelected: {
-        "type": "allExpenses"
+        "type": "expenses"
       },
       message: "",
 
@@ -161,44 +161,63 @@ class Main extends React.Component {
   }
 
   updateListingData (listingDataSelected) {
-    console.log("+++ 163 Main.js listingDataSelected: ", listingDataSelected)
+    console.log("+++ 164 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     var payload = {
       page: this.state.page,
       timeframe: this.state.currentTimeframe,
     }
 
-    if(!listingDataSelected.type || listingDataSelected.type === "allExpenses"){
-      payload['type'] = 'expenses';
+
+    if(listingDataSelected === null){
+      payload['type'] = "expenses";
+    } else {
+      console.log("+++ 174 Main.js listingDataSelected.type: ", listingDataSelected.type)
+      if(listingDataSelected.type === 'expenses' || listingDataSelected.type === 'allExpenses'){
+        payload['type'] = "expenses";
+      }
+
+      if(listingDataSelected.type === 'funds' || listingDataSelected.type === 'allFunds'){
+        payload['type'] = "funds";
+      }
+
     }
 
-    if(listingDataSelected.type === "expenses"){
-      payload['type'] = 'expenses';
-      payload['categoryId'] = Number(listingDataSelected.categoryId);
+    if(payload.type === "expenses"){
+      if(listingDataSelected && listingDataSelected.categoryId){
+        payload['categoryId'] = Number(listingDataSelected.categoryId);
+      }
     }
-  
-    if(listingDataSelected.type === "allFunds"){
-      payload['type'] = 'funds';
+
+
+    if(payload.type === "funds"){
+      if(listingDataSelected.accountId){
+        payload['accountId'] = Number(listingDataSelected.accountId);
+      }
+      if(listingDataSelected.typeId){
+        payload['typeId'] = Number(listingDataSelected.typeId);
+      }
+    }
+
+    if(listingDataSelected && listingDataSelected.type === "allFunds"){
       payload['typeId'] = [1,2,3];
     }
-    if(listingDataSelected.type === "funds"){
-      payload['type'] = 'funds';
-      payload['accountId'] = Number(listingDataSelected.accountId);
-      payload['typeId'] = Number(listingDataSelected.typeId);
-    }
 
+    console.log("+++ 176 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
         if(data.success){
-          this.setState({listingData: data.data.results, listingDataSelected})
+          var searchData = listingDataSelected
+          if(!listingDataSelected){
+            searchData = {
+              "type": "expenses"
+            }
+          }
+          this.setState({listingData: data.data.results, listingDataSelected: searchData})
         } else {
           this.setState({listingData: [], message: data.data.message})
         }
       })
-  }
-
-  componentDidMount() {
-    this.updateListingData(this.state.listingDataSelected);
   }
 
   render () {

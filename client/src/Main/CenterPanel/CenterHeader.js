@@ -43,7 +43,6 @@ class CenterHeader extends React.Component {
 
     if(currentTimeframe === 'year'){
       today = moment().dayOfYear();
-      console.log("+++ 48 CenterHeader.js today: ", today)
       average = totalExpenses/today;
       averageExpensesEstimate = average*moment().daysInMonth();
     }
