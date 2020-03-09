@@ -26,8 +26,16 @@ class Initials extends React.Component {
       view: 1,
       errorFound: false,
       failMessage: '',
-      categories: [],
-      sources: [],
+      categories: [
+        {  name: 'Groceries' },
+        {  name: 'Housing' },
+        {  name: 'Bills' },
+      ],
+      sources: [
+        {  name: 'Employment' },
+        {  name: 'Freelance' },
+        {  name: 'Taxes' },
+      ],
       rows: [{ 
         amount: '',
         account: '',
@@ -303,105 +311,99 @@ class Initials extends React.Component {
               spacing={5}
               alignItems="center"
               justify="center"
-              style={{ minHeight: '80vh' }}
+              style={{ minHeight: '20vh' }}
+            >
+              <Box pt={5} pb={5}>
+                <Grid item xs>
+                  <Typography component="h1" variant="h4" color="inherit" align="center">
+                    Now, lets add Expenses categories and Fund sources.
+                  </Typography>
+                  <Typography component="h1" variant="h6" color="inherit" align="center">
+                    Below are some examples. Feel free to change them.
+                  </Typography>
+                </Grid>
+              </Box>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              alignItems="center"
+              justify="center"
+              style={{ minHeight: '40vh' }}
             >
               <Grid item xs={5}>
-               <form onSubmit={this.handleSubmitCategories}>
-                  <Box pt={5} pb={5}>
-                    <Grid item xs>
-                      <Typography component="h1" variant="h4" color="inherit" align="center">
-                        Now, lets add Expenses categories,
-                      </Typography>
-                      <Typography component="h1" variant="h6" color="inherit" align="center">
-                        Examples are Groceries, Dining out, Housing, Bills, Etc. Add as many as you like.
-                      </Typography>
-                    </Grid>
-                  </Box>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                >
+                  {this.state.categories.map((item, index) => (
+                    <InitialItem 
+                      key={index} 
+                      item={item}
+                      index={index}
+                      name='name'
+                      label='category'
+                      handleFunction={this.handleCategory}
+                      onEnter={this.onEnter}
+                    />
+                  ))}
+                </Grid>
+                <Box pt={10}>
                   <Grid
                     container
                     spacing={0}
-                    direction="column"
-                    alignItems="center"
                   >
-                    {this.state.categories.map((item, index) => (
-                      <InitialItem 
-                        key={index} 
-                        item={item}
-                        index={index}
-                        name='name'
-                        label='category'
-                        handleFunction={this.handleCategory}
-                        onEnter={this.onEnter}
-                      />
-                    ))}
-                  </Grid>
-                  <Box pt={10}>
-                    <Grid
-                      container
-                      spacing={0}
-                    >
-                      <Grid item xs>
-                        <Button 
-                          variant="contained"
-                          color="primary"
-                          style={{float:"right"}}
-                          onClick={this.handleAddCategory}
-                        >
-                          Add More
-                        </Button>
-                      </Grid>
+                    <Grid item xs>
+                      <Button 
+                        variant="contained"
+                        color="primary"
+                        style={{float:"right"}}
+                        onClick={this.handleAddCategory}
+                      >
+                        Add More
+                      </Button>
                     </Grid>
-                  </Box>
-                </form>
+                  </Grid>
+                </Box>
               </Grid>
               <Grid item xs={5}>
-                <form onSubmit={this.handleSubmitSources}>
-                  <Box pt={5} pb={5}>
-                    <Grid item xs>
-                      <Typography component="h1" variant="h4" color="inherit" align="center">
-                        and Fund sources
-                      </Typography>
-                      <Typography component="h1" variant="h6" color="inherit" align="center">
-                        The name of your employer, your business, any Freelance gigs, or even taxes. 
-                      </Typography>
-                    </Grid>
-                  </Box>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                >
+                  {this.state.sources.map((item, index) => (
+                    <InitialItem 
+                      key={index} 
+                      item={item}
+                      index={index}
+                      name='source'
+                      label='source'
+                      handleFunction={this.handleSources}
+                      onEnter={this.onEnter}
+                    />
+                  ))}
+                </Grid>
+                <Box pt={10}>
                   <Grid
                     container
                     spacing={0}
-                    direction="column"
-                    alignItems="center"
                   >
-                    {this.state.sources.map((item, index) => (
-                      <InitialItem 
-                        key={index} 
-                        item={item}
-                        index={index}
-                        name='source'
-                        label='source'
-                        handleFunction={this.handleSources}
-                        onEnter={this.onEnter}
-                      />
-                    ))}
-                  </Grid>
-                  <Box pt={10}>
-                    <Grid
-                      container
-                      spacing={0}
-                    >
-                      <Grid item xs>
-                        <Button 
-                          variant="contained"
-                          color="primary"
-                          style={{float:"right"}}
-                          onClick={this.handleAddSource}
-                        >
-                          Add More
-                        </Button>
-                      </Grid>
+                    <Grid item xs>
+                      <Button 
+                        variant="contained"
+                        color="primary"
+                        style={{float:"right"}}
+                        onClick={this.handleAddSource}
+                      >
+                        Add More
+                      </Button>
                     </Grid>
-                  </Box>
-                </form>
+                  </Grid>
+                </Box>
               </Grid>
             </Grid>
             <Grid 
