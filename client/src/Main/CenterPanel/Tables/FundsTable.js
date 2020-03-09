@@ -48,7 +48,6 @@ class FundsTable extends React.Component {
                   <TableCell>{capitalize(item.account)}</TableCell>
                   <TableCell>{capitalize(item.source)}</TableCell>
                   <TableCell align="right">{decimals(item.amount)}</TableCell>
-
                 </TableRow>
               ))}
             </TableBody>

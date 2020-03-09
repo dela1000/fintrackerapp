@@ -61,9 +61,7 @@ class ListingPanel extends React.Component {
 
   render(){
     const { classes, viewSelected, listingData, listingDataSelected } = this.props;
-
     const Cmp = component[listingDataSelected.type];
-    
     return (
       <React.Fragment>
         
@@ -74,7 +72,6 @@ class ListingPanel extends React.Component {
           listingData={listingData}
           listingDataSelected={listingDataSelected}
         />
-        
       </React.Fragment>
     );
   }
@@ -85,28 +82,3 @@ ListingPanel.propTypes = {
 };
 
 export default withStyles(styles)(ListingPanel);
-
-
-// <Table size="small">
-//   <TableHead>
-//     <TableRow hover>
-//       {tableComponents[this.state.listingDataSelected].map((item, i) => (
-//         <TableCell key={i} >{capitalize(item)}</TableCell>
-//       ))}
-//     </TableRow>
-//   </TableHead>
-//     <TableBody>
-//       {this.state.listingData.map(item => (
-//         <TableRow key={item.id} hover>
-//           {tableComponents[this.state.listingDataSelected].map((el, i) => (
-//               <TableCell key={i}>{item[el]}</TableCell>
-//           ))}
-//         </TableRow>
-//       ))}
-//     </TableBody>
-// </Table>
-// <div className={classes.seeMore}>
-//   <Link color="primary" href="#" onClick={() => loadMore(viewSelected)}>
-//     Load More
-//   </Link>
-// </div>
