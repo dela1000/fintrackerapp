@@ -874,7 +874,6 @@ module.exports = controllers = {
         payload['startDate'] = finUtils.startOfYear();
         payload['endDate'] = finUtils.endOfYear();
       }
-      console.log("+++ 877 index.js payload: ", payload)
       models.all_totals.get(payload, function(results, message) {
         if (results) {
           models.all_user_data_types.get(payload, function (userData, message) {
@@ -954,34 +953,8 @@ module.exports = controllers = {
         deleted: false,
         include: [],
         orderBy: "date",
-        order: "asc"
+        order: "DESC"
       };
-
-      // if(type === "ExpensesCategories"){
-      //   payload.categoryId = req.query.categoryId;
-      // }
-
-      // if (req.query.comment) {
-      //   payload.comment = req.query.comment
-      // }
-      // if (req.query.minAmount) {
-      //   payload.minAmount = req.query.minAmount
-      // }
-      // if (req.query.maxAmount) {
-      //   payload.maxAmount = req.query.maxAmount
-      // }
-      // if (req.query.deleted) {
-      //   payload.deleted = true;
-      // };
-      // if (req.query.limit) {
-      //   payload.limit = Number(req.query.limit);
-      // };
-      // if (req.query.orderBy) {
-      //   payload.orderBy = req.query.orderBy;
-      // };
-      // if (req.query.order) {
-      //   payload.order = req.query.order;
-      // };      
 
       _.forEach(req.query, (value, key) => {
         payload[key] = value;

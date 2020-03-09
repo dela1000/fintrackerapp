@@ -803,7 +803,7 @@ module.exports = {
         query['include'] = payload.include;
       }
       if (payload.orderBy) {
-        query['order'] = [];
+        query['order'] = [[payload.orderBy, payload.order]];
         if (payload.type === "Expenses") {
           query['order'].push(["categoryId", "asc"])
         }
@@ -812,11 +812,6 @@ module.exports = {
         }
         query['order'].push(["amount", "desc"])
 
-        if (payload.order) {
-          query['order'].push([payload.orderBy, payload.order])
-        } else {
-          query['order'].push([payload.orderBy])
-        }
       }
       // if(tableName === "ExpensesCategories"){
       //   delete query.where.date;
@@ -824,7 +819,8 @@ module.exports = {
       //   query.where.id = query.where.categoryId;
       //   delete query.where.categoryId;
       // }
-      console.log("models - Search query: ", query)
+      console.log("models - Search query: ", JSON.stringify(query, null, "\t"))
+
       db[tableName].findAll(query)
         .then(function(foundResults) {
           if (foundResults.length > 0) {
