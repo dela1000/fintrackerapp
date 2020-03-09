@@ -50,7 +50,6 @@ class SidePanel extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
-          console.log("+++ 53 SidePanel.js data.data: ", JSON.stringify(data.data, null, "\t"));
           this.setState({ allTotals: data.data })
           this.props.updateTotalExpenses(data.data.totalExpenses);
           this.props.updateCurrentAvailable(data.data.currentAvailable);

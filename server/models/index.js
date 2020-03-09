@@ -782,10 +782,15 @@ module.exports = {
           // [Op.lte]: Number(payload.maxAmount) + .001
         }
       };
-      
+
+
       var tableName = payload.type;
       var query = {
         where: searchData
+      }
+
+      if(payload.offset){
+        query['offset'] = payload.offset;
       }
 
       if (payload.limit) {

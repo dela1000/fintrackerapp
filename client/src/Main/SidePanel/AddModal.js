@@ -341,10 +341,10 @@ class AddModal extends React.Component {
                     </Grid>
                   </Box>
                 </Grid>
-                <Grid item xs={8} className={classes.gridItem} style={this.state.itemsAdded.length > 0 ? {overflow: 'auto'} : {display: 'none'}}>
+                <Grid item xs={8} className={classes.gridItem} style={this.state.itemsAdded.length > 0 ? { maxHeight:'100%', overflow: 'auto'} : {display: 'none'}}>
                   <Box>
                     <h2>{capitalize(type)} to add</h2>
-                    <TableContainer style={{overflow: 'auto'}}>
+                    <TableContainer style={{ maxHeight:'100%', overflow: 'auto'}}>
                       <Table aria-label="simple table">
                         <TableHead>
                           <TableRow>

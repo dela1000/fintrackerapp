@@ -152,7 +152,6 @@ class Main extends React.Component {
   }
 
   updateListingData (listingDataSelected) {
-    console.log("+++ 154 Main.js listingDataSelected: ", listingDataSelected)
     this.setState({listingDataSelected})
   }
 

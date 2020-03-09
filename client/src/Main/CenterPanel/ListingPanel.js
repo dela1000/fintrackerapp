@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
 
 import { capitalize, decimals } from "../../Services/helpers.js";
+import { search } from "../../Services/WebServices";
 
 function loadMore(type) {
   
@@ -28,13 +29,56 @@ const styles = theme => ({
   },
 });
 
+
 class ListingPanel extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      listingData: [],
+      page: 1,
+    }
   }
+
+  updateListingData (data) {
+    console.log("+++ 32 ListingPanel.js data: ", JSON.stringify(data, null, "\t"));
+    var payload = {
+      page: this.state.page,
+      timeframe: this.props.currentTimeframe,
+    }
+
+    if(!data.type){
+      payload['type'] = 'expenses';
+    }
+
+    if(data.type === "allExpenses"){
+      payload['type'] = 'expenses';
+    }
+
+    if(data.type === "allFunds"){
+      payload['type'] = 'funds';
+    }
+    if(data.type === "expenses"){
+      payload['type'] = 'expenses';
+      payload['id'] = this.props.data.id;
+    }
+    console.log("+++ 64 ListingPanel.js payload: ", payload)
+    search(payload)
+      .then((res) => {
+        var data = res.data;
+        console.log("+++ 54 ListingPanel.js data: ", JSON.stringify(data, null, "\t"));
+        if(data.success){
+          
+        }
+      })
+  }
+
+
   render(){
-    const { classes, viewSelected } = this.props;
-    console.log("+++ 37 ListingPanel.js this.props: ", JSON.stringify(this.props, null, "\t"));
+    const { classes, viewSelected, listingDataSelected } = this.props;
+    let listingData = null;
+    if(listingData === null){
+      listingData = this.updateListingData(listingDataSelected);
+    }
     return (
       <React.Fragment>
         

@@ -1035,6 +1035,12 @@ module.exports = controllers = {
         payload['endDate'] = finUtils.endOfMonth();
       }
 
+      if(req.query.page > 1){
+        var item = req.query.page.toString();
+        item = item + "0"
+        payload.offset = Number(item) - 10;
+      }
+      console.log("+++ 1043 index.js payload: ", JSON.stringify(payload, null, "\t"));
       models.search.get(payload, function(foundResults, message) {
         if (foundResults) {
           var finalData = [];

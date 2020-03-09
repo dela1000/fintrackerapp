@@ -1,9 +1,9 @@
 import axios from 'axios';
+import _ from 'lodash'
 
 export function whoami(payload){
   return axios.get('/whoami')
 }
-
 
 export function get_types(){
   return axios.get('/types');
@@ -71,4 +71,17 @@ export function fund_sources(payload){
 
 export function transfers(payload){
   return axios.post('/transfers', payload)
+}
+
+export function search(payload){
+  var link = '/search?';
+  console.log("+++ 77 WebServices.js payload: ", JSON.stringify(payload, null, "\t"));
+  _.forEach(payload, (item, key) => {
+    console.log("+++ 80 WebServices.js key: ", key)
+    console.log("+++ 81 WebServices.js item: ", item)
+    var param = key + '=' + item + '&';
+    link = link + param
+  })
+  console.log("+++ 82 WebServices.js link: ", link)
+  return axios.get(link)
 }
