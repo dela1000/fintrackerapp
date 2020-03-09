@@ -86,7 +86,7 @@ class CenterHeader extends React.Component {
                   <Typography color="textSecondary">
                     Current Available
                   </Typography>
-                  <Typography component="p" variant="h4">
+                  <Typography component="p" variant="h4" style={ currentAvailable > 0 ? {} : {color: "red"} }>
                     {decimals(currentAvailable)}
                   </Typography>
                 </Grid>

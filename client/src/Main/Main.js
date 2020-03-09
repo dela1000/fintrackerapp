@@ -22,7 +22,7 @@ import Settings from '../Settings/SettingsButton.js';
 
 import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
-// import DetailsPanel from './DetailsPanel/DetailsPanel.js';
+import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 
 import { search } from "../Services/WebServices";
 
@@ -171,7 +171,6 @@ class Main extends React.Component {
     if(listingDataSelected === null){
       payload['type'] = "expenses";
     } else {
-      console.log("+++ 174 Main.js listingDataSelected.type: ", listingDataSelected.type)
       if(listingDataSelected.type === 'expenses' || listingDataSelected.type === 'allExpenses'){
         payload['type'] = "expenses";
       }
@@ -202,7 +201,6 @@ class Main extends React.Component {
       payload['typeId'] = [1,2,3];
     }
 
-    console.log("+++ 176 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -264,7 +262,6 @@ class Main extends React.Component {
             updateCurrentAvailable={this.updateCurrentAvailable}
             updateTotalExpenses={this.updateTotalExpenses}
             updateListingData={this.updateListingData}
-
           />
         </Drawer>
         <div className={classes.content}>
@@ -285,7 +282,11 @@ class Main extends React.Component {
                   </Grid>
                   <Grid item xs={4}>
                     <Paper className={classes.paper}>
-                      Right
+                      <DetailsPanel 
+                        viewSelected={this.state.listingDataSelected}
+                        graphData={this.state.listingData}
+                        currentTimeframe={this.state.currentTimeframe}
+                      />
                     </Paper>
                   </Grid>
                 </Grid>
