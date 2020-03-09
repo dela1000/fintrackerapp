@@ -16,22 +16,9 @@ export default function CenterPanel(props) {
         viewSelected={props.viewSelected}
         currentTimeframe={props.currentTimeframe}
         listingDataSelected={props.listingDataSelected}
+        listingData={props.listingData}
+        message={props.message}
       />
     </React.Fragment>
   )
 }
-
-
-      // <Grid container spacing={3}>
-      //   <Grid item xs={12}>
-      //     <Paper className={classes.paper}>
-      //       <ListingData 
-      //         viewSelected={props.viewSelected}
-      //         listingData={props.tableData}
-      //         timeframe={props.timeframe}
-      //         selectCategory={props.selectCategory}
-      //         selectAccount={props.selectAccount}
-      //       />
-      //     </Paper>
-      //   </Grid>
-      // </Grid>

@@ -24,6 +24,8 @@ import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
 // import DetailsPanel from './DetailsPanel.js';
 
+import { search } from "../Services/WebServices";
+
 const drawerWidth = 300;
 
 const styles = theme => ({
@@ -119,9 +121,11 @@ class Main extends React.Component {
       currentTimeframe: 'month',
       totalExpenses: 0,
       currentAvailable: 0,
+      listingData: [],
       listingDataSelected: {
         "type": "allExpenses"
       },
+      message: "",
 
     };
     this.updateTimeframe = this.updateTimeframe.bind(this);
@@ -153,7 +157,45 @@ class Main extends React.Component {
 
   updateListingData (listingDataSelected) {
     console.log("+++ 155 Main.js listingDataSelected: ", listingDataSelected)
-    this.setState({listingDataSelected})
+  
+    var payload = {
+      page: this.state.page,
+      timeframe: this.props.currentTimeframe,
+    }
+
+    if(!listingDataSelected.type || listingDataSelected.type === "allExpenses"){
+      payload['type'] = 'expenses';
+    }
+
+    if(listingDataSelected.type === "expenses"){
+      payload['type'] = 'expenses';
+      payload['categoryId'] = Number(listingDataSelected.categoryId);
+    }
+  
+    if(listingDataSelected.type === "allFunds"){
+      payload['type'] = 'funds';
+      payload['typeId'] = [1,2,3];
+    }
+    if(listingDataSelected.type === "funds"){
+      payload['type'] = 'funds';
+      payload['accountId'] = Number(listingDataSelected.accountId);
+      payload['typeId'] = Number(listingDataSelected.typeId);
+    }
+
+    search(payload)
+      .then((res) => {
+        var data = res.data;
+        console.log("+++ 103 Main.js data: ", data)
+        if(data.success){
+          this.setState({listingData: data.data.results, listingDataSelected})
+        } else {
+          this.setState({listingData: [], message: data.data.message})
+        }
+      })
+  }
+
+  componentDidMount() {
+    this.updateListingData(this.state.listingDataSelected);
   }
 
   render () {
@@ -214,7 +256,9 @@ class Main extends React.Component {
                     currentTimeframe={this.state.currentTimeframe}
                     currentAvailable={this.state.currentAvailable}
                     totalExpenses={this.state.totalExpenses}
+                    listingData={this.state.listingData}
                     listingDataSelected={this.state.listingDataSelected}
+                    message={this.state.message}
                     />
                   </Grid>
                   <Grid item xs={4}>
