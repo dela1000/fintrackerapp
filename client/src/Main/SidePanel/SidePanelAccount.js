@@ -59,7 +59,7 @@ export default function SidePanelAccount(props) {
       </Grid>
       <Box pt={1} pb={1} style={props.open ? {} : { display: 'none' }}>
         {props.data.map((item, key) => (
-          <ListItem button key={key} onClick={() => props.updateListingData({type: 'funds', name: item.account, id: item.accountId})}>
+          <ListItem button key={key} onClick={() => props.updateListingData({type: 'funds', name: item.account, accountId: item.accountId, typeId: item.typeId})}>
             <Grid
               container
               direction="row"

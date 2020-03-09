@@ -22,12 +22,11 @@ export function to2Fixed(n) {
   if (!match) { return 0; }
   var count = Math.max( 0, (match[1] === '0' ? 0 : (match[1] || '').length) - (match[2] || 0) );
   var value = s;
-  if(count > 1){
-    value = parseInt(n, 10);
-    value = Number(value);
-    value = value.toFixed(2);
+  if(count > 2){
+    value = n.slice(0, -1)
   };
-  return Number(value);
+  var result = Number(value);
+  return result;
 }
 
 export const dateFormat = 'MM-DD-YYYY';

@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash'
+import _ from 'lodash';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';

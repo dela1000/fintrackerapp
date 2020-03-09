@@ -763,6 +763,9 @@ module.exports = {
       if (payload.accountId) {
         searchData['accountId'] = payload.accountId
       }
+      if (payload.typeId) {
+        searchData['typeId'] = payload.typeId
+      }
       if (payload.comment) {
         searchData['comment'] = {
           [Op.like]: "%" + payload.comment + "%"

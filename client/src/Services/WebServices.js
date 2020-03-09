@@ -75,10 +75,7 @@ export function transfers(payload){
 
 export function search(payload){
   var link = '/search?';
-  console.log("+++ 77 WebServices.js payload: ", JSON.stringify(payload, null, "\t"));
   _.forEach(payload, (item, key) => {
-    console.log("+++ 80 WebServices.js key: ", key)
-    console.log("+++ 81 WebServices.js item: ", item)
     var param = key + '=' + item + '&';
     link = link + param
   })

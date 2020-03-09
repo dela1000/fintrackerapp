@@ -18,6 +18,8 @@ function loadMore(type) {
   
 }
 
+
+
 const expensesHeaders = ['Date', 'Comment', 'Account', 'Category', 'Amount'];
 const fundsHeaders = ['Date', 'Comment', 'Account', 'Source',  'Type', 'Amount'];
 const categoryHeaders = ['Date', 'Comment', 'Account', 'Source',  'Type', 'Amount'];
@@ -29,6 +31,24 @@ const styles = theme => ({
   },
 });
 
+const tableComponents = {
+  expenses: {
+    component: null,
+    headers: ['Date', 'Comment', 'Account', 'Category', 'Amount'],
+    tableElem: ['date', 'comment', 'account', 'category', 'amount'],
+  },
+  funds: {
+    component: null,
+    headers: ['Date', 'Comment', 'Account', 'Source', 'Amount'],
+    tableElem: ['date', 'comment', 'account', 'source', 'amount'],
+  },
+  category: {
+    component: null,
+    headers: ['Date', 'Comment', 'Account', 'Source',  'Type', 'Amount'],
+    tableElem: ['date', 'comment', 'account', 'source', 'type', 'amount'],
+  },
+}
+
 
 class ListingPanel extends React.Component {
   constructor(props) {
@@ -36,38 +56,57 @@ class ListingPanel extends React.Component {
     this.state = {
       listingData: [],
       page: 1,
+      typeSelected: 'expenses',
+      listingDataSelected: null
+      
+    }
+  }
+
+  componentDidMount() {
+    this.updateListingData(this.props.listingDataSelected);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.listingDataSelected !== this.props.listingDataSelected) {
+      this.updateListingData(this.props.listingDataSelected);
     }
   }
 
   updateListingData (data) {
-    console.log("+++ 32 ListingPanel.js data: ", JSON.stringify(data, null, "\t"));
     var payload = {
       page: this.state.page,
       timeframe: this.props.currentTimeframe,
+      listingData: [],
     }
 
-    if(!data.type){
+    if(!data.type || data.type === "allExpenses"){
+      // this.setState({typeSelected: 'expenses'}); 
       payload['type'] = 'expenses';
     }
 
-    if(data.type === "allExpenses"){
-      payload['type'] = 'expenses';
-    }
-
-    if(data.type === "allFunds"){
-      payload['type'] = 'funds';
-    }
     if(data.type === "expenses"){
+      // this.setState({typeSelected: 'category'}); 
       payload['type'] = 'expenses';
-      payload['id'] = this.props.data.id;
+      payload['categoryId'] = Number(data.categoryId);
     }
-    console.log("+++ 64 ListingPanel.js payload: ", payload)
+  
+    if(data.type === "allFunds"){
+      // this.setState({typeSelected: 'funds'}); 
+      payload['type'] = 'funds';
+      payload['typeId'] = [1,2,3];
+    }
+    if(data.type === "funds"){
+      // this.setState({typeSelected: 'funds'});
+      payload['type'] = 'funds';
+      payload['accountId'] = Number(data.accountId);
+      payload['typeId'] = Number(data.typeId);
+    }
+
     search(payload)
       .then((res) => {
         var data = res.data;
-        console.log("+++ 54 ListingPanel.js data: ", JSON.stringify(data, null, "\t"));
         if(data.success){
-          
+          this.setState({listingData: data.data.results, listingDataSelected: this.props.listingDataSelected})
         }
       })
   }
@@ -75,10 +114,10 @@ class ListingPanel extends React.Component {
 
   render(){
     const { classes, viewSelected, listingDataSelected } = this.props;
-    let listingData = null;
-    if(listingData === null){
-      listingData = this.updateListingData(listingDataSelected);
-    }
+    // let listingData = null;
+    // if(listingData === null){
+    //   listingData = this.updateListingData(listingDataSelected);
+    // }
     return (
       <React.Fragment>
         
@@ -87,16 +126,22 @@ class ListingPanel extends React.Component {
         </Typography>
         <Table size="small">
           <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Comment</TableCell>
-              <TableCell>Account</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell align="right">Amount</TableCell>
+            <TableRow hover>
+              {tableComponents[this.state.typeSelected].headers.map((item, i) => (
+                <TableCell key={i} >{item}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            TABLE GOES HERE
+            {this.state.listingData.map(item => (
+              <TableRow key={item.id} hover>
+                <TableCell>{item.date}</TableCell>
+                <TableCell>{item.comment}</TableCell>
+                <TableCell>{capitalize(item.account)}</TableCell>
+                <TableCell>{capitalize(item.expensescategory.name)}</TableCell>
+                <TableCell>{decimals(item.amount)}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         <div className={classes.seeMore}>

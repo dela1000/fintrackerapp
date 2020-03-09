@@ -940,23 +940,54 @@ module.exports = controllers = {
     get: function (req, res) {
       var userId = req.headers.userId;
       var type = finUtils.capitalizeFirst(req.query.type);
-      if(type === "Accounts"){
+      if(type === "Accounts" || type === "accounts"){
         type = "UserAccounts";
       } 
-      else if (type === "Categories") {
+      else if (type === "Categories" || type === "categories") {
         type = "ExpensesCategories";
-      } else if (type === "Sources") {
+      } else if (type === "Sources" || type === "sources") {
         type = "FundSources";
       }
 
       var payload = {
         userId: userId,
-        type: type,
         deleted: false,
         include: [],
         orderBy: "date",
         order: "asc"
       };
+
+      // if(type === "ExpensesCategories"){
+      //   payload.categoryId = req.query.categoryId;
+      // }
+
+      // if (req.query.comment) {
+      //   payload.comment = req.query.comment
+      // }
+      // if (req.query.minAmount) {
+      //   payload.minAmount = req.query.minAmount
+      // }
+      // if (req.query.maxAmount) {
+      //   payload.maxAmount = req.query.maxAmount
+      // }
+      // if (req.query.deleted) {
+      //   payload.deleted = true;
+      // };
+      // if (req.query.limit) {
+      //   payload.limit = Number(req.query.limit);
+      // };
+      // if (req.query.orderBy) {
+      //   payload.orderBy = req.query.orderBy;
+      // };
+      // if (req.query.order) {
+      //   payload.order = req.query.order;
+      // };      
+
+      _.forEach(req.query, (value, key) => {
+        payload[key] = value;
+      })
+
+      payload['type'] = type;
 
       if (type === "Funds") {
         payload.sourceId = req.query.sourceId;
@@ -989,31 +1020,6 @@ module.exports = controllers = {
         })
       }
 
-      // if(type === "ExpensesCategories"){
-      //   payload.categoryId = req.query.categoryId;
-      // }
-
-      if (req.query.comment) {
-        payload.comment = req.query.comment
-      }
-      if (req.query.minAmount) {
-        payload.minAmount = req.query.minAmount
-      }
-      if (req.query.maxAmount) {
-        payload.maxAmount = req.query.maxAmount
-      }
-      if (req.query.deleted) {
-        payload.deleted = true;
-      };
-      if (req.query.limit) {
-        payload.limit = Number(req.query.limit);
-      };
-      if (req.query.orderBy) {
-        payload.orderBy = req.query.orderBy;
-      };
-      if (req.query.order) {
-        payload.order = req.query.order;
-      };
       if (req.query.startDate) {
         payload['startDate'] = req.query.startDate
       } else {

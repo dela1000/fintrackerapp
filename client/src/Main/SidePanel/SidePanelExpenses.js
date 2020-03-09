@@ -18,7 +18,7 @@ export default function SidePanelExpenses(props) {
       />
       <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
         {props.expensesByCategory.map((item, key) => (
-          <ListItem button key={key} onClick={() => props.updateListingData({type: 'expenses', name: item.category, id: item.categoryId})}>
+          <ListItem button key={key} onClick={() => props.updateListingData({type: 'expenses', name: item.category, categoryId: item.categoryId})}>
             <Grid
               container
               direction="row"
