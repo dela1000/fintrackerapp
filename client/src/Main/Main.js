@@ -140,10 +140,14 @@ class Main extends React.Component {
 
   updateTimeframe(timeframe) {
     if(timeframe === 'month'){
-      this.setState({timeframe: "year", currentTimeframe: 'month'})
+      this.setState({timeframe: "year", currentTimeframe: 'month'}, () => {
+        this.updateListingData(this.state.listingDataSelected)
+      })
     }
     if(timeframe === 'year'){
-      this.setState({timeframe: "month", currentTimeframe: 'year'})
+      this.setState({timeframe: "month", currentTimeframe: 'year'}, () => {
+        this.updateListingData(this.state.listingDataSelected)
+      })
     }
   }
 
@@ -156,11 +160,9 @@ class Main extends React.Component {
   }
 
   updateListingData (listingDataSelected) {
-    console.log("+++ 155 Main.js listingDataSelected: ", listingDataSelected)
-  
     var payload = {
       page: this.state.page,
-      timeframe: this.props.currentTimeframe,
+      timeframe: this.state.currentTimeframe,
     }
 
     if(!listingDataSelected.type || listingDataSelected.type === "allExpenses"){
@@ -185,7 +187,6 @@ class Main extends React.Component {
     search(payload)
       .then((res) => {
         var data = res.data;
-        console.log("+++ 103 Main.js data: ", data)
         if(data.success){
           this.setState({listingData: data.data.results, listingDataSelected})
         } else {
