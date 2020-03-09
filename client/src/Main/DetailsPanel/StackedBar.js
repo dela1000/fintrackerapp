@@ -12,16 +12,14 @@ import { Chart,
 import { capitalize, decimals } from "../../Services/helpers";
 
 const customizeTooltip = arg => {
-    return {
-      text: `${capitalize(arg.seriesName) }: $${decimals(arg.valueText)}`
-    };
+    return { text: `${capitalize(arg.seriesName) }: $${decimals(arg.valueText)}` };
   }
 
 export default function Stacked ({dailyData, categoryData}) {
   return (
     <Chart
       id="chart"
-      title="Expenses By Day"
+      title="Expenses by day"
       dataSource={dailyData}
     >
       <CommonSeriesSettings argumentField="date" type="stackedBar" />

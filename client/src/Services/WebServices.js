@@ -79,6 +79,5 @@ export function search(payload){
     var param = key + '=' + item + '&';
     link = link + param
   })
-  console.log("+++ 82 WebServices.js link: ", link)
   return axios.get(link)
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 import Divider from '@material-ui/core/Divider';
 
 import { capitalize, decimals } from "../../Services/helpers";
@@ -16,10 +17,10 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
   let sourceTitle = "Sources this " + currentTimeframe;
   let sourceData = [];
   let argumentField = "";
-  let valueField = "";
   
   // Daily data
   let dailyData = [];
+  let tempCategoryData = [];
   let categoryData = [];
   
   if(viewSelected){
@@ -36,9 +37,9 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
   var dailyHolder = {};
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
     argumentField = "category";
-    valueField = "amount";
     _.forEach(graphData, (item) => {
       if(!mainHolder[item.categoryId]){
+        tempCategoryData.push({name: item.expensescategory.name, id: item.categoryId});
         mainHolder[item.categoryId] = {
           amount: item.amount,
           category: item.expensescategory.name
@@ -51,7 +52,6 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
           date: item.date,
           [item.expensescategory.name]: item.amount
         }
-        categoryData.push(item.expensescategory.name);
       } else {
         if(!dailyHolder[item.date][item.expensescategory.name]){
           dailyHolder[item.date][item.expensescategory.name] = item.amount;
@@ -60,16 +60,23 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
         }
       }
       dailyHolder[item.date][item.expensescategory.name] = Number(decimals(dailyHolder[item.date][item.expensescategory.name]))
+
     })
     _.forEach(dailyHolder, (item) => {
       dailyData.push(item)
     })
-    console.log("+++ 71 DetailsPanel.js dailyData: ", JSON.stringify(dailyData, null, "\t"));
+    dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
+    console.log("+++ 68 DetailsPanel.js dailyData: ", JSON.stringify(dailyData, null, "\t"));
   }
+  
+  tempCategoryData = _.orderBy(tempCategoryData, ['id'],['asc']);
+  
+  _.forEach(tempCategoryData, (item) => {
+    categoryData.push(item.name);
+  })
 
   if(viewSelected.type.toUpperCase().includes('fund'.toUpperCase())){
     argumentField = "account";
-    valueField = "amount";
     _.forEach(graphData, (item) => {
       if(!mainHolder[item.accountId]){
         mainHolder[item.accountId] = {
@@ -97,9 +104,6 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
     mainData.push(item)
   })
 
-  const formatLabel = (arg) => {
-    return `${capitalize(arg.argumentText)}: ${decimals(arg.valueText)}`;
-  }
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
     return (
       <React.Fragment>
@@ -107,8 +111,6 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
           data={mainData}
           title={title}
           argumentField={argumentField}
-          valueField={valueField}
-          formatLabel={formatLabel}
         />
       <Divider />
       <StackedBar 
@@ -126,16 +128,12 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
           data={mainData}
           title={title}
           argumentField={argumentField}
-          valueField={valueField}
-          formatLabel={formatLabel}
         />
         <Divider />
         <Pie
           data={sourceData}
           title={sourceTitle}
           argumentField={argumentField}
-          valueField={valueField}
-          formatLabel={formatLabel}
         />
       </React.Fragment>
     );

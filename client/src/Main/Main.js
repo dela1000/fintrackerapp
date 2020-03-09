@@ -74,6 +74,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    overflowY: 'scroll',
   },
   drawerPaperClose: {
     overflowX: 'hidden',
@@ -90,7 +91,7 @@ const styles = theme => ({
   content: {
     width: '100%',
     flexGrow: 1,
-    height: '100vh',
+    height: 'auto',
     overflow: 'auto',
   },
   container: {
@@ -102,6 +103,11 @@ const styles = theme => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+  },
+  detailsPanel: {
+    overflowY: 'scroll',
+    height: '100%',
+    display: 'block'
   },
   fixedHeight: {
     height: 160,
@@ -278,7 +284,7 @@ class Main extends React.Component {
                     message={this.state.message}
                     />
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={4} className={classes.detailsPanel}>
                     <Paper className={classes.paper}>
                       <DetailsPanel 
                         viewSelected={this.state.listingDataSelected}
@@ -298,91 +304,3 @@ class Main extends React.Component {
 }
 
 export default withStyles(styles)(Main);
-
-
- //  constructor(props) {
- //    super(props);
- //    this.state = {
- //      allTotals: {
- //        currentAvailable: "",
- //        availableByAccount: {
- //          checking: [],
- //          savings: [],
- //          investments: [],
- //        },
- //        expensesByCategory: [],
- //        fundsByTypes: [],
- //        userAccounts: [],
- //        expensesCategories: [],
- //        fundSources: [],
- //      },
- //      tableData: [],
- //      viewSelected: "expenses"
- //    };
- //    this.getExpenses = this.getExpenses.bind(this);
- //    this.getFunds = this.getFunds.bind(this);
- //    this.selectAccount = this.selectAccount.bind(this);
- //    this.selectCategory = this.selectCategory.bind(this);
- //    this.selectType = this.selectType.bind(this);
- //  }
-
- //  static propTypes = {
- //    allTotals: PropTypes.object,
- //    tableData: PropTypes.array,
- //    viewSelected: PropTypes.string,
- //  };
-
- //  componentDidMount() {
- //    this.getAllTotals = this.getAllTotals.bind(this);
- //    this.getAllTotals();
- //    // this.getUserDataTypes();
- //    this.getExpenses();
- //  };
-
- //  getAllTotals (){
- //    get_all_totals()
- //      .then((res) => {
- //        var data = res.data;
- //        if(data.success){
- //          this.setState({ allTotals: data.data })
- //        }
- //      })
- //  }
-
- // getExpenses(){
- //   get_expenses()
- //     .then((res) => {
- //       var data = res.data;
- //       if(data.success){ 
- //        this.setState({ tableData: data.data, viewSelected: "expenses"})
- //      }
- //     })
- //     .catch((err) => {
- //      console.log("+++ 50 Main.js err: ", err)
- //     })
- // }
-
- // getFunds(){
- //   get_funds()
- //     .then((res) => {
- //       var data = res.data;
- //       if(data.success){ 
- //        this.setState({ tableData: data.data, viewSelected: "funds"}) 
- //      }
- //     })
- //     .catch((err) => {
- //      console.log("+++ 61 Main.js err: ", err)
- //     })
- // }
-
- //  selectAccount(item){
- //    console.log("+++ 53 Main.js item: ", item)
- //  }
-
- //  selectCategory(item){
- //    console.log("+++ 57 Main.js item: ", item)
- //  }
-
- //  selectType(item){
- //    console.log("+++ 61 Main.js item: ", item)
- //  }
