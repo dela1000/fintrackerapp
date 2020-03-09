@@ -122,6 +122,7 @@ class Main extends React.Component {
       totalExpenses: 0,
       currentAvailable: 0,
       listingData: [],
+      page: 1,
       listingDataSelected: {
         "type": "allExpenses"
       },
@@ -160,6 +161,7 @@ class Main extends React.Component {
   }
 
   updateListingData (listingDataSelected) {
+    console.log("+++ 163 Main.js listingDataSelected: ", listingDataSelected)
     var payload = {
       page: this.state.page,
       timeframe: this.state.currentTimeframe,

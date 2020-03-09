@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Link from '@material-ui/core/Link';
-import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -27,7 +26,7 @@ class ExpensesTable extends React.Component {
   }
 
   render () {
-    const { classes, listingData, listingDataSelected } = this.props;
+    const { classes, listingData } = this.props;
     return (
       <React.Fragment>
         <Table size="small">
@@ -51,12 +50,12 @@ class ExpensesTable extends React.Component {
               </TableRow>
             ))}
           </TableBody>
-          <div className={classes.seeMore}>
-            <Link color="primary" href="#" onClick={() => loadMore()}>
-              Load More
-            </Link>
-          </div>
         </Table>
+        <div className={classes.seeMore}>
+          <Link color="primary" href="#" onClick={() => loadMore()}>
+            Load More
+          </Link>
+        </div>
       </React.Fragment>
     )
   }
