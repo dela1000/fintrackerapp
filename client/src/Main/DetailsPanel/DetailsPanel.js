@@ -1,31 +1,26 @@
 import React from 'react';
 import _ from 'lodash';
-
-import PieChart, {
-  Series,
-  Label,
-  Connector,
-  Size,
-  Legend,
-  SmallValuesGrouping,
-  Export,
-  Font,
-} from 'devextreme-react/pie-chart';
 import Divider from '@material-ui/core/Divider';
 
 import { capitalize, decimals } from "../../Services/helpers";
 
 import Pie from './Pie.js'
+import StackedBar from './StackedBar.js'
 
 export default function DetailedPanel({viewSelected, graphData, currentTimeframe}) {
-  console.log("+++ 16 PieGraph.js viewSelected: ", viewSelected)
-  let data = [];
-  let sourceData = [];
-  
+  // Expenses and funds data
+  let mainData = [];
   let title = " this " + currentTimeframe;
+
+  // Sources Data
   let sourceTitle = "Sources this " + currentTimeframe;
+  let sourceData = [];
   let argumentField = "";
   let valueField = "";
+  
+  // Daily data
+  let dailyData = [];
+  let categoryData = [];
   
   if(viewSelected){
     if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
@@ -36,34 +31,53 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
     }
   }
   
-  var tempHolder = {};
+  var mainHolder = {};
   var sourceHolder = {};
+  var dailyHolder = {};
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
     argumentField = "category";
     valueField = "amount";
     _.forEach(graphData, (item) => {
-      if(!tempHolder[item.categoryId]){
-        tempHolder[item.categoryId] = {
+      if(!mainHolder[item.categoryId]){
+        mainHolder[item.categoryId] = {
           amount: item.amount,
           category: item.expensescategory.name
         }
       } else {
-        tempHolder[item.categoryId].amount = tempHolder[item.categoryId].amount + item.amount;
+        mainHolder[item.categoryId].amount = mainHolder[item.categoryId].amount + item.amount;
       }
+      if(!dailyHolder[item.date]){
+        dailyHolder[item.date] = {
+          date: item.date,
+          [item.expensescategory.name]: item.amount
+        }
+        categoryData.push(item.expensescategory.name);
+      } else {
+        if(!dailyHolder[item.date][item.expensescategory.name]){
+          dailyHolder[item.date][item.expensescategory.name] = item.amount;
+        } else {
+          dailyHolder[item.date][item.expensescategory.name] = dailyHolder[item.date][item.expensescategory.name] + item.amount;
+        }
+      }
+      dailyHolder[item.date][item.expensescategory.name] = Number(decimals(dailyHolder[item.date][item.expensescategory.name]))
     })
+    _.forEach(dailyHolder, (item) => {
+      dailyData.push(item)
+    })
+    console.log("+++ 71 DetailsPanel.js dailyData: ", JSON.stringify(dailyData, null, "\t"));
   }
 
   if(viewSelected.type.toUpperCase().includes('fund'.toUpperCase())){
     argumentField = "account";
     valueField = "amount";
     _.forEach(graphData, (item) => {
-      if(!tempHolder[item.accountId]){
-        tempHolder[item.accountId] = {
+      if(!mainHolder[item.accountId]){
+        mainHolder[item.accountId] = {
           amount: item.amount,
           account: item.useraccount.account
         }
       } else {
-        tempHolder[item.accountId].amount = tempHolder[item.accountId].amount + item.amount;
+        mainHolder[item.accountId].amount = mainHolder[item.accountId].amount + item.amount;
       }
       if(!sourceHolder[item.sourceId]){
         sourceHolder[item.sourceId] = {
@@ -79,8 +93,8 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
     })
   }
 
-  _.forEach(tempHolder, (item) => {
-    data.push(item)
+  _.forEach(mainHolder, (item) => {
+    mainData.push(item)
   })
 
   const formatLabel = (arg) => {
@@ -88,13 +102,20 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
   }
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
     return (
-      <Pie
-        data={data}
-        title={title}
-        argumentField={argumentField}
-        valueField={valueField}
-        formatLabel={formatLabel}
+      <React.Fragment>
+        <Pie
+          data={mainData}
+          title={title}
+          argumentField={argumentField}
+          valueField={valueField}
+          formatLabel={formatLabel}
+        />
+      <Divider />
+      <StackedBar 
+        categoryData={categoryData}
+        dailyData={dailyData}
       />
+      </React.Fragment>
     );
   }
 
@@ -102,7 +123,7 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
     return (
       <React.Fragment>
         <Pie
-          data={data}
+          data={mainData}
           title={title}
           argumentField={argumentField}
           valueField={valueField}

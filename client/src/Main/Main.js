@@ -161,12 +161,10 @@ class Main extends React.Component {
   }
 
   updateListingData (listingDataSelected) {
-    console.log("+++ 164 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     var payload = {
       page: this.state.page,
       timeframe: this.state.currentTimeframe,
     }
-
 
     if(listingDataSelected === null){
       payload['type'] = "expenses";
