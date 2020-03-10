@@ -72,7 +72,7 @@ class ListingPanel extends React.Component {
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           }
         }
-        dailyHolder[item.date][item.expensescategory.name].total = Number(decimals(dailyHolder[item.date][item.expensescategory.name].total))
+        dailyHolder[item.date][item.expensescategory.name].total = decimals(dailyHolder[item.date][item.expensescategory.name].total);
       })
       
       tempHeaderData = _.orderBy(tempHeaderData, ['id'],['asc']);
@@ -87,7 +87,6 @@ class ListingPanel extends React.Component {
       
 
       dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
-      console.log("+++ 85 Sheet.js dailyData: ", JSON.stringify(dailyData, null, "\t"));
 
       this.setState({type: "expenses", headerData, dailyData})
     }
@@ -100,7 +99,6 @@ class ListingPanel extends React.Component {
 
   renderTableData() {
     return this.state.dailyData.map((row, i) => {
-      console.log("+++ 104 Sheet.js row: ", row)
       return (
           <TableRow key={i} hover>
             <TableCell component="th" scope="row">

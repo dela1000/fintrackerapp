@@ -45,14 +45,15 @@ class SelectorPanel extends React.Component {
     }
   }
 
-  updateView = () => {
-    if(this.state.viewSelected === "Listing"){
+  updateView = (view) => {
+    if(view === "Sheet"){
       this.setState({
         viewSelected: "Sheet",
         listButtonColor: 'default',
         sheetButtonColor: 'primary',
       })
-    } else {
+    }
+    if(view === "Listing") {
       this.setState({
         viewSelected: "Listing",
         listButtonColor: 'primary',
@@ -87,14 +88,14 @@ class SelectorPanel extends React.Component {
                   size="small" 
                   variant="contained" 
                   color={this.state.listButtonColor} 
-                  onClick={this.updateView}>
+                  onClick={() => this.updateView('Listing')}>
                     List
                 </Button>
                 <Button 
                   size="small" 
                   variant="contained" 
                   color={this.state.sheetButtonColor} 
-                  onClick={this.updateView}>
+                  onClick={() => this.updateView('Sheet')}>
                     Sheet
                 </Button>
               </ButtonGroup>
