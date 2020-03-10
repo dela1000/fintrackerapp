@@ -87,15 +87,21 @@ class Sheet extends React.Component {
             date: item.date,
             [item.accountId]: {
               total: item.amount,
-              comment: ["$" + decimals(item.amount) + " " + item.comment]
+              comment: ["$" + decimals(item.amount) + " - Source: " + capitalize(item.source)]
             },
             total: item.amount,
+          }
+          if(item.comment && item.comment.length > 0){
+            dailyHolder[item.date][item.accountId].comment[0] = dailyHolder[item.date][item.accountId].comment[0] + " - Comment: " + item.comment;
           }
         } else {
           if(!dailyHolder[item.date][item.accountId]){
             dailyHolder[item.date][item.accountId] = {
               total: item.amount,
-              comment: ["$" + decimals(item.amount) + " " + item.comment]
+              comment: ["$" + decimals(item.amount) + " - Source: " + capitalize(item.source)]
+            }
+            if(item.comment && item.comment.length > 0){
+              dailyHolder[item.date][item.accountId].comment[0] = dailyHolder[item.date][item.accountId].comment[0] + " - Comment: " + item.comment;
             }
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           } else {
@@ -112,7 +118,7 @@ class Sheet extends React.Component {
     _.forEach(tempHeaderData, (item) => {
       headerData.push({name: item.name, type: item.type, id: item.id});
     })
-    
+
     _.forEach(dailyHolder, (item) => {
       dailyData.push(item)
     })
