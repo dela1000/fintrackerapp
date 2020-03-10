@@ -834,10 +834,16 @@ module.exports = controllers = {
         payload['startDate'] = finUtils.startOfYear();
         payload['endDate'] = finUtils.endOfYear();
         payload.timeframe = req.query.timeframe;
-      } else {
+      } 
+      if (req.query.timeframe && req.query.timeframe === 'month') {
         payload['startDate'] = finUtils.startOfMonth();
         payload['endDate'] = finUtils.endOfMonth();
         payload.timeframe = "month";
+      }
+      if (req.query.startDate && req.query.endDate) {
+        payload['startDate'] = req.query.startDate;
+        payload['endDate'] = req.query.endDate;
+        payload.timeframe = "custom";
       }
       models.expenses_totals.get(payload, function(expensesData, message) {
         if (expensesData) {
@@ -860,19 +866,29 @@ module.exports = controllers = {
 
   all_totals: {
     get: function(req, res) {
-      console.log("+++ 864 index.js req.query: ", JSON.stringify(req.query, null, "\t"));
       var payload = {
-        timeframe: "month",
         userId: req.headers.userId,
-        deleted: false,
-        startDate: finUtils.startOfMonth(),
-        endDate: finUtils.endOfMonth()
+        deleted: false
       }
+      if(req.query.startDate){
+        payload.startDate = req.query.startDate;
+      } else{
+        payload.startDate = finUtils.startOfMonth();
+        
+      };
+      if(req.query.endDate){
+        payload.endDate = req.query.endDate;
+      } else{
+        payload.endDate = finUtils.endOfMonth();
+        
+      };
       
       if (req.query.timeframe === 'year') {
-        payload['timeframe'] = "year";
         payload['startDate'] = finUtils.startOfYear();
         payload['endDate'] = finUtils.endOfYear();
+      }
+      if(!req.query.timeframe){
+        payload['timeframe'] = "custom";
       }
       models.all_totals.get(payload, function(results, message) {
         if (results) {

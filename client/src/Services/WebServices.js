@@ -25,11 +25,12 @@ export function get_funds(page){
   return axios.get('/funds_bulk?page=' + pg)
 }
 
-export function get_all_totals(params){
+export function get_all_totals(payload){
   var link = '/all_totals?'
-  if(params.timeframe){
-    link = link + "timeframe=" + params.timeframe
-  }
+  _.forEach(payload, (value, key) => {
+    link = link + key + "=" + value + "&"
+  })
+  console.log("+++ 35 WebServices.js link: ", link)
   return axios.get(link);
 }
 

@@ -7,6 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -15,7 +17,8 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-import { dateFormat } from "../../Services/helpers";
+import { capitalize, dateFormat } from "../../Services/helpers";
+
 
 class TimeSelector extends React.Component {
   constructor(props) {
@@ -24,6 +27,7 @@ class TimeSelector extends React.Component {
       showCalendars: true,
       startDate: null,
       endDate: null,
+      option: ""
     }
   };
 
@@ -35,12 +39,44 @@ class TimeSelector extends React.Component {
     }
   }
 
+  customOptions = [
+    {name: "last month", value: 'lastMonth'},
+    {name: 'last 3 months', value: 'lastThreeMonths'},
+    {name: 'year to date', value: 'yearToDate'},
+    {name: 'last year', value: 'lastYear'},
+    // {name: 'all time', value: 'allTime'},
+  ]
+
   handleDateChange (e, selectedDate) {
     let date = moment(selectedDate).format('MM-DD-YYYY');
     this.setState({[e]: date}, () => {
       this.callCustomDates();
     });
   };
+
+  handleChange (e) { 
+    let value = e.target.value;
+    var payload = {};
+    if(value === "lastMonth"){
+      payload['startDate'] = moment().subtract(1, 'months').startOf('month').format(dateFormat);
+      payload['endDate'] = moment().subtract(1, 'months').endOf('month').format(dateFormat);
+    }
+    if(value === "lastThreeMonths"){
+      payload['startDate'] = moment().subtract(90, 'days').format(dateFormat);
+      payload['endDate'] = moment().format(dateFormat);
+    }
+    if(value === "yearToDate"){
+      payload['startDate'] = moment().startOf('year').format(dateFormat);
+      payload['endDate'] = moment().format(dateFormat);
+    }
+    if(value === "lastYear"){
+      payload['startDate'] = moment().subtract(1, 'year').startOf('year').format(dateFormat);
+      payload['endDate'] = moment().subtract(1, 'year').endOf('year').format(dateFormat);
+    }
+
+    this.props.updateCustom(payload)
+    this.setState({[e.target.name]: value, startDate: null, endDate: null})
+  }
 
   callCustomDates = () => {
     if(moment(this.state.endDate).isBefore(this.state.startDate)){
@@ -52,10 +88,9 @@ class TimeSelector extends React.Component {
         startDate: moment(this.state.startDate).format(dateFormat),
         endDate: moment(this.state.endDate).format(dateFormat),
       }
+      this.props.updateCustom(payload)
     }
-    console.log("+++ 56 TimeSelector.js payload: ", payload)
   }
-
 
   render () {
     const { open, timeframe } = this.props;
@@ -98,7 +133,7 @@ class TimeSelector extends React.Component {
           spacing={1}
           style={this.state.showCalendars ? {} : { display: 'none' }}
         >
-          <Grid item xs>
+          <Grid item>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
                 autoFocus
@@ -117,25 +152,42 @@ class TimeSelector extends React.Component {
               />
             </MuiPickersUtilsProvider>
           </Grid>
-          <Grid item xs>
-           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-             <KeyboardDatePicker
-               autoFocus
-               fullWidth
-               autoOk
-               allowKeyboardControl
-               autoComplete="off"
-               margin="normal"
-               id="date-picker-dialog"
-               label="Select End Date"
-               format="MM-dd-yyyy"
-               name="endDate"
-               value={this.state.endDate}
-               KeyboardButtonProps={{ 'aria-label': 'change date' }}
-               onChange={(e, date) => this.handleDateChange('endDate', date)}
-             />
-           </MuiPickersUtilsProvider>
-           </Grid>
+          <Grid item>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                autoFocus
+                fullWidth
+                autoOk
+                allowKeyboardControl
+                autoComplete="off"
+                margin="normal"
+                id="date-picker-dialog"
+                label="Select End Date"
+                format="MM-dd-yyyy"
+                name="endDate"
+                value={this.state.endDate}
+                KeyboardButtonProps={{ 'aria-label': 'change date' }}
+                onChange={(e, date) => this.handleDateChange('endDate', date)}
+              />
+            </MuiPickersUtilsProvider>
+          </Grid>
+          <Grid item>
+            <TextField
+              fullWidth
+              id="customOption"
+              select
+              label="Select a Custom Option"
+              name="option"
+              value={this.state.option}
+              onChange={(e) => this.handleChange(e)}
+            >
+              {this.customOptions.map((option, i) => (
+                <MenuItem key={i} value={option.value}>
+                  {capitalize(option.name)}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
         </Grid>
       </React.Fragment>
     )

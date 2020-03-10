@@ -38,18 +38,15 @@ class SidePanel extends React.Component {
     };
     this.getAllTotals = this.getAllTotals.bind(this);
     this.updateTimeframe = this.updateTimeframe.bind(this);
+    this.updateCustom = this.updateCustom.bind(this);
   }
 
   componentDidMount() {
     this.getAllTotals();
   };
 
-  getAllTotals (timeframe){
-    var params = {
-      timeframe: timeframe,
-      page: this.state.page
-    }
-    get_all_totals(params)
+  getAllTotals (payload){
+    get_all_totals(payload)
       .then((res) => {
         var data = res.data;
         if(data.success){
@@ -61,9 +58,8 @@ class SidePanel extends React.Component {
       })
   }
 
-  getExpensesTotals (timeframe){
-    var params = { timeframe: timeframe, }
-    expenses_totals(params)
+  getExpensesTotals (payload){
+    expenses_totals(payload)
       .then((res) => {
         var data = res.data;
         if(data.success){
@@ -78,14 +74,21 @@ class SidePanel extends React.Component {
 
   updateTimeframe (timeframe) {
     if(timeframe === 'month'){
-      this.getExpensesTotals('month');
+      this.getExpensesTotals({timeframe: 'month'});
       this.props.updateTimeframe('month');
     }
     if(timeframe === 'year'){
-      this.getExpensesTotals('year');
+      this.getExpensesTotals({timeframe: 'year'});
       this.props.updateTimeframe('year');
     }
   }
+
+  updateCustom (payload) {
+    console.log("+++ 92 SidePanel.js payload: ", payload)
+    // this.getExpensesTotals(payload);
+    this.getAllTotals(payload);
+    this.props.updateTimeframe('custom');
+  } 
 
   render () {
     let noExpensesCategories = _.isEmpty(this.state.allTotals.expensesCategories);
@@ -95,6 +98,7 @@ class SidePanel extends React.Component {
           open={this.props.open}
           timeframe={this.props.timeframe}
           updateTimeframe={this.updateTimeframe}
+          updateCustom={this.updateCustom}
         />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} onClick={() => this.props.updateListingData({type: 'allExpenses'})}>
           <Grid item xs={2}>
