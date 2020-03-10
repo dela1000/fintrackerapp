@@ -1,6 +1,11 @@
+import _ from 'lodash';
 import moment from 'moment';
 
+
 export function capitalize(str) {
+  if(str === 0 || str === "0.00"){
+    return "0.00"
+  }
   if(!str){
     return "";
   }
@@ -8,6 +13,9 @@ export function capitalize(str) {
 };
 
 export function decimals(num) {
+  if(!num) {
+    return null
+  }
   return Number(parseFloat(num).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 });
 }
 
@@ -33,4 +41,28 @@ export const dateFormat = 'MM-DD-YYYY';
 
 export const formatDate = function (date) {
   return moment(date).format(dateFormat)
+}
+
+export function findMissingDates(data) {
+  var tempResults = data.sort(function(a,b){
+   return Date.parse(a.date) - Date.parse(b.date);
+  }).reduce(function(hash){
+    return function(p,c){
+      var missingDaysNo = (Date.parse(c.date) - hash.prev) / (1000 * 3600 * 24);
+      if(hash.prev && missingDaysNo > 1) {
+        for(var i=1;i<missingDaysNo;i++)
+          p.push(new Date(hash.prev+i*(1000 * 3600 * 24)));
+      }
+      hash.prev = Date.parse(c.date);
+      return p;
+    };
+  }(Object.create(null)),[]);
+  var results = [];
+  _.forEach(tempResults, (date) => {
+    results.push({
+      date: moment(date).format(dateFormat),
+      total: "0.00"
+    })
+  })
+  return results;
 }

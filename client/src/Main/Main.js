@@ -225,7 +225,7 @@ class Main extends React.Component {
         }
       })
   }
-xr
+
   render () {
     const { classes } = this.props;
     return (
