@@ -2,10 +2,10 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
+import TableContainer from '@material-ui/core/TableContainer';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
@@ -146,8 +146,6 @@ class Sheet extends React.Component {
 
   subTable(row){
     return this.state.headerData.map((item, idx) => {
-      console.log("+++ 159 Sheet.js row: ", row)
-      console.log("+++ 160 Sheet.js item: ", item)
       if(row[item.id]){
         if(row[item.id].comment){
           return (
@@ -190,8 +188,8 @@ class Sheet extends React.Component {
   render(){
     return (
       <React.Fragment>
-        <TableContainer component={Paper}>
-          <Table  aria-label="simple table" size="small">
+        <TableContainer component={Paper} style={{maxHeight: '90vh'}}>
+          <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
             <TableHead>
               <TableRow>
               <TableCell component="th" scope="row">

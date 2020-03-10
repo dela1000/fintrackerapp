@@ -1,6 +1,8 @@
 import React from 'react';
 
 import Link from '@material-ui/core/Link';
+import TableContainer from '@material-ui/core/TableContainer';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -29,8 +31,8 @@ class ExpensesTable extends React.Component {
   render () {
     const { classes, listingData } = this.props;
     return (
-      <React.Fragment>
-        <Table size="small">
+      <TableContainer component={Paper} style={{maxHeight: '90vh'}}>
+        <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>
@@ -77,7 +79,7 @@ class ExpensesTable extends React.Component {
             Load More
           </Link>
         </div>
-      </React.Fragment>
+      </TableContainer>
     )
   }
 }
