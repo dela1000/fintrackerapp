@@ -16,7 +16,7 @@ import TransferModal from './TransferModal.js';
 import { capitalize, decimals } from "../../Services/helpers";
 
 const useStyles = makeStyles({
-  depositContext: {
+  accountContext: {
     flex: 1,
   },
 });
@@ -42,7 +42,7 @@ export default function SidePanelAccount(props) {
             <Typography variant="h6">
               {capitalize(props.type)}
             </Typography>
-            <Typography variant="caption" color="textSecondary" className={classes.depositContext}>
+            <Typography variant="caption" color="textSecondary" className={classes.accountContext}>
               Total: {decimals(accountsTotal)}
             </Typography>
           </Box>

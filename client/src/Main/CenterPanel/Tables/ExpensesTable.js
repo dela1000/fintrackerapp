@@ -6,6 +6,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
 import { capitalize, decimals } from "../../../Services/helpers.js";
@@ -32,11 +33,31 @@ class ExpensesTable extends React.Component {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Comment</TableCell>
-              <TableCell>Account</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell align="right">Amount</TableCell>
+              <TableCell>
+                <Typography>
+                  Date
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>
+                  Comment
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>
+                  Account
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>
+                  Category
+                </Typography>
+              </TableCell>
+              <TableCell align="right">
+                <Typography>
+                  Amount
+                </Typography>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

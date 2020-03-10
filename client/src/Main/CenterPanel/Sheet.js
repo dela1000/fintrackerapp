@@ -15,8 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import { capitalize, decimals, findMissingDates } from "../../Services/helpers.js";
 
 
-
-class ListingPanel extends React.Component {
+class Sheet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,12 +35,13 @@ class ListingPanel extends React.Component {
   }
 
   formatData = () => {
-    // EXPENSES SECTION
     let mainHolder = {};
     let dailyHolder = {};
     let dailyData = [];
     let headerData = [];
     let tempHeaderData =[];
+    
+    // EXPENSES SECTION
     if(this.props.listingDataSelected.type.toUpperCase().includes('expense'.toUpperCase())){
       _.forEach(this.props.listingData, (item) => {
         if(!mainHolder[item.categoryId]){
@@ -51,42 +51,27 @@ class ListingPanel extends React.Component {
         if(!dailyHolder[item.date]){
           dailyHolder[item.date] = {
             date: item.date,
-            [item.expensescategory.name]: {
+            [item.categoryId]: {
               total: item.amount,
               comment: ["$" + decimals(item.amount) + " " + item.comment]
             },
             total: item.amount,
           }
         } else {
-          if(!dailyHolder[item.date][item.expensescategory.name]){
-            dailyHolder[item.date][item.expensescategory.name] = {
+          if(!dailyHolder[item.date][item.categoryId]){
+            dailyHolder[item.date][item.categoryId] = {
               total: item.amount,
               comment: ["$" + decimals(item.amount) + " " + item.comment]
             }
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           } else {
-            dailyHolder[item.date][item.expensescategory.name].total = dailyHolder[item.date][item.expensescategory.name].total + item.amount;
-            dailyHolder[item.date][item.expensescategory.name].comment.push("$" + decimals(item.amount) + " " + item.comment);
+            dailyHolder[item.date][item.categoryId].total = dailyHolder[item.date][item.categoryId].total + item.amount;
+            dailyHolder[item.date][item.categoryId].comment.push("$" + decimals(item.amount) + " " + item.comment);
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           }
         }
-        dailyHolder[item.date][item.expensescategory.name].total = decimals(dailyHolder[item.date][item.expensescategory.name].total);
+        dailyHolder[item.date][item.categoryId].total = decimals(dailyHolder[item.date][item.categoryId].total);
       })
-      
-      tempHeaderData = _.orderBy(tempHeaderData, ['id'],['asc']);
-      _.forEach(dailyHolder, (item) => {
-        dailyData.push(item)
-      })
-      _.forEach(tempHeaderData, (item) => {
-        headerData.push(item.name);
-      })
-
-      dailyData = dailyData.concat(findMissingDates(dailyData));
-      
-
-      dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
-
-      this.setState({type: "expenses", headerData, dailyData})
     }
     // FUNDS SECTION
     if(this.props.listingDataSelected.type.toUpperCase().includes('fund'.toUpperCase())){
@@ -94,48 +79,47 @@ class ListingPanel extends React.Component {
       console.log("+++ 97 Sheet.js this.props.listingData: ", JSON.stringify(this.props.listingData, null, "\t"));
       _.forEach(this.props.listingData, (item) => {
         if(!mainHolder[item.accountId]){
-          tempHeaderData.push({name: item.account, id: item.accountId});
+          tempHeaderData.push({name: item.account, type: item.type , id: item.accountId});
           mainHolder[item.accountId] = item.accountId
         }
         if(!dailyHolder[item.date]){
           dailyHolder[item.date] = {
             date: item.date,
-            [item.account]: {
+            [item.accountId]: {
               total: item.amount,
               comment: ["$" + decimals(item.amount) + " " + item.comment]
             },
             total: item.amount,
           }
         } else {
-          if(!dailyHolder[item.date][item.account]){
-            dailyHolder[item.date][item.account] = {
+          if(!dailyHolder[item.date][item.accountId]){
+            dailyHolder[item.date][item.accountId] = {
               total: item.amount,
               comment: ["$" + decimals(item.amount) + " " + item.comment]
             }
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           } else {
-            dailyHolder[item.date][item.account].total = dailyHolder[item.date][item.account].total + item.amount;
-            dailyHolder[item.date][item.account].comment.push("$" + decimals(item.amount) + " " + item.comment);
+            dailyHolder[item.date][item.accountId].total = dailyHolder[item.date][item.accountId].total + item.amount;
+            dailyHolder[item.date][item.accountId].comment.push("$" + decimals(item.amount) + " " + item.comment);
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           }
-          dailyHolder[item.date][item.account].total = decimals(dailyHolder[item.date][item.account].total);
+          dailyHolder[item.date][item.accountId].total = decimals(dailyHolder[item.date][item.accountId].total);
         }
       })
-
-      tempHeaderData = _.orderBy(tempHeaderData, ['id'],['asc']);
-      _.forEach(dailyHolder, (item) => {
-        dailyData.push(item)
-      })
-      _.forEach(tempHeaderData, (item) => {
-        headerData.push(item.name);
-      })
-
-      dailyData = dailyData.concat(findMissingDates(dailyData));
-
-      dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
-
-      this.setState({type: "funds", headerData, dailyData})
     }
+    // CREATE ARRAYS
+    tempHeaderData = _.orderBy(tempHeaderData, ['id'],['asc']);
+    _.forEach(tempHeaderData, (item) => {
+      headerData.push({name: item.name, type: item.type, id: item.id});
+    })
+    
+    _.forEach(dailyHolder, (item) => {
+      dailyData.push(item)
+    })
+
+    dailyData = dailyData.concat(findMissingDates(dailyData));
+    dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
+    this.setState({type: "funds", headerData, dailyData})
   }
 
   renderTableData() {
@@ -156,14 +140,16 @@ class ListingPanel extends React.Component {
 
   subTable(row){
     return this.state.headerData.map((item, idx) => {
-      if(row[item]){
-        if(row[item].comment){
+      console.log("+++ 159 Sheet.js row: ", row)
+      console.log("+++ 160 Sheet.js item: ", item)
+      if(row[item.id]){
+        if(row[item.id].comment){
           return (
             <Tooltip key={idx} 
               style={{whiteSpace: 'pre-line'}}
               title={
                 <React.Fragment>
-                  {row[item].comment.map((comment, i) => {
+                  {row[item.id].comment.map((comment, i) => {
                     return (
                       <Typography key={i}>
                         {comment}
@@ -174,14 +160,14 @@ class ListingPanel extends React.Component {
               }
             >
               <TableCell key={idx} component="th" scope="row"  align="right">
-                {row[item].total}
+                {row[item.id].total}
               </TableCell>
             </Tooltip>
           )
         } else {
           return (
             <TableCell key={idx} component="th" scope="row"  align="right">
-              {row[item].total}
+              {row[item.id].total}
             </TableCell>
           )
         }
@@ -199,30 +185,39 @@ class ListingPanel extends React.Component {
     return (
       <React.Fragment>
         <TableContainer component={Paper}>
-              <Table  aria-label="simple table" size="small">
-                <TableHead>
-                  <TableRow>
-                  <TableCell component="th" scope="row">
-                    Date
-                  </TableCell>
-                  {this.state.headerData.map((item, i) => (
-                    <TableCell component="th" scope="row" key={i} align="right">
-                      {capitalize(item)}
-                    </TableCell>
-                  ))}
-                  <TableCell component="th" scope="row" align="right">
-                    Total
-                  </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.renderTableData()}
-                </TableBody>
-              </Table>
-            </TableContainer>
+          <Table  aria-label="simple table" size="small">
+            <TableHead>
+              <TableRow>
+              <TableCell component="th" scope="row">
+                <Typography>
+                  Date
+                </Typography>
+              </TableCell>
+              {this.state.headerData.map((item, i) => (
+                <TableCell component="th" scope="row" key={i} align="center">
+                  <Typography>
+                    {capitalize(item.name)}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {capitalize(item.type)}
+                  </Typography>
+                </TableCell>
+              ))}
+              <TableCell component="th" scope="row" align="right">
+                <Typography>
+                  Total
+                </Typography>
+              </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {this.renderTableData()}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </React.Fragment>
     );
   }
 }
 
-export default ListingPanel;
+export default Sheet;
