@@ -21,10 +21,6 @@ class ListingPanel extends React.Component {
     const Cmp = component[listingDataSelected.type];
     return (
       <React.Fragment>
-        
-        <Typography align="left" variant="h5">
-          {capitalize(listingDataSelected.type)}
-        </Typography>
         <Cmp 
           listingData={listingData}
         />

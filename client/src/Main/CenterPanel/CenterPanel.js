@@ -1,23 +1,20 @@
 import React from 'react';
 
-
 import CenterHeader from './CenterHeader.js';
-import ListingPanel from './ListingPanel.js';
+import SelectorPanel from './SelectorPanel.js';
 
-export default function CenterPanel(props) {
+export default function CenterPanel({currentTimeframe, totalExpenses, currentAvailable, listingDataSelected, listingData, message }) {
   return (
     <React.Fragment>
-      <CenterHeader 
-        currentTimeframe={props.currentTimeframe}
-        totalExpenses={props.totalExpenses}
-        currentAvailable={props.currentAvailable}
+      <CenterHeader
+        currentTimeframe={currentTimeframe}
+        totalExpenses={totalExpenses}
+        currentAvailable={currentAvailable}
       />
-      <ListingPanel 
-        viewSelected={props.viewSelected}
-        currentTimeframe={props.currentTimeframe}
-        listingDataSelected={props.listingDataSelected}
-        listingData={props.listingData}
-        message={props.message}
+      <SelectorPanel
+        listingDataSelected={listingDataSelected}
+        listingData={listingData}
+        message={message}
       />
     </React.Fragment>
   )

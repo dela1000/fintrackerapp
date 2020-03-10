@@ -66,7 +66,6 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
       dailyData.push(item)
     })
     dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
-    console.log("+++ 68 DetailsPanel.js dailyData: ", JSON.stringify(dailyData, null, "\t"));
   }
   
   tempCategoryData = _.orderBy(tempCategoryData, ['id'],['asc']);

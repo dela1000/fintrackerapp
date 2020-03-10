@@ -191,7 +191,6 @@ class Main extends React.Component {
       }
     }
 
-
     if(payload.type === "funds"){
       if(listingDataSelected.accountId){
         payload['accountId'] = Number(listingDataSelected.accountId);
@@ -209,6 +208,10 @@ class Main extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
+          if(data.message){
+            this.setState({listingData: [], message: data.data.message})
+            return
+          }
           var searchData = listingDataSelected
           if(!listingDataSelected){
             searchData = {
@@ -217,11 +220,12 @@ class Main extends React.Component {
           }
           this.setState({listingData: data.data.results, listingDataSelected: searchData})
         } else {
+          console.log("+++ 225 Main.js Here")
           this.setState({listingData: [], message: data.data.message})
         }
       })
   }
-
+xr
   render () {
     const { classes } = this.props;
     return (
