@@ -7,7 +7,6 @@ import { Chart,
   ValueAxis, 
   Title, 
   Tooltip,
-  AdaptiveLayout
 } from 'devextreme-react/chart';
 
 import { capitalize, decimals } from "../../Services/helpers";

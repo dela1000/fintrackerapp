@@ -200,10 +200,7 @@ class Main extends React.Component {
       }
     }
 
-    if(listingDataSelected && listingDataSelected.type === "allFunds"){
-      payload['typeId'] = [1,2,3];
-    }
-
+    console.log("+++ 206 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -220,7 +217,6 @@ class Main extends React.Component {
           }
           this.setState({listingData: data.data.results, listingDataSelected: searchData})
         } else {
-          console.log("+++ 225 Main.js Here")
           this.setState({listingData: [], message: data.data.message})
         }
       })

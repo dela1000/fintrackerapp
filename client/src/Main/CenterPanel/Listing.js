@@ -1,11 +1,7 @@
 import React from 'react';
 
-import Typography from '@material-ui/core/Typography';
-
 import ExpensesTable from './Tables/ExpensesTable.js'
 import FundsTable from './Tables/FundsTable.js'
-
-import { capitalize } from "../../Services/helpers.js";
 
 const component = {
   allExpenses: ExpensesTable,

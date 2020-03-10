@@ -984,9 +984,12 @@ module.exports = controllers = {
           attributes: ['account', 'id'],
         })
       }
-      
       if (type === "Funds" || type === "UserAccounts") {
-        payload.typeId = req.query.typeId;
+        if(req.query.typeId){
+          payload.typeId = req.query.typeId;
+        } else {
+          payload.typeId = [1,2,3];
+        }
         payload.include.push({
           model: db.Types,
           attributes: ['type', 'id'],
