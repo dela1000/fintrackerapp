@@ -15,6 +15,11 @@ const formatLabel = (arg) => {
   return `${capitalize(arg.argumentText)}: $${decimals(arg.valueText)}`;
 }
 
+var chartOptions = {
+    palette: ['black','red','white', '#7CBAB4', '#92C7E2', '#75B5D6', '#B78C9B', '#F2CA84', '#A7CA74'],
+    //...   
+};
+
 export default function Pie({data, title, argumentField, valueField}) {
   return (
     <PieChart id="pie"
@@ -22,6 +27,7 @@ export default function Pie({data, title, argumentField, valueField}) {
       dataSource={data}
       title={title}
       resolveLabelOverlapping="shift"
+      chartOptions={chartOptions}
     >
       <Legend visible={false} />
       <Series

@@ -116,6 +116,8 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
       <StackedBar 
         categoryData={categoryData}
         dailyData={dailyData}
+        viewSelected={viewSelected}
+        argumentField="date"
       />
       </React.Fragment>
     );

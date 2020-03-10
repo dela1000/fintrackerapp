@@ -15,14 +15,24 @@ const customizeTooltip = arg => {
     return { text: `${capitalize(arg.seriesName) }: $${decimals(arg.valueText)}` };
   }
 
-export default function Stacked ({dailyData, categoryData}) {
+const setTitle = (data) => {
+  if(data.type === 'expenses'){
+    if(!data.name){
+      return capitalize(data.type) + " by Day"
+    } else {
+      return "Category " + capitalize(data.name) + " by Day"
+    }
+  }
+}
+
+export default function Stacked ({dailyData, categoryData, viewSelected, argumentField}) {
   return (
     <Chart
       id="chart"
-      title="Expenses by day"
+      title={setTitle(viewSelected)}
       dataSource={dailyData}
     >
-      <CommonSeriesSettings argumentField="date" type="stackedBar" />
+      <CommonSeriesSettings argumentField={argumentField} type="stackedBar" />
       {categoryData.map((item, i) => (
         <Series
           key={i}
