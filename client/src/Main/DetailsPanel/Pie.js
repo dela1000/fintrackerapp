@@ -17,7 +17,6 @@ const formatLabel = (arg) => {
 
 var chartOptions = {
     palette: ['black','red','white', '#7CBAB4', '#92C7E2', '#75B5D6', '#B78C9B', '#F2CA84', '#A7CA74'],
-    //...   
 };
 
 export default function Pie({data, title, argumentField, valueField}) {

@@ -6,7 +6,8 @@ import { Chart,
   Legend, 
   ValueAxis, 
   Title, 
-  Tooltip 
+  Tooltip,
+  AdaptiveLayout
 } from 'devextreme-react/chart';
 
 import { capitalize, decimals } from "../../Services/helpers";
@@ -40,7 +41,7 @@ export default function Stacked ({dailyData, categoryData, viewSelected, argumen
           valueField={item}
         />
       ))}
-      <ValueAxis position="right">
+      <ValueAxis position="left">
         <Title text="$" />
       </ValueAxis>
       <Legend
@@ -53,6 +54,7 @@ export default function Stacked ({dailyData, categoryData, viewSelected, argumen
         location="edge"
         customizeTooltip={customizeTooltip}
       />
+      
     </Chart>
   );
 }
