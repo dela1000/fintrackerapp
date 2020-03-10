@@ -9,8 +9,10 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import SidePanelAccount from './SidePanelAccount.js';
 import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
-import SidePanelExpenses from './SidePanelExpenses.js';
 import Button from '@material-ui/core/Button';
+
+import SidePanelExpenses from './SidePanelExpenses.js';
+import TimeSelector from './TimeSelector.js';
 
 import { get_all_totals, expenses_totals } from "../../Services/WebServices";
 
@@ -35,6 +37,7 @@ class SidePanel extends React.Component {
       },
     };
     this.getAllTotals = this.getAllTotals.bind(this);
+    this.updateTimeframe = this.updateTimeframe.bind(this);
   }
 
   componentDidMount() {
@@ -88,18 +91,11 @@ class SidePanel extends React.Component {
     let noExpensesCategories = _.isEmpty(this.state.allTotals.expensesCategories);
     return (
       <React.Fragment>
-        <Grid container spacing={1} style={this.props.open ? {cursor: 'pointer', "marginTop": "5px"} : { display: 'none' }}>
-          <Grid item xs>
-            <Box pl={3} pt={0.5}>
-              <Button
-                color="primary"
-                onClick={() => this.updateTimeframe(this.props.timeframe)}
-              >
-                View: {this.props.timeframe}
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
+        <TimeSelector
+          open={this.props.open}
+          timeframe={this.props.timeframe}
+          updateTimeframe={this.updateTimeframe}
+        />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} onClick={() => this.props.updateListingData({type: 'allExpenses'})}>
           <Grid item xs={2}>
             <Box pl={3} pt={0.5}>
