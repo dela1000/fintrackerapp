@@ -232,6 +232,22 @@ class Main extends React.Component {
           this.setState({currentTimeframe: "custom"});
         }
       }
+
+    }
+
+    if(payload.type === "expenses"){
+      if(listingDataSelected && listingDataSelected.categoryId){
+        payload['categoryId'] = Number(listingDataSelected.categoryId);
+      }
+    }
+
+    if(payload.type === "funds"){
+      if(listingDataSelected.accountId){
+        payload['accountId'] = Number(listingDataSelected.accountId);
+      }
+      if(listingDataSelected.typeId){
+        payload['typeId'] = Number(listingDataSelected.typeId);
+      }
     }
 
     console.log("+++ 219 Main.js payload: ", JSON.stringify(payload, null, "\t"));
@@ -245,7 +261,6 @@ class Main extends React.Component {
             this.setState({listingData: [], message: data.data.message})
             return;
           }
-          console.log("+++ 253 Main.js data.data: ", JSON.stringify(data.data, null, "\t"));
           let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
           this.setState({listingData: finalData, listingDataSelected: listingDataSelected, totalExpenses: data.data.totalAmountFound}, ()=> {
             console.log("+++ 281 Main.js this.state.listingData: ", this.state.listingData)
@@ -255,26 +270,6 @@ class Main extends React.Component {
         }
       })
 
-    // if(listingDataSelected && !listingDataSelected.startDate && !listingDataSelected.endDate){
-    //   payload['timeframe'] = this.state.currentTimeframe;
-    // }
-    // if(listingDataSelected && listingDataSelected.startDate && listingDataSelected.endDate){
-    //   payload['startDate'] = listingDataSelected.startDate;
-    //   payload['endDate'] = listingDataSelected.endDate;
-    //   if(this.state.listingDataSelected.type){
-    //     payload['type'] = this.state.listingDataSelected.type;
-    //   }
-    //   if(this.state.listingDataSelected.categoryId){
-    //     payload['categoryId'] = this.state.listingDataSelected.categoryId;
-    //   }
-    //   if(this.state.listingDataSelected.accountId){
-    //     payload['accountId'] = this.state.listingDataSelected.accountId;
-    //   }
-    //   if(this.state.listingDataSelected.typeId){
-    //     payload['typeId'] = this.state.listingDataSelected.typeId;
-    //   }
-    //   payload['timeframe'] = "custom";
-    // }
 
     // if(listingDataSelected === null){
     //   payload['type'] = "expenses";
@@ -287,21 +282,6 @@ class Main extends React.Component {
     //     payload['type'] = "funds";
     //   }
 
-    // }
-
-    // if(payload.type === "expenses"){
-    //   if(listingDataSelected && listingDataSelected.categoryId){
-    //     payload['categoryId'] = Number(listingDataSelected.categoryId);
-    //   }
-    // }
-
-    // if(payload.type === "funds"){
-    //   if(listingDataSelected.accountId){
-    //     payload['accountId'] = Number(listingDataSelected.accountId);
-    //   }
-    //   if(listingDataSelected.typeId){
-    //     payload['typeId'] = Number(listingDataSelected.typeId);
-    //   }
     // }
   }
 
@@ -359,6 +339,19 @@ class Main extends React.Component {
             timeframe={this.state.timeframe}
             updateTimeframe={this.updateTimeframe}
             updateCustom={this.updateCustom}
+
+            expensesByCategory={this.state.expensesByCategory} 
+            expensesCategories={this.state.allTotals.expensesCategories}
+            updateListingData={this.updateListingData}
+            getAllTotals={this.getAllTotals}
+
+            expensesCategories={this.state.allTotals.expensesCategories}
+            fundSources={this.state.allTotals.fundSources}
+            userAccounts={this.state.allTotals.userAccounts}
+
+
+            availableByAccount={this.state.allTotals.availableByAccount}
+            currentAvailable={this.state.currentAvailable}
           />
         </Drawer>
         {/*END OF SIDE PANEL DRAWER */}
@@ -397,3 +390,5 @@ class Main extends React.Component {
 }
 
 export default withStyles(styles)(Main);
+
+

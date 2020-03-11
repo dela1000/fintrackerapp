@@ -36,7 +36,6 @@ class CenterHeader extends React.Component {
     }
   }
   componentDidUpdate(){
-    console.log("+++ 51 CenterHeader.js currentTimeframe: ", this.props.currentTimeframe)
     this.state.header = "Expenses this " + this.props.currentTimeframe;
   }
   

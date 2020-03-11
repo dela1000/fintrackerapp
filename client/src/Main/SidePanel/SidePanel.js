@@ -44,6 +44,15 @@ class SidePanel extends React.Component {
       timeframe, 
       updateTimeframe, 
       updateCustom, 
+      expensesByCategory,
+      expensesCategories,
+      getAllTotals,
+      updateListingData,
+      fundSources,
+      userAccounts,
+      savings,
+      availableByAccount,
+      currentAvailable,
     } = this.props;
 
     return (
@@ -69,11 +78,24 @@ class SidePanel extends React.Component {
           </Grid>
           <Grid item xs={2} style={this.props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
             <Box>
-              ADD MODAL GOES HERE
+              <AddModal 
+                type={'expenses'}
+                expensesCategories={expensesCategories}
+                fundSources={fundSources}
+                userAccounts={userAccounts}
+                getAllTotals={getAllTotals}
+              />
+
             </Box>
           </Grid>
         </Grid>
-        SIDE PANEL EXPENSES GOES HERE
+        <SidePanelExpenses 
+          expensesByCategory={expensesByCategory} 
+          expensesCategories={expensesCategories}
+          open={open}
+          getAllTotals={getAllTotals}
+          updateListingData={updateListingData}
+        />
         <Divider />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} >
           <Grid item xs={2}>
@@ -81,104 +103,76 @@ class SidePanel extends React.Component {
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }}>
+          <Grid item xs={8} style={open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
                 CURRENT FUNDS
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2} style={this.props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            ADD MODAL FUNDS GOES HERE
+          <Grid item xs={2} style={open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
+            <AddModal 
+              type={'funds'}
+              expensesCategories={expensesCategories}
+              fundSources={fundSources}
+              userAccounts={userAccounts}
+              getAllTotals={getAllTotals}
+            />
           </Grid>
         </Grid>
-        ADD TYPE MODALS GO HERE
-        SIDE PANEL ACCOUNTS  GO HERE
-        
+        <AddTypeModal 
+          type={'account'}
+          itemName={'account'}
+          open={open}
+          currentItems={userAccounts}
+          getAllTotals={getAllTotals}
+        />
+        <AddTypeModal 
+          type={'source'}
+          itemName={'source'}
+          open={open}
+          currentItems={fundSources}
+          getAllTotals={getAllTotals}
+        />
+        <Box style={ availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
+          <SidePanelAccount
+            type={'checking'}
+            typeId={2}
+            data={availableByAccount.checking}
+            open={open}
+            currentAvailable={currentAvailable}
+            userAccounts={userAccounts}
+            getAllTotals={getAllTotals}
+            updateListingData={updateListingData}
+          />
+        </Box>
+        <Box style={ availableByAccount.savings.length > 0 ? {} : {'display': 'none'} }>
+          <SidePanelAccount
+            type={'savings'}
+            typeId={2}
+            data={availableByAccount.savings}
+            open={open}
+            currentAvailable={currentAvailable}
+            userAccounts={userAccounts}
+            getAllTotals={getAllTotals}
+            updateListingData={updateListingData}
+          />
+        </Box>
+        <Box style={ availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
+          <SidePanelAccount
+            type={'investments'}
+            typeId={2}
+            data={availableByAccount.investments}
+            open={open}
+            currentAvailable={currentAvailable}
+            userAccounts={userAccounts}
+            getAllTotals={getAllTotals}
+            updateListingData={updateListingData}
+          />
+        </Box>
       </React.Fragment>
     )
   }
 }
 
 export default SidePanel;
-
-
-
-
-// <AddModal 
-// type={'expenses'}
-// expensesCategories={this.state.allTotals.expensesCategories}
-// fundSources={this.state.allTotals.fundSources}
-// userAccounts={this.state.allTotals.userAccounts}
-// getAllTotals={this.getAllTotals}
-// />
-
-// <SidePanelExpenses 
-//   expensesByCategory={this.state.allTotals.expensesByCategory} 
-//   expensesCategories={this.state.allTotals.expensesCategories}
-//   open={this.props.open}
-//   getAllTotals={this.getAllTotals}
-//   updateListingData={this.props.updateListingData}
-// />
-
-// <AddModal 
-// type={'funds'}
-// expensesCategories={this.state.allTotals.expensesCategories}
-// fundSources={this.state.allTotals.fundSources}
-// userAccounts={this.state.allTotals.userAccounts}
-// getAllTotals={this.getAllTotals}
-// />
-
-
-// <AddTypeModal 
-//   type={'account'}
-//   itemName={'account'}
-//   open={this.props.open}
-//   currentItems={this.state.allTotals.userAccounts}
-//   getAllTotals={this.getAllTotals}
-// />
-// <AddTypeModal 
-//   type={'source'}
-//   itemName={'source'}
-//   open={this.props.open}
-//   currentItems={this.state.allTotals.fundSources}
-//   getAllTotals={this.getAllTotals}
-// />
-
-
-// <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
-//   <SidePanelAccount
-//     type={'checking'}
-//     typeId={1}
-//     data={this.state.allTotals.availableByAccount.checking}
-//     open={this.props.open}
-//     currentAvailable={this.state.allTotals.currentAvailable}
-//     userAccounts={this.state.allTotals.userAccounts}
-//     getAllTotals={this.getAllTotals}
-//     updateListingData={this.props.updateListingData}
-//   />
-// </Box>
-// <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {} : {'display': 'none'} }>
-//   <SidePanelAccount
-//     type={'savings'}
-//     typeId={2}
-//     data={this.state.allTotals.availableByAccount.savings}
-//     open={this.props.open}
-//     currentAvailable={this.state.allTotals.currentAvailable}
-//     userAccounts={this.state.allTotals.userAccounts}
-//     getAllTotals={this.getAllTotals}
-//     updateListingData={this.props.updateListingData}
-//   />
-// </Box>
-// <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
-//   <SidePanelAccount
-//     type={'investments'}
-//     typeId={3}
-//     data={this.state.allTotals.availableByAccount.investments}
-//     open={this.props.open}
-//     currentAvailable={this.state.allTotals.currentAvailable}
-//     userAccounts={this.state.allTotals.userAccounts}
-//     getAllTotals={this.getAllTotals}
-//     updateListingData={this.props.updateListingData}
-//   />
-// </Box>
