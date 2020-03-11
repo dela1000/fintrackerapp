@@ -43,6 +43,7 @@ class SidePanel extends React.Component {
 
   componentDidMount() {
     this.getAllTotals();
+    this.props.updateListingData(null);
   };
 
   getAllTotals (payload){
@@ -53,7 +54,6 @@ class SidePanel extends React.Component {
           this.setState({ allTotals: data.data })
           this.props.updateTotalExpenses(data.data.totalExpenses);
           this.props.updateCurrentAvailable(data.data.currentAvailable);
-          this.props.updateListingData(null);
         }
       })
   }
@@ -84,10 +84,10 @@ class SidePanel extends React.Component {
   }
 
   updateCustom (payload) {
-    console.log("+++ 92 SidePanel.js payload: ", payload)
-    // this.getExpensesTotals(payload);
     this.getAllTotals(payload);
     this.props.updateTimeframe('custom');
+    this.props.updateListingData({type: 'expenses', startDate: payload.startDate, endDate: payload.endDate})
+
   } 
 
   render () {

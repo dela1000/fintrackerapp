@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import moment from 'moment';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -169,7 +170,27 @@ class Main extends React.Component {
   updateListingData (listingDataSelected) {
     var payload = {
       page: this.state.page,
-      timeframe: this.state.currentTimeframe,
+    }
+
+    if(listingDataSelected && !listingDataSelected.startDate && !listingDataSelected.endDate){
+      payload['timeframe'] = this.state.currentTimeframe;
+    }
+    if(listingDataSelected && listingDataSelected.startDate && listingDataSelected.endDate){
+      payload['startDate'] = listingDataSelected.startDate;
+      payload['endDate'] = listingDataSelected.endDate;
+      if(this.state.listingDataSelected.type){
+        payload['type'] = this.state.listingDataSelected.type;
+      }
+      if(this.state.listingDataSelected.categoryId){
+        payload['categoryId'] = this.state.listingDataSelected.categoryId;
+      }
+      if(this.state.listingDataSelected.accountId){
+        payload['accountId'] = this.state.listingDataSelected.accountId;
+      }
+      if(this.state.listingDataSelected.typeId){
+        payload['typeId'] = this.state.listingDataSelected.typeId;
+      }
+      payload['timeframe'] = "custom";
     }
 
     if(listingDataSelected === null){
@@ -209,13 +230,14 @@ class Main extends React.Component {
             this.setState({listingData: [], message: data.data.message})
             return
           }
-          var searchData = listingDataSelected
+          var searchData = listingDataSelected;
           if(!listingDataSelected){
             searchData = {
               "type": "expenses"
             }
           }
-          this.setState({listingData: data.data.results, listingDataSelected: searchData})
+          let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
+          this.setState({listingData: finalData, listingDataSelected: searchData})
         } else {
           this.setState({listingData: [], message: data.data.message})
         }
