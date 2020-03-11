@@ -25,7 +25,7 @@ import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 
-import { search } from "../Services/WebServices";
+import { get_all_totals, expenses_totals, search } from "../Services/WebServices";
 
 const drawerWidth = 300;
 
@@ -124,131 +124,204 @@ class Main extends React.Component {
     
     this.state = {
       open: true,
-      timeframe: 'year',
-      currentTimeframe: 'month',
       totalExpenses: 0,
       currentAvailable: 0,
+      expensesByCategory: [],
       listingData: [],
+      timeframe: 'year',
+      currentTimeframe: 'month',
       page: 1,
       listingDataSelected: {
         "type": "expenses"
       },
+      allTotals: {
+        currentAvailable: 0,
+        availableByAccount: {
+          checking: [],
+          savings: [],
+          investments: [],
+        },
+        fundsByTypes: [],
+        userAccounts: [],
+        expensesCategories: [],
+        fundSources: [],
+      },
       message: "",
-
     };
-    this.updateTimeframe = this.updateTimeframe.bind(this);
-    this.updateCurrentAvailable = this.updateCurrentAvailable.bind(this);
-    this.updateTotalExpenses = this.updateTotalExpenses.bind(this);
-    this.updateListingData = this.updateListingData.bind(this);
   }
 
   handleDrawer(value) {
     this.setState({ open: value });
   };
 
-  updateTimeframe(timeframe) {
+
+  getAllTotals (payload){
+    get_all_totals(payload)
+      .then((res) => {
+        var data = res.data;
+        if(data.success){
+          console.log("+++ 155 Main.js data.data: ", data.data)
+          this.setState({ 
+            allTotals: data.data, 
+            currentAvailable: data.data.currentAvailable, 
+            totalExpenses: data.data.totalExpenses,
+            expensesByCategory: data.data.expensesByCategory
+          })
+        }
+      })
+  }
+
+  getExpensesTotals (payload){
+    expenses_totals(payload)
+      .then((res) => {
+        var data = res.data;
+        if(data.success){
+          this.setState({
+            totalExpenses: data.data.totalExpenses,
+            expensesByCategory: data.data.expensesByCategory
+          })
+        }
+      })
+  }
+
+  updateTimeframe = (timeframe) => {
     if(timeframe === 'month'){
-      this.setState({timeframe: "year", currentTimeframe: 'month'}, () => {
-        this.updateListingData(this.state.listingDataSelected)
-      })
-    }
-    if(timeframe === 'year'){
-      this.setState({timeframe: "month", currentTimeframe: 'year'}, () => {
-        this.updateListingData(this.state.listingDataSelected)
-      })
-    }
+      this.setState({timeframe: "year", currentTimeframe: 'month'}, ()=> {
+        this.updateListingData({timeframe: 'month'});
+      });
+    };
+    if(timeframe === 'year' || timeframe === 'custom'){
+      this.setState({timeframe: "month", currentTimeframe: 'year'}, ()=> {
+        this.updateListingData({timeframe: 'year'});
+      });
+    };
   }
 
-  updateCurrentAvailable (currentAvailable) {
-    this.setState({currentAvailable})
-  }
 
-  updateTotalExpenses (totalExpenses) {
-    this.setState({totalExpenses})
-  }
+  updateListingData = (listingDataSelected) => {
 
-  updateListingData (listingDataSelected) {
+    console.log("+++ 210 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     var payload = {
       page: this.state.page,
     }
-
-    if(listingDataSelected && !listingDataSelected.startDate && !listingDataSelected.endDate){
-      payload['timeframe'] = this.state.currentTimeframe;
-    }
-    if(listingDataSelected && listingDataSelected.startDate && listingDataSelected.endDate){
-      payload['startDate'] = listingDataSelected.startDate;
-      payload['endDate'] = listingDataSelected.endDate;
-      if(this.state.listingDataSelected.type){
-        payload['type'] = this.state.listingDataSelected.type;
-      }
-      if(this.state.listingDataSelected.categoryId){
-        payload['categoryId'] = this.state.listingDataSelected.categoryId;
-      }
-      if(this.state.listingDataSelected.accountId){
-        payload['accountId'] = this.state.listingDataSelected.accountId;
-      }
-      if(this.state.listingDataSelected.typeId){
-        payload['typeId'] = this.state.listingDataSelected.typeId;
-      }
-      payload['timeframe'] = "custom";
-    }
-
-    if(listingDataSelected === null){
+  
+    if(!listingDataSelected){
       payload['type'] = "expenses";
     } else {
-      if(listingDataSelected.type === 'expenses' || listingDataSelected.type === 'allExpenses'){
-        payload['type'] = "expenses";
+      if(listingDataSelected.type){
+        payload['type'] = listingDataSelected.type;
+      } else {
+        if(this.state.listingDataSelected.type){
+          payload['type'] = this.state.listingDataSelected.type;
+        } else {
+          payload['type'] = 'expenses';
+        }
       }
-
-      if(listingDataSelected.type === 'funds' || listingDataSelected.type === 'allFunds'){
-        payload['type'] = "funds";
+      if(listingDataSelected.timeframe){
+        payload['timeframe'] = listingDataSelected.timeframe;
+      } else {
+        if(listingDataSelected.startDate){
+          payload['startDate'] = listingDataSelected.startDate;
+        }
+        if(listingDataSelected.endDate){
+          payload['endDate'] = listingDataSelected.endDate;
+        }
+        if(!payload['startDate'] && !payload['endDate']){
+          payload['timeframe'] = "month";
+        } else {
+          this.setState({currentTimeframe: "custom"});
+        }
       }
-
     }
 
-    if(payload.type === "expenses"){
-      if(listingDataSelected && listingDataSelected.categoryId){
-        payload['categoryId'] = Number(listingDataSelected.categoryId);
-      }
-    }
+    console.log("+++ 219 Main.js payload: ", JSON.stringify(payload, null, "\t"));
+    console.log("+++ 220 Main.js this.state.listingDataSelected: ", this.state.listingDataSelected)
 
-    if(payload.type === "funds"){
-      if(listingDataSelected.accountId){
-        payload['accountId'] = Number(listingDataSelected.accountId);
-      }
-      if(listingDataSelected.typeId){
-        payload['typeId'] = Number(listingDataSelected.typeId);
-      }
-    }
-
-    console.log("+++ 206 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
         if(data.success){
           if(data.message){
             this.setState({listingData: [], message: data.data.message})
-            return
+            return;
           }
-          var searchData = listingDataSelected;
-          if(!listingDataSelected){
-            searchData = {
-              "type": "expenses"
-            }
-          }
+          console.log("+++ 253 Main.js data.data: ", JSON.stringify(data.data, null, "\t"));
           let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
-          this.setState({listingData: finalData, listingDataSelected: searchData})
+          this.setState({listingData: finalData, listingDataSelected: listingDataSelected, totalExpenses: data.data.totalAmountFound}, ()=> {
+            console.log("+++ 281 Main.js this.state.listingData: ", this.state.listingData)
+          })
         } else {
           this.setState({listingData: [], message: data.data.message})
         }
       })
+
+    // if(listingDataSelected && !listingDataSelected.startDate && !listingDataSelected.endDate){
+    //   payload['timeframe'] = this.state.currentTimeframe;
+    // }
+    // if(listingDataSelected && listingDataSelected.startDate && listingDataSelected.endDate){
+    //   payload['startDate'] = listingDataSelected.startDate;
+    //   payload['endDate'] = listingDataSelected.endDate;
+    //   if(this.state.listingDataSelected.type){
+    //     payload['type'] = this.state.listingDataSelected.type;
+    //   }
+    //   if(this.state.listingDataSelected.categoryId){
+    //     payload['categoryId'] = this.state.listingDataSelected.categoryId;
+    //   }
+    //   if(this.state.listingDataSelected.accountId){
+    //     payload['accountId'] = this.state.listingDataSelected.accountId;
+    //   }
+    //   if(this.state.listingDataSelected.typeId){
+    //     payload['typeId'] = this.state.listingDataSelected.typeId;
+    //   }
+    //   payload['timeframe'] = "custom";
+    // }
+
+    // if(listingDataSelected === null){
+    //   payload['type'] = "expenses";
+    // } else {
+    //   if(listingDataSelected.type === 'expenses' || listingDataSelected.type === 'allExpenses'){
+    //     payload['type'] = "expenses";
+    //   }
+
+    //   if(listingDataSelected.type === 'funds' || listingDataSelected.type === 'allFunds'){
+    //     payload['type'] = "funds";
+    //   }
+
+    // }
+
+    // if(payload.type === "expenses"){
+    //   if(listingDataSelected && listingDataSelected.categoryId){
+    //     payload['categoryId'] = Number(listingDataSelected.categoryId);
+    //   }
+    // }
+
+    // if(payload.type === "funds"){
+    //   if(listingDataSelected.accountId){
+    //     payload['accountId'] = Number(listingDataSelected.accountId);
+    //   }
+    //   if(listingDataSelected.typeId){
+    //     payload['typeId'] = Number(listingDataSelected.typeId);
+    //   }
+    // }
   }
+
+  updateCustom = (payload) => {
+    console.log("+++ 269 Main.js payload: ", payload)
+    this.getAllTotals(payload);
+    this.updateListingData({startDate: payload.startDate, endDate: payload.endDate})
+  } 
+
+  componentDidMount() {
+    this.getAllTotals({timeframe: "month"});
+    this.updateListingData({type: "expenses", timeframe: "month"});
+  };
 
   render () {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
         <CssBaseline />
+        {/*HEADER BAR */}
         <AppBar position="fixed" className={clsx(classes.appBar, this.state.open && classes.appBarShift)}>
           <Toolbar className={classes.toolbar}>
             <IconButton
@@ -267,6 +340,7 @@ class Main extends React.Component {
             <Logout />
           </Toolbar>
         </AppBar>
+        {/*SIDE PANEL DRAWER */}
         <Drawer
           variant="permanent"
           classes={{
@@ -280,16 +354,15 @@ class Main extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          <SidePanel 
+          <SidePanel
             open={this.state.open}
             timeframe={this.state.timeframe}
-            currentTimeframe={this.state.currentTimeframe}
             updateTimeframe={this.updateTimeframe}
-            updateCurrentAvailable={this.updateCurrentAvailable}
-            updateTotalExpenses={this.updateTotalExpenses}
-            updateListingData={this.updateListingData}
+            updateCustom={this.updateCustom}
           />
         </Drawer>
+        {/*END OF SIDE PANEL DRAWER */}
+        {/*SECTIONS */}
         <div className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="xl" className={classes.container}>
@@ -297,22 +370,20 @@ class Main extends React.Component {
               <GridListTile style={{height: '100%'}}>
                 <Grid container spacing={3}>
                   <Grid item xs={8}>
-                    <CenterPanel 
-                    currentTimeframe={this.state.currentTimeframe}
-                    currentAvailable={this.state.currentAvailable}
-                    totalExpenses={this.state.totalExpenses}
-                    listingData={this.state.listingData}
-                    listingDataSelected={this.state.listingDataSelected}
-                    message={this.state.message}
+                    {/*CENTER SECTION */}
+                    <CenterPanel
+                      currentTimeframe={this.state.currentTimeframe}
+                      totalExpenses={this.state.totalExpenses}
+                      currentAvailable={this.state.currentAvailable}
+                      listingDataSelected={this.state.listingDataSelected}
+                      listingData={this.state.listingData}
+                      message={this.state.message}
                     />
                   </Grid>
                   <Grid item xs={4} className={classes.detailsPanel}>
                     <Paper className={classes.paper}>
-                      <DetailsPanel 
-                        viewSelected={this.state.listingDataSelected}
-                        graphData={this.state.listingData}
-                        currentTimeframe={this.state.currentTimeframe}
-                      />
+                      {/*DETAILS SECTION */}
+                      DETAILS GO HERE
                     </Paper>
                   </Grid>
                 </Grid>

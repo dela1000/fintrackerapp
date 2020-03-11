@@ -749,6 +749,7 @@ module.exports = {
 
   search: {
     get: function(payload, callback) {
+      console.log("+++ 752 index.js payload: ", payload)
       var searchData = {
         userId: payload.userId,
         date: {
@@ -791,7 +792,6 @@ module.exports = {
       var query = {
         where: searchData
       }
-
       if(payload.offset){
         query['offset'] = payload.offset;
       }
@@ -811,7 +811,6 @@ module.exports = {
           query['order'].push(["accountId", "asc"])
         }
         query['order'].push(["amount", "desc"])
-
       }
       // if(tableName === "ExpensesCategories"){
       //   delete query.where.date;
@@ -819,6 +818,7 @@ module.exports = {
       //   query.where.id = query.where.categoryId;
       //   delete query.where.categoryId;
       // }
+      console.log("+++ 821 index.js query.where: ", query.where)
       console.log("models - Search query: ", JSON.stringify(query, null, "\t"))
 
       db[tableName].findAll(query)

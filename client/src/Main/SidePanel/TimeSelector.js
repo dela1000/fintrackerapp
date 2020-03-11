@@ -1,10 +1,7 @@
 import React from 'react';
-import _ from 'lodash';
 import moment from 'moment';
 
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -92,8 +89,14 @@ class TimeSelector extends React.Component {
     }
   }
 
+  componentDidUpdate (prevProps) {
+    if(!this.props.open && this.state.showCalendars){
+      this.setState({showCalendars: false})
+    }
+  }
+
   render () {
-    const { open, timeframe } = this.props;
+    const { open, timeframe, updateTimeframe } = this.props;
     return (
       <React.Fragment>
         <Grid 
@@ -107,8 +110,9 @@ class TimeSelector extends React.Component {
           <Grid item xs>
             <Box pl={3} pt={0.5}>
               <Button
+                size="small"
                 color="primary"
-                onClick={() => this.props.updateTimeframe(timeframe)}
+                onClick={() => updateTimeframe(timeframe)}
               >
                 View: {timeframe}
               </Button>
@@ -117,6 +121,7 @@ class TimeSelector extends React.Component {
           <Grid item xs>
             <Box pr={3} pt={0.5}>
               <Button
+                size="small"
                 color="primary"
                 onClick={() => this.showCalendars()}
               >
@@ -142,7 +147,7 @@ class TimeSelector extends React.Component {
                 allowKeyboardControl
                 autoComplete="off"
                 margin="normal"
-                id="date-picker-dialog"
+                id="startDate"
                 label="Select Start Date"
                 format="MM-dd-yyyy"
                 name="startDate"
@@ -161,7 +166,7 @@ class TimeSelector extends React.Component {
                 allowKeyboardControl
                 autoComplete="off"
                 margin="normal"
-                id="date-picker-dialog"
+                id="endDate"
                 label="Select End Date"
                 format="MM-dd-yyyy"
                 name="endDate"

@@ -11,96 +11,50 @@ import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
 import Button from '@material-ui/core/Button';
 
-import SidePanelExpenses from './SidePanelExpenses.js';
 import TimeSelector from './TimeSelector.js';
+import SidePanelExpenses from './SidePanelExpenses.js';
 
 import { get_all_totals, expenses_totals } from "../../Services/WebServices";
 
 
 class SidePanel extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      allTotals: {
-        currentAvailable: 0,
-        availableByAccount: {
-          checking: [],
-          savings: [],
-          investments: [],
-        },
-        totalExpenses: 0,
-        expensesByCategory: [],
-        fundsByTypes: [],
-        userAccounts: [],
-        expensesCategories: [],
-        fundSources: [],
-      },
-    };
-    this.getAllTotals = this.getAllTotals.bind(this);
-    this.updateTimeframe = this.updateTimeframe.bind(this);
-    this.updateCustom = this.updateCustom.bind(this);
-  }
 
   componentDidMount() {
-    this.getAllTotals();
-    this.props.updateListingData(null);
+    // this.getAllTotals();
+    // this.props.updateListingData(null);
   };
 
-  getAllTotals (payload){
-    get_all_totals(payload)
-      .then((res) => {
-        var data = res.data;
-        if(data.success){
-          this.setState({ allTotals: data.data })
-          this.props.updateTotalExpenses(data.data.totalExpenses);
-          this.props.updateCurrentAvailable(data.data.currentAvailable);
-        }
-      })
-  }
-
   getExpensesTotals (payload){
-    expenses_totals(payload)
-      .then((res) => {
-        var data = res.data;
-        if(data.success){
-          var allTotals = {...this.state.allTotals}
-          allTotals.totalExpenses = Number(data.data.totalExpenses);
-          allTotals.expensesByCategory = data.data.expensesByCategory;
-          this.setState({allTotals})
-          this.props.updateTotalExpenses(data.data.totalExpenses);
-        }
-      })
+    // expenses_totals(payload)
+    //   .then((res) => {
+    //     var data = res.data;
+    //     if(data.success){
+    //       var allTotals = {...this.state.allTotals}
+    //       allTotals.totalExpenses = Number(data.data.totalExpenses);
+    //       allTotals.expensesByCategory = data.data.expensesByCategory;
+    //       this.setState({allTotals})
+    //       this.props.updateTotalExpenses(data.data.totalExpenses);
+    //     }
+    //   })
   }
-
-  updateTimeframe (timeframe) {
-    if(timeframe === 'month'){
-      this.getExpensesTotals({timeframe: 'month'});
-      this.props.updateTimeframe('month');
-    }
-    if(timeframe === 'year'){
-      this.getExpensesTotals({timeframe: 'year'});
-      this.props.updateTimeframe('year');
-    }
-  }
-
-  updateCustom (payload) {
-    this.getAllTotals(payload);
-    this.props.updateTimeframe('custom');
-    this.props.updateListingData({type: 'expenses', startDate: payload.startDate, endDate: payload.endDate})
-
-  } 
 
   render () {
-    let noExpensesCategories = _.isEmpty(this.state.allTotals.expensesCategories);
+    const { 
+      open, 
+      timeframe, 
+      updateTimeframe, 
+      updateCustom, 
+    } = this.props;
+
     return (
       <React.Fragment>
         <TimeSelector
-          open={this.props.open}
-          timeframe={this.props.timeframe}
-          updateTimeframe={this.updateTimeframe}
-          updateCustom={this.updateCustom}
+          open={open}
+          timeframe={timeframe}
+          updateTimeframe={updateTimeframe}
+          updateCustom={updateCustom}
         />
-        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} onClick={() => this.props.updateListingData({type: 'allExpenses'})}>
+        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
           <Grid item xs={2}>
             <Box pl={3} pt={0.5}>
               <ReceiptIcon />
@@ -109,31 +63,19 @@ class SidePanel extends React.Component {
           <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
-                {this.props.currentTimeframe.toUpperCase()} EXPENSES
+                EXPENSES
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={2} style={this.props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <Box style={ noExpensesCategories ? { display: 'none' } : {}}>
-              <AddModal 
-              type={'expenses'}
-              expensesCategories={this.state.allTotals.expensesCategories}
-              fundSources={this.state.allTotals.fundSources}
-              userAccounts={this.state.allTotals.userAccounts}
-              getAllTotals={this.getAllTotals}
-              />
+            <Box>
+              ADD MODAL GOES HERE
             </Box>
           </Grid>
         </Grid>
-        <SidePanelExpenses 
-          expensesByCategory={this.state.allTotals.expensesByCategory} 
-          expensesCategories={this.state.allTotals.expensesCategories}
-          open={this.props.open}
-          getAllTotals={this.getAllTotals}
-          updateListingData={this.props.updateListingData}
-        />
+        SIDE PANEL EXPENSES GOES HERE
         <Divider />
-        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} onClick={() => this.props.updateListingData({type: 'allFunds'})}>
+        <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} >
           <Grid item xs={2}>
             <Box pl={3} pt={0.5}>
               <AccountBalanceWalletIcon />
@@ -147,68 +89,96 @@ class SidePanel extends React.Component {
             </Box>
           </Grid>
           <Grid item xs={2} style={this.props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-            <AddModal 
-            type={'funds'}
-            expensesCategories={this.state.allTotals.expensesCategories}
-            fundSources={this.state.allTotals.fundSources}
-            userAccounts={this.state.allTotals.userAccounts}
-            getAllTotals={this.getAllTotals}
-            />
+            ADD MODAL FUNDS GOES HERE
           </Grid>
         </Grid>
-        <AddTypeModal 
-          type={'account'}
-          itemName={'account'}
-          open={this.props.open}
-          currentItems={this.state.allTotals.userAccounts}
-          getAllTotals={this.getAllTotals}
-        />
-        <AddTypeModal 
-          type={'source'}
-          itemName={'source'}
-          open={this.props.open}
-          currentItems={this.state.allTotals.fundSources}
-          getAllTotals={this.getAllTotals}
-        />
-        <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
-          <SidePanelAccount
-            type={'checking'}
-            typeId={1}
-            data={this.state.allTotals.availableByAccount.checking}
-            open={this.props.open}
-            currentAvailable={this.state.allTotals.currentAvailable}
-            userAccounts={this.state.allTotals.userAccounts}
-            getAllTotals={this.getAllTotals}
-            updateListingData={this.props.updateListingData}
-          />
-        </Box>
-        <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {} : {'display': 'none'} }>
-          <SidePanelAccount
-            type={'savings'}
-            typeId={2}
-            data={this.state.allTotals.availableByAccount.savings}
-            open={this.props.open}
-            currentAvailable={this.state.allTotals.currentAvailable}
-            userAccounts={this.state.allTotals.userAccounts}
-            getAllTotals={this.getAllTotals}
-            updateListingData={this.props.updateListingData}
-          />
-        </Box>
-        <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
-          <SidePanelAccount
-            type={'investments'}
-            typeId={3}
-            data={this.state.allTotals.availableByAccount.investments}
-            open={this.props.open}
-            currentAvailable={this.state.allTotals.currentAvailable}
-            userAccounts={this.state.allTotals.userAccounts}
-            getAllTotals={this.getAllTotals}
-            updateListingData={this.props.updateListingData}
-          />
-        </Box>
+        ADD TYPE MODALS GO HERE
+        SIDE PANEL ACCOUNTS  GO HERE
+        
       </React.Fragment>
     )
   }
 }
 
 export default SidePanel;
+
+
+
+
+// <AddModal 
+// type={'expenses'}
+// expensesCategories={this.state.allTotals.expensesCategories}
+// fundSources={this.state.allTotals.fundSources}
+// userAccounts={this.state.allTotals.userAccounts}
+// getAllTotals={this.getAllTotals}
+// />
+
+// <SidePanelExpenses 
+//   expensesByCategory={this.state.allTotals.expensesByCategory} 
+//   expensesCategories={this.state.allTotals.expensesCategories}
+//   open={this.props.open}
+//   getAllTotals={this.getAllTotals}
+//   updateListingData={this.props.updateListingData}
+// />
+
+// <AddModal 
+// type={'funds'}
+// expensesCategories={this.state.allTotals.expensesCategories}
+// fundSources={this.state.allTotals.fundSources}
+// userAccounts={this.state.allTotals.userAccounts}
+// getAllTotals={this.getAllTotals}
+// />
+
+
+// <AddTypeModal 
+//   type={'account'}
+//   itemName={'account'}
+//   open={this.props.open}
+//   currentItems={this.state.allTotals.userAccounts}
+//   getAllTotals={this.getAllTotals}
+// />
+// <AddTypeModal 
+//   type={'source'}
+//   itemName={'source'}
+//   open={this.props.open}
+//   currentItems={this.state.allTotals.fundSources}
+//   getAllTotals={this.getAllTotals}
+// />
+
+
+// <Box style={ this.state.allTotals.availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
+//   <SidePanelAccount
+//     type={'checking'}
+//     typeId={1}
+//     data={this.state.allTotals.availableByAccount.checking}
+//     open={this.props.open}
+//     currentAvailable={this.state.allTotals.currentAvailable}
+//     userAccounts={this.state.allTotals.userAccounts}
+//     getAllTotals={this.getAllTotals}
+//     updateListingData={this.props.updateListingData}
+//   />
+// </Box>
+// <Box style={ this.state.allTotals.availableByAccount.savings.length > 0 ? {} : {'display': 'none'} }>
+//   <SidePanelAccount
+//     type={'savings'}
+//     typeId={2}
+//     data={this.state.allTotals.availableByAccount.savings}
+//     open={this.props.open}
+//     currentAvailable={this.state.allTotals.currentAvailable}
+//     userAccounts={this.state.allTotals.userAccounts}
+//     getAllTotals={this.getAllTotals}
+//     updateListingData={this.props.updateListingData}
+//   />
+// </Box>
+// <Box style={ this.state.allTotals.availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
+//   <SidePanelAccount
+//     type={'investments'}
+//     typeId={3}
+//     data={this.state.allTotals.availableByAccount.investments}
+//     open={this.props.open}
+//     currentAvailable={this.state.allTotals.currentAvailable}
+//     userAccounts={this.state.allTotals.userAccounts}
+//     getAllTotals={this.getAllTotals}
+//     updateListingData={this.props.updateListingData}
+//   />
+// </Box>

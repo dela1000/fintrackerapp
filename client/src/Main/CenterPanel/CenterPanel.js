@@ -11,11 +11,11 @@ export default function CenterPanel({currentTimeframe, totalExpenses, currentAva
         totalExpenses={totalExpenses}
         currentAvailable={currentAvailable}
       />
-      <SelectorPanel
-        listingDataSelected={listingDataSelected}
-        listingData={listingData}
-        message={message}
-      />
     </React.Fragment>
   )
 }
+      // <SelectorPanel
+      //   listingDataSelected={listingDataSelected}
+      //   listingData={listingData}
+      //   message={message}
+      // />

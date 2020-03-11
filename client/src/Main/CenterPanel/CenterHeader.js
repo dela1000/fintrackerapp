@@ -26,7 +26,19 @@ const styles = theme => ({
   },
 })
 
+
 class CenterHeader extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      header: ""
+    }
+  }
+  componentDidUpdate(){
+    console.log("+++ 51 CenterHeader.js currentTimeframe: ", this.props.currentTimeframe)
+    this.state.header = "Expenses this " + this.props.currentTimeframe;
+  }
   
   render () {
     const { classes, currentTimeframe, totalExpenses, currentAvailable } = this.props;
@@ -55,7 +67,7 @@ class CenterHeader extends React.Component {
               <Grid container spacing={1}>
                 <Grid item xs={6}>
                   <Typography color="textSecondary">
-                    Expenses this {currentTimeframe}
+                    {this.state.header}
                   </Typography>
                   <Typography component="p" variant="h4">
                     {decimals(totalExpenses)}

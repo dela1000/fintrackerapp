@@ -882,7 +882,10 @@ module.exports = controllers = {
         payload.endDate = finUtils.endOfMonth();
         
       };
-      
+      if (req.query.timeframe === 'month') {
+        payload['startDate'] = finUtils.startOfMonth();
+        payload['endDate'] = finUtils.endOfMonth();
+      }
       if (req.query.timeframe === 'year') {
         payload['startDate'] = finUtils.startOfYear();
         payload['endDate'] = finUtils.endOfYear();
