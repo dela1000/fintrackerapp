@@ -14,7 +14,6 @@ class ListingPanel extends React.Component {
 
   render(){
     const { listingData, listingDataSelected } = this.props;
-    console.log("+++ 17 Listing.js listingDataSelected: ", listingDataSelected)
     const Cmp = component[listingDataSelected.type];
     return (
       <React.Fragment>

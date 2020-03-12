@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import _ from 'lodash';
 
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -53,7 +54,10 @@ class TimeSelector extends React.Component {
 
   handleChange (e) { 
     let value = e.target.value;
-    var payload = {};
+    let selected = this.customOptions.find(x => x.value === e.target.value);
+    let payload = {
+      customOption: selected.name
+    };
     if(value === "lastMonth"){
       payload['startDate'] = moment().subtract(1, 'months').startOf('month').format(dateFormat);
       payload['endDate'] = moment().subtract(1, 'months').endOf('month').format(dateFormat);
@@ -70,6 +74,7 @@ class TimeSelector extends React.Component {
       payload['startDate'] = moment().subtract(1, 'year').startOf('year').format(dateFormat);
       payload['endDate'] = moment().subtract(1, 'year').endOf('year').format(dateFormat);
     }
+    
 
     this.props.updateCustom(payload)
     this.setState({[e.target.name]: value, startDate: null, endDate: null})
@@ -81,23 +86,24 @@ class TimeSelector extends React.Component {
       return;
     }
     if(this.state.startDate && this.state.endDate){
-      var payload = {
+      let payload = {
         startDate: moment(this.state.startDate).format(dateFormat),
         endDate: moment(this.state.endDate).format(dateFormat),
+        customOption: "custom dates"
       }
-      this.props.updateCustom(payload)
+      this.props.updateCustom(payload);
     }
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate () {
     if(!this.props.open && this.state.showCalendars){
       this.setState({showCalendars: false})
     }
   }
 
-  clear (){
+  reset (){
     this.setState({ startDate: null, endDate: null, option: ""}, () => {
-      this.props.updateCustom('clear');
+      this.props.updateCustom('reset');
     })
   }
 
@@ -208,9 +214,9 @@ class TimeSelector extends React.Component {
             <Button
               size="small"
               variant="contained"
-              onClick={() => this.clear()}
+              onClick={() => this.reset()}
             >
-              Clear
+              Reset
             </Button>
           </Box>
         </Grid>

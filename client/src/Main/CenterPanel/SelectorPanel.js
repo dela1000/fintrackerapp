@@ -29,7 +29,6 @@ class SelectorPanel extends React.Component {
   }
 
   defineTitle = (listingDataSelected) => {
-    console.log("+++ 32 SelectorPanel.js listingDataSelected: ", listingDataSelected)
     if(listingDataSelected){
       if(listingDataSelected.name){
         return capitalize(listingDataSelected.type) + " - " + capitalize(listingDataSelected.name)

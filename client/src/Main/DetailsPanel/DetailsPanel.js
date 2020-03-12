@@ -8,13 +8,21 @@ import { decimals } from "../../Services/helpers";
 import Pie from './Pie.js'
 import StackedBar from './StackedBar.js'
 
-export default function DetailedPanel({viewSelected, graphData, currentTimeframe}) {
+export default function DetailedPanel({viewSelected, graphData, timeframe, customOption}) {
   // Expenses and funds data
   let mainData = [];
-  let title = " this " + currentTimeframe;
+  let title = "";
+  let sourceTitle = "";
+
+  if(timeframe === "custom"){
+    title = " - " + customOption;
+    sourceTitle = " - " + customOption;
+  } else {
+    title = " this " + timeframe;
+    sourceTitle = "Sources this " + timeframe;
+  }
 
   // Sources Data
-  let sourceTitle = "Sources this " + currentTimeframe;
   let sourceData = [];
   let argumentField = "";
   
@@ -104,22 +112,35 @@ export default function DetailedPanel({viewSelected, graphData, currentTimeframe
   })
 
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
-    return (
-      <React.Fragment>
-        <Pie
-          data={mainData}
-          title={title}
-          argumentField={argumentField}
-        />
-      <Divider />
-      <StackedBar 
-        categoryData={categoryData}
-        dailyData={dailyData}
-        viewSelected={viewSelected}
-        argumentField="date"
-      />
-      </React.Fragment>
-    );
+    if(viewSelected.categoryId){
+      return (
+        <React.Fragment>
+          <StackedBar 
+            categoryData={categoryData}
+            dailyData={dailyData}
+            viewSelected={viewSelected}
+            argumentField="date"
+          />
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <Pie
+            data={mainData}
+            title={title}
+            argumentField={argumentField}
+          />
+          <Divider />
+          <StackedBar 
+            categoryData={categoryData}
+            dailyData={dailyData}
+            viewSelected={viewSelected}
+            argumentField="date"
+          />
+        </React.Fragment>
+      );
+    }
   }
 
   if(viewSelected.type.toUpperCase().includes('funds'.toUpperCase())){

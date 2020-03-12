@@ -146,6 +146,7 @@ class Main extends React.Component {
         fundSources: [],
       },
       message: "",
+      customOption: "",
     };
   }
 
@@ -158,7 +159,6 @@ class Main extends React.Component {
       .then((res) => {
         var data = res.data;
         if(data.success){
-          console.log("+++ 155 Main.js data.data: ", data.data)
           this.setState({ 
             allTotals: data.data, 
             currentAvailable: data.data.currentAvailable, 
@@ -205,6 +205,9 @@ class Main extends React.Component {
     } else {
       if(listingDataSelected.type){
         payload['type'] = listingDataSelected.type;
+        if(listingDataSelected.timeframe){
+          this.setState({timeframe: listingDataSelected.timeframe});
+        }
       } else {
         if(this.state.listingDataSelected.type){
           payload['type'] = this.state.listingDataSelected.type;
@@ -228,7 +231,11 @@ class Main extends React.Component {
         if(!payload['startDate'] && !payload['endDate']){
           payload['timeframe'] = this.state.timeframe;
         } else {
-          this.setState({timeframe: "custom"});
+          if(listingDataSelected.timeframe){
+            this.setState({timeframe: listingDataSelected.timeframe});
+          } else {
+            this.setState({timeframe: "custom"});
+          }
         }
       }
       if (this.state.listingDataSelected.name) {
@@ -236,6 +243,11 @@ class Main extends React.Component {
       }
       if(!payload.name && listingDataSelected.name){
         payload.name = listingDataSelected.name;
+      }
+      if(listingDataSelected.customOption){
+        this.setState({customOption: listingDataSelected.customOption})
+      } else if(this.state.listingDataSelected.customOption){
+        this.setState({customOption: this.state.listingDataSelected.customOption})
       }
     }
 
@@ -259,14 +271,20 @@ class Main extends React.Component {
           payload['typeId'] = Number(this.state.listingDataSelected.typeId);
         }
       }
+      
+      if(payload.type === "allExpenses" || payload.type === "allFunds"){
+        this.setState({customOption: "", timeframe: 'month'})
+      }
       if(payload.type === "allExpenses"){
         payload = {
-          type: "expenses"
+          type: "expenses",
+          timeframe: "month"
         }
       }
       if(payload.type === "allFunds"){
         payload = {
-          type: "funds"
+          type: "funds",
+          timeframe: "month"
         }
       }
       // TYPES ARE NOT WORKING
@@ -280,7 +298,7 @@ class Main extends React.Component {
       // }
     }
 
-    console.log("+++ 219 Main.js payload: ", JSON.stringify(payload, null, "\t"));
+    console.log("+++ 293 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -299,9 +317,7 @@ class Main extends React.Component {
             payload.name = listingDataSelected.name;
           }
 
-          this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound}, ()=> {
-            console.log("+++ 281 Main.js this.state.listingData: ", this.state.listingData)
-          })
+          this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound})
         } else {
           this.setState({listingData: [], message: data.data.message}, () => {
               setTimeout(() => {
@@ -313,18 +329,19 @@ class Main extends React.Component {
   }
 
   updateCustom = (payload) => {
-    if(payload === "clear"){
+    if(payload === "reset"){
       this.getAllTotals({timeframe: "month"});
-      this.updateListingData({type: "expenses", timeframe: "month"});
+      this.updateListingData({type: "allExpenses", timeframe: "month"});
+      this.setState({customOption: ""})
     } else {
       this.getAllTotals(payload);
-      this.updateListingData({startDate: payload.startDate, endDate: payload.endDate})
+      this.updateListingData(payload);
     }
   } 
 
   componentDidMount() {
     this.getAllTotals({timeframe: "month"});
-    this.updateListingData({type: "expenses", timeframe: "month"});
+    this.updateListingData({type: "allExpenses", timeframe: "month"});
   };
 
   render () {
@@ -400,12 +417,18 @@ class Main extends React.Component {
                       listingDataSelected={this.state.listingDataSelected}
                       listingData={this.state.listingData}
                       message={this.state.message}
+                      customOption={this.state.customOption}
                     />
                   </Grid>
                   <Grid item xs={4} className={classes.detailsPanel}>
                     <Paper className={classes.paper}>
                       {/*DETAILS SECTION */}
-                      DETAILS GO HERE
+                      <DetailsPanel 
+                        viewSelected={this.state.listingDataSelected}
+                        graphData={this.state.listingData}
+                        timeframe={this.state.timeframe}
+                        customOption={this.state.customOption}
+                      />
                     </Paper>
                   </Grid>
                 </Grid>

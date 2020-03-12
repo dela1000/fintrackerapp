@@ -26,7 +26,6 @@ const styles = theme => ({
   },
 })
 
-
 class CenterHeader extends React.Component {
   constructor(props) {
     super(props);
@@ -36,11 +35,15 @@ class CenterHeader extends React.Component {
     }
   }
   componentDidUpdate(){
-    this.state.header = "Expenses this " + this.props.timeframe;
+    if(this.props.customOption.length > 0){
+      this.state.header = "Expenses - " + this.props.customOption;
+    } else {
+      this.state.header = "Expenses - " + this.props.timeframe;
+    }
   }
   
   render () {
-    const { classes, timeframe, totalExpenses, currentAvailable } = this.props;
+    const { classes, listingDataSelected, timeframe, totalExpenses, currentAvailable } = this.props;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     let today = 0;
     let average = 0;
@@ -49,14 +52,17 @@ class CenterHeader extends React.Component {
     if(timeframe === 'month'){
       today = moment();
       average = totalExpenses/today.format('D');
-      averageExpensesEstimate = average*moment().daysInMonth();
     }
 
     if(timeframe === 'year'){
-      today = moment().dayOfYear();
-      average = totalExpenses/today;
-      averageExpensesEstimate = average*moment().daysInMonth();
+      let totalDays = moment().dayOfYear();
+      average = totalExpenses/totalDays;
     }
+    if(timeframe === "custom"){
+      let totalDays = moment.duration(moment(listingDataSelected.endDate).diff(moment(listingDataSelected.startDate))).asDays() + 1;
+      average = totalExpenses/totalDays;
+    }
+    averageExpensesEstimate = average*moment().daysInMonth();
 
     return (
       <React.Fragment>
