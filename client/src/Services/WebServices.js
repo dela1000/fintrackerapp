@@ -82,3 +82,11 @@ export function search(payload){
   })
   return axios.get(link)
 }
+
+export function patch_expenses(payload){
+  return axios.patch('/expenses', payload)
+}
+
+export function patch_funds(payload){
+  return axios.patch('/funds', payload)
+}

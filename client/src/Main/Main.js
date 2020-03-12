@@ -30,7 +30,7 @@ import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 import EditDrawer from './EditDrawer/EditDrawer.js';
 
 import { decimals, to2Fixed } from "../Services/helpers";
-import { get_all_totals, expenses_totals, search } from "../Services/WebServices";
+import { get_all_totals, expenses_totals, patch_expenses, patch_funds, search } from "../Services/WebServices";
 
 const drawerWidth = 300;
 
@@ -380,41 +380,81 @@ class Main extends React.Component {
       return;
     }
     this.setState({ right: open });
+    if(!open){
+      this.setState({dataToEdit: {}})
+    }
   };
 
   openDetailsDrawer = (payload) => {
-    console.log("+++ 386 Main.js payload: ", JSON.stringify(payload, null, "\t"));
-    
+    console.log("+++ 389 Main.js payload.item: ", payload.item)
     let dataToEdit = {
       type: payload.type,
+      id: payload.item.id,
       date: payload.item.date,
-      amount: decimals(payload.item.amount),
+      amount: Number(payload.item.amount),
       comment: payload.item.comment,
       account: this.state.allTotals.userAccounts.find(x => x.id === payload.item.accountId),
       category: this.state.allTotals.expensesCategories.find(x => x.id === payload.item.categoryId),
       source: this.state.allTotals.fundSources.find(x => x.id === payload.item.sourceId),
     };
-
-    console.log("+++ 392 Main.js dataToEdit: ", JSON.stringify(dataToEdit, null, "\t"));
-
     this.setState({ right: true, dataToEdit});
   };
 
   handleEditDateChange = (e) => {
     let date = moment(e).format('MM-DD-YYYY');
-    var dataToEdit = {...this.state.dataToEdit}
+    let dataToEdit = {...this.state.dataToEdit}
     dataToEdit.date = date;
     this.setState({dataToEdit});
   };
 
   handleEditChange = (e) => {
-    var value = e.target.value;
+    let value = e.target.value;
       if(e.target.name === 'amount'){
         value = to2Fixed(e.target.value)
       }
-    var dataToEdit = {...this.state.dataToEdit}
+    let dataToEdit = {...this.state.dataToEdit}
     dataToEdit[e.target.name] = value;
     this.setState({dataToEdit})
+  }
+
+  submitEdit = () => {
+    let dataToEdit = {...this.state.dataToEdit}
+    let payload = {
+      id: dataToEdit.id,
+      date: dataToEdit.date,
+      amount: Number(dataToEdit.amount),
+      accountId: dataToEdit.account.id,
+      comment: dataToEdit.comment,
+    };
+    if(dataToEdit.type === "expenses"){
+      payload.categoryId = dataToEdit.category.id;
+
+      patch_expenses(payload)
+        .then((res) => {
+          var data = res.data;
+          if(data.success){
+            this.setState({ right: false, dataToEdit: {}}, () => {
+              this.getAllTotals(this.state.listingDataSelected);
+              this.updateListingData(this.state.listingDataSelected);
+            });
+          }
+        })
+    }
+    if(dataToEdit.type === "funds"){
+      payload.sourceId = dataToEdit.source.id;
+      payload.typeId = dataToEdit.account.typeId;
+      console.log("+++ 446 Main.js payload: ", JSON.stringify(payload, null, "\t"));
+      patch_funds(payload)
+        .then((res) => {
+          var data = res.data;
+          if(data.success){
+            this.setState({ right: false, dataToEdit: {}}, () => {
+              this.getAllTotals(this.state.listingDataSelected);
+              this.updateListingData(this.state.listingDataSelected);
+            });
+          }
+        })
+    }
   }
 
   render () {
@@ -525,9 +565,10 @@ class Main extends React.Component {
           dataToEdit={this.state.dataToEdit}
           expensesCategories={this.state.allTotals.expensesCategories}
           fundSources={this.state.allTotals.fundSources}
-          accounts={this.state.allTotals.userAccounts}
+          userAccounts={this.state.allTotals.userAccounts}
           handleEditDateChange={this.handleEditDateChange}
           handleEditChange={this.handleEditChange}
+          submitEdit={this.submitEdit}
         />
       </div>
     )

@@ -54,15 +54,23 @@ class EditDraw extends React.Component {
       handleEditChange,
       expensesCategories,
       fundSources,
-      accounts, 
+      userAccounts,
+      submitEdit, 
     } = this.props;
+
+    let accounts = [];
+    if(dataToEdit.type === "expenses"){
+      accounts = _.filter(userAccounts, { 'typeId': 1 });
+    } else {
+      accounts = userAccounts;
+    }
 
     return (
       <SwipeableDrawer
         anchor="right"
         open={right}
         onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
+        onOpen={toggleDrawer()}
       >
         <div className={classes.drawer} role="presentation">
           <Box>
@@ -118,7 +126,7 @@ class EditDraw extends React.Component {
                 id="categories"
                 select
                 label="Select category"
-                name="categoryId"
+                name="category"
                 value={dataToEdit.category || ''}
                 onChange={(e) => handleEditChange(e)}
                 className={classes.item}
@@ -186,6 +194,7 @@ class EditDraw extends React.Component {
                   <Button
                     variant="contained"
                     color="primary"
+                    onClick={submitEdit}
                   >
                     Update
                   </Button>

@@ -586,11 +586,7 @@ module.exports = controllers = {
         userId: userId,
       };
       _.forEach(req.body, function(value, key) {
-        if (key === "date") {
-          payload[key] = finUtils.startOfDay(value);
-        } else {
-          payload[key] = value
-        }
+        payload[key] = value
       })
       models.funds.patch(payload, function(fundUpdated, message) {
         if (fundUpdated) {
@@ -759,12 +755,9 @@ module.exports = controllers = {
         userId: userId,
       };
       _.forEach(req.body, function(value, key) {
-        if (key === "date") {
-          payload[key] = finUtils.startOfDay(value);
-        } else {
-          payload[key] = value
-        }
+        payload[key] = value
       })
+      console.log("+++ 768 index.js payload: ", payload)
       models.expenses.patch(payload, function(expenseUpdated, message) {
         if (expenseUpdated) {
           if("amount" in payload || "accountId" in payload){
