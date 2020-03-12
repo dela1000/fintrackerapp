@@ -135,7 +135,7 @@ class Sheet extends React.Component {
             <TableCell component="th" scope="row">
               {row.date}
             </TableCell>
-            {this.subTable(row)}
+            {this.innerCells(row)}
             <TableCell component="th" scope="row"  align="right">
               {decimals(row.total)}
             </TableCell>
@@ -144,7 +144,7 @@ class Sheet extends React.Component {
     })
   }
 
-  subTable(row){
+  innerCells(row){
     return this.state.headerData.map((item, idx) => {
       if(row[item.id]){
         if(row[item.id].comment){
@@ -198,7 +198,7 @@ class Sheet extends React.Component {
                 </Typography>
               </TableCell>
               {this.state.headerData.map((item, i) => (
-                <TableCell component="th" scope="row" key={i} align="center">
+                <TableCell component="th" scope="row" key={i} align="right">
                   <Typography>
                     {capitalize(item.name)}
                   </Typography>

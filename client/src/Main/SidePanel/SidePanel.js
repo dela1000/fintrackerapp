@@ -45,7 +45,7 @@ class SidePanel extends React.Component {
         />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}}>
           <Grid item xs={2}>
-            <Box pl={3} pt={0.5}>
+            <Box pl={3} pt={0.5} onClick={() => this.props.updateListingData({type: 'allExpenses'})}>
               <ReceiptIcon />
             </Box>
           </Grid>
@@ -79,7 +79,7 @@ class SidePanel extends React.Component {
         <Divider />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} >
           <Grid item xs={2}>
-            <Box pl={3} pt={0.5}>
+            <Box pl={3} pt={0.5} onClick={() => this.props.updateListingData({type: 'allFunds'})}>
               <AccountBalanceWalletIcon />
             </Box>
           </Grid>
