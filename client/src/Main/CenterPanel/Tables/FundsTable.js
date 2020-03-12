@@ -27,51 +27,8 @@ const styles = theme => ({
 
 class FundsTable extends React.Component {
 
+
   setTable = () => {
-    let transferFound = false;
-    _.forEach(this.props.listingData, (item) => {
-      item.transferAccountData = {};
-      if(item.transferAccountId){
-        item.transferAccountData = this.props.userAccounts.find(x => x.id === item.transferAccountId); 
-        transferFound = true;
-      }
-    })
-
-    if(!transferFound){
-      return (
-        <TableBody>
-          {this.props.listingData.map((item, i) => (
-              <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
-              <TableCell >{item.date}</TableCell>
-              <TableCell>{item.comment}</TableCell>
-              <TableCell>{capitalize(item.account)}</TableCell>
-              <TableCell>{capitalize(item.source)}</TableCell>
-              <TableCell align="right">{decimals(item.amount)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      )
-    } else {
-      
-      return (
-        <TableBody>
-          {this.props.listingData.map((item, i) => (
-              <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
-              <TableCell >{item.date}</TableCell>
-              <TableCell>{item.comment}</TableCell>
-              <TableCell>{capitalize(item.account)}</TableCell>
-              <TableCell>{capitalize(item.source)}</TableCell>
-              <TableCell>{capitalize(item.transferAccountData.account)}</TableCell>
-              <TableCell align="right">{decimals(item.amount)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      )
-    }
-  }
-
-  setHeaders = () => {
-    
     let headers = [
       {name: 'date', align: "left"},
       {name: 'comment', align: "left"},
@@ -83,6 +40,7 @@ class FundsTable extends React.Component {
     _.forEach(this.props.listingData, (item) => {
       item.transferAccountData = {};
       if(item.transferAccountId){
+        item.transferAccountData = this.props.userAccounts.find(x => x.id === item.transferAccountId); 
         transferFound = true;
       }
     })
@@ -91,18 +49,63 @@ class FundsTable extends React.Component {
       headers.push({name: "Transfer Account", align: 'left'})
     }
     headers.push({name: 'amount', align: "right"})
-    return (
-      <TableRow>
-        {headers.map((item, i) => (
-          <TableCell key={i} align={item.align}>
-            <Typography>
-              {capitalize(item.name)}
-            </Typography>
-          </TableCell>
-        ))}
-      </TableRow>
 
-    )
+    if(transferFound){
+      return (
+        <Table aria-label="simple table" size="small" padding="checkbox" stickyHeader>
+          <TableHead>
+            <TableRow>
+              {headers.map((item, i) => (
+                <TableCell key={i} align={item.align}>
+                  <Typography>
+                    {capitalize(item.name)}
+                  </Typography>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {this.props.listingData.map((item, i) => (
+                <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
+                <TableCell >{item.date}</TableCell>
+                <TableCell>{item.comment}</TableCell>
+                <TableCell>{capitalize(item.account)}</TableCell>
+                <TableCell>{capitalize(item.source)}</TableCell>
+                <TableCell>{capitalize(item.transferAccountData.account)}</TableCell>
+                <TableCell align="right">{decimals(item.amount)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table> 
+      )
+    } else {
+      return (
+        <Table aria-label="simple table" size="small" padding="checkbox" stickyHeader>
+          <TableHead>
+            <TableRow>
+              {headers.map((item, i) => (
+                <TableCell key={i} align={item.align}>
+                  <Typography>
+                    {capitalize(item.name)}
+                  </Typography>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {this.props.listingData.map((item, i) => (
+                <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
+                <TableCell >{item.date}</TableCell>
+                <TableCell>{item.comment}</TableCell>
+                <TableCell>{capitalize(item.account)}</TableCell>
+                <TableCell>{capitalize(item.source)}</TableCell>
+                <TableCell align="right">{decimals(item.amount)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )
+    }
   }
 
   render () {
@@ -113,12 +116,7 @@ class FundsTable extends React.Component {
     } = this.props;
     return (
       <TableContainer component={Paper}>
-        <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
-          <TableHead>
-            {this.setHeaders()}
-          </TableHead>
-          {this.setTable()}
-        </Table>
+        {this.setTable()}
         <div className={classes.seeMore}>
           <Link color="primary" href="#" onClick={() => loadMore()}>
             Load More
