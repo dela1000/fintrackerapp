@@ -16,6 +16,9 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
+
 import { withStyles } from '@material-ui/core/styles';
 
 import Logout from '../Auth/Logout.js';
@@ -96,8 +99,8 @@ const styles = theme => ({
     overflow: 'auto',
   },
   container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   paper: {
     padding: theme.spacing(2),
@@ -147,6 +150,9 @@ class Main extends React.Component {
       },
       message: "",
       customOption: "",
+      detailsState: 'open',
+      centerWidth: 8,
+      detailsWidth: true,
     };
   }
 
@@ -274,17 +280,22 @@ class Main extends React.Component {
       
       if(payload.type === "allExpenses" || payload.type === "allFunds"){
         this.setState({customOption: "", timeframe: 'month'})
-      }
-      if(payload.type === "allExpenses"){
-        payload = {
-          type: "expenses",
-          timeframe: "month"
+        if(payload.type === "allExpenses"){
+          payload = {
+            type: "expenses",
+          }
         }
-      }
-      if(payload.type === "allFunds"){
-        payload = {
-          type: "funds",
-          timeframe: "month"
+        if(payload.type === "allFunds"){
+          payload = {
+            type: "funds",
+          }
+        }
+        if(listingDataSelected.timeframe){
+          payload.timeframe = listingDataSelected.timeframe;
+        } else if (this.state.listingDataSelected.timeframe){
+          payload.timeframe = this.state.listingDataSelected.timeframe;
+        } else {
+          payload.timeframe = "month";
         }
       }
       // TYPES ARE NOT WORKING
@@ -344,6 +355,14 @@ class Main extends React.Component {
     this.updateListingData({type: "allExpenses", timeframe: "month"});
   };
 
+  detailsView = () => {
+    if(this.state.detailsState === 'close'){
+      this.setState({ centerWidth: 8, detailsWidth: true, detailsState: 'open' })
+    } else {
+      this.setState({ centerWidth: 12, detailsWidth: false, detailsState: 'close' })
+    }
+  }
+
   render () {
     const { classes } = this.props;
     return (
@@ -371,9 +390,7 @@ class Main extends React.Component {
         {/*SIDE PANEL DRAWER */}
         <Drawer
           variant="permanent"
-          classes={{
-            paper: clsx(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-          }}
+          classes={{ paper: clsx(classes.drawerPaper, !this.state.open && classes.drawerPaperClose) }}
           open={this.state.open}
         >
           <div className={classes.toolbarIcon}>
@@ -407,8 +424,13 @@ class Main extends React.Component {
           <Container maxWidth="xl" className={classes.container}>
             <GridList cols={1} >
               <GridListTile style={{height: '100%'}}>
+                <Box>
+                  <Button size="small" color="primary" style={{float: 'right'}} onClick={this.detailsView}>
+                    {this.state.detailsState}
+                  </Button>
+                </Box>
                 <Grid container spacing={3}>
-                  <Grid item xs={8}>
+                  <Grid item xs={this.state.centerWidth}>
                     {/*CENTER SECTION */}
                     <CenterPanel
                       timeframe={this.state.timeframe}
@@ -418,9 +440,15 @@ class Main extends React.Component {
                       listingData={this.state.listingData}
                       message={this.state.message}
                       customOption={this.state.customOption}
+                      availableByAccount={this.state.allTotals.availableByAccount}
                     />
                   </Grid>
-                  <Grid item xs={4} className={classes.detailsPanel}>
+                  <Grid 
+                    item 
+                    xs={this.state.detailsWidth} 
+                    className={classes.detailsPanel} 
+                    style={ this.state.detailsWidth ? {} : {display: 'none'}} 
+                  >
                     <Paper className={classes.paper}>
                       {/*DETAILS SECTION */}
                       <DetailsPanel 

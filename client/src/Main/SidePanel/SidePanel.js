@@ -9,7 +9,6 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import SidePanelAccount from './SidePanelAccount.js';
 import AddTypeModal from './AddTypeModal.js';
 import AddModal from './AddModal.js';
-import Button from '@material-ui/core/Button';
 
 import TimeSelector from './TimeSelector.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
@@ -67,7 +66,6 @@ class SidePanel extends React.Component {
                 getAllTotals={getAllTotals}
                 updateListingData={updateListingData}
               />
-
             </Box>
           </Grid>
         </Grid>

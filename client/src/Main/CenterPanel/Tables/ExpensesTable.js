@@ -23,6 +23,14 @@ const styles = theme => ({
   },
 });
 
+const headers = [
+  {name: 'date', align: "left"},
+  {name: 'comment', align: ""},
+  {name: 'category', align: ""},
+  {name: 'account', align: ""},
+  {name: 'amount', align: "right"},
+]
+
 class ExpensesTable extends React.Component {
   constructor(props) {
     super(props);
@@ -31,35 +39,17 @@ class ExpensesTable extends React.Component {
   render () {
     const { classes, listingData } = this.props;
     return (
-      <TableContainer component={Paper} style={{maxHeight: '90vh'}}>
+      <TableContainer component={Paper}>
         <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>
-                <Typography>
-                  Date
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography>
-                  Comment
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography>
-                  Account
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography>
-                  Category
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography>
-                  Amount
-                </Typography>
-              </TableCell>
+              {headers.map((item, i) => (
+                <TableCell key={i} align={item.align}>
+                  <Typography>
+                    {capitalize(item.name)}
+                  </Typography>
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -67,8 +57,8 @@ class ExpensesTable extends React.Component {
               <TableRow key={item.id} hover>
                 <TableCell >{item.date}</TableCell>
                 <TableCell>{item.comment}</TableCell>
-                <TableCell>{capitalize(item.account)}</TableCell>
                 <TableCell>{capitalize(item.expensescategory.name)}</TableCell>
+                <TableCell>{capitalize(item.account)}</TableCell>
                 <TableCell align="right">{decimals(item.amount)}</TableCell>
               </TableRow>
             ))}
