@@ -259,6 +259,16 @@ class Main extends React.Component {
           payload['typeId'] = Number(this.state.listingDataSelected.typeId);
         }
       }
+      if(payload.type === "allExpenses"){
+        payload = {
+          type: "expenses"
+        }
+      }
+      if(payload.type === "allFunds"){
+        payload = {
+          type: "funds"
+        }
+      }
       // TYPES ARE NOT WORKING
       // if(payload.type === "type"){
       //   if(listingDataSelected.typeId){
@@ -303,9 +313,13 @@ class Main extends React.Component {
   }
 
   updateCustom = (payload) => {
-    console.log("+++ 269 Main.js payload: ", payload)
-    this.getAllTotals(payload);
-    this.updateListingData({startDate: payload.startDate, endDate: payload.endDate})
+    if(payload === "clear"){
+      this.getAllTotals({timeframe: "month"});
+      this.updateListingData({type: "expenses", timeframe: "month"});
+    } else {
+      this.getAllTotals(payload);
+      this.updateListingData({startDate: payload.startDate, endDate: payload.endDate})
+    }
   } 
 
   componentDidMount() {

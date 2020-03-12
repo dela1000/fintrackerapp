@@ -19,25 +19,6 @@ import { get_all_totals, expenses_totals } from "../../Services/WebServices";
 
 class SidePanel extends React.Component {
 
-  componentDidMount() {
-    // this.getAllTotals();
-    // this.props.updateListingData(null);
-  };
-
-  getExpensesTotals (payload){
-    // expenses_totals(payload)
-    //   .then((res) => {
-    //     var data = res.data;
-    //     if(data.success){
-    //       var allTotals = {...this.state.allTotals}
-    //       allTotals.totalExpenses = Number(data.data.totalExpenses);
-    //       allTotals.expensesByCategory = data.data.expensesByCategory;
-    //       this.setState({allTotals})
-    //       this.props.updateTotalExpenses(data.data.totalExpenses);
-    //     }
-    //   })
-  }
-
   render () {
     const { 
       open, 
@@ -69,7 +50,7 @@ class SidePanel extends React.Component {
               <ReceiptIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }} onClick={() => this.props.updateListingData({type: 'expenses'})}>
+          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }} onClick={() => this.props.updateListingData({type: 'allExpenses'})}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
                 EXPENSES
@@ -106,7 +87,7 @@ class SidePanel extends React.Component {
           </Grid>
           <Grid item xs={8} style={open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
-              <Typography variant="h6" onClick={() => this.props.updateListingData({type: 'funds'})}>
+              <Typography variant="h6" onClick={() => this.props.updateListingData({type: 'allFunds'})}>
                 CURRENT FUNDS
               </Typography>
             </Box>

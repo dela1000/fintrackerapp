@@ -38,9 +38,9 @@ class TimeSelector extends React.Component {
 
   customOptions = [
     {name: "last month", value: 'lastMonth'},
-    {name: 'last 3 months', value: 'lastThreeMonths'},
+    // {name: 'last 3 months', value: 'lastThreeMonths'},
     {name: 'year to date', value: 'yearToDate'},
-    {name: 'last year', value: 'lastYear'},
+    // {name: 'last year', value: 'lastYear'},
     // {name: 'all time', value: 'allTime'},
   ]
 
@@ -91,8 +91,15 @@ class TimeSelector extends React.Component {
 
   componentDidUpdate (prevProps) {
     if(!this.props.open && this.state.showCalendars){
-      this.setState({showCalendars: false})
+      this.setState({showCalendars: false, startDate: null, endDate: null, option: ""})
+
     }
+  }
+
+  clear (){
+    this.setState({ startDate: null, endDate: null, option: ""}, () => {
+      this.props.updateCustom('clear');
+    })
   }
 
   render () {
@@ -134,65 +141,79 @@ class TimeSelector extends React.Component {
           container
           direction="column"
           justify="center"
-          alignItems="center"
           spacing={1}
           style={this.state.showCalendars ? {} : { display: 'none' }}
         >
-          <Grid item>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <KeyboardDatePicker
-                autoFocus
+          <Box pr={4} pl={4}>
+            <Grid item>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  fullWidth
+                  autoOk
+                  allowKeyboardControl
+                  autoComplete="off"
+                  margin="normal"
+                  id="startDate"
+                  label="Select Start Date"
+                  format="MM-dd-yyyy"
+                  name="startDate"
+                  value={this.state.startDate}
+                  KeyboardButtonProps={{ 'aria-label': 'change date' }}
+                  onChange={(e, date) => this.handleDateChange('startDate', date)}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  fullWidth
+                  autoOk
+                  allowKeyboardControl
+                  autoComplete="off"
+                  margin="normal"
+                  id="endDate"
+                  label="Select End Date"
+                  format="MM-dd-yyyy"
+                  name="endDate"
+                  value={this.state.endDate}
+                  KeyboardButtonProps={{ 'aria-label': 'change date' }}
+                  onChange={(e, date) => this.handleDateChange('endDate', date)}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item xs>
+              <TextField
                 fullWidth
-                autoOk
-                allowKeyboardControl
-                autoComplete="off"
-                margin="normal"
-                id="startDate"
-                label="Select Start Date"
-                format="MM-dd-yyyy"
-                name="startDate"
-                value={this.state.startDate}
-                KeyboardButtonProps={{ 'aria-label': 'change date' }}
-                onChange={(e, date) => this.handleDateChange('startDate', date)}
-              />
-            </MuiPickersUtilsProvider>
-          </Grid>
-          <Grid item>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <KeyboardDatePicker
-                autoFocus
-                fullWidth
-                autoOk
-                allowKeyboardControl
-                autoComplete="off"
-                margin="normal"
-                id="endDate"
-                label="Select End Date"
-                format="MM-dd-yyyy"
-                name="endDate"
-                value={this.state.endDate}
-                KeyboardButtonProps={{ 'aria-label': 'change date' }}
-                onChange={(e, date) => this.handleDateChange('endDate', date)}
-              />
-            </MuiPickersUtilsProvider>
-          </Grid>
-          <Grid item>
-            <TextField
-              fullWidth
-              id="customOption"
-              select
-              label="Select a Custom Option"
-              name="option"
-              value={this.state.option}
-              onChange={(e) => this.handleChange(e)}
+                id="customOption"
+                select
+                label="Select a Custom Option"
+                name="option"
+                value={this.state.option}
+                onChange={(e) => this.handleChange(e)}
+              >
+                {this.customOptions.map((option, i) => (
+                  <MenuItem key={i} value={option.value}>
+                    {capitalize(option.name)}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Box>
+        </Grid>
+        <Grid 
+          container
+          spacing={1}
+          style={this.state.showCalendars ? {} : { display: 'none' }}
+        >
+          <Box pl={3} pt={2}>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => this.clear()}
             >
-              {this.customOptions.map((option, i) => (
-                <MenuItem key={i} value={option.value}>
-                  {capitalize(option.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
+              Clear
+            </Button>
+          </Box>
         </Grid>
       </React.Fragment>
     )
