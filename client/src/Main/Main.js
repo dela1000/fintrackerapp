@@ -34,6 +34,7 @@ const drawerWidth = 300;
 
 const styles = theme => ({
   root: {
+    height: '100vh',
     display: 'flex',
   },
   toolbar: {
@@ -71,6 +72,8 @@ const styles = theme => ({
     flexGrow: 1,
   },
   drawerPaper: {
+    height: '100vh',
+    overflowY: 'scroll',
     position: 'relative',
     whiteSpace: 'nowrap',
     width: drawerWidth,
@@ -78,7 +81,6 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowY: 'scroll',
   },
   drawerPaperClose: {
     overflowX: 'hidden',
@@ -99,6 +101,7 @@ const styles = theme => ({
     overflow: 'auto',
   },
   container: {
+    overflowY: 'scroll',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
