@@ -30,15 +30,17 @@ class SelectorPanel extends React.Component {
 
   defineTitle = (listingDataSelected) => {
     console.log("+++ 32 SelectorPanel.js listingDataSelected: ", listingDataSelected)
-    if(listingDataSelected.name){
-      return capitalize(listingDataSelected.type) + " - " + capitalize(listingDataSelected.name)
-    }
-    if(listingDataSelected.type){
-      if(listingDataSelected.type.toUpperCase().includes('expense'.toUpperCase())){
-          return "Expenses";
+    if(listingDataSelected){
+      if(listingDataSelected.name){
+        return capitalize(listingDataSelected.type) + " - " + capitalize(listingDataSelected.name)
       }
-      if(listingDataSelected.type.toUpperCase().includes('fund'.toUpperCase())){
-          return "Funds";
+      if(listingDataSelected.type){
+        if(listingDataSelected.type.toUpperCase().includes('expense'.toUpperCase())){
+            return "Expenses";
+        }
+        if(listingDataSelected.type.toUpperCase().includes('fund'.toUpperCase())){
+            return "Funds";
+        }
       }
     } else{
       return "Expenses";
@@ -102,14 +104,16 @@ class SelectorPanel extends React.Component {
             </Box> 
           </Grid>
         </Grid>
-        <Cmp 
-          listingDataSelected={listingDataSelected}
-          listingData={listingData}
-          message={message}
-        />
+          hello
       </React.Fragment>
     );
   }
 }
 
 export default SelectorPanel;
+
+        // <Cmp 
+        //   listingDataSelected={listingDataSelected}
+        //   listingData={listingData}
+        //   message={message}
+        // />

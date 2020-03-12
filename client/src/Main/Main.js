@@ -228,6 +228,9 @@ class Main extends React.Component {
           this.setState({timeframe: "custom"});
         }
       }
+      if(!listingDataSelected.type){
+        listingDataSelected.type = payload.type;
+      }
     }
 
     if(listingDataSelected){
@@ -235,13 +238,22 @@ class Main extends React.Component {
         if(listingDataSelected.categoryId){
           payload['categoryId'] = Number(listingDataSelected.categoryId);
         }
+        if(this.state.listingDataSelected.categoryId){
+          payload['categoryId'] = Number(this.state.listingDataSelected.categoryId);
+        }
       }
       if(payload.type === "funds"){
         if(listingDataSelected.accountId){
           payload['accountId'] = Number(listingDataSelected.accountId);
         }
+        if(this.state.listingDataSelected.accountId){
+          payload['accountId'] = Number(this.state.listingDataSelected.accountId);
+        }
         if(listingDataSelected.typeId){
           payload['typeId'] = Number(listingDataSelected.typeId);
+        }
+        if(this.state.listingDataSelected.typeId){
+          payload['typeId'] = Number(this.state.listingDataSelected.typeId);
         }
       }
     }
@@ -252,7 +264,11 @@ class Main extends React.Component {
         var data = res.data;
         if(data.success){
           if(data.message){
-            this.setState({listingData: [], message: data.data.message})
+            this.setState({listingData: [], message: data.data.message}, () => {
+              setTimeout(() => {
+                this.setState({message: ""})
+              }, 2500);
+            })
             return;
           }
           let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
@@ -260,23 +276,13 @@ class Main extends React.Component {
             console.log("+++ 281 Main.js this.state.listingData: ", this.state.listingData)
           })
         } else {
-          this.setState({listingData: [], message: data.data.message})
+          this.setState({listingData: [], message: data.data.message}, () => {
+              setTimeout(() => {
+                this.setState({message: ""})
+              }, 2500);
+            })
         }
       })
-
-
-    // if(listingDataSelected === null){
-    //   payload['type'] = "expenses";
-    // } else {
-    //   if(listingDataSelected.type === 'expenses' || listingDataSelected.type === 'allExpenses'){
-    //     payload['type'] = "expenses";
-    //   }
-
-    //   if(listingDataSelected.type === 'funds' || listingDataSelected.type === 'allFunds'){
-    //     payload['type'] = "funds";
-    //   }
-
-    // }
   }
 
   updateCustom = (payload) => {
