@@ -13,12 +13,17 @@ const component = {
 class ListingPanel extends React.Component {
 
   render(){
-    const { listingData, listingDataSelected } = this.props;
+    const { 
+      listingData, 
+      listingDataSelected, 
+      openDetailsDrawer 
+    } = this.props;
     const Cmp = component[listingDataSelected.type];
     return (
       <React.Fragment>
         <Cmp 
           listingData={listingData}
+          openDetailsDrawer={openDetailsDrawer}
         />
       </React.Fragment>
     );

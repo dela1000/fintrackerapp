@@ -3,7 +3,17 @@ import React from 'react';
 import CenterHeader from './CenterHeader.js';
 import SelectorPanel from './SelectorPanel.js';
 
-export default function CenterPanel({timeframe, totalExpenses, currentAvailable, listingDataSelected, listingData, message, availableByAccount, customOption}) {
+export default function CenterPanel({
+    timeframe, 
+    totalExpenses, 
+    currentAvailable, 
+    listingDataSelected, 
+    listingData, 
+    message, 
+    availableByAccount, 
+    customOption, 
+    openDetailsDrawer
+  }) {
   return (
     <React.Fragment>
       <CenterHeader
@@ -18,6 +28,7 @@ export default function CenterPanel({timeframe, totalExpenses, currentAvailable,
         listingDataSelected={listingDataSelected}
         listingData={listingData}
         message={message}
+        openDetailsDrawer={openDetailsDrawer}
       />
     </React.Fragment>
   )

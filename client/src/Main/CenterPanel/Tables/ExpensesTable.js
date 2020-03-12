@@ -32,12 +32,13 @@ const headers = [
 ]
 
 class ExpensesTable extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   render () {
-    const { classes, listingData } = this.props;
+    const { 
+      classes, 
+      listingData, 
+      openDetailsDrawer 
+    } = this.props;
     return (
       <TableContainer component={Paper}>
         <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
@@ -53,8 +54,8 @@ class ExpensesTable extends React.Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {listingData.map(item => (
-              <TableRow key={item.id} hover>
+            {listingData.map((item, i) => (
+              <TableRow key={i} hover onClick={() => openDetailsDrawer({item: item, type: 'expenses'})}>
                 <TableCell >{item.date}</TableCell>
                 <TableCell>{item.comment}</TableCell>
                 <TableCell>{capitalize(item.expensescategory.name)}</TableCell>

@@ -56,9 +56,6 @@ class CenterHeader extends React.Component {
     let averageHeader = "Average Daily " + capitalize(listingDataSelected.type);
     let monthEstimate = "Month Estimate";
     
-    
-    console.log("+++ 41 CenterHeader.js timeframe: ", timeframe)
-    console.log("+++ 42 CenterHeader.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     if(listingDataSelected.type === "expenses"){
       backgroundColor = "#FF504C";
       if(listingDataSelected.categoryId){

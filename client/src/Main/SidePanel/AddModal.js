@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import _ from 'lodash'
 
-import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
-
 import Fade from '@material-ui/core/Fade';
 import MenuItem from '@material-ui/core/MenuItem';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -20,6 +18,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -270,7 +269,7 @@ class AddModal extends React.Component {
                           KeyboardButtonProps={{ 'aria-label': 'change date' }}
                           onChange={(date) => this.handleDateChange(date)}
                       />
-                    </MuiPickersUtilsProvider>
+                      </MuiPickersUtilsProvider>
                       <TextField 
                         fullWidth
                         type="number" 

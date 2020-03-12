@@ -18,7 +18,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -30,6 +29,7 @@ import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 import EditDrawer from './EditDrawer/EditDrawer.js';
 
+import { to2Fixed } from "../Services/helpers";
 import { get_all_totals, expenses_totals, search } from "../Services/WebServices";
 
 const drawerWidth = 300;
@@ -164,17 +164,14 @@ class Main extends React.Component {
       detailsState: 'open',
       centerWidth: 8,
       detailsWidth: true,
-      right: true,
+      right: false,
+      dataToEdit: {}
     };
   }
 
   handleDrawer(value) {
     this.setState({ open: value });
   };
-
-  handleEditPanel(value) {
-    this.setState({right: true})
-  }
 
   getAllTotals = (payload) => {
     get_all_totals(payload)
@@ -325,7 +322,6 @@ class Main extends React.Component {
       // }
     }
 
-    console.log("+++ 293 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -379,9 +375,26 @@ class Main extends React.Component {
     }
   }
 
-  toggleDrawer = (open) => {
+  toggleDrawer = (open) => event => {
+    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
     this.setState({ right: open });
   };
+
+  openDetailsDrawer = (payload) => {
+    payload.item['type'] = payload.type
+    this.setState({ right: true, dataToEdit: payload.item });
+  };
+
+  handleChange = (e) => {
+    var value = e.target.value;
+    console.log("+++ 392 Main.js value: ", value)
+    
+    let dataToEdit = ...this.state.dataToEdit;
+    dataToEdit[e.target.name] = e.target.value;
+    this.setState({dataToEdit})
+  }
 
   render () {
     const { classes } = this.props;
@@ -461,6 +474,7 @@ class Main extends React.Component {
                       message={this.state.message}
                       customOption={this.state.customOption}
                       availableByAccount={this.state.allTotals.availableByAccount}
+                      openDetailsDrawer={this.openDetailsDrawer}
                     />
                   </Grid>
                   <Grid 
@@ -487,6 +501,11 @@ class Main extends React.Component {
         <EditDrawer
           right={this.state.right}
           toggleDrawer={this.toggleDrawer}
+          dataToEdit={this.state.dataToEdit}
+          expensesCategories={this.state.allTotals.expensesCategories}
+          fundSources={this.state.allTotals.fundSources}
+          accounts={this.state.allTotals.userAccounts}
+          handleChange={this.handleChange}
         />
       </div>
     )
