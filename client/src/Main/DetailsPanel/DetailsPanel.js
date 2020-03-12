@@ -10,7 +10,7 @@ import { decimals } from "../../Services/helpers";
 import Pie from './Pie.js'
 import StackedBar from './StackedBar.js'
 
-export default function DetailedPanel({viewSelected, graphData, timeframe, customOption}) {
+export default function DetailedPanel({viewSelected, graphData, timeframe, customOption, colors}) {
   // Expenses and funds data
   let mainData = [];
   let title = "";
@@ -81,7 +81,7 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
   tempCategoryData = _.orderBy(tempCategoryData, ['id'],['asc']);
   
   _.forEach(tempCategoryData, (item) => {
-    categoryData.push(item.name);
+    categoryData.push({name: item.name, categoryId: item.id});
   })
 
   if(viewSelected.type.toUpperCase().includes('fund'.toUpperCase())){
@@ -118,10 +118,11 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
       return (
         <React.Fragment>
           <StackedBar 
+            argumentField="date"
             categoryData={categoryData}
             dailyData={dailyData}
             viewSelected={viewSelected}
-            argumentField="date"
+            colors={colors}
           />
         </React.Fragment>
       );
@@ -132,13 +133,15 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
             data={mainData}
             title={title}
             argumentField={argumentField}
+            colors={colors}
           />
           <Divider />
           <StackedBar 
+            argumentField="date"
             categoryData={categoryData}
             dailyData={dailyData}
             viewSelected={viewSelected}
-            argumentField="date"
+            colors={colors}
           />
         </React.Fragment>
       );

@@ -1,6 +1,8 @@
 import React from 'react';
+import _ from 'lodash';
 
-import { Chart, 
+import { 
+  Chart, 
   Series, 
   CommonSeriesSettings, 
   Legend, 
@@ -25,7 +27,7 @@ const setTitle = (data) => {
   }
 }
 
-export default function Stacked ({dailyData, categoryData, viewSelected, argumentField}) {
+export default function Stacked ({dailyData, categoryData, viewSelected, argumentField, colors}) {
   return (
     <Chart
       id="chart"
@@ -36,8 +38,9 @@ export default function Stacked ({dailyData, categoryData, viewSelected, argumen
       {categoryData.map((item, i) => (
         <Series
           key={i}
-          name={capitalize(item)}
-          valueField={item}
+          name={capitalize(item.name)}
+          valueField={item.name}
+          color={!_.isEmpty(colors) ? colors[item.categoryId].color : null}
         />
       ))}
       <ValueAxis position="left">

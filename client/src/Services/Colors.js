@@ -41,6 +41,7 @@ export function defineColors(categories) {
   _.forEach(categories, (cat, i) => {
     let color = colors[i];
     color.category = cat.name;
+    color.id = cat.id;
     definedColors[cat.id] = color;
   })
   return definedColors;

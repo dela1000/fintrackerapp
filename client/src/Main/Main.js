@@ -559,6 +559,7 @@ class Main extends React.Component {
                         graphData={this.state.listingData}
                         timeframe={this.state.timeframe}
                         customOption={this.state.customOption}
+                        colors={this.state.colors}
                       />
                     </Paper>
                   </Grid>

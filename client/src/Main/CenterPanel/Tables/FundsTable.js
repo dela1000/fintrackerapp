@@ -107,11 +107,7 @@ class FundsTable extends React.Component {
   }
 
   render () {
-    const { 
-      classes, 
-      listingData, 
-      openDetailsDrawer 
-    } = this.props;
+    const { classes } = this.props;
     return (
       <TableContainer component={Paper}>
         {this.setTable()}
