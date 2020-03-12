@@ -25,9 +25,9 @@ const styles = theme => ({
 
 const headers = [
   {name: 'date', align: "left"},
-  {name: 'comment', align: ""},
-  {name: 'source', align: ""},
-  {name: 'account', align: ""},
+  {name: 'comment', align: "left"},
+  {name: 'source', align: "left"},
+  {name: 'account', align: "left"},
   {name: 'amount', align: "right"},
 ]
 

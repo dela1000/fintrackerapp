@@ -18,6 +18,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -27,6 +28,7 @@ import Settings from '../Settings/SettingsButton.js';
 import SidePanel from './SidePanel/SidePanel.js';
 import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel/DetailsPanel.js';
+import EditDrawer from './EditDrawer/EditDrawer.js';
 
 import { get_all_totals, expenses_totals, search } from "../Services/WebServices";
 
@@ -122,6 +124,12 @@ const styles = theme => ({
   depositContext: {
     flex: 1,
   },
+  list: {
+      width: 450,
+    },
+    fullList: {
+      width: 'auto',
+    },
 })
 
 class Main extends React.Component {
@@ -156,12 +164,17 @@ class Main extends React.Component {
       detailsState: 'open',
       centerWidth: 8,
       detailsWidth: true,
+      right: true,
     };
   }
 
   handleDrawer(value) {
     this.setState({ open: value });
   };
+
+  handleEditPanel(value) {
+    this.setState({right: true})
+  }
 
   getAllTotals = (payload) => {
     get_all_totals(payload)
@@ -366,6 +379,10 @@ class Main extends React.Component {
     }
   }
 
+  toggleDrawer = (open) => {
+    this.setState({ right: open });
+  };
+
   render () {
     const { classes } = this.props;
     return (
@@ -467,6 +484,10 @@ class Main extends React.Component {
             </GridList>
           </Container>
         </div>
+        <EditDrawer
+          right={this.state.right}
+          toggleDrawer={this.toggleDrawer}
+        />
       </div>
     )
   }
