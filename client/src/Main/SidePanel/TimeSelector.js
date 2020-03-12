@@ -22,7 +22,7 @@ class TimeSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCalendars: true,
+      showCalendars: false,
       startDate: null,
       endDate: null,
       option: ""

@@ -161,7 +161,7 @@ class Main extends React.Component {
       },
       message: "",
       customOption: "",
-      detailsState: 'open',
+      detailsState: 'close',
       centerWidth: 8,
       detailsWidth: true,
       right: false,
@@ -368,10 +368,10 @@ class Main extends React.Component {
   };
 
   detailsView = () => {
-    if(this.state.detailsState === 'close'){
-      this.setState({ centerWidth: 8, detailsWidth: true, detailsState: 'open' })
+    if(this.state.detailsState === 'open'){
+      this.setState({ centerWidth: 8, detailsWidth: true, detailsState: 'close' })
     } else {
-      this.setState({ centerWidth: 12, detailsWidth: false, detailsState: 'close' })
+      this.setState({ centerWidth: 12, detailsWidth: false, detailsState: 'open' })
     }
   }
 

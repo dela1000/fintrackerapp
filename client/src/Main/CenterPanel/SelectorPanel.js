@@ -93,14 +93,12 @@ class SelectorPanel extends React.Component {
               <ButtonGroup>
                 <Button 
                   size="small" 
-                  variant="contained" 
                   color={this.state.listButtonColor} 
                   onClick={() => this.updateView('Listing')}>
                     List
                 </Button>
                 <Button 
                   size="small" 
-                  variant="contained" 
                   color={this.state.sheetButtonColor} 
                   onClick={() => this.updateView('Sheet')}>
                     Sheet

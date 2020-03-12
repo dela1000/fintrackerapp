@@ -24,9 +24,7 @@ const styles = theme => ({
   },
 });
 
-
 class FundsTable extends React.Component {
-
 
   setTable = () => {
     let headers = [
