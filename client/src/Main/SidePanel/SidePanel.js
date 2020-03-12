@@ -69,7 +69,7 @@ class SidePanel extends React.Component {
               <ReceiptIcon />
             </Box>
           </Grid>
-          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }}>
+          <Grid item xs={8} style={this.props.open ? {} : { display: 'none' }} onClick={() => this.props.updateListingData({type: 'expenses'})}>
             <Box pl={1} pt={0.2}>
               <Typography variant="h6">
                 EXPENSES
@@ -84,6 +84,7 @@ class SidePanel extends React.Component {
                 fundSources={fundSources}
                 userAccounts={userAccounts}
                 getAllTotals={getAllTotals}
+                updateListingData={updateListingData}
               />
 
             </Box>
@@ -105,7 +106,7 @@ class SidePanel extends React.Component {
           </Grid>
           <Grid item xs={8} style={open ? {} : { display: 'none' }}>
             <Box pl={1} pt={0.2}>
-              <Typography variant="h6">
+              <Typography variant="h6" onClick={() => this.props.updateListingData({type: 'funds'})}>
                 CURRENT FUNDS
               </Typography>
             </Box>
@@ -117,6 +118,7 @@ class SidePanel extends React.Component {
               fundSources={fundSources}
               userAccounts={userAccounts}
               getAllTotals={getAllTotals}
+              updateListingData={updateListingData}
             />
           </Grid>
         </Grid>

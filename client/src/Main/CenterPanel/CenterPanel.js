@@ -3,11 +3,11 @@ import React from 'react';
 import CenterHeader from './CenterHeader.js';
 import SelectorPanel from './SelectorPanel.js';
 
-export default function CenterPanel({currentTimeframe, totalExpenses, currentAvailable, listingDataSelected, listingData, message }) {
+export default function CenterPanel({timeframe, totalExpenses, currentAvailable, listingDataSelected, listingData, message }) {
   return (
     <React.Fragment>
       <CenterHeader
-        currentTimeframe={currentTimeframe}
+        timeframe={timeframe}
         totalExpenses={totalExpenses}
         currentAvailable={currentAvailable}
       />

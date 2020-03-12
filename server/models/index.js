@@ -818,8 +818,9 @@ module.exports = {
       //   query.where.id = query.where.categoryId;
       //   delete query.where.categoryId;
       // }
-      console.log("+++ 821 index.js query.where: ", query.where)
-      console.log("models - Search query: ", JSON.stringify(query, null, "\t"))
+      console.log("models - Search query.where: ", query.where)
+      console.log("models - Search query.include: ", JSON.stringify(query.include, null, "\t"))
+      console.log("models - Search query.order: ", JSON.stringify(query.order, null, "\t"))
 
       db[tableName].findAll(query)
         .then(function(foundResults) {

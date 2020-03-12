@@ -153,6 +153,7 @@ class AddModal extends React.Component {
             var data = res.data;
             if(data.success){
               this.props.getAllTotals();
+              this.props.updateListingData();
               this.clearAfterSubmit();
               this.handleOpen(false);
             } else {
@@ -176,6 +177,7 @@ class AddModal extends React.Component {
             var data = res.data;
             if(data.success){
               this.props.getAllTotals();
+              this.props.updateListingData();
               this.clearAfterSubmit();
               this.handleOpen(false);
             } else {

@@ -128,8 +128,7 @@ class Main extends React.Component {
       currentAvailable: 0,
       expensesByCategory: [],
       listingData: [],
-      timeframe: 'year',
-      currentTimeframe: 'month',
+      timeframe: 'month',
       page: 1,
       listingDataSelected: {
         "type": "expenses"
@@ -154,8 +153,7 @@ class Main extends React.Component {
     this.setState({ open: value });
   };
 
-
-  getAllTotals (payload){
+  getAllTotals = (payload) => {
     get_all_totals(payload)
       .then((res) => {
         var data = res.data;
@@ -186,21 +184,19 @@ class Main extends React.Component {
 
   updateTimeframe = (timeframe) => {
     if(timeframe === 'month'){
-      this.setState({timeframe: "year", currentTimeframe: 'month'}, ()=> {
-        this.updateListingData({timeframe: 'month'});
+      this.setState({timeframe: "year"}, ()=> {
+        this.updateListingData({timeframe: 'year'});
       });
     };
     if(timeframe === 'year' || timeframe === 'custom'){
-      this.setState({timeframe: "month", currentTimeframe: 'year'}, ()=> {
-        this.updateListingData({timeframe: 'year'});
+      this.setState({timeframe: "month"}, ()=> {
+        this.updateListingData({timeframe: 'month'});
       });
     };
   }
 
 
   updateListingData = (listingDataSelected) => {
-
-    console.log("+++ 210 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     var payload = {
       page: this.state.page,
     }
@@ -227,32 +223,30 @@ class Main extends React.Component {
           payload['endDate'] = listingDataSelected.endDate;
         }
         if(!payload['startDate'] && !payload['endDate']){
-          payload['timeframe'] = "month";
+          payload['timeframe'] = this.state.timeframe;
         } else {
-          this.setState({currentTimeframe: "custom"});
+          this.setState({timeframe: "custom"});
         }
       }
-
     }
 
-    if(payload.type === "expenses"){
-      if(listingDataSelected && listingDataSelected.categoryId){
-        payload['categoryId'] = Number(listingDataSelected.categoryId);
+    if(listingDataSelected){
+      if(payload.type === "expenses"){
+        if(listingDataSelected.categoryId){
+          payload['categoryId'] = Number(listingDataSelected.categoryId);
+        }
       }
-    }
-
-    if(payload.type === "funds"){
-      if(listingDataSelected.accountId){
-        payload['accountId'] = Number(listingDataSelected.accountId);
-      }
-      if(listingDataSelected.typeId){
-        payload['typeId'] = Number(listingDataSelected.typeId);
+      if(payload.type === "funds"){
+        if(listingDataSelected.accountId){
+          payload['accountId'] = Number(listingDataSelected.accountId);
+        }
+        if(listingDataSelected.typeId){
+          payload['typeId'] = Number(listingDataSelected.typeId);
+        }
       }
     }
 
     console.log("+++ 219 Main.js payload: ", JSON.stringify(payload, null, "\t"));
-    console.log("+++ 220 Main.js this.state.listingDataSelected: ", this.state.listingDataSelected)
-
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -337,21 +331,19 @@ class Main extends React.Component {
           <SidePanel
             open={this.state.open}
             timeframe={this.state.timeframe}
+
             updateTimeframe={this.updateTimeframe}
             updateCustom={this.updateCustom}
-
-            expensesByCategory={this.state.expensesByCategory} 
-            expensesCategories={this.state.allTotals.expensesCategories}
-            updateListingData={this.updateListingData}
             getAllTotals={this.getAllTotals}
+            updateListingData={this.updateListingData}
+
+            currentAvailable={this.state.currentAvailable}
+            expensesByCategory={this.state.expensesByCategory} 
 
             expensesCategories={this.state.allTotals.expensesCategories}
+            availableByAccount={this.state.allTotals.availableByAccount}
             fundSources={this.state.allTotals.fundSources}
             userAccounts={this.state.allTotals.userAccounts}
-
-
-            availableByAccount={this.state.allTotals.availableByAccount}
-            currentAvailable={this.state.currentAvailable}
           />
         </Drawer>
         {/*END OF SIDE PANEL DRAWER */}
@@ -365,7 +357,7 @@ class Main extends React.Component {
                   <Grid item xs={8}>
                     {/*CENTER SECTION */}
                     <CenterPanel
-                      currentTimeframe={this.state.currentTimeframe}
+                      timeframe={this.state.timeframe}
                       totalExpenses={this.state.totalExpenses}
                       currentAvailable={this.state.currentAvailable}
                       listingDataSelected={this.state.listingDataSelected}

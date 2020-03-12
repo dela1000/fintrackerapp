@@ -36,23 +36,23 @@ class CenterHeader extends React.Component {
     }
   }
   componentDidUpdate(){
-    this.state.header = "Expenses this " + this.props.currentTimeframe;
+    this.state.header = "Expenses this " + this.props.timeframe;
   }
   
   render () {
-    const { classes, currentTimeframe, totalExpenses, currentAvailable } = this.props;
+    const { classes, timeframe, totalExpenses, currentAvailable } = this.props;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     let today = 0;
     let average = 0;
     let averageExpensesEstimate = 0;
   
-    if(currentTimeframe === 'month'){
+    if(timeframe === 'month'){
       today = moment();
       average = totalExpenses/today.format('D');
       averageExpensesEstimate = average*moment().daysInMonth();
     }
 
-    if(currentTimeframe === 'year'){
+    if(timeframe === 'year'){
       today = moment().dayOfYear();
       average = totalExpenses/today;
       averageExpensesEstimate = average*moment().daysInMonth();
