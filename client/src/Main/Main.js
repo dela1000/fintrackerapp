@@ -29,7 +29,7 @@ import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 import EditDrawer from './EditDrawer/EditDrawer.js';
 
-import { to2Fixed } from "../Services/helpers";
+import { decimals, to2Fixed } from "../Services/helpers";
 import { get_all_totals, expenses_totals, search } from "../Services/WebServices";
 
 const drawerWidth = 300;
@@ -383,16 +383,37 @@ class Main extends React.Component {
   };
 
   openDetailsDrawer = (payload) => {
-    payload.item['type'] = payload.type
-    this.setState({ right: true, dataToEdit: payload.item });
+    console.log("+++ 386 Main.js payload: ", JSON.stringify(payload, null, "\t"));
+    
+    let dataToEdit = {
+      type: payload.type,
+      date: payload.item.date,
+      amount: decimals(payload.item.amount),
+      comment: payload.item.comment,
+      account: this.state.allTotals.userAccounts.find(x => x.id === payload.item.accountId),
+      category: this.state.allTotals.expensesCategories.find(x => x.id === payload.item.categoryId),
+      source: this.state.allTotals.fundSources.find(x => x.id === payload.item.sourceId),
+    };
+
+    console.log("+++ 392 Main.js dataToEdit: ", JSON.stringify(dataToEdit, null, "\t"));
+
+    this.setState({ right: true, dataToEdit});
   };
 
-  handleChange = (e) => {
+  handleEditDateChange = (e) => {
+    let date = moment(e).format('MM-DD-YYYY');
+    var dataToEdit = {...this.state.dataToEdit}
+    dataToEdit.date = date;
+    this.setState({dataToEdit});
+  };
+
+  handleEditChange = (e) => {
     var value = e.target.value;
-    console.log("+++ 392 Main.js value: ", value)
-    
-    let dataToEdit = ...this.state.dataToEdit;
-    dataToEdit[e.target.name] = e.target.value;
+      if(e.target.name === 'amount'){
+        value = to2Fixed(e.target.value)
+      }
+    var dataToEdit = {...this.state.dataToEdit}
+    dataToEdit[e.target.name] = value;
     this.setState({dataToEdit})
   }
 
@@ -505,7 +526,8 @@ class Main extends React.Component {
           expensesCategories={this.state.allTotals.expensesCategories}
           fundSources={this.state.allTotals.fundSources}
           accounts={this.state.allTotals.userAccounts}
-          handleChange={this.handleChange}
+          handleEditDateChange={this.handleEditDateChange}
+          handleEditChange={this.handleEditChange}
         />
       </div>
     )

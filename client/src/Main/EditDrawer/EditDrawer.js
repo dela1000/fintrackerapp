@@ -43,33 +43,6 @@ const styles = theme => ({
 })
 
 class EditDraw extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      dataToEdit: {},
-      selectedDate: null,
-      amount: "",
-      comment: "",
-      categoryId: "",
-      source: "",
-      account: {
-        account: ""
-      },
-    }
-  }
-
-  handleDateChange (e) {
-    let date = moment(e).format('MM-DD-YYYY');
-    this.setState({selectedDate: date});
-  };
-
-  // handleChange (e) {
-  //   var value = e.target.value;
-  //   if(e.target.name === 'amount'){
-  //     value = to2Fixed(e.target.value)
-  //   }
-  //   this.setState({[e.target.name]: value})
-  // }
 
   render () {
     const { 
@@ -77,7 +50,8 @@ class EditDraw extends React.Component {
       right, 
       toggleDrawer, 
       dataToEdit, 
-      handleChange,
+      handleEditDateChange,
+      handleEditChange,
       expensesCategories,
       fundSources,
       accounts, 
@@ -112,9 +86,9 @@ class EditDraw extends React.Component {
                   id="date-picker-dialog"
                   label="Date of Transaction"
                   format="MM-dd-yyyy"
-                  value={dataToEdit.selectedDate}
+                  value={dataToEdit.date}
                   KeyboardButtonProps={{ 'aria-label': 'change date' }}
-                  onChange={(date) => this.handleDateChange(date)}
+                  onChange={(date) => handleEditDateChange(date)}
                 />
               </MuiPickersUtilsProvider>
               <TextField 
@@ -125,7 +99,7 @@ class EditDraw extends React.Component {
                 label="Amount" 
                 autoComplete="off"
                 value={dataToEdit.amount} 
-                onChange={(e) => handleChange(e)} 
+                onChange={(e) => handleEditChange(e)} 
                 className={classes.item}
               />
               <TextField 
@@ -136,7 +110,7 @@ class EditDraw extends React.Component {
                 label="Comment" 
                 autoComplete="off"
                 value={dataToEdit.comment} 
-                onChange={(e) => handleChange(e)} 
+                onChange={(e) => handleEditChange(e)} 
                 className={classes.item}
               />
               <TextField
@@ -145,10 +119,10 @@ class EditDraw extends React.Component {
                 select
                 label="Select category"
                 name="categoryId"
-                value={dataToEdit.categoryId}
-                onChange={(e) => handleChange(e)}
+                value={dataToEdit.category || ''}
+                onChange={(e) => handleEditChange(e)}
                 className={classes.item}
-                style={dataToEdit.type === "expenses" ? { display: 'block' } : { display: 'none' }}
+                style={dataToEdit.type === "expenses" ? {} : { display: 'none' }}
               >
                 {expensesCategories.map(cat => (
                   <MenuItem key={cat.id} value={cat}>
@@ -162,8 +136,8 @@ class EditDraw extends React.Component {
                 select
                 label="Select Source"
                 name="source"
-                value={dataToEdit.source}
-                onChange={(e) => handleChange(e)}
+                value={dataToEdit.source || ''}
+                onChange={(e) => handleEditChange(e)}
                 className={classes.item}
                 style={dataToEdit.type === "funds" ? {} : { display: 'none' }}
               >
@@ -180,7 +154,7 @@ class EditDraw extends React.Component {
                 label="Select Account"
                 name="account"
                 value={dataToEdit.account || ''}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => handleEditChange(e)}
                 className={classes.item}
               >
                 {accounts.map(acc => (

@@ -58,7 +58,7 @@ class FundsTable extends React.Component {
           </TableHead>
           <TableBody>
             {listingData.map((item, i) => (
-                <TableRow key={i} hover onClick={() => openDetailsDrawer({item: item, type: 'expenses'})}>
+                <TableRow key={i} hover onClick={() => openDetailsDrawer({item: item, type: 'funds'})}>
                 <TableCell >{item.date}</TableCell>
                 <TableCell>{item.comment}</TableCell>
                 <TableCell>{capitalize(item.account)}</TableCell>
