@@ -16,7 +16,8 @@ class ListingPanel extends React.Component {
     const { 
       listingData, 
       listingDataSelected, 
-      openDetailsDrawer 
+      openDetailsDrawer ,
+      userAccounts
     } = this.props;
     const Cmp = component[listingDataSelected.type];
     return (
@@ -24,6 +25,7 @@ class ListingPanel extends React.Component {
         <Cmp 
           listingData={listingData}
           openDetailsDrawer={openDetailsDrawer}
+          userAccounts={userAccounts}
         />
       </React.Fragment>
     );

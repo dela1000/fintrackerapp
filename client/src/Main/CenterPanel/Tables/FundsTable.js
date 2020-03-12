@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import Link from '@material-ui/core/Link';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -23,17 +24,85 @@ const styles = theme => ({
   },
 });
 
-const headers = [
-  {name: 'date', align: "left"},
-  {name: 'comment', align: "left"},
-  {name: 'source', align: "left"},
-  {name: 'account', align: "left"},
-  {name: 'amount', align: "right"},
-]
 
 class FundsTable extends React.Component {
-  constructor(props) {
-    super(props);
+
+  setTable = () => {
+    let transferFound = false;
+    _.forEach(this.props.listingData, (item) => {
+      item.transferAccountData = {};
+      if(item.transferAccountId){
+        item.transferAccountData = this.props.userAccounts.find(x => x.id === item.transferAccountId); 
+        transferFound = true;
+      }
+    })
+
+    if(!transferFound){
+      return (
+        <TableBody>
+          {this.props.listingData.map((item, i) => (
+              <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
+              <TableCell >{item.date}</TableCell>
+              <TableCell>{item.comment}</TableCell>
+              <TableCell>{capitalize(item.account)}</TableCell>
+              <TableCell>{capitalize(item.source)}</TableCell>
+              <TableCell align="right">{decimals(item.amount)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      )
+    } else {
+      
+      return (
+        <TableBody>
+          {this.props.listingData.map((item, i) => (
+              <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
+              <TableCell >{item.date}</TableCell>
+              <TableCell>{item.comment}</TableCell>
+              <TableCell>{capitalize(item.account)}</TableCell>
+              <TableCell>{capitalize(item.source)}</TableCell>
+              <TableCell>{capitalize(item.transferAccountData.account)}</TableCell>
+              <TableCell align="right">{decimals(item.amount)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      )
+    }
+  }
+
+  setHeaders = () => {
+    
+    let headers = [
+      {name: 'date', align: "left"},
+      {name: 'comment', align: "left"},
+      {name: 'source', align: "left"},
+      {name: 'account', align: "left"},
+    ];
+
+    let transferFound = false;
+    _.forEach(this.props.listingData, (item) => {
+      item.transferAccountData = {};
+      if(item.transferAccountId){
+        transferFound = true;
+      }
+    })
+
+    if(transferFound){
+      headers.push({name: "Transfer Account", align: 'left'})
+    }
+    headers.push({name: 'amount', align: "right"})
+    return (
+      <TableRow>
+        {headers.map((item, i) => (
+          <TableCell key={i} align={item.align}>
+            <Typography>
+              {capitalize(item.name)}
+            </Typography>
+          </TableCell>
+        ))}
+      </TableRow>
+
+    )
   }
 
   render () {
@@ -46,27 +115,9 @@ class FundsTable extends React.Component {
       <TableContainer component={Paper}>
         <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
           <TableHead>
-            <TableRow>
-              {headers.map((item, i) => (
-                <TableCell key={i} align={item.align}>
-                  <Typography>
-                    {capitalize(item.name)}
-                  </Typography>
-                </TableCell>
-              ))}
-            </TableRow>
+            {this.setHeaders()}
           </TableHead>
-          <TableBody>
-            {listingData.map((item, i) => (
-                <TableRow key={i} hover onClick={() => openDetailsDrawer({item: item, type: 'funds'})}>
-                <TableCell >{item.date}</TableCell>
-                <TableCell>{item.comment}</TableCell>
-                <TableCell>{capitalize(item.account)}</TableCell>
-                <TableCell>{capitalize(item.source)}</TableCell>
-                <TableCell align="right">{decimals(item.amount)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          {this.setTable()}
         </Table>
         <div className={classes.seeMore}>
           <Link color="primary" href="#" onClick={() => loadMore()}>

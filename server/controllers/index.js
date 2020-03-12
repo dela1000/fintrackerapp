@@ -997,11 +997,11 @@ module.exports = controllers = {
         })
       }
       if (type === "Funds" || type === "UserAccounts") {
-        if(req.query.typeId){
-          payload.typeId = req.query.typeId;
-        } else {
-          payload.typeId = [1,2,3];
-        }
+        // if(req.query.typeId){
+        //   payload.typeId = req.query.typeId;
+        // } else {
+          payload.typeId = [1,2,3,4];
+        // }
         payload.include.push({
           model: db.Types,
           attributes: ['type', 'id'],

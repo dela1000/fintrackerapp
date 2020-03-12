@@ -12,7 +12,8 @@ export default function CenterPanel({
     message, 
     availableByAccount, 
     customOption, 
-    openDetailsDrawer
+    openDetailsDrawer,
+    userAccounts
   }) {
   return (
     <React.Fragment>
@@ -29,6 +30,7 @@ export default function CenterPanel({
         listingData={listingData}
         message={message}
         openDetailsDrawer={openDetailsDrawer}
+        userAccounts={userAccounts}
       />
     </React.Fragment>
   )

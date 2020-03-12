@@ -532,6 +532,7 @@ class Main extends React.Component {
                       currentAvailable={this.state.currentAvailable}
                       listingDataSelected={this.state.listingDataSelected}
                       listingData={this.state.listingData}
+                      userAccounts={this.state.allTotals.userAccounts}
                       message={this.state.message}
                       customOption={this.state.customOption}
                       availableByAccount={this.state.allTotals.availableByAccount}

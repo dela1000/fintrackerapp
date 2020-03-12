@@ -68,7 +68,8 @@ class SelectorPanel extends React.Component {
       listingData, 
       listingDataSelected, 
       message, 
-      openDetailsDrawer 
+      openDetailsDrawer,
+      userAccounts 
     } = this.props;
     const Cmp = component[this.state.viewSelected];
     return (
@@ -113,6 +114,7 @@ class SelectorPanel extends React.Component {
           listingData={listingData}
           message={message}
           openDetailsDrawer={openDetailsDrawer}
+          userAccounts={userAccounts}
         />
       </React.Fragment>
     );
