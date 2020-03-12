@@ -200,7 +200,6 @@ class Main extends React.Component {
     var payload = {
       page: this.state.page,
     }
-    console.log("+++ 203 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     if(!listingDataSelected){
       payload['type'] = "expenses";
     } else {
@@ -218,9 +217,13 @@ class Main extends React.Component {
       } else {
         if(listingDataSelected.startDate){
           payload['startDate'] = listingDataSelected.startDate;
+        } else if(this.state.listingDataSelected.startDate){
+          payload['startDate'] = this.state.listingDataSelected.startDate
         }
         if(listingDataSelected.endDate){
           payload['endDate'] = listingDataSelected.endDate;
+        } else if(this.state.listingDataSelected.endDate){
+          payload['endDate'] = this.state.listingDataSelected.endDate;
         }
         if(!payload['startDate'] && !payload['endDate']){
           payload['timeframe'] = this.state.timeframe;
@@ -228,8 +231,11 @@ class Main extends React.Component {
           this.setState({timeframe: "custom"});
         }
       }
-      if(!listingDataSelected.type){
-        listingDataSelected.type = payload.type;
+      if (this.state.listingDataSelected.name) {
+        payload.name = this.state.listingDataSelected.name;
+      }
+      if(!payload.name && listingDataSelected.name){
+        payload.name = listingDataSelected.name;
       }
     }
 
@@ -237,34 +243,31 @@ class Main extends React.Component {
       if(payload.type === "expenses"){
         if(listingDataSelected.categoryId){
           payload['categoryId'] = Number(listingDataSelected.categoryId);
-        }
-        if(this.state.listingDataSelected.categoryId){
+        } else if(this.state.listingDataSelected.categoryId){
           payload['categoryId'] = Number(this.state.listingDataSelected.categoryId);
         }
       }
       if(payload.type === "funds"){
         if(listingDataSelected.accountId){
           payload['accountId'] = Number(listingDataSelected.accountId);
-        }
-        if(this.state.listingDataSelected.accountId){
+        } else if(this.state.listingDataSelected.accountId){
           payload['accountId'] = Number(this.state.listingDataSelected.accountId);
         }
         if(listingDataSelected.typeId){
           payload['typeId'] = Number(listingDataSelected.typeId);
-        }
-        if(this.state.listingDataSelected.typeId){
+        } else if(this.state.listingDataSelected.typeId){
           payload['typeId'] = Number(this.state.listingDataSelected.typeId);
         }
       }
       // TYPES ARE NOT WORKING
-      if(payload.type === "type"){
-        if(listingDataSelected.typeId){
-          payload['typeId'] = Number(listingDataSelected.typeId);
-        }
-        if(this.state.listingDataSelected.typeId){
-          payload['typeId'] = Number(this.state.listingDataSelected.typeId);
-        }
-      }
+      // if(payload.type === "type"){
+      //   if(listingDataSelected.typeId){
+      //     payload['typeId'] = Number(listingDataSelected.typeId);
+      //   }
+      //   if(this.state.listingDataSelected.typeId){
+      //     payload['typeId'] = Number(this.state.listingDataSelected.typeId);
+      //   }
+      // }
     }
 
     console.log("+++ 219 Main.js payload: ", JSON.stringify(payload, null, "\t"));
@@ -281,7 +284,12 @@ class Main extends React.Component {
             return;
           }
           let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
-          this.setState({listingData: finalData, listingDataSelected: listingDataSelected, totalExpenses: data.data.totalAmountFound}, ()=> {
+          
+          if(listingDataSelected && listingDataSelected.name){
+            payload.name = listingDataSelected.name;
+          }
+
+          this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound}, ()=> {
             console.log("+++ 281 Main.js this.state.listingData: ", this.state.listingData)
           })
         } else {

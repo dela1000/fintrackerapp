@@ -104,16 +104,14 @@ class SelectorPanel extends React.Component {
             </Box> 
           </Grid>
         </Grid>
-          hello
+        <Cmp 
+          listingDataSelected={listingDataSelected}
+          listingData={listingData}
+          message={message}
+        />
       </React.Fragment>
     );
   }
 }
 
 export default SelectorPanel;
-
-        // <Cmp 
-        //   listingDataSelected={listingDataSelected}
-        //   listingData={listingData}
-        //   message={message}
-        // />
