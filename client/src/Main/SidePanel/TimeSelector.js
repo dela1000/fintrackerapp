@@ -91,8 +91,7 @@ class TimeSelector extends React.Component {
 
   componentDidUpdate (prevProps) {
     if(!this.props.open && this.state.showCalendars){
-      this.setState({showCalendars: false, startDate: null, endDate: null, option: ""})
-
+      this.setState({showCalendars: false})
     }
   }
 
