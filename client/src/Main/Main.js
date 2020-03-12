@@ -31,6 +31,7 @@ import EditDrawer from './EditDrawer/EditDrawer.js';
 
 import { decimals, to2Fixed } from "../Services/helpers";
 import { get_all_totals, expenses_totals, patch_expenses, patch_funds, search } from "../Services/WebServices";
+import { defineColors } from "../Services/Colors.js";
 
 const drawerWidth = 300;
 
@@ -165,7 +166,8 @@ class Main extends React.Component {
       centerWidth: 8,
       detailsWidth: true,
       right: false,
-      dataToEdit: {}
+      dataToEdit: {},
+      colors: [],
     };
   }
 
@@ -183,6 +185,9 @@ class Main extends React.Component {
             currentAvailable: data.data.currentAvailable, 
             totalExpenses: data.data.totalExpenses,
             expensesByCategory: data.data.expensesByCategory
+          }, () => {
+            let colors = defineColors(this.state.allTotals.expensesCategories);
+            this.setState({colors})
           })
         }
       })
@@ -509,6 +514,7 @@ class Main extends React.Component {
             availableByAccount={this.state.allTotals.availableByAccount}
             fundSources={this.state.allTotals.fundSources}
             userAccounts={this.state.allTotals.userAccounts}
+            colors={this.state.colors}
           />
         </Drawer>
         {/*END OF SIDE PANEL DRAWER */}
@@ -537,6 +543,7 @@ class Main extends React.Component {
                       customOption={this.state.customOption}
                       availableByAccount={this.state.allTotals.availableByAccount}
                       openDetailsDrawer={this.openDetailsDrawer}
+                      colors={this.state.colors}
                     />
                   </Grid>
                   <Grid 

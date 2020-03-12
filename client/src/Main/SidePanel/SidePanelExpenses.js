@@ -1,4 +1,6 @@
 import React from 'react';
+import _ from 'lodash';
+
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 import Grid from '@material-ui/core/Grid';
@@ -7,6 +9,7 @@ import AddTypeModal from './AddTypeModal.js';
 import { capitalize, decimals } from "../../Services/helpers";
 
 export default function SidePanelExpenses(props) {
+  let colors = props.colors;
   return (
     <React.Fragment>
       <AddTypeModal 
@@ -18,7 +21,12 @@ export default function SidePanelExpenses(props) {
       />
       <Box pt={1} pr={2} pb={1} pl={2} style={props.open ? { display: 'block' } : { display: 'none' }}>
         {props.expensesByCategory.map((item, key) => (
-          <ListItem button key={key} onClick={() => props.updateListingData({type: 'expenses', name: item.category, categoryId: item.categoryId})}>
+          <ListItem 
+            button 
+            key={key} 
+            onClick={() => props.updateListingData({type: 'expenses', name: item.category, categoryId: item.categoryId})}
+            style={ !_.isEmpty(colors) ? {margin: '3px', padding: '3px', borderLeft: '8px solid ' + colors[item.categoryId].color} : {}}
+            >
             <Grid
               container
               direction="row"

@@ -33,6 +33,7 @@ class SidePanel extends React.Component {
       savings,
       availableByAccount,
       currentAvailable,
+      colors,
     } = this.props;
 
     return (
@@ -75,6 +76,7 @@ class SidePanel extends React.Component {
           open={open}
           getAllTotals={getAllTotals}
           updateListingData={updateListingData}
+          colors={colors}
         />
         <Divider />
         <Grid container spacing={1} style={{cursor: 'pointer', "marginTop": "5px"}} >

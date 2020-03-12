@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import Link from '@material-ui/core/Link';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -33,12 +34,52 @@ const headers = [
 
 class ExpensesTable extends React.Component {
 
+  defineTable = () => {
+    let colors = this.props.colors;
+    let listingData = this.props.listingData;
+    return (
+      <TableBody>
+        {listingData.map((item, i) => (
+          <TableRow 
+            key={i} 
+            hover 
+            onClick={() => this.props.openDetailsDrawer({item: item, type: 'expenses'})}
+          >
+            <TableCell
+              style={ !_.isEmpty(colors) ? {borderLeft: '10px solid ' + colors[item.categoryId].color} : {}}
+            >
+              <Typography variant='subtitle2'>
+                {item.date}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant='subtitle2'>
+                {item.comment}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant='subtitle2'>
+                {capitalize(item.expensescategory.name)}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant='subtitle2'>
+                {capitalize(item.account)}
+              </Typography>
+            </TableCell>
+            <TableCell align="right">
+              <Typography variant='subtitle2'>
+                {decimals(item.amount)}
+              </Typography>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    )
+  }
+
   render () {
-    const { 
-      classes, 
-      listingData, 
-      openDetailsDrawer 
-    } = this.props;
+    const { classes } = this.props;
     return (
       <TableContainer component={Paper}>
         <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
@@ -53,17 +94,7 @@ class ExpensesTable extends React.Component {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {listingData.map((item, i) => (
-              <TableRow key={i} hover onClick={() => openDetailsDrawer({item: item, type: 'expenses'})}>
-                <TableCell >{item.date}</TableCell>
-                <TableCell>{item.comment}</TableCell>
-                <TableCell>{capitalize(item.expensescategory.name)}</TableCell>
-                <TableCell>{capitalize(item.account)}</TableCell>
-                <TableCell align="right">{decimals(item.amount)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          {this.defineTable()}
         </Table>
         <div className={classes.seeMore}>
           <Link color="primary" href="#" onClick={() => loadMore()}>

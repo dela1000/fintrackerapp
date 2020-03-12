@@ -17,7 +17,8 @@ class ListingPanel extends React.Component {
       listingData, 
       listingDataSelected, 
       openDetailsDrawer ,
-      userAccounts
+      userAccounts,
+      colors
     } = this.props;
     const Cmp = component[listingDataSelected.type];
     return (
@@ -26,6 +27,7 @@ class ListingPanel extends React.Component {
           listingData={listingData}
           openDetailsDrawer={openDetailsDrawer}
           userAccounts={userAccounts}
+          colors={colors}
         />
       </React.Fragment>
     );

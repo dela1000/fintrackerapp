@@ -10,6 +10,7 @@ import Listing from './Listing.js'
 import Sheet from './Sheet.js'
 
 import { capitalize } from "../../Services/helpers.js";
+import { colorPalette } from "../../Services/Colors.js";
 
 
 const component = {
@@ -24,7 +25,8 @@ class SelectorPanel extends React.Component {
       listButtonColor: 'primary',
       sheetButtonColor: 'default',
       viewSelected: "Listing",
-      type: 'expenses'
+      type: 'expenses',
+      colors: []
     }
   }
 
@@ -69,7 +71,8 @@ class SelectorPanel extends React.Component {
       listingDataSelected, 
       message, 
       openDetailsDrawer,
-      userAccounts 
+      userAccounts,
+      colors,
     } = this.props;
     const Cmp = component[this.state.viewSelected];
     return (
@@ -113,6 +116,7 @@ class SelectorPanel extends React.Component {
           message={message}
           openDetailsDrawer={openDetailsDrawer}
           userAccounts={userAccounts}
+          colors={colors}
         />
       </React.Fragment>
     );

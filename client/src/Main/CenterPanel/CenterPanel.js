@@ -13,7 +13,8 @@ export default function CenterPanel({
     availableByAccount, 
     customOption, 
     openDetailsDrawer,
-    userAccounts
+    userAccounts,
+    colors,
   }) {
   return (
     <React.Fragment>
@@ -31,6 +32,7 @@ export default function CenterPanel({
         message={message}
         openDetailsDrawer={openDetailsDrawer}
         userAccounts={userAccounts}
+        colors={colors}
       />
     </React.Fragment>
   )
