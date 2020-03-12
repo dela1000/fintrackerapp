@@ -200,7 +200,7 @@ class Main extends React.Component {
     var payload = {
       page: this.state.page,
     }
-  
+    console.log("+++ 203 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     if(!listingDataSelected){
       payload['type'] = "expenses";
     } else {
@@ -249,6 +249,15 @@ class Main extends React.Component {
         if(this.state.listingDataSelected.accountId){
           payload['accountId'] = Number(this.state.listingDataSelected.accountId);
         }
+        if(listingDataSelected.typeId){
+          payload['typeId'] = Number(listingDataSelected.typeId);
+        }
+        if(this.state.listingDataSelected.typeId){
+          payload['typeId'] = Number(this.state.listingDataSelected.typeId);
+        }
+      }
+      // TYPES ARE NOT WORKING
+      if(payload.type === "type"){
         if(listingDataSelected.typeId){
           payload['typeId'] = Number(listingDataSelected.typeId);
         }
