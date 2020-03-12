@@ -12,8 +12,6 @@ const colors = [
   {color: "#D0CECE"},
   {color: "#AEAAAA"},
   {color: "#FFE699"},
-  {color: "#EB2D26"},
-  {color: "#0A4D78"},
   {color: "#11A4A3"},
   {color: "#FFC54D"},
   {color: "#0294A5"},
@@ -34,13 +32,15 @@ const colors = [
   {color: "#DCD9C6"},
   {color: "#74593D"},
   {color: "#3F3232"},
+  {color: "#EB2D26"},
+  {color: "#0A4D78"},
 ];
-
 
 export function defineColors(categories) {
   let definedColors = {};
   _.forEach(categories, (cat, i) => {
     let color = colors[i];
+    color.category = cat.name;
     definedColors[cat.id] = color;
   })
   return definedColors;

@@ -25,7 +25,7 @@ export default function SidePanelExpenses(props) {
             button 
             key={key} 
             onClick={() => props.updateListingData({type: 'expenses', name: item.category, categoryId: item.categoryId})}
-            style={ !_.isEmpty(colors) ? {margin: '3px', padding: '3px', borderLeft: '8px solid ' + colors[item.categoryId].color} : {}}
+            style={ !_.isEmpty(colors) ? {paddingTop: '5px', paddingBottom: '0px', borderLeft: '8px solid ' + colors[item.categoryId].color} : {}}
             >
             <Grid
               container
