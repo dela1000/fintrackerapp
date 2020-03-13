@@ -24,7 +24,7 @@ class SelectorPanel extends React.Component {
     this.state = {
       listButtonColor: 'primary',
       sheetButtonColor: 'default',
-      viewSelected: "Listing",
+      viewSelected: "Sheet",
       type: 'expenses',
       colors: []
     }

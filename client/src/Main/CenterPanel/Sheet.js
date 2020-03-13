@@ -56,7 +56,7 @@ class Sheet extends React.Component {
     // EXPENSES SECTION
     if(this.props.listingDataSelected.type.toUpperCase().includes('expense'.toUpperCase())){
       _.forEach(this.props.listingData, (item) => {
-        if(!mainHolder[item.categoryId]){
+        if(!mainHolder[item.categoryId] && !_.isEmpty(this.props.colors)){
           tempHeaderData.push({name: item.expensescategory.name, id: item.categoryId, color: this.props.colors[item.categoryId].color});
           mainHolder[item.categoryId] = item.categoryId;
         }
@@ -201,7 +201,7 @@ class Sheet extends React.Component {
                 <React.Fragment>
                   {row[item.id].comment.map((comment, i) => {
                     return (
-                      <Typography key={i}>
+                      <Typography key={i} className={this.props.classes.tableCell}>
                         {comment}
                       </Typography>
                     )
@@ -227,7 +227,6 @@ class Sheet extends React.Component {
           </TableCell>
         )
       }
-      
     })
   }
 
