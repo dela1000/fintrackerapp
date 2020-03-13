@@ -39,7 +39,6 @@ class Pie extends React.Component {
         <Series
           argumentField={argumentField}
           valueField="amount"
-
         >
           <Label 
             visible={true} 
