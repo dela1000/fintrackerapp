@@ -16,6 +16,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
@@ -74,7 +75,8 @@ class AddModal extends React.Component {
         account: ""
       },
       itemsAdded: [],
-      width: '32vw'
+      width: '32vw',
+      toAdd: 0
     }
   }
 
@@ -83,7 +85,7 @@ class AddModal extends React.Component {
     if(value === true){
       this.definePrimaryAccount();
     } else {
-      this.clearAfterSubmit();
+      this.reset();
       this.removeAll();
     }
     this.setState({ open: value });
@@ -120,7 +122,6 @@ class AddModal extends React.Component {
     if(this.props.type === "expenses"){
       if(this.state.selectedDate && this.state.amount && this.state.account && this.state.categoryId){
         newItem['category'] = this.state.categoryId;
-        this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '90vw' })
       }
     } 
     if (this.props.type === "funds") {
@@ -128,10 +129,12 @@ class AddModal extends React.Component {
         newItem['category']['name'] = null;
         newItem['type'] = accountSelected.type;
         newItem['source'] = this.state.source;
-        this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '90vw' })
       }
     }
-    this.clearAfterSubmit();
+    let toAdd = Number(this.state.toAdd) + Number(newItem.amount);
+    toAdd = decimals(toAdd);
+    this.setState({ itemsAdded: [...this.state.itemsAdded, newItem], width: '90vw', toAdd })
+    this.reset();
   }
 
   submitNew () {
@@ -153,7 +156,7 @@ class AddModal extends React.Component {
             if(data.success){
               this.props.getAllTotals();
               this.props.updateListingData();
-              this.clearAfterSubmit();
+              this.reset();
               this.handleOpen(false);
             } else {
               console.log("+++ 156 AddModal.js data: ", data)
@@ -177,7 +180,7 @@ class AddModal extends React.Component {
             if(data.success){
               this.props.getAllTotals();
               this.props.updateListingData();
-              this.clearAfterSubmit();
+              this.reset();
               this.handleOpen(false);
             } else {
               console.log("+++ 177 AddModal.js data: ", data)
@@ -188,7 +191,7 @@ class AddModal extends React.Component {
     }
   }
 
-  clearAfterSubmit () {
+  reset () {
     this.setState({
       selectedDate: null,
       amount: "",
@@ -202,8 +205,10 @@ class AddModal extends React.Component {
   removeFromItems (i) {
     var array = [...this.state.itemsAdded];
     if (i !== -1) {
+      let toAdd = this.state.toAdd - Number(array[i].amount);
+      toAdd = decimals(toAdd);
       array.splice(i, 1);
-      this.setState({itemsAdded: array}, () => {
+      this.setState({itemsAdded: array, toAdd}, () => {
         if(this.state.itemsAdded.length === 0){
           this.setState({width: '32vw'})
         }
@@ -212,7 +217,7 @@ class AddModal extends React.Component {
   }
 
   removeAll () {
-    this.setState({ itemsAdded: [] }, () => {
+    this.setState({ itemsAdded: [], toAdd: 0 }, () => {
       if(this.state.itemsAdded.length === 0){
         this.setState({width: '32vw'})
       }
@@ -429,6 +434,13 @@ class AddModal extends React.Component {
                     justify="space-between"
                     alignItems="center"
                   >
+                    <Grid className={classes.root}>
+                      <Box mt={2} pt={2} pl={1} pb={1}>
+                        <Typography>
+                          Total to add: {this.state.toAdd}
+                        </Typography>
+                      </Box> 
+                    </Grid>
                     <Grid className={classes.root}>
                       <Box mt={2} pt={2} pl={1} pb={1}>
                         <Button
