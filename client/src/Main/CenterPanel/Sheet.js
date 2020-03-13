@@ -130,8 +130,6 @@ class Sheet extends React.Component {
       headerData.push({name: item.name, type: item.type, id: item.id, color: item.color || null});
     })
 
-    console.log("+++ 133 Sheet.js headerData: ", JSON.stringify(headerData, null, "\t"));
-
     _.forEach(dailyHolder, (item) => {
       dailyData.push(item)
     })

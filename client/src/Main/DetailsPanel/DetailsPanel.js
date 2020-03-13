@@ -52,7 +52,8 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
         tempCategoryData.push({name: item.expensescategory.name, id: item.categoryId});
         mainHolder[item.categoryId] = {
           amount: item.amount,
-          category: item.expensescategory.name
+          category: item.expensescategory.name,
+          id: item.expensescategory.id
         }
       } else {
         mainHolder[item.categoryId].amount = mainHolder[item.categoryId].amount + item.amount;
