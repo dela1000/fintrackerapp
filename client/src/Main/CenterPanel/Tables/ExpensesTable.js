@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 
 import Link from '@material-ui/core/Link';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -12,7 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
-import { capitalize, decimals } from "../../../Services/helpers.js";
+import { capitalize, decimals, dateFormat } from "../../../Services/helpers.js";
 
 function loadMore(type) {
   
@@ -22,6 +23,9 @@ const styles = theme => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
+  tableCell: {
+    fontSize: '12px'
+  }
 });
 
 const headers = [
@@ -37,6 +41,7 @@ class ExpensesTable extends React.Component {
   defineTable = () => {
     let colors = this.props.colors;
     let listingData = this.props.listingData;
+    let today = moment().format(dateFormat);
     return (
       <TableBody>
         {listingData.map((item, i) => (
@@ -44,33 +49,25 @@ class ExpensesTable extends React.Component {
             key={i} 
             hover 
             onClick={() => this.props.openDetailsDrawer({item: item, type: 'expenses'})}
+            style={moment(today).isSame(item.date) ? {backgroundColor: '#D3F1D3'} : {} }
           >
             <TableCell
+              className={this.props.classes.tableCell}
               style={ !_.isEmpty(colors) ? {borderLeft: '10px solid ' + colors[item.categoryId].color} : {}}
             >
-              <Typography variant='subtitle2'>
-                {item.date}
-              </Typography>
+              {item.date}
             </TableCell>
-            <TableCell>
-              <Typography variant='subtitle2'>
-                {item.comment}
-              </Typography>
+            <TableCell className={this.props.classes.tableCell}>
+              {item.comment}
             </TableCell>
-            <TableCell>
-              <Typography variant='subtitle2'>
-                {capitalize(item.expensescategory.name)}
-              </Typography>
+            <TableCell className={this.props.classes.tableCell}>
+              {capitalize(item.expensescategory.name)}
             </TableCell>
-            <TableCell>
-              <Typography variant='subtitle2'>
-                {capitalize(item.account)}
-              </Typography>
+            <TableCell className={this.props.classes.tableCell}>
+              {capitalize(item.account)}
             </TableCell>
-            <TableCell align="right">
-              <Typography variant='subtitle2'>
-                {decimals(item.amount)}
-              </Typography>
+            <TableCell align="right" className={this.props.classes.tableCell}>
+              {decimals(item.amount)}
             </TableCell>
           </TableRow>
         ))}
@@ -107,4 +104,3 @@ class ExpensesTable extends React.Component {
 }
 
 export default withStyles(styles)(ExpensesTable);
-

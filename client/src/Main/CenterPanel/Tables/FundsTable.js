@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 
 import Link from '@material-ui/core/Link';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -12,7 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
-import { capitalize, decimals } from "../../../Services/helpers.js";
+import { capitalize, decimals, dateFormat } from "../../../Services/helpers.js";
 
 function loadMore(type) {
   
@@ -22,6 +23,9 @@ const styles = theme => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
+  tableCell: {
+    fontSize: '12px'
+  }
 });
 
 class FundsTable extends React.Component {
@@ -47,7 +51,9 @@ class FundsTable extends React.Component {
       headers.push({name: "Transfer Account", align: 'left'})
     }
     headers.push({name: 'amount', align: "right"})
-
+    
+    let today = moment().format(dateFormat);
+  
     if(transferFound){
       return (
         <Table aria-label="simple table" size="small" padding="checkbox" stickyHeader>
@@ -64,12 +70,22 @@ class FundsTable extends React.Component {
           </TableHead>
           <TableBody>
             {this.props.listingData.map((item, i) => (
-                <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
-                <TableCell >{item.date}</TableCell>
-                <TableCell>{item.comment}</TableCell>
-                <TableCell>{capitalize(item.account)}</TableCell>
-                <TableCell>{capitalize(item.source)}</TableCell>
-                <TableCell>{capitalize(item.transferAccountData.account)}</TableCell>
+              <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})} style={moment(today).isSame(item.date) ? {backgroundColor: '#D3F1D3'} : {} }>
+                <TableCell className={this.props.classes.tableCell}>
+                  {item.date}
+                </TableCell>
+                <TableCell className={this.props.classes.tableCell}>
+                  {item.comment}
+                </TableCell>
+                <TableCell className={this.props.classes.tableCell}>
+                  {capitalize(item.account)}
+                </TableCell>
+                <TableCell className={this.props.classes.tableCell}>
+                  {capitalize(item.source)}
+                </TableCell>
+                <TableCell className={this.props.classes.tableCell}>
+                  {capitalize(item.transferAccountData.account)}
+                </TableCell>
                 <TableCell align="right">{decimals(item.amount)}</TableCell>
               </TableRow>
             ))}
@@ -93,7 +109,7 @@ class FundsTable extends React.Component {
           <TableBody>
             {this.props.listingData.map((item, i) => (
                 <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
-                <TableCell >{item.date}</TableCell>
+                <TableCell>{item.date}</TableCell>
                 <TableCell>{item.comment}</TableCell>
                 <TableCell>{capitalize(item.account)}</TableCell>
                 <TableCell>{capitalize(item.source)}</TableCell>

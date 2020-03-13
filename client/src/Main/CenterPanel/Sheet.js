@@ -12,8 +12,16 @@ import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
+import { withStyles } from '@material-ui/core/styles';
+
 import { capitalize, decimals, findMissingDates, dateFormat } from "../../Services/helpers.js";
 
+
+const styles = theme => ({
+  tableCell: {
+    fontSize: '12px'
+  }
+})
 
 class Sheet extends React.Component {
   constructor(props) {
@@ -136,11 +144,14 @@ class Sheet extends React.Component {
     return this.state.dailyData.map((row, i) => {
       return (
           <TableRow key={i} hover style={moment(this.state.today).isSame(row.date) ? {backgroundColor: '#D3F1D3'} : {} }>
-            <TableCell component="th" scope="row">
+            <TableCell component="th" scope="row" className={this.props.classes.tableCell}>
+              {moment(row.date).format('ddd')}
+            </TableCell>
+            <TableCell component="th" scope="row" className={this.props.classes.tableCell}>
               {row.date}
             </TableCell>
             {this.innerCells(row)}
-            <TableCell component="th" scope="row"  align="right">
+            <TableCell component="th" scope="row"  align="right" className={this.props.classes.tableCell}>
               {decimals(row.total)}
             </TableCell>
         </TableRow>
@@ -167,21 +178,21 @@ class Sheet extends React.Component {
                 </React.Fragment>
               }
             >
-              <TableCell key={idx} component="th" scope="row"  align="right">
+              <TableCell key={idx} component="th" scope="row"  align="right" className={this.props.classes.tableCell}>
                 {row[item.id].total}
               </TableCell>
             </Tooltip>
           )
         } else {
           return (
-            <TableCell key={idx} component="th" scope="row"  align="right">
+            <TableCell key={idx} component="th" scope="row"  align="right" className={this.props.classes.tableCell}>
               {row[item.id].total}
             </TableCell>
           )
         }
       } else {
         return (
-          <TableCell key={idx} component="th" scope="row"  align="right">
+          <TableCell key={idx} component="th" scope="row"  align="right" className={this.props.classes.tableCell}>
           </TableCell>
         )
       }
@@ -196,13 +207,18 @@ class Sheet extends React.Component {
           <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
             <TableHead>
               <TableRow>
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row" className={this.props.classes.tableCell}>
+                <Typography>
+                  Day
+                </Typography>
+              </TableCell>
+              <TableCell component="th" scope="row" className={this.props.classes.tableCell}>
                 <Typography>
                   Date
                 </Typography>
               </TableCell>
               {this.state.headerData.map((item, i) => (
-                <TableCell component="th" scope="row" key={i} align="right">
+                <TableCell component="th" scope="row" key={i} align="right" className={this.props.classes.tableCell}>
                   <Typography>
                     {capitalize(item.name)}
                   </Typography>
@@ -211,7 +227,7 @@ class Sheet extends React.Component {
                   </Typography>
                 </TableCell>
               ))}
-              <TableCell component="th" scope="row" align="right">
+              <TableCell component="th" scope="row" align="right" className={this.props.classes.tableCell}>
                 <Typography>
                   Total
                 </Typography>
@@ -228,4 +244,4 @@ class Sheet extends React.Component {
   }
 }
 
-export default Sheet;
+export default withStyles(styles)(Sheet);
