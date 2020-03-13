@@ -10,8 +10,6 @@ import Listing from './Listing.js'
 import Sheet from './Sheet.js'
 
 import { capitalize } from "../../Services/helpers.js";
-import { colorPalette } from "../../Services/Colors.js";
-
 
 const component = {
   Listing: Listing,

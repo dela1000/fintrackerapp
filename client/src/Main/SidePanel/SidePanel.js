@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -12,9 +11,6 @@ import AddModal from './AddModal.js';
 
 import TimeSelector from './TimeSelector.js';
 import SidePanelExpenses from './SidePanelExpenses.js';
-
-import { get_all_totals, expenses_totals } from "../../Services/WebServices";
-
 
 class SidePanel extends React.Component {
 
@@ -30,7 +26,6 @@ class SidePanel extends React.Component {
       updateListingData,
       fundSources,
       userAccounts,
-      savings,
       availableByAccount,
       currentAvailable,
       colors,

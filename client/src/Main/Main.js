@@ -29,7 +29,7 @@ import CenterPanel from './CenterPanel/CenterPanel.js';
 import DetailsPanel from './DetailsPanel/DetailsPanel.js';
 import EditDrawer from './EditDrawer/EditDrawer.js';
 
-import { decimals, to2Fixed } from "../Services/helpers";
+import { to2Fixed } from "../Services/helpers";
 import { get_all_totals, expenses_totals, patch_expenses, patch_funds, search } from "../Services/WebServices";
 import { defineColors } from "../Services/Colors.js";
 
@@ -525,7 +525,7 @@ class Main extends React.Component {
             <GridList cols={1} >
               <GridListTile style={{height: '100%'}}>
                 <Box>
-                  <Button size="small" color="primary" style={{float: 'right'}} onClick={this.detailsView}>
+                  <Button size="small" color="primary" style={{position: 'fixed', right: '24px', top: '73'}} onClick={this.detailsView}>
                     {this.state.detailsState}
                   </Button>
                 </Box>

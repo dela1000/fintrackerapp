@@ -31,6 +31,7 @@ const styles = theme => ({
 class FundsTable extends React.Component {
 
   setTable = () => {
+    let colors = this.props.colors;
     let headers = [
       {name: 'date', align: "left"},
       {name: 'comment', align: "left"},
@@ -60,7 +61,11 @@ class FundsTable extends React.Component {
           <TableHead>
             <TableRow>
               {headers.map((item, i) => (
-                <TableCell key={i} align={item.align}>
+                <TableCell 
+                    key={i} 
+                    align={item.align}
+                    style={ !_.isEmpty(colors) ? {borderLeft: '10px solid ' + colors[i].color} : {}}
+                  >
                   <Typography>
                     {capitalize(item.name)}
                   </Typography>
@@ -109,11 +114,11 @@ class FundsTable extends React.Component {
           <TableBody>
             {this.props.listingData.map((item, i) => (
                 <TableRow key={i} hover onClick={() => this.props.openDetailsDrawer({item: item, type: 'funds'})}>
-                <TableCell>{item.date}</TableCell>
-                <TableCell>{item.comment}</TableCell>
-                <TableCell>{capitalize(item.account)}</TableCell>
-                <TableCell>{capitalize(item.source)}</TableCell>
-                <TableCell align="right">{decimals(item.amount)}</TableCell>
+                <TableCell className={this.props.classes.tableCell}>{item.date}</TableCell>
+                <TableCell className={this.props.classes.tableCell}>{item.comment}</TableCell>
+                <TableCell className={this.props.classes.tableCell}>{capitalize(item.account)}</TableCell>
+                <TableCell className={this.props.classes.tableCell}>{capitalize(item.source)}</TableCell>
+                <TableCell className={this.props.classes.tableCell} align="right">{decimals(item.amount)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

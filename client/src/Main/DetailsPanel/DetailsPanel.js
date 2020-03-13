@@ -2,7 +2,6 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
-import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
 import { decimals } from "../../Services/helpers";

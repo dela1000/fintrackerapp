@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import _ from 'lodash'
 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -20,7 +19,7 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-import { capitalize, decimals, to2Fixed } from "../../Services/helpers";
+import { capitalize, } from "../../Services/helpers";
 
 const styles = theme => ({
   drawer: {

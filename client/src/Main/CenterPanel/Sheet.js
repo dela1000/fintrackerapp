@@ -142,19 +142,19 @@ class Sheet extends React.Component {
   renderHeaders() {
     return (
       <TableRow>
-        <TableCell component="th" scope="row" className={this.props.classes.tableCell} style={{borderBottom: '5px solid #DCDCDC'}}>
-          <Typography>
+        <TableCell component="th" scope="row" style={{borderBottom: '5px solid #DCDCDC'}}>
+          <Typography variant='subtitle2'>
             Day
           </Typography>
         </TableCell>
-        <TableCell component="th" scope="row" className={this.props.classes.tableCell} style={{borderBottom: '5px solid #DCDCDC'}}>
-          <Typography>
+        <TableCell component="th" scope="row" style={{borderBottom: '5px solid #DCDCDC'}}>
+          <Typography variant='subtitle2'>
             Date
           </Typography>
         </TableCell>
         {this.state.headerData.map((item, i) => (
-          <TableCell component="th" scope="row" key={i} align="right" className={this.props.classes.tableCell} style={{borderBottom: '5px solid ' + item.color}}>
-            <Typography>
+          <TableCell component="th" scope="row" key={i} align="right" style={{borderBottom: '5px solid ' + item.color}}>
+            <Typography variant='subtitle2'>
               {capitalize(item.name)}
             </Typography>
             <Typography variant="caption" color="textSecondary">
@@ -162,8 +162,8 @@ class Sheet extends React.Component {
             </Typography>
           </TableCell>
         ))}
-        <TableCell component="th" scope="row" align="right" className={this.props.classes.tableCell} style={{borderBottom: '5px solid #71CA71'}}>
-          <Typography>
+        <TableCell component="th" scope="row" align="right" style={{borderBottom: '5px solid #71CA71'}}>
+          <Typography variant='subtitle2'>
             Total
           </Typography>
         </TableCell>

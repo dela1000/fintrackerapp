@@ -20,7 +20,7 @@ const formatLabel = (arg) => {
 class Pie extends React.Component {
 
   render(){
-    const { data, title, argumentField, valueField, colors } = this.props;
+    const { data, title, argumentField, colors } = this.props;
     const customizePoint = (arg) => {
       if(arg.data && arg.data.id && arg.data.category && !_.isEmpty(colors)){
         return { color: colors[arg.data.id].color, hoverStyle: { color: colors[arg.data.id].color } };
