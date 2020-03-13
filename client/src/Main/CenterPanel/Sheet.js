@@ -12,13 +12,14 @@ import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
-import { capitalize, decimals, findMissingDates } from "../../Services/helpers.js";
+import { capitalize, decimals, findMissingDates, dateFormat } from "../../Services/helpers.js";
 
 
 class Sheet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      today: "",
       headerData: [],
       dailyData: []
     }
@@ -35,6 +36,9 @@ class Sheet extends React.Component {
   }
 
   formatData = () => {
+    let today = moment().format(dateFormat);
+    this.setState({today})
+    
     let mainHolder = {};
     let dailyHolder = {};
     let dailyData = [];
@@ -131,7 +135,7 @@ class Sheet extends React.Component {
   renderTableData() {
     return this.state.dailyData.map((row, i) => {
       return (
-          <TableRow key={i} hover>
+          <TableRow key={i} hover style={moment(this.state.today).isSame(row.date) ? {backgroundColor: '#D3F1D3'} : {} }>
             <TableCell component="th" scope="row">
               {row.date}
             </TableCell>
