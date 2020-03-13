@@ -39,7 +39,7 @@ export default function Pie({data, title, argumentField, valueField, colors}) {
           visible={true} 
           customizeText={formatLabel}
         >
-          <Font color="#767676" />
+          <Font color="#353535" />
           <Connector 
             visible={true} 
             width={0.5} 
