@@ -57,7 +57,7 @@ class Sheet extends React.Component {
     if(this.props.listingDataSelected.type.toUpperCase().includes('expense'.toUpperCase())){
       _.forEach(this.props.listingData, (item) => {
         if(!mainHolder[item.categoryId]){
-          tempHeaderData.push({name: item.expensescategory.name, id: item.categoryId});
+          tempHeaderData.push({name: item.expensescategory.name, id: item.categoryId, color: this.props.colors[item.categoryId].color});
           mainHolder[item.categoryId] = item.categoryId;
         }
         if(!dailyHolder[item.date]){
@@ -88,7 +88,6 @@ class Sheet extends React.Component {
     // FUNDS SECTION
     if(this.props.listingDataSelected.type.toUpperCase().includes('fund'.toUpperCase())){
       console.log("+++ 32 Sheet.js AT FUNDS")
-      console.log("+++ 97 Sheet.js this.props.listingData: ", JSON.stringify(this.props.listingData, null, "\t"));
       _.forEach(this.props.listingData, (item) => {
         if(!mainHolder[item.accountId]){
           tempHeaderData.push({name: item.account, type: item.type , id: item.accountId});
@@ -128,8 +127,10 @@ class Sheet extends React.Component {
     // CREATE ARRAYS
     tempHeaderData = _.orderBy(tempHeaderData, ['id'],['asc']);
     _.forEach(tempHeaderData, (item) => {
-      headerData.push({name: item.name, type: item.type, id: item.id});
+      headerData.push({name: item.name, type: item.type, id: item.id, color: item.color || null});
     })
+
+    console.log("+++ 133 Sheet.js headerData: ", JSON.stringify(headerData, null, "\t"));
 
     _.forEach(dailyHolder, (item) => {
       dailyData.push(item)
@@ -138,6 +139,38 @@ class Sheet extends React.Component {
     dailyData = dailyData.concat(findMissingDates(dailyData));
     dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
     this.setState({type: "funds", headerData, dailyData})
+  }
+
+  renderHeaders() {
+    return (
+      <TableRow>
+        <TableCell component="th" scope="row" className={this.props.classes.tableCell} style={{borderBottom: '5px solid #DCDCDC'}}>
+          <Typography>
+            Day
+          </Typography>
+        </TableCell>
+        <TableCell component="th" scope="row" className={this.props.classes.tableCell} style={{borderBottom: '5px solid #DCDCDC'}}>
+          <Typography>
+            Date
+          </Typography>
+        </TableCell>
+        {this.state.headerData.map((item, i) => (
+          <TableCell component="th" scope="row" key={i} align="right" className={this.props.classes.tableCell} style={{borderBottom: '5px solid ' + item.color}}>
+            <Typography>
+              {capitalize(item.name)}
+            </Typography>
+            <Typography variant="caption" color="textSecondary">
+              {capitalize(item.type)}
+            </Typography>
+          </TableCell>
+        ))}
+        <TableCell component="th" scope="row" align="right" className={this.props.classes.tableCell} style={{borderBottom: '5px solid #71CA71'}}>
+          <Typography>
+            Total
+          </Typography>
+        </TableCell>
+      </TableRow>
+    )
   }
 
   renderTableData() {
@@ -206,33 +239,7 @@ class Sheet extends React.Component {
         <TableContainer component={Paper} style={{maxHeight: '90vh'}}>
           <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
             <TableHead>
-              <TableRow>
-              <TableCell component="th" scope="row" className={this.props.classes.tableCell}>
-                <Typography>
-                  Day
-                </Typography>
-              </TableCell>
-              <TableCell component="th" scope="row" className={this.props.classes.tableCell}>
-                <Typography>
-                  Date
-                </Typography>
-              </TableCell>
-              {this.state.headerData.map((item, i) => (
-                <TableCell component="th" scope="row" key={i} align="right" className={this.props.classes.tableCell}>
-                  <Typography>
-                    {capitalize(item.name)}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {capitalize(item.type)}
-                  </Typography>
-                </TableCell>
-              ))}
-              <TableCell component="th" scope="row" align="right" className={this.props.classes.tableCell}>
-                <Typography>
-                  Total
-                </Typography>
-              </TableCell>
-              </TableRow>
+              {this.renderHeaders()}
             </TableHead>
             <TableBody>
               {this.renderTableData()}

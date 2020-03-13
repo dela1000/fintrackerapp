@@ -50,18 +50,10 @@ class SelectorPanel extends React.Component {
 
   updateView = (view) => {
     if(view === "Sheet"){
-      this.setState({
-        viewSelected: "Sheet",
-        listButtonColor: 'default',
-        sheetButtonColor: 'primary',
-      })
+      this.setState({ viewSelected: "Sheet", listButtonColor: 'default', sheetButtonColor: 'primary'})
     }
     if(view === "Listing") {
-      this.setState({
-        viewSelected: "Listing",
-        listButtonColor: 'primary',
-        sheetButtonColor: 'default',
-      })
+      this.setState({ viewSelected: "Listing", listButtonColor: 'primary', sheetButtonColor: 'default'})
     }
   }
 
