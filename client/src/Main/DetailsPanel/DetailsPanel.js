@@ -108,10 +108,12 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
       sourceData.push(item)
     })
   }
-
+  
+  mainHolder = _.orderBy(mainHolder, ['id'],['asc']);
   _.forEach(mainHolder, (item) => {
     mainData.push(item)
   })
+  console.log("+++ 116 DetailsPanel.js mainData: ", mainData)
 
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
     if(viewSelected.categoryId){
