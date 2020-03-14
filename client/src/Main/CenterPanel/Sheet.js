@@ -87,7 +87,6 @@ class Sheet extends React.Component {
     }
     // FUNDS SECTION
     if(this.props.listingDataSelected.type.toUpperCase().includes('fund'.toUpperCase())){
-      console.log("+++ 32 Sheet.js AT FUNDS")
       _.forEach(this.props.listingData, (item) => {
         if(!mainHolder[item.accountId]){
           tempHeaderData.push({name: item.account, type: item.type , id: item.accountId});
@@ -237,7 +236,6 @@ class Sheet extends React.Component {
   }
 
   render(){
-    console.log("+++ 234 Sheet.js this.props: ", JSON.stringify(this.props, null, "\t"));
     return (
       <React.Fragment>
         <TableContainer component={Paper} style={{maxHeight: '90vh'}}>

@@ -48,6 +48,7 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
   if(viewSelected.type.toUpperCase().includes('expense'.toUpperCase())){
     argumentField = "category";
     _.forEach(graphData, (item) => {
+
       if(!mainHolder[item.categoryId]){
         tempCategoryData.push({name: item.expensescategory.name, id: item.categoryId});
         mainHolder[item.categoryId] = {
@@ -55,9 +56,12 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
           category: capitalize(item.expensescategory.name),
           id: item.expensescategory.id
         }
+        if(item.amount > 1000){
+        }
       } else {
         mainHolder[item.categoryId].amount = mainHolder[item.categoryId].amount + item.amount;
       }
+      
       if(!dailyHolder[item.date]){
         dailyHolder[item.date] = {
           date: item.date,
@@ -70,8 +74,6 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
           dailyHolder[item.date][item.expensescategory.name] = dailyHolder[item.date][item.expensescategory.name] + item.amount;
         }
       }
-      dailyHolder[item.date][item.expensescategory.name] = Number(decimals(dailyHolder[item.date][item.expensescategory.name]))
-
     })
     _.forEach(dailyHolder, (item) => {
       dailyData.push(item)
@@ -110,7 +112,6 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
         sourceData.push(item)
       }
     })
-
   }
   
   mainHolder = _.orderBy(mainHolder, ['id'],['asc']);

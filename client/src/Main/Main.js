@@ -325,7 +325,6 @@ class Main extends React.Component {
       //   }
       // }
     }
-    console.log("+++ 333 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -343,7 +342,6 @@ class Main extends React.Component {
           if(listingDataSelected && listingDataSelected.name){
             payload.name = listingDataSelected.name;
           }
-          console.log("+++ 347 Main.js finalData: ", JSON.stringify(finalData, null, "\t"));
           this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound, timeframe: payload.timeframe})
         } else {
           this.setState({listingData: [], message: data.data.message}, () => {
