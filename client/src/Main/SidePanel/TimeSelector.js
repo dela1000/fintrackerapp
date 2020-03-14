@@ -88,7 +88,7 @@ class TimeSelector extends React.Component {
       let payload = {
         startDate: moment(this.state.startDate).format(dateFormat),
         endDate: moment(this.state.endDate).format(dateFormat),
-        customOption: "custom dates"
+        customOption: "custom dates",
       }
       this.props.updateCustom(payload);
     }

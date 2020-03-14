@@ -228,9 +228,7 @@ class Main extends React.Component {
     } else {
       if(listingDataSelected.type){
         payload['type'] = listingDataSelected.type;
-        if(listingDataSelected.timeframe){
-          this.setState({timeframe: listingDataSelected.timeframe});
-        }
+        payload['timeframe'] = listingDataSelected.timeframe;
       } else {
         if(this.state.listingDataSelected.type){
           payload['type'] = this.state.listingDataSelected.type;
@@ -253,14 +251,9 @@ class Main extends React.Component {
         }
         if(!payload['startDate'] && !payload['endDate']){
           payload['timeframe'] = this.state.timeframe;
-        } else {
-          if(listingDataSelected.timeframe){
-            this.setState({timeframe: listingDataSelected.timeframe});
-          } else {
-            this.setState({timeframe: "custom"});
-          }
-        }
+        } 
       }
+
       if (this.state.listingDataSelected.name) {
         payload.name = this.state.listingDataSelected.name;
       }
@@ -274,57 +267,58 @@ class Main extends React.Component {
       }
     }
 
-    if(listingDataSelected){
-      if(payload.type === "expenses"){
-        if(listingDataSelected.categoryId){
-          payload['categoryId'] = Number(listingDataSelected.categoryId);
-        } else if(this.state.listingDataSelected.categoryId){
-          payload['categoryId'] = Number(this.state.listingDataSelected.categoryId);
-        }
+    
+    if(payload.type === "expenses"){
+      if(listingDataSelected.categoryId){
+        payload['categoryId'] = Number(listingDataSelected.categoryId);
+      } else if(this.state.listingDataSelected.categoryId){
+        payload['categoryId'] = Number(this.state.listingDataSelected.categoryId);
       }
-      if(payload.type === "funds"){
-        if(listingDataSelected.accountId){
-          payload['accountId'] = Number(listingDataSelected.accountId);
-        } else if(this.state.listingDataSelected.accountId){
-          payload['accountId'] = Number(this.state.listingDataSelected.accountId);
-        }
-        if(listingDataSelected.typeId){
-          payload['typeId'] = Number(listingDataSelected.typeId);
-        } else if(this.state.listingDataSelected.typeId){
-          payload['typeId'] = Number(this.state.listingDataSelected.typeId);
-        }
-      }
-      
-      if(payload.type === "allExpenses" || payload.type === "allFunds"){
-        this.setState({customOption: "", timeframe: 'month'})
-        if(payload.type === "allExpenses"){
-          payload = {
-            type: "expenses",
-          }
-        }
-        if(payload.type === "allFunds"){
-          payload = {
-            type: "funds",
-          }
-        }
-        if(listingDataSelected.timeframe){
-          payload.timeframe = listingDataSelected.timeframe;
-        } else if (this.state.listingDataSelected.timeframe){
-          payload.timeframe = this.state.listingDataSelected.timeframe;
-        } else {
-          payload.timeframe = "month";
-        }
-      }
-      // TYPES ARE NOT WORKING
-      // if(payload.type === "type"){
-      //   if(listingDataSelected.typeId){
-      //     payload['typeId'] = Number(listingDataSelected.typeId);
-      //   }
-      //   if(this.state.listingDataSelected.typeId){
-      //     payload['typeId'] = Number(this.state.listingDataSelected.typeId);
-      //   }
-      // }
     }
+    if(payload.type === "funds"){
+      if(listingDataSelected.accountId){
+        payload['accountId'] = Number(listingDataSelected.accountId);
+      } else if(this.state.listingDataSelected.accountId){
+        payload['accountId'] = Number(this.state.listingDataSelected.accountId);
+      }
+      if(listingDataSelected.typeId){
+        payload['typeId'] = Number(listingDataSelected.typeId);
+      } else if(this.state.listingDataSelected.typeId){
+        payload['typeId'] = Number(this.state.listingDataSelected.typeId);
+      }
+    }
+    
+    if(payload.type === "allExpenses" || payload.type === "allFunds"){
+      this.setState({customOption: "", timeframe: 'month'})
+      if(payload.type === "allExpenses"){
+        payload = {
+          type: "expenses",
+        }
+      }
+      if(payload.type === "allFunds"){
+        payload = {
+          type: "funds",
+        }
+      }
+      if(listingDataSelected.timeframe){
+        payload.timeframe = listingDataSelected.timeframe;
+      } else if (this.state.listingDataSelected.timeframe){
+        payload.timeframe = this.state.listingDataSelected.timeframe;
+      } else {
+        payload.timeframe = "month";
+      }
+    }
+    // TYPES ARE NOT WORKING
+    // if(payload.type === "type"){
+    //   if(listingDataSelected.typeId){
+    //     payload['typeId'] = Number(listingDataSelected.typeId);
+    //   }
+    //   if(this.state.listingDataSelected.typeId){
+    //     payload['typeId'] = Number(this.state.listingDataSelected.typeId);
+    //   }
+    // }
+
+
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -341,6 +335,9 @@ class Main extends React.Component {
           
           if(listingDataSelected && listingDataSelected.name){
             payload.name = listingDataSelected.name;
+          }
+          if(!payload.timeframe && !listingDataSelected.timeframe){
+            payload.timeframe = "custom";
           }
           this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound, timeframe: payload.timeframe})
         } else {
