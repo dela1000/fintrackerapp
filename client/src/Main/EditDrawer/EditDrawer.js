@@ -57,13 +57,11 @@ class EditDraw extends React.Component {
       submitEdit, 
     } = this.props;
 
-    console.log("+++ 67 EditDrawer.js dataToEdit: ", JSON.stringify(dataToEdit, null, "\t"));
     let accounts = [];
     if(dataToEdit.type === "expenses"){
       accounts = _.filter(userAccounts, { 'typeId': 1 });
     } else {
       accounts = userAccounts;
-      console.log("+++ 65 EditDrawer.js accounts: ", JSON.stringify(accounts, null, "\t"));
     }
 
 

@@ -43,7 +43,7 @@ export const formatDate = function (date) {
   return moment(date).format(dateFormat)
 }
 
-export function findMissingDates(data) {
+export function findMissingDates(data, addFollowingDate) {
   var tempResults = data.sort(function(a,b){
    return Date.parse(a.date) - Date.parse(b.date);
   }).reduce(function(hash){
@@ -64,5 +64,17 @@ export function findMissingDates(data) {
       total: "0.00"
     })
   })
+
+  if(addFollowingDate){
+    let date = new Date();
+    let days = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() - date.getDate();
+    _.times(days, i => {
+      results.push({
+        date: moment().add(i+1, 'days').format(dateFormat),
+        total: "0.00"
+      })
+      
+    })
+  }
   return results;
 }

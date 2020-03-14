@@ -220,7 +220,6 @@ class Main extends React.Component {
 
 
   updateListingData = (listingDataSelected) => {
-    console.log("+++ 227 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     var payload = {
       page: this.state.page,
     }

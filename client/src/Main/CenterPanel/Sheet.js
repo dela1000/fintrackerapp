@@ -134,7 +134,13 @@ class Sheet extends React.Component {
       dailyData.push(item)
     })
 
-    dailyData = dailyData.concat(findMissingDates(dailyData));
+    let addFollowingDate = false;
+
+    if(this.props.listingDataSelected && this.props.listingDataSelected.timeframe === "month"){
+      addFollowingDate = true;
+    }
+
+    dailyData = dailyData.concat(findMissingDates(dailyData, addFollowingDate));
     dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
     this.setState({type: "funds", headerData, dailyData})
   }
@@ -231,6 +237,7 @@ class Sheet extends React.Component {
   }
 
   render(){
+    console.log("+++ 234 Sheet.js this.props: ", JSON.stringify(this.props, null, "\t"));
     return (
       <React.Fragment>
         <TableContainer component={Paper} style={{maxHeight: '90vh'}}>
