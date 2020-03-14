@@ -14,10 +14,17 @@ import PieChart, {
 import { capitalize, decimals } from "../../Services/helpers";
 
 const formatLabel = (arg) => {
-  return `${capitalize(arg.argumentText)}: $${decimals(arg.valueText)}`;
+  return `${capitalize(arg.argumentText)}<br>$${decimals(arg.valueText)}`;
 }
 
 class Pie extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.pointClickHandler = this.pointClickHandler.bind(this);
+    this.legendClickHandler = this.legendClickHandler.bind(this);
+  }
 
   render(){
     const { data, title, argumentField, colors } = this.props;
@@ -34,6 +41,8 @@ class Pie extends React.Component {
         title={title}
         resolveLabelOverlapping="shift"
         customizePoint={customizePoint}
+        onPointClick={this.pointClickHandler}
+        onLegendClick={this.legendClickHandler}
       >
         <Legend visible={false} />
         <Series
@@ -54,9 +63,24 @@ class Pie extends React.Component {
             threshold={4.5} 
           />
         </Series>
+        <Legend visible={true}/>
         <Size width={500} />
       </PieChart>
     )
+  }
+
+  pointClickHandler(e) {
+    this.toggleVisibility(e.target);
+  }
+
+  legendClickHandler(e) {
+    let arg = e.target;
+    let item = e.component.getAllSeries()[0].getPointsByArg(arg)[0];
+    this.toggleVisibility(item);
+  }
+
+  toggleVisibility(item) {
+  item.isVisible() ? item.hide() : item.show();
   }
 }
 

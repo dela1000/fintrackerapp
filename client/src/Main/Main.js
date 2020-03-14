@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import moment from 'moment';
+import _ from 'lodash';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -113,6 +114,7 @@ const styles = theme => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+    height: '100vh',
   },
   detailsPanel: {
     overflowY: 'scroll',
@@ -143,6 +145,7 @@ class Main extends React.Component {
       currentAvailable: 0,
       expensesByCategory: [],
       listingData: [],
+      sortBy: 'asc',
       timeframe: 'month',
       page: 1,
       listingDataSelected: {
@@ -462,6 +465,42 @@ class Main extends React.Component {
     }
   }
 
+  sortListingData = (sort) => {
+    let listingData = this.state.listingData;
+    let type = this.state.listingDataSelected.type;
+    let sortBy = this.state.sortBy;
+    var newSort = [];
+    
+    if(type.toLowerCase().includes('expense'.toLowerCase())){
+      if(sort === 'category'){
+        sort = 'categoryId';
+      }
+      if(sortBy === 'asc'){
+        newSort = _.orderBy(listingData, sort, 'desc');
+        sortBy = 'desc';
+      } else {
+        newSort = _.orderBy(listingData, sort, 'asc');
+        sortBy = 'asc';
+      }
+    }
+
+    if(type.toLowerCase().includes('fund'.toLowerCase())){
+      if(sort === 'account'){
+        sort = 'accountId';
+      }
+      if(sortBy === 'asc'){
+        newSort = _.orderBy(listingData, sort, 'desc');
+        sortBy = 'desc';
+      } else {
+        newSort = _.orderBy(listingData, sort, 'asc');
+        sortBy = 'asc';
+      }
+    }
+
+    this.setState({listingData: newSort, sortBy: sortBy})
+
+  }
+
   render () {
     const { classes } = this.props;
     return (
@@ -538,6 +577,7 @@ class Main extends React.Component {
                       currentAvailable={this.state.currentAvailable}
                       listingDataSelected={this.state.listingDataSelected}
                       listingData={this.state.listingData}
+                      sortListingData={this.sortListingData}
                       userAccounts={this.state.allTotals.userAccounts}
                       message={this.state.message}
                       customOption={this.state.customOption}

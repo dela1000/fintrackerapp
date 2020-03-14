@@ -14,7 +14,7 @@ import {
 import { capitalize, decimals } from "../../Services/helpers";
 
 const customizeTooltip = arg => {
-    return { text: `${capitalize(arg.seriesName) }: $${decimals(arg.valueText)}` };
+    return { text: `${capitalize(arg.seriesName) }<br>$${decimals(arg.valueText)}` };
   }
 
 const setTitle = (data) => {

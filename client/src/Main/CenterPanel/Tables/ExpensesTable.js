@@ -76,7 +76,7 @@ class ExpensesTable extends React.Component {
   }
 
   render () {
-    const { classes } = this.props;
+    const { classes, sortListingData } = this.props;
     return (
       <TableContainer component={Paper}>
         <Table  aria-label="simple table" size="small" padding="checkbox" stickyHeader>
@@ -84,7 +84,7 @@ class ExpensesTable extends React.Component {
             <TableRow>
               {headers.map((item, i) => (
                 <TableCell key={i} align={item.align}>
-                  <Typography>
+                  <Typography onClick={() => sortListingData(item.name)} style={{cursor: 'pointer'}}>
                     {capitalize(item.name)}
                   </Typography>
                 </TableCell>

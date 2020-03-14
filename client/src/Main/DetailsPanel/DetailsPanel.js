@@ -4,10 +4,11 @@ import moment from 'moment';
 
 import Divider from '@material-ui/core/Divider';
 
-import { decimals } from "../../Services/helpers";
+import { capitalize, decimals } from "../../Services/helpers";
 
 import Pie from './Pie.js'
 import StackedBar from './StackedBar.js'
+
 
 export default function DetailedPanel({viewSelected, graphData, timeframe, customOption, colors}) {
   // Expenses and funds data
@@ -51,7 +52,7 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
         tempCategoryData.push({name: item.expensescategory.name, id: item.categoryId});
         mainHolder[item.categoryId] = {
           amount: item.amount,
-          category: item.expensescategory.name,
+          category: capitalize(item.expensescategory.name),
           id: item.expensescategory.id
         }
       } else {
@@ -90,7 +91,7 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
       if(!mainHolder[item.accountId]){
         mainHolder[item.accountId] = {
           amount: item.amount,
-          account: item.useraccount.account
+          account: capitalize(item.useraccount.account)
         }
       } else {
         mainHolder[item.accountId].amount = mainHolder[item.accountId].amount + item.amount;

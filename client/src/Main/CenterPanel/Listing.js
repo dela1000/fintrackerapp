@@ -18,7 +18,8 @@ class ListingPanel extends React.Component {
       listingDataSelected, 
       openDetailsDrawer ,
       userAccounts,
-      colors
+      colors,
+      sortListingData,
     } = this.props;
     const Cmp = component[listingDataSelected.type];
     return (
@@ -28,6 +29,7 @@ class ListingPanel extends React.Component {
           openDetailsDrawer={openDetailsDrawer}
           userAccounts={userAccounts}
           colors={colors}
+          sortListingData={sortListingData}
         />
       </React.Fragment>
     );

@@ -15,6 +15,7 @@ export default function CenterPanel({
     openDetailsDrawer,
     userAccounts,
     colors,
+    sortListingData,
   }) {
   return (
     <React.Fragment>
@@ -33,6 +34,7 @@ export default function CenterPanel({
         openDetailsDrawer={openDetailsDrawer}
         userAccounts={userAccounts}
         colors={colors}
+        sortListingData={sortListingData}
       />
     </React.Fragment>
   )

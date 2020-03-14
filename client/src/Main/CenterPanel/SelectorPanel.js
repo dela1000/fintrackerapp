@@ -20,8 +20,8 @@ class SelectorPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      listButtonColor: 'primary',
-      sheetButtonColor: 'default',
+      listButtonColor: 'default',
+      sheetButtonColor: 'primary',
       viewSelected: "Sheet",
       type: 'expenses',
       colors: []
@@ -34,10 +34,10 @@ class SelectorPanel extends React.Component {
         return capitalize(listingDataSelected.type) + " - " + capitalize(listingDataSelected.name)
       }
       if(listingDataSelected.type){
-        if(listingDataSelected.type.toUpperCase().includes('expense'.toUpperCase())){
+        if(listingDataSelected.type.toLowerCase().includes('expense'.toLowerCase())){
             return "Expenses";
         }
-        if(listingDataSelected.type.toUpperCase().includes('fund'.toUpperCase())){
+        if(listingDataSelected.type.toLowerCase().includes('fund'.toLowerCase())){
             return "Funds";
         }
       }
@@ -63,6 +63,7 @@ class SelectorPanel extends React.Component {
       openDetailsDrawer,
       userAccounts,
       colors,
+      sortListingData,
     } = this.props;
     const Cmp = component[this.state.viewSelected];
     return (
@@ -86,15 +87,15 @@ class SelectorPanel extends React.Component {
               <ButtonGroup>
                 <Button 
                   size="small" 
-                  color={this.state.listButtonColor} 
-                  onClick={() => this.updateView('Listing')}>
-                    List
-                </Button>
-                <Button 
-                  size="small" 
                   color={this.state.sheetButtonColor} 
                   onClick={() => this.updateView('Sheet')}>
                     Sheet
+                </Button>
+                <Button 
+                  size="small" 
+                  color={this.state.listButtonColor} 
+                  onClick={() => this.updateView('Listing')}>
+                    List
                 </Button>
               </ButtonGroup>
             </Box> 
@@ -107,6 +108,7 @@ class SelectorPanel extends React.Component {
           openDetailsDrawer={openDetailsDrawer}
           userAccounts={userAccounts}
           colors={colors}
+          sortListingData={sortListingData}
         />
       </React.Fragment>
     );
