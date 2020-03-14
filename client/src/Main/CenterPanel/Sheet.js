@@ -75,11 +75,11 @@ class Sheet extends React.Component {
               total: item.amount,
               comment: ["$" + decimals(item.amount) + " " + item.comment]
             }
-            dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
+            dailyHolder[item.date].total = Number(dailyHolder[item.date].total) + Number(item.amount);
           } else {
-            dailyHolder[item.date][item.categoryId].total = dailyHolder[item.date][item.categoryId].total + item.amount;
+            dailyHolder[item.date][item.categoryId].total = Number(dailyHolder[item.date][item.categoryId].total) + Number(item.amount);
             dailyHolder[item.date][item.categoryId].comment.push("$" + decimals(item.amount) + " " + item.comment);
-            dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
+            dailyHolder[item.date].total = Number(dailyHolder[item.date].total) + Number(item.amount);
           }
         }
         dailyHolder[item.date][item.categoryId].total = decimals(dailyHolder[item.date][item.categoryId].total);
@@ -116,9 +116,9 @@ class Sheet extends React.Component {
             }
             dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
           } else {
-            dailyHolder[item.date][item.accountId].total = dailyHolder[item.date][item.accountId].total + item.amount;
+            dailyHolder[item.date][item.accountId].total = Number(dailyHolder[item.date][item.accountId].total) + Number(item.amount);
             dailyHolder[item.date][item.accountId].comment.push("$" + decimals(item.amount) + " " + item.comment);
-            dailyHolder[item.date].total = dailyHolder[item.date].total + item.amount;
+            dailyHolder[item.date].total = Number(dailyHolder[item.date].total) + Number(item.amount);
           }
           dailyHolder[item.date][item.accountId].total = decimals(dailyHolder[item.date][item.accountId].total);
         }
