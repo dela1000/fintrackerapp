@@ -57,12 +57,15 @@ class EditDraw extends React.Component {
       submitEdit, 
     } = this.props;
 
+    console.log("+++ 67 EditDrawer.js dataToEdit: ", JSON.stringify(dataToEdit, null, "\t"));
     let accounts = [];
     if(dataToEdit.type === "expenses"){
       accounts = _.filter(userAccounts, { 'typeId': 1 });
     } else {
       accounts = userAccounts;
+      console.log("+++ 65 EditDrawer.js accounts: ", JSON.stringify(accounts, null, "\t"));
     }
+
 
     return (
       <SwipeableDrawer
@@ -71,7 +74,7 @@ class EditDraw extends React.Component {
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer()}
       >
-        <div className={classes.drawer} role="presentation">
+        <div className={ classes.drawer } role="presentation">
           <Box>
             <Button size="small" color="primary" style={{float: 'right'}} onClick={toggleDrawer(false)}>
               Close

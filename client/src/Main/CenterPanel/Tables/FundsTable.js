@@ -35,8 +35,8 @@ class FundsTable extends React.Component {
     let headers = [
       {name: 'date', align: "left"},
       {name: 'comment', align: "left"},
-      {name: 'source', align: "left"},
       {name: 'account', align: "left"},
+      {name: 'source', align: "left"},
     ];
 
     let transferFound = false;

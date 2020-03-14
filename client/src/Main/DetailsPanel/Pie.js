@@ -21,7 +21,6 @@ class Pie extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.pointClickHandler = this.pointClickHandler.bind(this);
     this.legendClickHandler = this.legendClickHandler.bind(this);
   }
@@ -33,6 +32,13 @@ class Pie extends React.Component {
         return { color: colors[arg.data.id].color, hoverStyle: { color: colors[arg.data.id].color } };
       }
     }
+    // Remove Initials from pie chart
+    if(argumentField === 'account')
+    _.forEach(data, (item, i) => {
+      if(item && item.account === "Initial"){
+        data.splice(i, 1);
+      }
+    })
     return (
       <PieChart 
         id="pie"

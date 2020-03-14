@@ -211,19 +211,16 @@ class Main extends React.Component {
 
   updateTimeframe = (timeframe) => {
     if(timeframe === 'month'){
-      this.setState({timeframe: "year"}, ()=> {
-        this.updateListingData({timeframe: 'year'});
-      });
+      this.updateListingData({timeframe: 'year'});
     };
     if(timeframe === 'year' || timeframe === 'custom'){
-      this.setState({timeframe: "month"}, ()=> {
-        this.updateListingData({timeframe: 'month'});
-      });
+      this.updateListingData({timeframe: 'month'});
     };
   }
 
 
   updateListingData = (listingDataSelected) => {
+    console.log("+++ 227 Main.js listingDataSelected: ", JSON.stringify(listingDataSelected, null, "\t"));
     var payload = {
       page: this.state.page,
     }
@@ -329,7 +326,7 @@ class Main extends React.Component {
       //   }
       // }
     }
-
+    console.log("+++ 333 Main.js payload: ", JSON.stringify(payload, null, "\t"));
     search(payload)
       .then((res) => {
         var data = res.data;
@@ -347,8 +344,8 @@ class Main extends React.Component {
           if(listingDataSelected && listingDataSelected.name){
             payload.name = listingDataSelected.name;
           }
-
-          this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound})
+          console.log("+++ 347 Main.js finalData: ", JSON.stringify(finalData, null, "\t"));
+          this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound, timeframe: payload.timeframe})
         } else {
           this.setState({listingData: [], message: data.data.message}, () => {
               setTimeout(() => {
