@@ -485,6 +485,9 @@ class Main extends React.Component {
     }
 
     if(type.toLowerCase().includes('fund'.toLowerCase())){
+      if(sort.toLowerCase().includes('transfer'.toLowerCase())){
+        sort = 'transferAccountId';
+      }
       if(sort === 'account'){
         sort = 'accountId';
       }

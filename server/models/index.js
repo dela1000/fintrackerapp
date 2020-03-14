@@ -750,7 +750,7 @@ module.exports = {
   search: {
     get: function(payload, callback) {
       console.log("+++ 752 index.js payload: ", payload)
-      var searchData = {
+      var where = {
         userId: payload.userId,
         date: {
           [Op.gte]: payload.startDate,
@@ -759,16 +759,16 @@ module.exports = {
         deleted: payload.deleted
       };
       if (payload.categoryId) {
-        searchData['categoryId'] = payload.categoryId
+        where['categoryId'] = payload.categoryId
       }
       if (payload.accountId) {
-        searchData['accountId'] = payload.accountId
+        where['accountId'] = payload.accountId
       }
       if (payload.typeId) {
-        searchData['typeId'] = payload.typeId
+        where['typeId'] = payload.typeId
       }
       if (payload.comment) {
-        searchData['comment'] = {
+        where['comment'] = {
           [Op.like]: "%" + payload.comment + "%"
         }
       }
@@ -779,7 +779,7 @@ module.exports = {
         if (!payload.maxAmount) {
           payload.maxAmount = 99999;
         };
-        searchData['amount'] = {
+        where['amount'] = {
           [Op.between]: [Number(payload.minAmount) - .001, Number(payload.maxAmount) + .001],
           // // THIS BELOW DOES NOT INCLUDE LESS THAN OR EQUALS WHEN DECIMALS ARE INVOLVED
           // [Op.gte]: Number(payload.minAmount) - .001,
@@ -790,7 +790,7 @@ module.exports = {
 
       var tableName = payload.type;
       var query = {
-        where: searchData
+        where: where
       }
       if(payload.offset){
         query['offset'] = payload.offset;

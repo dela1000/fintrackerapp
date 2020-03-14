@@ -64,9 +64,9 @@ class FundsTable extends React.Component {
                 <TableCell 
                     key={i} 
                     align={item.align}
-                    style={ !_.isEmpty(colors) ? {borderLeft: '10px solid ' + colors[i].color} : {}}
+                    // style={ !_.isEmpty(colors) ? {borderLeft: '10px solid ' + colors[i].color} : {}}
                   >
-                  <Typography>
+                  <Typography onClick={() => this.props.sortListingData(item.name)} style={{cursor: 'pointer'}}>
                     {capitalize(item.name)}
                   </Typography>
                 </TableCell>

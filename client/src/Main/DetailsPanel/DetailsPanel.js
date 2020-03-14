@@ -106,8 +106,11 @@ export default function DetailedPanel({viewSelected, graphData, timeframe, custo
       }
     })
     _.forEach(sourceHolder, (item) =>{
-      sourceData.push(item)
+      if(item.amount > 0){
+        sourceData.push(item)
+      }
     })
+
   }
   
   mainHolder = _.orderBy(mainHolder, ['id'],['asc']);
