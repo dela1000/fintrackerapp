@@ -115,8 +115,11 @@ class CenterHeader extends React.Component {
         let dayOfYear = moment().dayOfYear();
         let dailyEarnedAvg = totalAmountFound / dayOfYear;
         topSublineAmount = decimals(dailyEarnedAvg);
-        bottomSubline = "";
-        bottomSublineAmount = "";
+        bottomSubline = "Monthly Earned Average";
+        today = moment();
+        let currentMonth = today.format('M');
+        let monthlyEarnedAverage = totalAmountFound / currentMonth;
+        bottomSublineAmount = decimals(monthlyEarnedAverage);
       }
 
       if(timeframe === 'custom'){
@@ -125,13 +128,27 @@ class CenterHeader extends React.Component {
         }
         if(listingDataSelected.startDate && listingDataSelected.endDate){
           let totalDays = moment.duration(moment(listingDataSelected.endDate).diff(moment(listingDataSelected.startDate))).asDays() + 1;
+          
+          if(customOption === "last month"){
+            topSubline = "Daily Earned Average";
+            let dailyEarnedAvg = totalAmountFound / totalDays;
+            topSublineAmount = decimals(dailyEarnedAvg);
 
-          topSubline = "Days Searched";
-          topSublineAmount = totalDays;
+            bottomSubline = "Net Gain %";
+            let netGainPercentage = (-((totalExpenses / totalAmountFound) - 1)) * 100;
+            netGainPercentage = decimals(netGainPercentage);
+            netGainPercentage = netGainPercentage.toString();
+            bottomSublineAmount = netGainPercentage + "%";
 
-          bottomSubline = "Daily Earned Average";
-          let dailyEarnedAvg = totalAmountFound / totalDays;
-          bottomSublineAmount = decimals(dailyEarnedAvg);
+          } else {
+            topSubline = "Days Searched";
+            topSublineAmount = totalDays;
+
+            bottomSubline = "Daily Earned Average";
+            let dailyEarnedAvg = totalAmountFound / totalDays;
+            bottomSublineAmount = decimals(dailyEarnedAvg);
+          }
+
         } else {
           topSubline = "";
           topSublineAmount = "";
