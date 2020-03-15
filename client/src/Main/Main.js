@@ -309,14 +309,17 @@ class Main extends React.Component {
       }
     }
     // TYPES ARE NOT WORKING
-    // if(payload.type === "type"){
+    if(payload.type === "type"){
+      console.log("+++ 313 Main.js listingDataSelected: ", listingDataSelected)
+      payload.typeId = listingDataSelected.typeId
+      console.log("+++ 313 Main.js payload: ", payload)
     //   if(listingDataSelected.typeId){
     //     payload['typeId'] = Number(listingDataSelected.typeId);
     //   }
     //   if(this.state.listingDataSelected.typeId){
     //     payload['typeId'] = Number(this.state.listingDataSelected.typeId);
     //   }
-    // }
+    }
 
 
     search(payload)
@@ -332,7 +335,7 @@ class Main extends React.Component {
             return;
           }
           let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
-          
+          console.log("+++ 338 Main.js finalData: ", JSON.stringify(finalData, null, "\t"));
           if(listingDataSelected && listingDataSelected.name){
             payload.name = listingDataSelected.name;
           }

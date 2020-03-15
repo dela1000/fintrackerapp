@@ -1008,6 +1008,16 @@ module.exports = controllers = {
         })
       }
 
+      if(type === "Type" || type === "type"){
+        payload['type'] = "Funds";
+        payload['typeId'] = req.query.typeId;
+        payload.include.push({
+          model: db.FundSources,
+          attributes: ['source', 'id'],
+        })
+      }
+
+
       if (req.query.startDate) {
         payload['startDate'] = req.query.startDate
       } else {

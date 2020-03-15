@@ -115,7 +115,7 @@ class SidePanel extends React.Component {
         <Box style={ availableByAccount.checking.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
             type={'checking'}
-            typeId={2}
+            typeId={1}
             data={availableByAccount.checking}
             open={open}
             currentAvailable={currentAvailable}
@@ -139,7 +139,7 @@ class SidePanel extends React.Component {
         <Box style={ availableByAccount.investments.length > 0 ? {} : {'display': 'none'} }>
           <SidePanelAccount
             type={'investments'}
-            typeId={2}
+            typeId={3}
             data={availableByAccount.investments}
             open={open}
             currentAvailable={currentAvailable}

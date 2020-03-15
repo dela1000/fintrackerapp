@@ -138,9 +138,10 @@ class Sheet extends React.Component {
     if(this.props.listingDataSelected && this.props.listingDataSelected.timeframe === "month"){
       addFollowingDate = true;
     }
-
-    dailyData = dailyData.concat(findMissingDates(dailyData, addFollowingDate));
-    dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
+    if(dailyData.length > 0){
+      dailyData = dailyData.concat(findMissingDates(dailyData, addFollowingDate));
+      dailyData = dailyData.sort((a, b) => moment(a.date) - moment(b.date))
+    }
     this.setState({type: "funds", headerData, dailyData})
   }
 
