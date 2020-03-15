@@ -49,7 +49,7 @@ class CenterHeader extends React.Component {
       })
     }
 
-    let today = 0;
+    let today;
     let topSublineAmount = 0;
     let bottomSublineAmount = 0;
     let mainHeader = capitalize(listingDataSelected.type) + " - " + capitalize(timeframe);
@@ -66,14 +66,16 @@ class CenterHeader extends React.Component {
       }
       if(timeframe === 'month'){
         today = moment();
-        topSublineAmount = totalExpenses / today.format('D');
+        let avgDailyExpenses = totalExpenses / today.format('D');
+        topSublineAmount = decimals(avgDailyExpenses);
         let averageTotal = topSublineAmount * moment().daysInMonth();
         bottomSublineAmount = decimals(averageTotal);
       }
 
       if(timeframe === 'year'){
         let totalDays = moment().dayOfYear();
-        topSublineAmount = totalExpenses / totalDays;
+        let avgYearAmount = totalExpenses / totalDays;
+        topSublineAmount = decimals(avgYearAmount);
         let numOfDaysInYear = 365;
         if(moment().isLeapYear()){
           numOfDaysInYear = 366;
@@ -82,13 +84,15 @@ class CenterHeader extends React.Component {
         bottomSublineAmount = decimals(avgYear);
       }
       if(timeframe === "custom"){
+        if(customOption) {
+          mainHeader = capitalize(listingDataSelected.type) + " - " + capitalize(customOption);
+        }
         topSubline = "Average Daily " + capitalize(listingDataSelected.type);
         bottomSubline = "";
         let totalDays = moment.duration(moment(listingDataSelected.endDate).diff(moment(listingDataSelected.startDate))).asDays() + 1;
-        topSublineAmount = totalExpenses / totalDays;
+        let dailyEarnedAvg = totalExpenses / totalDays;
+        topSublineAmount = decimals(dailyEarnedAvg);
         bottomSublineAmount = "";
-      } else {
-        mainHeader = capitalize(listingDataSelected.type) + " - " + timeframe;
       }
     }
 
@@ -97,7 +101,8 @@ class CenterHeader extends React.Component {
       backgroundColor = "#C6E0B4";
       if(timeframe === 'month'){
         topSubline = capitalize(timeframe) + " - Net Gain"
-        topSublineAmount = totalAmountFound - totalExpenses;
+        let monthNetGain = totalAmountFound - totalExpenses;
+        topSublineAmount = decimals(monthNetGain);
         bottomSubline = "Net Gain %"
         let netGainPercentage = (-((totalExpenses / totalAmountFound) - 1)) * 100;
         netGainPercentage = decimals(netGainPercentage);
@@ -105,22 +110,34 @@ class CenterHeader extends React.Component {
         bottomSublineAmount = netGainPercentage + "%";
       }
 
-        console.log("+++ 97 CenterHeader.js timeframe: ", timeframe)
-        console.log("+++ 98 CenterHeader.js totalExpenses: ", totalExpenses)
-        console.log("+++ 99 CenterHeader.js totalAmountFound: ", totalAmountFound)
-
       if(timeframe === 'year'){
-        topSubline = "";
-        topSublineAmount = "";
+        topSubline = "Daily Earned Average";
+        let dayOfYear = moment().dayOfYear();
+        let dailyEarnedAvg = totalAmountFound / dayOfYear;
+        topSublineAmount = decimals(dailyEarnedAvg);
         bottomSubline = "";
         bottomSublineAmount = "";
       }
 
       if(timeframe === 'custom'){
-        topSubline = "";
-        topSublineAmount = "";
-        bottomSubline = "";
-        bottomSublineAmount = "";
+        if(customOption) {
+          mainHeader = capitalize(listingDataSelected.type) + " - " + capitalize(customOption);
+        }
+        if(listingDataSelected.startDate && listingDataSelected.endDate){
+          let totalDays = moment.duration(moment(listingDataSelected.endDate).diff(moment(listingDataSelected.startDate))).asDays() + 1;
+
+          topSubline = "Days Searched";
+          topSublineAmount = totalDays;
+
+          bottomSubline = "Daily Earned Average";
+          let dailyEarnedAvg = totalAmountFound / totalDays;
+          bottomSublineAmount = decimals(dailyEarnedAvg);
+        } else {
+          topSubline = "";
+          topSublineAmount = "";
+          bottomSubline = "";
+          bottomSublineAmount = "";
+        }
       }
     }
 
@@ -143,7 +160,7 @@ class CenterHeader extends React.Component {
                     {topSubline}
                   </Typography>
                   <Typography component="p" variant="subtitle2">
-                    {decimals(topSublineAmount)}
+                    {topSublineAmount}
                   </Typography>
                   <Typography color="textSecondary" variant="subtitle1" style={ bottomSubline < 0 ? {color: 'red'} : {}}>
                     {bottomSubline}

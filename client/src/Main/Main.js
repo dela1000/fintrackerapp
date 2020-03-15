@@ -331,7 +331,6 @@ class Main extends React.Component {
             return;
           }
           if(payload.type === "funds"){
-            console.log("+++ 335 Main.js data.data: ", data.data)
             _.forEach(data.data.results, (item) => {
               if(item.fundsource.source === "Initial"){
                 data.data.totalAmountFound = Number(data.data.totalAmountFound) - item.amount;
@@ -347,7 +346,6 @@ class Main extends React.Component {
           if(!payload.timeframe && !listingDataSelected.timeframe){
             payload.timeframe = "custom";
           }
-          console.log("+++ 352 Main.js data.data.totalAmountFound: ", data.data.totalAmountFound)
           this.setState({listingData: finalData, listingDataSelected: payload, totalAmountFound: data.data.totalAmountFound, timeframe: payload.timeframe})
         } else {
           this.setState({listingData: [], message: data.data.message}, () => {
