@@ -331,7 +331,6 @@ class Main extends React.Component {
             return;
           }
           let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
-          console.log("+++ 338 Main.js finalData: ", JSON.stringify(finalData, null, "\t"));
           if(listingDataSelected && listingDataSelected.name){
             payload.name = listingDataSelected.name;
           }

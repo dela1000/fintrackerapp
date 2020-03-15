@@ -14,8 +14,9 @@ import {
 import { capitalize, decimals } from "../../Services/helpers";
 
 const customizeTooltip = arg => {
-    return { text: `${capitalize(arg.seriesName) }<br>$${decimals(arg.valueText)}` };
-  }
+  console.log("+++ 17 StackedBar.js arg: ", arg)
+  return { text: `${capitalize(arg.seriesName) }<br>$${decimals(arg.valueText)}<br>Day Total:<br>${decimals(arg.totalText)}` };
+}
 
 const setTitle = (data) => {
   if(data.type === 'expenses'){
@@ -54,6 +55,7 @@ export default function Stacked ({dailyData, categoryData, viewSelected, argumen
       <Tooltip
         enabled={true}
         location="edge"
+        cornerRadius="10"
         customizeTooltip={customizeTooltip}
       />
       

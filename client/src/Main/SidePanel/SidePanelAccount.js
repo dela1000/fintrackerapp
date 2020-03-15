@@ -32,7 +32,7 @@ export default function SidePanelAccount(props) {
       <Grid 
         container 
         spacing={1} 
-        style={{cursor: 'pointer'}} 
+        // style={{cursor: 'pointer'}} 
         // onClick={() => props.updateListingData({type: 'type', name: props.type, typeId: props.typeId})}
       >
         <Grid item xs={2}>
@@ -53,7 +53,7 @@ export default function SidePanelAccount(props) {
           </Box>
         </Grid>
         <Grid item xs={2} style={props.open ? { "marginTop": "4px" } : { display: 'none' }} variant="contained" color="primary">
-          <Box>
+          <Box style={{cursor: 'pointer'}}>
             <TransferModal 
               from={props.type}
               userAccounts={props.userAccounts}

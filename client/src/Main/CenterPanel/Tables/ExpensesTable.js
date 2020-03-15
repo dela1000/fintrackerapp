@@ -49,7 +49,7 @@ class ExpensesTable extends React.Component {
             key={i} 
             hover 
             onClick={() => this.props.openDetailsDrawer({item: item, type: 'expenses'})}
-            style={moment(today).isSame(item.date) ? {backgroundColor: '#D3F1D3'} : {} }
+            style={moment(today).isSame(item.date) ? {backgroundColor: '#D3F1D3', cursor: 'pointer'} : {cursor: 'pointer'} }
           >
             <TableCell
               className={this.props.classes.tableCell}
