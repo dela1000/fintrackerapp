@@ -134,9 +134,11 @@ class Sheet extends React.Component {
     })
 
     let addFollowingDate = false;
-
     if(this.props.listingDataSelected && this.props.listingDataSelected.timeframe === "month"){
       addFollowingDate = true;
+    }
+    if(this.props.listingDataSelected.categoryId){
+      addFollowingDate = false;
     }
     if(dailyData.length > 0){
       dailyData = dailyData.concat(findMissingDates(dailyData, addFollowingDate));
@@ -189,7 +191,7 @@ class Sheet extends React.Component {
             </TableCell>
             {this.innerCells(row)}
             <TableCell component="th" scope="row"  align="right" className={this.props.classes.tableCell}>
-              {decimals(row.total)}
+              {decimals(row.total) || "0.00"}
             </TableCell>
         </TableRow>
       )

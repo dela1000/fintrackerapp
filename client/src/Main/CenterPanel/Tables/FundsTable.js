@@ -31,7 +31,6 @@ const styles = theme => ({
 class FundsTable extends React.Component {
 
   setTable = () => {
-    let colors = this.props.colors;
     let headers = [
       {name: 'date', align: "left"},
       {name: 'comment', align: "left"},
@@ -64,7 +63,6 @@ class FundsTable extends React.Component {
                 <TableCell 
                     key={i} 
                     align={item.align}
-                    // style={ !_.isEmpty(colors) ? {borderLeft: '10px solid ' + colors[i].color} : {}}
                   >
                   <Typography onClick={() => this.props.sortListingData(item.name)} style={{cursor: 'pointer'}}>
                     {capitalize(item.name)}

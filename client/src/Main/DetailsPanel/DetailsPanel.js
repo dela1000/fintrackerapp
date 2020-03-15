@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import Divider from '@material-ui/core/Divider';
 
-import { capitalize, decimals } from "../../Services/helpers";
+import { capitalize } from "../../Services/helpers";
 
 import Pie from './Pie.js'
 import StackedBar from './StackedBar.js'

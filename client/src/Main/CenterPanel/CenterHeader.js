@@ -35,7 +35,6 @@ class CenterHeader extends React.Component {
     let backgroundColor = "";
 
     let totalSavings = 0;
-    let savedThisYear = 0
     let totalInvestments = 0;
     if(availableByAccount.savings){
       _.forEach(availableByAccount.savings, (saving) => {
@@ -59,22 +58,27 @@ class CenterHeader extends React.Component {
     if(listingDataSelected.type === "expenses"){
       topSubline = "Average Daily " + capitalize(listingDataSelected.type);
       bottomSubline = capitalize(timeframe) + " Estimate";
+      let totalData = totalExpenses;
       backgroundColor = "#FF504C";
       if(listingDataSelected.categoryId){
         topSubline = "Average Daily - " + capitalize(listingDataSelected.name);
         bottomSubline = "Month Estimate - " + capitalize(listingDataSelected.name);
+        totalData = totalAmountFound;
       }
       if(timeframe === 'month'){
         today = moment();
-        let avgDailyExpenses = totalExpenses / today.format('D');
+        let dayOfMonth = today.format('D');
+        let totalDaysInMonth = moment().daysInMonth();
+        let avgDailyExpenses = totalData / totalDaysInMonth;
+        let estimateMonthlyTotal = (avgDailyExpenses * (totalDaysInMonth - dayOfMonth)) + totalData;
+
         topSublineAmount = decimals(avgDailyExpenses);
-        let averageTotal = topSublineAmount * moment().daysInMonth();
-        bottomSublineAmount = decimals(averageTotal);
+        bottomSublineAmount = decimals(estimateMonthlyTotal);
       }
 
       if(timeframe === 'year'){
         let totalDays = moment().dayOfYear();
-        let avgYearAmount = totalExpenses / totalDays;
+        let avgYearAmount = totalData / totalDays;
         topSublineAmount = decimals(avgYearAmount);
         let numOfDaysInYear = 365;
         if(moment().isLeapYear()){
@@ -90,7 +94,7 @@ class CenterHeader extends React.Component {
         topSubline = "Average Daily " + capitalize(listingDataSelected.type);
         bottomSubline = "";
         let totalDays = moment.duration(moment(listingDataSelected.endDate).diff(moment(listingDataSelected.startDate))).asDays() + 1;
-        let dailyEarnedAvg = totalExpenses / totalDays;
+        let dailyEarnedAvg = totalData / totalDays;
         topSublineAmount = decimals(dailyEarnedAvg);
         bottomSublineAmount = "";
       }
