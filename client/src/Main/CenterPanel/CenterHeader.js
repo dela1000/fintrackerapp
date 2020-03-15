@@ -30,7 +30,7 @@ const styles = theme => ({
 class CenterHeader extends React.Component {
   
   render () {
-    const { classes, listingDataSelected, timeframe, totalExpenses, currentAvailable, availableByAccount, customOption } = this.props;
+    const { classes, listingDataSelected, timeframe, totalAmountFound, totalExpenses, currentAvailable, availableByAccount, customOption } = this.props;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     let backgroundColor = "";
 
@@ -50,54 +50,83 @@ class CenterHeader extends React.Component {
     }
 
     let today = 0;
-    let average = 0;
-    let averageExpensesEstimate = 0;
-    let mainHeader = capitalize(listingDataSelected.type) + " - " + timeframe;
-    let averageHeader = "Average Daily " + capitalize(listingDataSelected.type);
-    let monthEstimate = "Month Estimate";
+    let topSublineAmount = 0;
+    let bottomSublineAmount = 0;
+    let mainHeader = capitalize(listingDataSelected.type) + " - " + capitalize(timeframe);
+    let topSubline = ""
+    let bottomSubline = "";
     
     if(listingDataSelected.type === "expenses"){
+      topSubline = "Average Daily " + capitalize(listingDataSelected.type);
+      bottomSubline = capitalize(timeframe) + " Estimate";
       backgroundColor = "#FF504C";
       if(listingDataSelected.categoryId){
-        averageHeader = "Average Daily - " + capitalize(listingDataSelected.name);
-        monthEstimate = "Month Estimate - " + capitalize(listingDataSelected.name);
+        topSubline = "Average Daily - " + capitalize(listingDataSelected.name);
+        bottomSubline = "Month Estimate - " + capitalize(listingDataSelected.name);
       }
-
-      if(timeframe === 'custom'){
-        mainHeader = capitalize(listingDataSelected.type) + " - " + customOption;
-        monthEstimate = "Total Estimate - " + capitalize(listingDataSelected.name);
-      } else {
-        mainHeader = capitalize(listingDataSelected.type) + " - " + timeframe;
-      }
-
       if(timeframe === 'month'){
         today = moment();
-        average = totalExpenses/today.format('D');
-        averageExpensesEstimate = average*moment().daysInMonth();
+        topSublineAmount = totalExpenses / today.format('D');
+        let averageTotal = topSublineAmount * moment().daysInMonth();
+        bottomSublineAmount = decimals(averageTotal);
       }
 
       if(timeframe === 'year'){
         let totalDays = moment().dayOfYear();
-        average = totalExpenses/totalDays;
+        topSublineAmount = totalExpenses / totalDays;
         let numOfDaysInYear = 365;
         if(moment().isLeapYear()){
           numOfDaysInYear = 366;
         }
-        averageExpensesEstimate = average*numOfDaysInYear;
+        let avgYear = topSublineAmount * numOfDaysInYear
+        bottomSublineAmount = decimals(avgYear);
       }
       if(timeframe === "custom"){
+        topSubline = "Average Daily " + capitalize(listingDataSelected.type);
+        bottomSubline = "";
         let totalDays = moment.duration(moment(listingDataSelected.endDate).diff(moment(listingDataSelected.startDate))).asDays() + 1;
-        average = totalExpenses/totalDays;
-        averageExpensesEstimate = average*totalDays;
+        topSublineAmount = totalExpenses / totalDays;
+        bottomSublineAmount = "";
+      } else {
+        mainHeader = capitalize(listingDataSelected.type) + " - " + timeframe;
       }
     }
+
+
     if (listingDataSelected.type === "funds") {
       backgroundColor = "#C6E0B4";
+      if(timeframe === 'month'){
+        topSubline = capitalize(timeframe) + " - Net Gain"
+        topSublineAmount = totalAmountFound - totalExpenses;
+        bottomSubline = "Net Gain %"
+        let netGainPercentage = (-((totalExpenses / totalAmountFound) - 1)) * 100;
+        netGainPercentage = decimals(netGainPercentage);
+        netGainPercentage = netGainPercentage.toString();
+        bottomSublineAmount = netGainPercentage + "%";
+      }
+
+        console.log("+++ 97 CenterHeader.js timeframe: ", timeframe)
+        console.log("+++ 98 CenterHeader.js totalExpenses: ", totalExpenses)
+        console.log("+++ 99 CenterHeader.js totalAmountFound: ", totalAmountFound)
+
+      if(timeframe === 'year'){
+        topSubline = "";
+        topSublineAmount = "";
+        bottomSubline = "";
+        bottomSublineAmount = "";
+      }
+
+      if(timeframe === 'custom'){
+        topSubline = "";
+        topSublineAmount = "";
+        bottomSubline = "";
+        bottomSublineAmount = "";
+      }
     }
 
     return (
       <React.Fragment>
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           <Grid item xs={6}>
             <Paper className={fixedHeightPaper} style={{backgroundColor: backgroundColor}}>
               <Grid container spacing={1}>
@@ -106,21 +135,21 @@ class CenterHeader extends React.Component {
                     {mainHeader}
                   </Typography>
                   <Typography component="p" variant="h4">
-                    {decimals(totalExpenses)}
+                    {decimals(totalAmountFound)}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography color="textSecondary" variant="subtitle1">
-                    {averageHeader}
+                    {topSubline}
                   </Typography>
                   <Typography component="p" variant="subtitle2">
-                    {decimals(average)}
+                    {decimals(topSublineAmount)}
                   </Typography>
-                  <Typography color="textSecondary" variant="subtitle1">
-                    {monthEstimate}
+                  <Typography color="textSecondary" variant="subtitle1" style={ bottomSubline < 0 ? {color: 'red'} : {}}>
+                    {bottomSubline}
                   </Typography>
                   <Typography component="p" variant="subtitle2">
-                    {decimals(averageExpensesEstimate)}
+                    {bottomSublineAmount}
                   </Typography>
                   
                 </Grid>
@@ -130,7 +159,7 @@ class CenterHeader extends React.Component {
           <Grid item xs={6}>
             <Paper className={fixedHeightPaper} style={{backgroundColor: "#33C7FF"}}>
               <Grid container spacing={1}>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Typography color="textSecondary">
                     Current Available
                   </Typography>
@@ -138,7 +167,7 @@ class CenterHeader extends React.Component {
                     {decimals(currentAvailable)}
                   </Typography>
                 </Grid>
-                <Grid item xs={4} style={totalSavings > 0 ? {} : {display: 'none'}}>
+                <Grid item xs={6} style={totalSavings > 0 ? {} : {display: 'none'}}>
                   <Typography color="textSecondary" variant="subtitle1">
                     Total Savings
                   </Typography>
@@ -150,14 +179,6 @@ class CenterHeader extends React.Component {
                   </Typography>
                   <Typography component="p" variant="subtitle2">
                     {decimals(totalInvestments)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography color="textSecondary" variant="subtitle1">
-                    Saved this year
-                  </Typography>
-                  <Typography component="p" variant="subtitle2">
-                    {decimals(savedThisYear)}
                   </Typography>
                 </Grid>
               </Grid>

@@ -5,6 +5,7 @@ import SelectorPanel from './SelectorPanel.js';
 
 export default function CenterPanel({
     timeframe, 
+    totalAmountFound,
     totalExpenses, 
     currentAvailable, 
     listingDataSelected, 
@@ -21,6 +22,7 @@ export default function CenterPanel({
     <React.Fragment>
       <CenterHeader
         timeframe={timeframe}
+        totalAmountFound={totalAmountFound}
         totalExpenses={totalExpenses}
         currentAvailable={currentAvailable}
         customOption={customOption}

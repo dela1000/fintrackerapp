@@ -330,14 +330,25 @@ class Main extends React.Component {
             })
             return;
           }
-          let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date))
+          if(payload.type === "funds"){
+            console.log("+++ 335 Main.js data.data: ", data.data)
+            _.forEach(data.data.results, (item) => {
+              if(item.fundsource.source === "Initial"){
+                data.data.totalAmountFound = Number(data.data.totalAmountFound) - item.amount;
+              }
+            })
+          }
+
+          let finalData = data.data.results.sort((a, b) => moment(a.date) - moment(b.date));
           if(listingDataSelected && listingDataSelected.name){
             payload.name = listingDataSelected.name;
           }
+          
           if(!payload.timeframe && !listingDataSelected.timeframe){
             payload.timeframe = "custom";
           }
-          this.setState({listingData: finalData, listingDataSelected: payload, totalExpenses: data.data.totalAmountFound, timeframe: payload.timeframe})
+          console.log("+++ 352 Main.js data.data.totalAmountFound: ", data.data.totalAmountFound)
+          this.setState({listingData: finalData, listingDataSelected: payload, totalAmountFound: data.data.totalAmountFound, timeframe: payload.timeframe})
         } else {
           this.setState({listingData: [], message: data.data.message}, () => {
               setTimeout(() => {
@@ -565,6 +576,7 @@ class Main extends React.Component {
                     {/*CENTER SECTION */}
                     <CenterPanel
                       timeframe={this.state.timeframe}
+                      totalAmountFound={this.state.totalAmountFound}
                       totalExpenses={this.state.totalExpenses}
                       currentAvailable={this.state.currentAvailable}
                       listingDataSelected={this.state.listingDataSelected}

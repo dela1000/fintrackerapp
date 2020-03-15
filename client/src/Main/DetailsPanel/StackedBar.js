@@ -14,7 +14,6 @@ import {
 import { capitalize, decimals } from "../../Services/helpers";
 
 const customizeTooltip = arg => {
-  console.log("+++ 17 StackedBar.js arg: ", arg)
   return { text: `${capitalize(arg.seriesName) }<br>$${decimals(arg.valueText)}<br>Day Total:<br>${decimals(arg.totalText)}` };
 }
 
