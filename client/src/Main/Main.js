@@ -310,15 +310,11 @@ class Main extends React.Component {
     }
     // TYPES ARE NOT WORKING
     if(payload.type === "type"){
-      console.log("+++ 313 Main.js listingDataSelected: ", listingDataSelected)
-      payload.typeId = listingDataSelected.typeId
-      console.log("+++ 313 Main.js payload: ", payload)
-    //   if(listingDataSelected.typeId){
-    //     payload['typeId'] = Number(listingDataSelected.typeId);
-    //   }
-    //   if(this.state.listingDataSelected.typeId){
-    //     payload['typeId'] = Number(this.state.listingDataSelected.typeId);
-    //   }
+      if(listingDataSelected.typeId){
+        payload['typeId'] = Number(listingDataSelected.typeId);
+      } else if(this.state.listingDataSelected.typeId){
+        payload['typeId'] = Number(this.state.listingDataSelected.typeId);
+      }
     }
 
 
