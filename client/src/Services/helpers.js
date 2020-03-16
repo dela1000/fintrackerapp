@@ -65,16 +65,16 @@ export function findMissingDates(data, addFollowingDate) {
     })
   })
 
-  if(addFollowingDate){
-    let date = new Date();
-    let days = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() - date.getDate();
-    _.times(days, i => {
-      results.push({
-        date: moment().add(i+1, 'days').format(dateFormat),
-        total: "0.00"
-      })
+  // if(addFollowingDate){
+  //   let date = new Date();
+  //   let days = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() - date.getDate();
+  //   _.times(days, i => {
+  //     results.push({
+  //       date: moment().add(i+1, 'days').format(dateFormat),
+  //       total: "0.00"
+  //     })
       
-    })
-  }
+  //   })
+  // }
   return results;
 }
