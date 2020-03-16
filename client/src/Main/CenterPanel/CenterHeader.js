@@ -60,11 +60,6 @@ class CenterHeader extends React.Component {
       bottomSubline = capitalize(timeframe) + " Estimate";
       let totalData = totalExpenses;
       backgroundColor = "#FF504C";
-      if(listingDataSelected.categoryId){
-        topSubline = "Average Daily - " + capitalize(listingDataSelected.name);
-        bottomSubline = "Month Estimate - " + capitalize(listingDataSelected.name);
-        totalData = totalAmountFound;
-      }
       if(timeframe === 'month'){
         today = moment();
         let dayOfMonth = today.format('D');
@@ -97,6 +92,12 @@ class CenterHeader extends React.Component {
         let dailyEarnedAvg = totalData / totalDays;
         topSublineAmount = decimals(dailyEarnedAvg);
         bottomSublineAmount = "";
+      }
+
+      if(listingDataSelected.categoryId){
+        topSubline = "Average Daily - " + capitalize(listingDataSelected.name);
+        bottomSubline = "Month Estimate - " + capitalize(listingDataSelected.name);
+        totalData = totalAmountFound;
       }
     }
 
