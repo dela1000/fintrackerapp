@@ -269,7 +269,7 @@ class Main extends React.Component {
 
     
     if(payload.type === "expenses"){
-      if(listingDataSelected.categoryId){
+      if(listingDataSelected && listingDataSelected.categoryId){
         payload['categoryId'] = Number(listingDataSelected.categoryId);
       } else if(this.state.listingDataSelected.categoryId){
         payload['categoryId'] = Number(this.state.listingDataSelected.categoryId);
@@ -343,7 +343,7 @@ class Main extends React.Component {
             payload.name = listingDataSelected.name;
           }
           
-          if(!payload.timeframe && !listingDataSelected.timeframe){
+          if(payload && !payload.timeframe && listingDataSelected && !listingDataSelected.timeframe){
             payload.timeframe = "custom";
           }
           this.setState({listingData: finalData, listingDataSelected: payload, totalAmountFound: data.data.totalAmountFound, timeframe: payload.timeframe})
