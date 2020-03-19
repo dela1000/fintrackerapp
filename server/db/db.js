@@ -10,7 +10,7 @@ var secrets = require('../../secrets/secrets.js');
 //   dialect: 'mysql'
 // });
 
-let env = os.hostname().indexOf("ip-172.31.26.6") > -1;
+let env = os.hostname().indexOf("172.31.26.6") > -1;
 
 console.log("+++ 14 db.js env: ", env)
 
