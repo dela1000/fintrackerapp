@@ -9,6 +9,7 @@ var secrets = require('../../secrets/secrets.js');
 //   host: 'localhost',
 //   dialect: 'mysql'
 // });
+console.log("+++ 12 db.js os.hostname(): ", os.hostname())
 
 let env = os.hostname().indexOf("172.31.26.6") > -1;
 
