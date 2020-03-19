@@ -14,7 +14,7 @@ let env = os.hostname().indexOf("ip-172.31.26.6") > -1;
 
 console.log("+++ 14 db.js env: ", env)
 
-if(env !== true) {
+if(!env) {
     _.times(10, () => {
         console.log("++++++++++++++ db.js LOCAL ++++++++++++++")
     })
