@@ -369,6 +369,22 @@ module.exports = {
   },
 
   current_available: {
+    get: function (payload, callback) {
+      console.log("+++ 373 index.js payload: ", payload)
+      db.CurrentAvailables.findOne({
+        where: {
+          userId: payload.userId
+        },
+        attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'deleted'] },
+      })
+      .then(function (currentAvailable) {
+        if(currentAvailable){
+          callback(currentAvailable)
+        } else {
+          callback(false, "Current Available not found")
+        }
+      })
+    },
     patch: function(payload, callback) {
       db.CurrentAvailables.findOne({
           where: {
@@ -487,6 +503,17 @@ module.exports = {
   },
 
   account_totals: {
+    get: function (payload, callback) {
+      db.AccountTotals.findAll(payload)
+        .then(function (results) {
+          if(results){
+            callback(results)
+          } else {
+            callback(false, "No Accounts found")
+          }
+          
+        })
+    },
     get_by_id: function (payload, callback){
       db.AccountTotals.findAll({
         where: {
@@ -811,6 +838,12 @@ module.exports = {
           query['order'].push(["accountId", "asc"])
         }
         query['order'].push(["amount", "desc"])
+      }
+      if(payload.raw){
+        query['raw'] = true
+      }
+      if(payload.attributes){
+        query.attributes = payload.attributes
       }
       // if(tableName === "ExpensesCategories"){
       //   delete query.where.date;
