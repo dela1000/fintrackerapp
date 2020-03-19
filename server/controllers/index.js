@@ -4,6 +4,7 @@ var finUtils = require('../helpers/finUtils.js');
 var calcUtils = require('../helpers/calcUtils.js');
 var Promise = require('bluebird');
 var db = require('../db/db.js');
+var Sequelize = require("sequelize");
 var _ = require('lodash');
 var moment = require('moment');
 var passwordValidator = require('password-validator');
@@ -640,15 +641,14 @@ module.exports = controllers = {
         userId: userId,
         totalToUpdate: 0
       }
-      addedTotals = {};
-
+      let addedTotals = {};
       _.forEach(expenses, function (expense) {
         expense.userId = userId;
-        userData.totalToUpdate = userData.totalToUpdate + expense.amount;
+        userData.totalToUpdate = userData.totalToUpdate + Number(expense.amount);
         if(!addedTotals[expense.accountId]){
           addedTotals[expense.accountId] = {
             id: expense.accountId,
-            amount: expense.amount
+            amount: Number(expense.amount)
           };
         } else {
           addedTotals[expense.accountId].amount = addedTotals[expense.accountId].amount + expense.amount;
@@ -1196,7 +1196,92 @@ module.exports = controllers = {
         }
       })
     }
+  },
+
+  mobile_main_data: {
+    get: function (req, res) {
+      var userId = req.headers.userId;
+      var payload = {
+        userId: userId,
+      }
+      models.current_available.get(payload, function (currentAvailable, message) {
+        if(currentAvailable){
+          var where = {
+            where: {
+              userId: userId,
+              typeId: 1,
+              deleted: false,
+            },
+            include: [{
+            model: db.UserAccounts,
+              attributes: ['account', 'id'],
+            }],
+            attributes: [
+              'id', 
+              'amount',
+              [Sequelize.col('useraccount.account'), 'account'],
+              [Sequelize.col('useraccount.id'), 'accountId']
+            ],
+            raw: true,
+          }
+          models.account_totals.get(where, function (accounts, accountsMessage) {
+            if(accounts){
+              var monthExpenses = {
+                userId: userId,
+                type: 'Expenses',
+                deleted: false,
+                startDate: finUtils.startOfMonth(),
+                endDate: finUtils.endOfMonth(),
+                orderBy: 'date',
+                order: 'DESC',
+                include: [{
+                  model: db.UserAccounts,
+                  attributes: ['account', 'id'],
+                }, {
+                  model: db.ExpensesCategories,
+                  attributes: ['name', 'id'],
+                }],
+                attributes: [
+                  'id', 
+                  'amount',
+                  'comment',
+                  'date',
+                  [Sequelize.col('expensescategory.name'), 'name'],
+                  [Sequelize.col('useraccount.account'), 'account'],
+                ],
+                raw: true,
+              }
+              models.search.get(monthExpenses, function (expenses, expensesMessage) {
+                if(expenses){
+                  var totalExpenses = 0;
+                  _.forEach(expenses, function (expense) {
+                    totalExpenses = totalExpenses + expense.amount;
+                  })
+                  totalExpenses = Number(totalExpenses.toFixed(2))
+                  var data = {
+                    currentAvailable: currentAvailable,
+                    totalExpenses: totalExpenses,
+                    accounts: accounts,
+                    expenses: expenses,
+                  };
+                  data.currentAvailable.amount = Number(currentAvailable.amount.toFixed(2));
+                  successResponse(res, data)
+                } else {
+                  failedResponse(res, expensesMessage)
+                }
+              })
+
+            }else{
+              failedResponse(res, accountsMessage)
+            };
+          })
+        } else {
+          failedResponse(res, message)
+        }
+      })
+    }
   }
+
 }
 
 // HELPER FUNCTIONS

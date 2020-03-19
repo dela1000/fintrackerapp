@@ -5,7 +5,7 @@ var path = require('path')
 var authUtils = require('../helpers/authUtils.js');
 
 router.get('/', function(req, res) {
-  res.status(202).sendFile(path.resolve(__dirname + "../../client/index.html"));
+  res.status(202).sendFile(path.resolve(__dirname + "../../../client/public/index.html"));
 })
 
 // TEST Ping
@@ -167,6 +167,10 @@ router.post('/transfers', authUtils.checkUser, function(req, res) {
 // SEARCH 
 router.get('/search', authUtils.checkUser, function(req, res) {
   controllers.search.get(req, res)
+})
+
+router.get('/mobile_main_data', authUtils.checkUser, function(req, res) {
+  controllers.mobile_main_data.get(req, res)
 })
 
 
