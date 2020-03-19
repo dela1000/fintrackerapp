@@ -77,19 +77,27 @@ export default class Add extends React.Component {
     let formattedData = [];
     let label = "";
     _.forEach(data, item => {
+      let primary = false;
       if(type === 'categories') {
         label = capitalize(item.name);
       }
       if(type === 'accounts') {
         label = capitalize(item.account) + " - " + capitalize(item.type);
+        if(item.primary){
+          primary = true;
+        }
       }
       if(type === 'sources') {
         label = capitalize(item.source);
       }
-      formattedData.push({
+      let dropDownItem = {
         label: label,
         value: item.id
-      })
+      };
+      formattedData.push(dropDownItem)
+      if(primary){
+        this.setState({accountSelected: dropDownItem})
+      }
     })
     return formattedData;
   }
