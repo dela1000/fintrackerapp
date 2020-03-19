@@ -5,6 +5,7 @@ mobile_client/www/lib
 secrets/
 *.log
 
+server/db/apiKeys.js
 # Test files
 server/test/expenses.js
 server/test/funds.js

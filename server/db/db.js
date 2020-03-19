@@ -1,11 +1,45 @@
 var Sequelize = require("sequelize");
+var os = require('os');
+var _ = require('lodash');
+
 var testData = require("../test/testData.js").testData;
 var defaults = require("./defaults.js").defaults;
 var secrets = require('../../secrets/secrets.js');
-var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
-  host: 'localhost',
-  dialect: 'mysql'
-});
+// var sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
+//   host: 'localhost',
+//   dialect: 'mysql'
+// });
+
+let env = os.hostname().indexOf("ip-172.31.26.6") > -1;
+
+console.log("+++ 14 db.js env: ", env)
+
+if(env !== true) {
+    _.times(10, () => {
+        console.log("++++++++++++++ db.js LOCAL ++++++++++++++")
+    })
+    sequelize = new Sequelize(secrets.dbName, secrets.dbUser, secrets.dbPass, {
+        host: 'localhost',
+        dialect: 'mysql'
+    });
+} else {
+  _.times(10, () => {
+      console.log("************************************************** db.js PRODUCTION **************************************************")
+  })
+  sequelize = new Sequelize(secrets.dbName, secrets.mysqRDSlUser, secrets.mysqlRDSPass, {
+      host: RDSEndpoint,
+      port: 3306,
+      dialect: 'mysql',
+      logging: console.log,
+      maxConcurrentQueries: 100,
+      dialectOptions: {
+          ssl:'Amazon RDS'
+      },
+      pool: { maxConnections: 5, maxIdleTime: 30},
+      language: 'en',
+      timeout: 60000
+  });
+}
 
 
 var Users = sequelize.define('users', {
