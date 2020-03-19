@@ -11,7 +11,7 @@ var secrets = require('../../secrets/secrets.js');
 // });
 console.log("+++ 12 db.js os.hostname(): ", os.hostname())
 
-let env = os.hostname().indexOf("172.31.26.6") > -1;
+let env = os.hostname().indexOf("172-31-26-6") > -1;
 
 console.log("+++ 14 db.js env: ", env)
 
