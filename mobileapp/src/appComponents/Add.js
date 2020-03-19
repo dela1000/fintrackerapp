@@ -1,6 +1,6 @@
 import React, 
 { Component } from "react";
-import { ScrollView, KeyboardAvoidingView, StatusBar, View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { ScrollView, KeyboardAvoidingView, StatusBar, View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -187,9 +187,12 @@ export default class Add extends React.Component {
                 this.props.navigation.navigate('Home');
               } else{
                 console.log("+++ 181 Add.js result: ", result)
+                Alert.alert( result.message, 'Press ok to try again', [ {text: 'OK'} ], { cancelable: false } )
               };
               this.setState({ loading: false });
             })
+        } else {
+          Alert.alert( 'Please add a Category and an Account', 'Press ok to try again', [ {text: 'OK'} ], { cancelable: false } )
         }
       }
       if(this.state.type === "funds"){
@@ -221,16 +224,37 @@ export default class Add extends React.Component {
                 this.props.navigation.navigate('Home');
               } else{
                 console.log("+++ 181 Add.js result: ", result)
+                Alert.alert( result.message, 'Press ok to try again', [ {text: 'OK'} ], { cancelable: false } )
               };
               this.setState({ loading: false });
             })
+        } else {
+          Alert.alert( 'Please add a Source and an Account', 'Press ok to try again', [ {text: 'OK'} ], { cancelable: false } )
         }
       }
-    } 
+    } else {
+      console.log("+++ 232 Add.js ALRT AFDSFF")
+      Alert.alert( 'Please include an amount', 'Press ok to try again', [ {text: 'OK'} ], { cancelable: false } )
+    }
   }
 
   render() {
     const { navigation } = this.props;
+    const rnpCategory = {
+      label: 'Select a category...',
+      value: null,
+      color: '#9EA0A4',
+    };
+    const rnpSource = {
+      label: 'Select a source...',
+      value: null,
+      color: '#9EA0A4',
+    };
+    const rnpAccount = {
+      label: 'Select an account...',
+      value: null,
+      color: '#9EA0A4',
+    };
     return (
       <KeyboardAvoidingView behavior="padding" style = { style.mainContainer }>
         <StatusBar barStyle="light-content" />
@@ -319,7 +343,7 @@ export default class Add extends React.Component {
                 Category*
               </Text>
               <RNPickerSelect
-                placeholder="Select a category"
+                placeholder={rnpCategory}
                 items={this.state.categories}
                 onValueChange={(value) => this.changeDropdown(value, "categories")}
                 style={pickerSelectStyles}
@@ -331,7 +355,7 @@ export default class Add extends React.Component {
                 Source*
               </Text>
               <RNPickerSelect
-                placeholder="Select a source"
+                placeholder={rnpSource}
                 items={this.state.sources}
                 onValueChange={(value) => this.changeDropdown(value, "sources")}
                 style={pickerSelectStyles}
@@ -343,7 +367,7 @@ export default class Add extends React.Component {
                 Account*
               </Text>
               <RNPickerSelect
-                placeholder="Select an account"
+                placeholder={rnpAccount}
                 items={this.state.accounts}
                 onValueChange={(value) => this.changeDropdown(value, "accounts")}
                 style={pickerSelectStyles}
