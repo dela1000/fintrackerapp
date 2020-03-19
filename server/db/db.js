@@ -28,7 +28,7 @@ if(!env) {
       console.log("************************************************** db.js PRODUCTION **************************************************")
   })
   sequelize = new Sequelize(secrets.dbName, secrets.mysqRDSlUser, secrets.mysqlRDSPass, {
-      host: RDSEndpoint,
+      host: secrets.RDSEndpoint,
       port: 3306,
       dialect: 'mysql',
       logging: console.log,
