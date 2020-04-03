@@ -62,7 +62,6 @@ class Auth extends React.Component {
       message: null,
     }
 
-    this.login = this.login.bind(this);
     this.signup = this.signup.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
     this.update_message = this.update_message.bind(this);
@@ -80,7 +79,8 @@ class Auth extends React.Component {
     return false;
   } 
 
-  login(payload, cb) {
+  login = (payload, cb) => {
+    console.log("+++ 83 Router.js payload: ", payload)
     login(payload)
       .then((res) => {
         let data = res.data;

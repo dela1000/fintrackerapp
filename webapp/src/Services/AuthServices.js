@@ -9,7 +9,5 @@ export function signup(payload){
 }
 
 export function logout(){
-    return axios.get('/logout')
+  return axios.get('/logout')
 }
-
-  
