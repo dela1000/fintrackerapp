@@ -9,6 +9,7 @@ var secrets = require(__dirname + '/secrets/secrets.js');
 var parser = require('body-parser');
 var router = require(__dirname + '/server/routes/routes.js');
 
+
 // Router
 var app = express();
 module.exports.app = app;
@@ -31,16 +32,15 @@ app.use(responseTime(function (req, res, time) {
 
 //Use cors
 app.use(function(req, res, next) {
-  // res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
   res.header('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, ' + secrets.tokenName);
   next();
 });
 
-// Serving static files from client directory.
-app.use(express.static(__dirname + '../client'));
-app.use('/', express.static(path.join(__dirname, '../client/')));
+// Serving React static files from client directory.
+app.use(express.static(`${__dirname}/webapp/build`));
 // Set up our routes
 app.use("/", router);
 

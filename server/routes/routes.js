@@ -4,10 +4,6 @@ var router = require('express').Router();
 var path = require('path')
 var authUtils = require('../helpers/authUtils.js');
 
-router.get('/', function(req, res) {
-  res.status(202).sendFile(path.resolve(__dirname + "../../../client/public/index.html"));
-})
-
 // TEST Ping
 router.get('/ping', function(req, res) {
   controllers.ping.get(req, res)
