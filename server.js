@@ -42,6 +42,11 @@ app.use(function(req, res, next) {
 
 // Serving React static files from client directory.
 app.use(express.static(`${__dirname}/webapp/build`));
+
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 // Set up our routes
 app.use("/", router);
 
