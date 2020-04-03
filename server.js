@@ -9,7 +9,6 @@ var secrets = require(__dirname + '/secrets/secrets.js');
 var parser = require('body-parser');
 var router = require(__dirname + '/server/routes/routes.js');
 
-
 // Router
 var app = express();
 module.exports.app = app;
@@ -27,7 +26,8 @@ app.use(responseTime(function (req, res, time) {
       console.log("+++ server.js PATH:", req.method + " " + req.route.path)
       console.log("+++ server.js TIME IN SECONDS:", time / 1000)
     } else {
-        console.log("+++ server - No Route found")
+      console.log("+++ server - No Route found. Redirecting to Login")
+      res.redirect("/login");
     }
 }))
 
